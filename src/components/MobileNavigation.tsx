@@ -9,7 +9,7 @@ export function MobileNavigation() {
   if (!isMobile) return null;
   
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t py-2 md:hidden">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t py-2 md:hidden shadow-lg">
       <nav className="flex items-center justify-around">
         <Link to="/" className="flex flex-col items-center p-2 text-primary">
           <Home className="w-5 h-5" />
@@ -17,11 +17,11 @@ export function MobileNavigation() {
         </Link>
         <Link to="/" className="flex flex-col items-center p-2 text-muted-foreground">
           <Search className="w-5 h-5" />
-          <span className="text-xs mt-1">Search</span>
+          <span className="text-xs mt-1">Tests</span>
         </Link>
         <Link to="/" className="flex flex-col items-center p-2 text-muted-foreground">
           <Calendar className="w-5 h-5" />
-          <span className="text-xs mt-1">Bookings</span>
+          <span className="text-xs mt-1">Reports</span>
         </Link>
         <Link to="/" className="flex flex-col items-center p-2 text-muted-foreground">
           <MessageSquare className="w-5 h-5" />
@@ -29,7 +29,7 @@ export function MobileNavigation() {
         </Link>
         <Link to="/" className="flex flex-col items-center p-2 text-muted-foreground">
           <User className="w-5 h-5" />
-          <span className="text-xs mt-1">Profile</span>
+          <span className="text-xs mt-1">Account</span>
         </Link>
       </nav>
     </div>

@@ -14,7 +14,7 @@ interface AppointmentCardProps {
 
 export function AppointmentCard({ doctorName, specialty, date, time, imageSrc, status }: AppointmentCardProps) {
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden border-none card-shadow">
       <CardContent className="p-4">
         <div className="flex gap-3">
           <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
@@ -27,11 +27,11 @@ export function AppointmentCard({ doctorName, specialty, date, time, imageSrc, s
             
             <div className="flex items-center gap-4 mt-2">
               <div className="flex items-center gap-1">
-                <Calendar className="h-3 w-3 text-muted-foreground" />
+                <Calendar className="h-3 w-3 text-primary" />
                 <span className="text-xs">{date}</span>
               </div>
               <div className="flex items-center gap-1">
-                <Clock className="h-3 w-3 text-muted-foreground" />
+                <Clock className="h-3 w-3 text-primary" />
                 <span className="text-xs">{time}</span>
               </div>
             </div>
@@ -40,15 +40,15 @@ export function AppointmentCard({ doctorName, specialty, date, time, imageSrc, s
         
         <div className="flex items-center justify-between mt-3 pt-3 border-t">
           <div>
-            {status === "upcoming" && <span className="text-xs px-2 py-1 bg-blue-50 text-blue-600 rounded-full">Upcoming</span>}
+            {status === "upcoming" && <span className="text-xs px-2 py-1 bg-orange-50 text-primary rounded-full">Upcoming</span>}
             {status === "completed" && <span className="text-xs px-2 py-1 bg-green-50 text-green-600 rounded-full">Completed</span>}
             {status === "cancelled" && <span className="text-xs px-2 py-1 bg-red-50 text-red-600 rounded-full">Cancelled</span>}
           </div>
           
           {status === "upcoming" && (
             <div className="flex gap-2">
-              <Button size="sm" variant="outline" className="text-xs h-8">Reschedule</Button>
-              <Button size="sm" className="text-xs h-8">Join</Button>
+              <Button size="sm" variant="outline" className="text-xs h-8 rounded-full">Reschedule</Button>
+              <Button size="sm" className="text-xs h-8 orange-button rounded-full">Join</Button>
             </div>
           )}
         </div>

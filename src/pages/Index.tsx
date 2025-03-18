@@ -1,5 +1,5 @@
 
-import { Calendar, Clock, Filter, MapPin, Star } from "lucide-react";
+import { Calendar, Clock, Filter, MapPin, Star, FileText, Stethoscope, Heart, Activity } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import { SearchBar } from "@/components/SearchBar";
 import { DoctorCard } from "@/components/DoctorCard";
@@ -14,70 +14,72 @@ const Index = () => {
       <div className="container px-4 py-6">
         {/* Hero Section */}
         <section className="mb-8">
-          <div className="rounded-lg bg-white p-6 mb-6 md:p-8 lg:flex items-center justify-between">
+          <div className="rounded-xl bg-white p-6 mb-6 md:p-8 lg:flex items-center justify-between overflow-hidden relative card-shadow">
             <div className="mb-6 lg:mb-0 lg:max-w-lg">
-              <h1 className="text-2xl md:text-3xl font-bold mb-2">Find and Book Your Doctor</h1>
+              <h1 className="text-2xl md:text-3xl font-bold mb-2">Book Tests & Health Checkups</h1>
               <p className="text-muted-foreground mb-4">
-                Book appointments with the best doctors and specialists in your area
+                Schedule your tests at home or visit a nearby diagnostic center
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <SearchBar />
-                <Button className="whitespace-nowrap" size="lg">
+                <Button className="whitespace-nowrap orange-button rounded-full" size="lg">
                   <Filter className="mr-2 h-4 w-4" />
                   Filters
                 </Button>
               </div>
             </div>
-            <div className="hidden lg:block max-w-xs">
+            <div className="hidden lg:block max-w-xs relative z-10">
               <img 
-                src="https://placehold.co/400x300/e6f7ff/0099cc?text=Doctor+Consultation&font=montserrat" 
-                alt="Doctor consultation" 
+                src="https://placehold.co/400x300/fff5eb/FF6B00?text=Health+Tests&font=montserrat" 
+                alt="Health tests" 
                 className="rounded-lg"
               />
             </div>
+            <div className="absolute -right-16 -bottom-16 w-64 h-64 rounded-full opacity-10 orange-gradient"></div>
           </div>
         </section>
 
         {/* Quick Access Cards */}
-        <section className="mb-8">
+        <section className="mb-10">
+          <h2 className="text-xl font-semibold mb-4">Our Services</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Card>
-              <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-                <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center mb-2">
-                  <Calendar className="h-5 w-5 text-blue-600" />
+            <Card className="border-none card-shadow">
+              <CardContent className="p-6 flex flex-col items-center justify-center text-center hover:bg-orange-50 transition-colors">
+                <div className="w-12 h-12 rounded-full orange-gradient flex items-center justify-center mb-3">
+                  <FileText className="h-6 w-6 text-white" />
                 </div>
-                <h3 className="font-medium text-sm">Appointments</h3>
+                <h3 className="font-medium">Lab Tests</h3>
               </CardContent>
             </Card>
-            <Card>
-              <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-                <div className="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center mb-2">
-                  <Star className="h-5 w-5 text-purple-600" />
+            <Card className="border-none card-shadow">
+              <CardContent className="p-6 flex flex-col items-center justify-center text-center hover:bg-orange-50 transition-colors">
+                <div className="w-12 h-12 rounded-full orange-gradient flex items-center justify-center mb-3">
+                  <Stethoscope className="h-6 w-6 text-white" />
                 </div>
-                <h3 className="font-medium text-sm">Top Doctors</h3>
+                <h3 className="font-medium">Doctors</h3>
               </CardContent>
             </Card>
-            <Card>
-              <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-                <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center mb-2">
-                  <Clock className="h-5 w-5 text-green-600" />
+            <Card className="border-none card-shadow">
+              <CardContent className="p-6 flex flex-col items-center justify-center text-center hover:bg-orange-50 transition-colors">
+                <div className="w-12 h-12 rounded-full orange-gradient flex items-center justify-center mb-3">
+                  <Heart className="h-6 w-6 text-white" />
                 </div>
-                <h3 className="font-medium text-sm">Available Now</h3>
+                <h3 className="font-medium">Health Packages</h3>
               </CardContent>
             </Card>
-            <Card>
-              <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-                <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center mb-2">
-                  <MapPin className="h-5 w-5 text-amber-600" />
+            <Card className="border-none card-shadow">
+              <CardContent className="p-6 flex flex-col items-center justify-center text-center hover:bg-orange-50 transition-colors">
+                <div className="w-12 h-12 rounded-full orange-gradient flex items-center justify-center mb-3">
+                  <Activity className="h-6 w-6 text-white" />
                 </div>
-                <h3 className="font-medium text-sm">Nearby</h3>
+                <h3 className="font-medium">Health Concerns</h3>
               </CardContent>
             </Card>
           </div>
         </section>
 
         {/* Upcoming Appointments */}
-        <section className="mb-8">
+        <section className="mb-10">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold">Upcoming Appointments</h2>
             <Button variant="link" className="text-primary">View All</Button>
@@ -88,7 +90,7 @@ const Index = () => {
               specialty="Cardiologist"
               date="Today, 15 May"
               time="10:00 AM"
-              imageSrc="https://placehold.co/200/e6f7ff/0099cc?text=SJ&font=montserrat"
+              imageSrc="https://placehold.co/200/fff5eb/FF6B00?text=SJ&font=montserrat"
               status="upcoming"
             />
             <AppointmentCard
@@ -96,7 +98,7 @@ const Index = () => {
               specialty="Dermatologist"
               date="Tomorrow, 16 May"
               time="02:30 PM"
-              imageSrc="https://placehold.co/200/e6f7ff/0099cc?text=MC&font=montserrat"
+              imageSrc="https://placehold.co/200/fff5eb/FF6B00?text=MC&font=montserrat"
               status="upcoming"
             />
           </div>
@@ -110,7 +112,7 @@ const Index = () => {
           </div>
           
           <Tabs defaultValue="all">
-            <TabsList className="mb-4">
+            <TabsList className="mb-4 bg-white border border-gray-100">
               <TabsTrigger value="all">All</TabsTrigger>
               <TabsTrigger value="cardiologist">Cardiologist</TabsTrigger>
               <TabsTrigger value="dermatologist">Dermatologist</TabsTrigger>
@@ -124,32 +126,32 @@ const Index = () => {
                   specialty="Cardiologist"
                   rating={4.9}
                   reviewCount={124}
-                  price="$120"
-                  imageSrc="https://placehold.co/400x300/e6f7ff/0099cc?text=Dr.+Thompson&font=montserrat"
+                  price="₹1,200"
+                  imageSrc="https://placehold.co/400x300/fff5eb/FF6B00?text=Dr.+Thompson&font=montserrat"
                 />
                 <DoctorCard
                   name="Dr. James Wilson"
                   specialty="Neurologist"
                   rating={4.7}
                   reviewCount={98}
-                  price="$150"
-                  imageSrc="https://placehold.co/400x300/e6f7ff/0099cc?text=Dr.+Wilson&font=montserrat"
+                  price="₹1,500"
+                  imageSrc="https://placehold.co/400x300/fff5eb/FF6B00?text=Dr.+Wilson&font=montserrat"
                 />
                 <DoctorCard
                   name="Dr. Emily Parker"
                   specialty="Dermatologist"
                   rating={4.8}
                   reviewCount={156}
-                  price="$135"
-                  imageSrc="https://placehold.co/400x300/e6f7ff/0099cc?text=Dr.+Parker&font=montserrat"
+                  price="₹1,350"
+                  imageSrc="https://placehold.co/400x300/fff5eb/FF6B00?text=Dr.+Parker&font=montserrat"
                 />
                 <DoctorCard
                   name="Dr. Robert Kim"
                   specialty="Pediatrician"
                   rating={4.9}
                   reviewCount={210}
-                  price="$110"
-                  imageSrc="https://placehold.co/400x300/e6f7ff/0099cc?text=Dr.+Kim&font=montserrat"
+                  price="₹1,100"
+                  imageSrc="https://placehold.co/400x300/fff5eb/FF6B00?text=Dr.+Kim&font=montserrat"
                 />
               </div>
             </TabsContent>
@@ -161,8 +163,8 @@ const Index = () => {
                   specialty="Cardiologist"
                   rating={4.9}
                   reviewCount={124}
-                  price="$120"
-                  imageSrc="https://placehold.co/400x300/e6f7ff/0099cc?text=Dr.+Thompson&font=montserrat"
+                  price="₹1,200"
+                  imageSrc="https://placehold.co/400x300/fff5eb/FF6B00?text=Dr.+Thompson&font=montserrat"
                 />
               </div>
             </TabsContent>
@@ -174,8 +176,8 @@ const Index = () => {
                   specialty="Dermatologist"
                   rating={4.8}
                   reviewCount={156}
-                  price="$135"
-                  imageSrc="https://placehold.co/400x300/e6f7ff/0099cc?text=Dr.+Parker&font=montserrat"
+                  price="₹1,350"
+                  imageSrc="https://placehold.co/400x300/fff5eb/FF6B00?text=Dr.+Parker&font=montserrat"
                 />
               </div>
             </TabsContent>
@@ -187,8 +189,8 @@ const Index = () => {
                   specialty="Pediatrician"
                   rating={4.9}
                   reviewCount={210}
-                  price="$110"
-                  imageSrc="https://placehold.co/400x300/e6f7ff/0099cc?text=Dr.+Kim&font=montserrat"
+                  price="₹1,100"
+                  imageSrc="https://placehold.co/400x300/fff5eb/FF6B00?text=Dr.+Kim&font=montserrat"
                 />
               </div>
             </TabsContent>

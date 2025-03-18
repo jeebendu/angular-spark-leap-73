@@ -14,7 +14,7 @@ interface DoctorCardProps {
 
 export function DoctorCard({ name, specialty, rating, reviewCount, price, imageSrc }: DoctorCardProps) {
   return (
-    <Card className="overflow-hidden transition-all hover:shadow-md">
+    <Card className="overflow-hidden transition-all border-none card-shadow">
       <CardContent className="p-0">
         <div className="aspect-[3/2] relative overflow-hidden">
           <img 
@@ -35,7 +35,7 @@ export function DoctorCard({ name, specialty, rating, reviewCount, price, imageS
           
           <div className="flex items-center justify-between mt-3">
             <span className="font-semibold">{price}</span>
-            <Button size="sm" variant="secondary">Book Now</Button>
+            <Button size="sm" className="orange-button rounded-full">Book Now</Button>
           </div>
         </div>
       </CardContent>

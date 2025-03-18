@@ -12,7 +12,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   const isMobile = useIsMobile();
   
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#F8F9FC]">
       <Navbar />
       <main className={`pb-${isMobile ? '20' : '6'}`}>
         {children}

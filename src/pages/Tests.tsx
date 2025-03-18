@@ -3,7 +3,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { CalendarDays, ChevronRight, Clock, Flask, Heart, Needle, SearchIcon, TestTube, ThermometerSun } from "lucide-react";
+import { CalendarDays, ChevronRight, Clock, Beaker, Heart, Syringe, SearchIcon, TestTubes, Thermometer } from "lucide-react";
 import { SearchBar } from "@/components/SearchBar";
 
 export default function Tests() {
@@ -25,7 +25,7 @@ export default function Tests() {
               price={599}
               originalPrice={799}
               tests={8}
-              icon={<Flask className="w-6 h-6 text-primary" />}
+              icon={<Beaker className="w-6 h-6 text-primary" />}
             />
             
             <TestPackageCard 
@@ -34,7 +34,7 @@ export default function Tests() {
               price={899}
               originalPrice={1299}
               tests={5}
-              icon={<Needle className="w-6 h-6 text-primary" />}
+              icon={<Syringe className="w-6 h-6 text-primary" />}
             />
             
             <TestPackageCard 
@@ -43,7 +43,7 @@ export default function Tests() {
               price={699}
               originalPrice={999}
               tests={3}
-              icon={<ThermometerSun className="w-6 h-6 text-primary" />}
+              icon={<Thermometer className="w-6 h-6 text-primary" />}
             />
             
             <TestPackageCard 
@@ -61,7 +61,7 @@ export default function Tests() {
               price={899}
               originalPrice={1499}
               tests={6}
-              icon={<TestTube className="w-6 h-6 text-primary" />}
+              icon={<TestTubes className="w-6 h-6 text-primary" />}
             />
             
             <TestPackageCard 
@@ -70,18 +70,18 @@ export default function Tests() {
               price={1599}
               originalPrice={2499}
               tests={12}
-              icon={<Flask className="w-6 h-6 text-primary" />}
+              icon={<Beaker className="w-6 h-6 text-primary" />}
             />
           </div>
           
           <h2 className="text-xl font-semibold text-[#333] mt-4">Popular Health Concerns</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            <HealthConcernCard label="Diabetes" icon={<Needle className="w-5 h-5" />} />
-            <HealthConcernCard label="Thyroid" icon={<ThermometerSun className="w-5 h-5" />} />
+            <HealthConcernCard label="Diabetes" icon={<Syringe className="w-5 h-5" />} />
+            <HealthConcernCard label="Thyroid" icon={<Thermometer className="w-5 h-5" />} />
             <HealthConcernCard label="Heart" icon={<Heart className="w-5 h-5" />} />
-            <HealthConcernCard label="Liver" icon={<Flask className="w-5 h-5" />} />
-            <HealthConcernCard label="Kidney" icon={<TestTube className="w-5 h-5" />} />
-            <HealthConcernCard label="Allergy" icon={<TestTube className="w-5 h-5" />} />
+            <HealthConcernCard label="Liver" icon={<Beaker className="w-5 h-5" />} />
+            <HealthConcernCard label="Kidney" icon={<TestTubes className="w-5 h-5" />} />
+            <HealthConcernCard label="Allergy" icon={<TestTubes className="w-5 h-5" />} />
           </div>
         </div>
       </div>

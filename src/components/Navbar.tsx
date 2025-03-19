@@ -34,7 +34,7 @@ export function Navbar() {
             </Link>
           </nav>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Button variant="ghost" size="icon" className="text-muted-foreground">
               <Search className="h-5 w-5" />
             </Button>

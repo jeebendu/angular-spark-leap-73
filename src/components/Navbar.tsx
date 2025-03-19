@@ -2,8 +2,12 @@
 import { Link } from "react-router-dom";
 import { Bell, Calendar, MessageSquare, Search, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useTranslation } from "react-i18next";
 
 export function Navbar() {
+  const { t } = useTranslation();
+  
   return (
     <header className="border-b bg-white py-3 px-4 md:px-6 sticky top-0 z-30 shadow-sm">
       <div className="container flex items-center justify-between">
@@ -17,16 +21,16 @@ export function Navbar() {
         <div className="hidden md:flex items-center gap-6">
           <nav className="flex items-center gap-6">
             <Link to="/" className="text-sm font-medium hover:text-primary transition-colors">
-              Home
+              {t('common.home')}
+            </Link>
+            <Link to="/tests" className="text-sm font-medium hover:text-primary transition-colors">
+              {t('common.tests')}
             </Link>
             <Link to="/" className="text-sm font-medium hover:text-primary transition-colors">
-              Tests
+              {t('header.healthPackages')}
             </Link>
-            <Link to="/" className="text-sm font-medium hover:text-primary transition-colors">
-              Health Packages
-            </Link>
-            <Link to="/" className="text-sm font-medium hover:text-primary transition-colors">
-              Reports
+            <Link to="/reports" className="text-sm font-medium hover:text-primary transition-colors">
+              {t('common.reports')}
             </Link>
           </nav>
           
@@ -38,9 +42,10 @@ export function Navbar() {
               <Bell className="h-5 w-5" />
               <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
             </Button>
+            <LanguageSwitcher />
             <Button className="orange-button rounded-full ml-2">
               <User className="h-4 w-4 mr-2" />
-              Account
+              {t('common.account')}
             </Button>
           </div>
         </div>

@@ -1,0 +1,131 @@
+
+{
+  "common": {
+    "home": "ଘର",
+    "tests": "ପରୀକ୍ଷଣ",
+    "reports": "ରିପୋର୍ଟ",
+    "chat": "ଚାଟ୍",
+    "account": "ଆକାଉଣ୍ଟ",
+    "search": "ଖୋଜନ୍ତୁ",
+    "off": "ଛାଡ଼",
+    "viewDetails": "ବିବରଣୀ ଦେଖନ୍ତୁ",
+    "bookAppointment": "ଆପଏଣ୍ଟମେଣ୍ଟ ବୁକ୍ କରନ୍ତୁ",
+    "viewAll": "ସମସ୍ତ ଦେଖନ୍ତୁ",
+    "submit": "ଦାଖଲ କରନ୍ତୁ",
+    "cancel": "ବାତିଲ କରନ୍ତୁ"
+  },
+  "header": {
+    "labTests": "ଲ୍ୟାବ୍ ପରୀକ୍ଷଣ",
+    "healthPackages": "ସ୍ୱାସ୍ଥ୍ୟ ପ୍ୟାକେଜ୍",
+    "doctors": "ଡାକ୍ତର",
+    "healthBlogs": "ସ୍ୱାସ୍ଥ୍ୟ ବ୍ଲଗ୍"
+  },
+  "home": {
+    "welcomeMessage": "ଆପଣଙ୍କର ସ୍ୱାସ୍ଥ୍ୟ ଯାତ୍ରା ଆରମ୍ଭ କରନ୍ତୁ",
+    "searchPlaceholder": "ଟେଷ୍ଟ୍ ପାଇଁ ଖୋଜନ୍ତୁ, ଡାକ୍ତର ଇତ୍ୟାଦି",
+    "popularTests": "ଜନପ୍ରିୟ ପରୀକ୍ଷଣ",
+    "viewAllTests": "ସମସ୍ତ ପରୀକ୍ଷଣ ଦେଖନ୍ତୁ",
+    "upcomingAppointments": "ଆସନ୍ତା ଆପଏଣ୍ଟମେଣ୍ଟ",
+    "viewAllAppointments": "ସମସ୍ତ ଆପଏଣ୍ଟମେଣ୍ଟ ଦେଖନ୍ତୁ",
+    "featuredDoctors": "ଉଲ୍ଲେଖଯୋଗ୍ୟ ଡାକ୍ତର",
+    "viewAllDoctors": "ସମସ୍ତ ଡାକ୍ତର ଦେଖନ୍ତୁ",
+    "healthTips": "ସ୍ୱାସ୍ଥ୍ୟ ଟିପ୍ସ"
+  },
+  "tests": {
+    "title": "ଲ୍ୟାବ୍ ପରୀକ୍ଷଣ",
+    "bookTest": "ଏକ ପରୀକ୍ଷଣ ବୁକ୍ କରନ୍ତୁ",
+    "testsIncluded": "ପରୀକ୍ଷଣ ଅନ୍ତର୍ଭୁକ୍ତ",
+    "turnaround": "24 ଘଣ୍ଟା",
+    "availableToday": "ଆଜି ଉପଲବ୍ଧ",
+    "bookNow": "ଏବେ ବୁକ୍ କରନ୍ତୁ",
+    "healthConcerns": "ଜନପ୍ରିୟ ସ୍ୱାସ୍ଥ୍ୟ ଚିନ୍ତା",
+    "packages": {
+      "cbc": {
+        "title": "ସମ୍ପୂର୍ଣ୍ଣ ରକ୍ତ ଗଣନା",
+        "description": "ଆମର ବ୍ୟାପକ ରକ୍ତ ପରୀକ୍ଷଣ ସହିତ ଆପଣଙ୍କର ସାମଗ୍ରିକ ସ୍ୱାସ୍ଥ୍ୟ ଯାଞ୍ଚ କରନ୍ତୁ"
+      },
+      "diabetes": {
+        "title": "ମଧୁମେହ ସ୍କ୍ରିନିଂ",
+        "description": "ମଧୁମେହର ପ୍ରାରମ୍ଭିକ ସନ୍ଧାନ ଏବଂ ନିରୀକ୍ଷଣ"
+      },
+      "thyroid": {
+        "title": "ଥାଇରଏଡ୍ ପ୍ରୋଫାଇଲ୍",
+        "description": "ଥାଇରଏଡ୍ କାର୍ଯ୍ୟର ବ୍ୟାପକ ବିଶ୍ଳେଷଣ"
+      },
+      "heart": {
+        "title": "ହୃଦୟ ସ୍ୱାସ୍ଥ୍ୟ",
+        "description": "ବ୍ୟାପକ ହୃଦୟ ବିପଦ ମୂଲ୍ୟାଙ୍କନ"
+      },
+      "vitamin": {
+        "title": "ଭିଟାମିନ୍ ପ୍ରୋଫାଇଲ୍",
+        "description": "ଆମର ପରୀକ୍ଷଣ ସହିତ ଭିଟାମିନ୍ ଅଭାବ ଯାଞ୍ଚ କରନ୍ତୁ"
+      },
+      "women": {
+        "title": "ମହିଳା ସ୍ୱାସ୍ଥ୍ୟ",
+        "description": "ମହିଳାଙ୍କ ସୁସ୍ଥତା ପାଇଁ ଡିଜାଇନ୍ କରାଯାଇଥିବା ବ୍ୟାପକ ପ୍ୟାନେଲ୍"
+      }
+    }
+  },
+  "healthConcerns": {
+    "diabetes": "ମଧୁମେହ",
+    "thyroid": "ଥାଇରଏଡ୍",
+    "heart": "ହୃଦୟ",
+    "liver": "ଯକୃତ",
+    "kidney": "କିଡନୀ",
+    "allergy": "ଆଲର୍ଜି"
+  },
+  "reports": {
+    "title": "ମେଡିକାଲ୍ ରିପୋର୍ଟ",
+    "recentReports": "ସାମ୍ପ୍ରତିକ ରିପୋର୍ଟ",
+    "allReports": "ସମସ୍ତ ରିପୋର୍ଟ",
+    "downloadReport": "ରିପୋର୍ଟ ଡାଉନଲୋଡ୍ କରନ୍ତୁ",
+    "shareReport": "ରିପୋର୍ଟ ସେୟାର କରନ୍ତୁ"
+  },
+  "chat": {
+    "title": "ଚାଟ୍ ସହିତ ଡାକ୍ତର",
+    "searchPlaceholder": "ଡାକ୍ତର ଖୋଜନ୍ତୁ",
+    "startChat": "ଚାଟ୍ ଆରମ୍ଭ କରନ୍ତୁ",
+    "messageInput": "ଆପଣଙ୍କର ମେସେଜ୍ ଲେଖନ୍ତୁ",
+    "send": "ପଠାନ୍ତୁ"
+  },
+  "account": {
+    "title": "ମୋର ଆକାଉଣ୍ଟ",
+    "signOut": "ସାଇନ୍ ଆଉଟ୍",
+    "personalInfo": "ବ୍ୟକ୍ତିଗତ ସୂଚନା",
+    "security": "ସୁରକ୍ଷା",
+    "notifications": "ବିଜ୍ଞପ୍ତି",
+    "paymentMethods": "ପେମେଣ୍ଟ ପଦ୍ଧତି",
+    "familyMembers": "ପରିବାର ସଦସ୍ୟ",
+    "preferences": "ପସନ୍ଦ",
+    "manageDetails": "ଆପଣଙ୍କର ବ୍ୟକ୍ତିଗତ ବିବରଣୀ ପରିଚାଳନା କରନ୍ତୁ",
+    "saveChanges": "ପରିବର୍ତ୍ତନ ସଞ୍ଚୟ କରନ୍ତୁ",
+    "firstName": "ପ୍ରଥମ ନାମ",
+    "lastName": "ଶେଷ ନାମ",
+    "email": "ଇମେଲ୍",
+    "phone": "ଫୋନ୍ ନମ୍ବର",
+    "dob": "ଜନ୍ମ ତାରିଖ",
+    "gender": "ଲିଙ୍ଗ",
+    "addressInfo": "ଠିକଣା ସୂଚନା",
+    "manageAddresses": "ନମୁନା ସଂଗ୍ରହ ପାଇଁ ଆପଣଙ୍କର ଠିକଣା ପରିଚାଳନା କରନ୍ତୁ",
+    "addAddress": "ନୂତନ ଠିକଣା ଯୋଡନ୍ତୁ",
+    "edit": "ସମ୍ପାଦନା",
+    "delete": "ବିଲୋପ କରନ୍ତୁ",
+    "healthInfo": "ସ୍ୱାସ୍ଥ୍ୟ ସୂଚନା",
+    "healthInfoDesc": "ଉତ୍ତମ ସେବା ପାଇଁ ଆପଣଙ୍କର ମୌଳିକ ସ୍ୱାସ୍ଥ୍ୟ ସୂଚନା",
+    "height": "ଉଚ୍ଚତା",
+    "weight": "ଓଜନ",
+    "bloodGroup": "ରକ୍ତ ଗୋଷ୍ଠୀ",
+    "allergies": "ଆଲର୍ଜି",
+    "currentMedication": "ବର୍ତ୍ତମାନର ଔଷଧ",
+    "addMedication": "ଔଷଧ ଯୋଡନ୍ତୁ"
+  },
+  "languageSwitcher": {
+    "language": "ଭାଷା",
+    "english": "English",
+    "hindi": "हिंदी",
+    "tamil": "தமிழ்",
+    "telugu": "తెలుగు",
+    "bengali": "বাংলা",
+    "odia": "ଓଡ଼ିଆ"
+  }
+}

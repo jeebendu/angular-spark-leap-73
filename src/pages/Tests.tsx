@@ -5,23 +5,26 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { CalendarDays, ChevronRight, Clock, Beaker, Heart, Syringe, SearchIcon, TestTubes, Thermometer } from "lucide-react";
 import { SearchBar } from "@/components/SearchBar";
+import { useTranslation } from 'react-i18next';
 
 export default function Tests() {
+  const { t } = useTranslation();
+  
   return (
     <AppLayout>
       <div className="container px-4 mx-auto py-6">
         <div className="flex flex-col gap-6">
-          <h1 className="text-2xl font-bold text-[#333]">Lab Tests</h1>
+          <h1 className="text-2xl font-bold text-[#333]">{t('tests.title')}</h1>
           
           <div className="flex flex-col md:flex-row justify-between gap-4">
             <SearchBar />
-            <Button className="bg-primary hover:bg-primary/90 text-white">Book a Test</Button>
+            <Button className="bg-primary hover:bg-primary/90 text-white">{t('tests.bookTest')}</Button>
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <TestPackageCard 
-              title="Complete Blood Count" 
-              description="Check your overall health with our comprehensive blood test"
+              title={t('tests.packages.cbc.title')}
+              description={t('tests.packages.cbc.description')}
               price={599}
               originalPrice={799}
               tests={8}
@@ -29,8 +32,8 @@ export default function Tests() {
             />
             
             <TestPackageCard 
-              title="Diabetes Screening" 
-              description="Early detection and monitoring of diabetes"
+              title={t('tests.packages.diabetes.title')}
+              description={t('tests.packages.diabetes.description')}
               price={899}
               originalPrice={1299}
               tests={5}
@@ -38,8 +41,8 @@ export default function Tests() {
             />
             
             <TestPackageCard 
-              title="Thyroid Profile" 
-              description="Comprehensive analysis of thyroid function"
+              title={t('tests.packages.thyroid.title')}
+              description={t('tests.packages.thyroid.description')}
               price={699}
               originalPrice={999}
               tests={3}
@@ -47,8 +50,8 @@ export default function Tests() {
             />
             
             <TestPackageCard 
-              title="Heart Health" 
-              description="Comprehensive cardiac risk assessment"
+              title={t('tests.packages.heart.title')}
+              description={t('tests.packages.heart.description')}
               price={1299}
               originalPrice={1999}
               tests={10}
@@ -56,8 +59,8 @@ export default function Tests() {
             />
             
             <TestPackageCard 
-              title="Vitamin Profile" 
-              description="Check for vitamin deficiencies with our test"
+              title={t('tests.packages.vitamin.title')}
+              description={t('tests.packages.vitamin.description')}
               price={899}
               originalPrice={1499}
               tests={6}
@@ -65,8 +68,8 @@ export default function Tests() {
             />
             
             <TestPackageCard 
-              title="Women's Health" 
-              description="Comprehensive panel designed for women's wellness"
+              title={t('tests.packages.women.title')}
+              description={t('tests.packages.women.description')}
               price={1599}
               originalPrice={2499}
               tests={12}
@@ -74,14 +77,14 @@ export default function Tests() {
             />
           </div>
           
-          <h2 className="text-xl font-semibold text-[#333] mt-4">Popular Health Concerns</h2>
+          <h2 className="text-xl font-semibold text-[#333] mt-4">{t('tests.healthConcerns')}</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            <HealthConcernCard label="Diabetes" icon={<Syringe className="w-5 h-5" />} />
-            <HealthConcernCard label="Thyroid" icon={<Thermometer className="w-5 h-5" />} />
-            <HealthConcernCard label="Heart" icon={<Heart className="w-5 h-5" />} />
-            <HealthConcernCard label="Liver" icon={<Beaker className="w-5 h-5" />} />
-            <HealthConcernCard label="Kidney" icon={<TestTubes className="w-5 h-5" />} />
-            <HealthConcernCard label="Allergy" icon={<TestTubes className="w-5 h-5" />} />
+            <HealthConcernCard label={t('healthConcerns.diabetes')} icon={<Syringe className="w-5 h-5" />} />
+            <HealthConcernCard label={t('healthConcerns.thyroid')} icon={<Thermometer className="w-5 h-5" />} />
+            <HealthConcernCard label={t('healthConcerns.heart')} icon={<Heart className="w-5 h-5" />} />
+            <HealthConcernCard label={t('healthConcerns.liver')} icon={<Beaker className="w-5 h-5" />} />
+            <HealthConcernCard label={t('healthConcerns.kidney')} icon={<TestTubes className="w-5 h-5" />} />
+            <HealthConcernCard label={t('healthConcerns.allergy')} icon={<TestTubes className="w-5 h-5" />} />
           </div>
         </div>
       </div>
@@ -99,6 +102,7 @@ interface TestPackageCardProps {
 }
 
 function TestPackageCard({ title, description, price, originalPrice, tests, icon }: TestPackageCardProps) {
+  const { t } = useTranslation();
   const discount = Math.round(((originalPrice - price) / originalPrice) * 100);
   
   return (
@@ -112,7 +116,7 @@ function TestPackageCard({ title, description, price, originalPrice, tests, icon
             <CardTitle className="text-base font-semibold">{title}</CardTitle>
           </div>
           <div className="bg-green-50 text-green-600 text-xs font-medium px-2 py-1 rounded">
-            {discount}% OFF
+            {discount}% {t('common.off')}
           </div>
         </div>
       </CardHeader>
@@ -120,12 +124,12 @@ function TestPackageCard({ title, description, price, originalPrice, tests, icon
         <CardDescription className="text-sm text-gray-600 mb-3">{description}</CardDescription>
         <div className="flex items-center gap-3 my-2">
           <div className="flex items-center gap-1 text-xs text-gray-600">
-            <TestTube className="w-4 h-4" />
-            <span>{tests} Tests included</span>
+            <TestTubes className="w-4 h-4" />
+            <span>{tests} {t('tests.testsIncluded')}</span>
           </div>
           <div className="flex items-center gap-1 text-xs text-gray-600">
             <Clock className="w-4 h-4" />
-            <span>24 hours</span>
+            <span>{t('tests.turnaround')}</span>
           </div>
         </div>
         <div className="flex items-center mt-2">
@@ -137,10 +141,10 @@ function TestPackageCard({ title, description, price, originalPrice, tests, icon
         <div className="flex justify-between items-center w-full">
           <div className="flex items-center gap-1 text-xs">
             <CalendarDays className="w-4 h-4 text-primary" />
-            <span className="text-gray-600">Available today</span>
+            <span className="text-gray-600">{t('tests.availableToday')}</span>
           </div>
           <Button variant="ghost" size="sm" className="text-primary p-0 h-auto">
-            Book Now <ChevronRight className="w-4 h-4 ml-1" />
+            {t('tests.bookNow')} <ChevronRight className="w-4 h-4 ml-1" />
           </Button>
         </div>
       </CardFooter>

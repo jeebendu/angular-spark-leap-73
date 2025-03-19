@@ -9,17 +9,20 @@ import { BellRing, CreditCard, Edit2, Lock, LogOut, Settings, Shield, User, User
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { useTranslation } from "react-i18next";
 
 export default function Account() {
+  const { t } = useTranslation();
+  
   return (
     <AppLayout>
       <div className="container px-4 mx-auto py-6">
         <div className="flex flex-col gap-6">
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-[#333]">My Account</h1>
+            <h1 className="text-2xl font-bold text-[#333]">{t('account.title')}</h1>
             <Button variant="outline" className="gap-2">
               <LogOut className="h-4 w-4" />
-              Sign Out
+              {t('account.signOut')}
             </Button>
           </div>
           
@@ -36,16 +39,16 @@ export default function Account() {
                   <p className="text-sm text-gray-500 mb-4">john.doe@example.com</p>
                   <Button variant="outline" size="sm" className="gap-2 mb-6">
                     <Edit2 className="h-3 w-3" />
-                    Edit Profile
+                    {t('account.edit')}
                   </Button>
                   
                   <div className="w-full space-y-2">
-                    <AccountNavItem icon={<User />} label="Personal Information" active />
-                    <AccountNavItem icon={<Shield />} label="Security" />
-                    <AccountNavItem icon={<BellRing />} label="Notifications" />
-                    <AccountNavItem icon={<CreditCard />} label="Payment Methods" />
-                    <AccountNavItem icon={<UserCog />} label="Family Members" />
-                    <AccountNavItem icon={<Settings />} label="Preferences" />
+                    <AccountNavItem icon={<User />} label={t('account.personalInfo')} active />
+                    <AccountNavItem icon={<Shield />} label={t('account.security')} />
+                    <AccountNavItem icon={<BellRing />} label={t('account.notifications')} />
+                    <AccountNavItem icon={<CreditCard />} label={t('account.paymentMethods')} />
+                    <AccountNavItem icon={<UserCog />} label={t('account.familyMembers')} />
+                    <AccountNavItem icon={<Settings />} label={t('account.preferences')} />
                   </div>
                 </div>
               </CardContent>
@@ -57,36 +60,36 @@ export default function Account() {
                 <CardHeader>
                   <div className="flex justify-between items-center">
                     <div>
-                      <CardTitle>Personal Information</CardTitle>
-                      <CardDescription>Manage your personal details</CardDescription>
+                      <CardTitle>{t('account.personalInfo')}</CardTitle>
+                      <CardDescription>{t('account.manageDetails')}</CardDescription>
                     </div>
-                    <Button size="sm">Save Changes</Button>
+                    <Button size="sm">{t('account.saveChanges')}</Button>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="firstName">First Name</Label>
+                      <Label htmlFor="firstName">{t('account.firstName')}</Label>
                       <Input id="firstName" defaultValue="John" />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="lastName">Last Name</Label>
+                      <Label htmlFor="lastName">{t('account.lastName')}</Label>
                       <Input id="lastName" defaultValue="Doe" />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
+                      <Label htmlFor="email">{t('account.email')}</Label>
                       <Input id="email" type="email" defaultValue="john.doe@example.com" />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="phone">Phone Number</Label>
+                      <Label htmlFor="phone">{t('account.phone')}</Label>
                       <Input id="phone" defaultValue="+91 98765 43210" />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="dob">Date of Birth</Label>
+                      <Label htmlFor="dob">{t('account.dob')}</Label>
                       <Input id="dob" defaultValue="15/04/1985" />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="gender">Gender</Label>
+                      <Label htmlFor="gender">{t('account.gender')}</Label>
                       <Input id="gender" defaultValue="Male" />
                     </div>
                   </div>
@@ -95,8 +98,8 @@ export default function Account() {
               
               <Card>
                 <CardHeader>
-                  <CardTitle>Address Information</CardTitle>
-                  <CardDescription>Manage your addresses for sample collection</CardDescription>
+                  <CardTitle>{t('account.addressInfo')}</CardTitle>
+                  <CardDescription>{t('account.manageAddresses')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
@@ -113,8 +116,8 @@ export default function Account() {
                         </p>
                       </div>
                       <div className="flex gap-2">
-                        <Button variant="outline" size="sm">Edit</Button>
-                        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">Delete</Button>
+                        <Button variant="outline" size="sm">{t('account.edit')}</Button>
+                        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">{t('account.delete')}</Button>
                       </div>
                     </div>
                     
@@ -128,13 +131,13 @@ export default function Account() {
                         </p>
                       </div>
                       <div className="flex gap-2">
-                        <Button variant="outline" size="sm">Edit</Button>
-                        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">Delete</Button>
+                        <Button variant="outline" size="sm">{t('account.edit')}</Button>
+                        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">{t('account.delete')}</Button>
                       </div>
                     </div>
                     
                     <Button variant="outline" className="w-full">
-                      + Add New Address
+                      + {t('account.addAddress')}
                     </Button>
                   </div>
                 </CardContent>
@@ -142,35 +145,35 @@ export default function Account() {
               
               <Card>
                 <CardHeader>
-                  <CardTitle>Health Information</CardTitle>
-                  <CardDescription>Your basic health information for better service</CardDescription>
+                  <CardTitle>{t('account.healthInfo')}</CardTitle>
+                  <CardDescription>{t('account.healthInfoDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="height">Height</Label>
+                      <Label htmlFor="height">{t('account.height')}</Label>
                       <Input id="height" defaultValue="175 cm" />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="weight">Weight</Label>
+                      <Label htmlFor="weight">{t('account.weight')}</Label>
                       <Input id="weight" defaultValue="70 kg" />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="bloodGroup">Blood Group</Label>
+                      <Label htmlFor="bloodGroup">{t('account.bloodGroup')}</Label>
                       <Input id="bloodGroup" defaultValue="O+" />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="allergies">Allergies</Label>
+                      <Label htmlFor="allergies">{t('account.allergies')}</Label>
                       <Input id="allergies" defaultValue="None" />
                     </div>
                   </div>
                   
                   <div className="mt-6 space-y-4">
-                    <h3 className="font-medium">Current Medication</h3>
+                    <h3 className="font-medium">{t('account.currentMedication')}</h3>
                     <div className="p-4 border rounded-lg">
                       <p className="text-sm text-gray-500">No current medications added</p>
                     </div>
-                    <Button variant="outline" size="sm">Add Medication</Button>
+                    <Button variant="outline" size="sm">{t('account.addMedication')}</Button>
                   </div>
                 </CardContent>
               </Card>

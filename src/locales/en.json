@@ -1,0 +1,131 @@
+
+{
+  "common": {
+    "home": "Home",
+    "tests": "Tests",
+    "reports": "Reports",
+    "chat": "Chat",
+    "account": "Account",
+    "search": "Search",
+    "off": "Off",
+    "viewDetails": "View Details",
+    "bookAppointment": "Book Appointment",
+    "viewAll": "View All",
+    "submit": "Submit",
+    "cancel": "Cancel"
+  },
+  "header": {
+    "labTests": "Lab Tests",
+    "healthPackages": "Health Packages",
+    "doctors": "Doctors",
+    "healthBlogs": "Health Blogs"
+  },
+  "home": {
+    "welcomeMessage": "Start Your Health Journey",
+    "searchPlaceholder": "Search for tests, doctors, etc.",
+    "popularTests": "Popular Tests",
+    "viewAllTests": "View All Tests",
+    "upcomingAppointments": "Upcoming Appointments",
+    "viewAllAppointments": "View All Appointments",
+    "featuredDoctors": "Featured Doctors",
+    "viewAllDoctors": "View All Doctors",
+    "healthTips": "Health Tips"
+  },
+  "tests": {
+    "title": "Lab Tests",
+    "bookTest": "Book a Test",
+    "testsIncluded": "Tests Included",
+    "turnaround": "24 Hours",
+    "availableToday": "Available Today",
+    "bookNow": "Book Now",
+    "healthConcerns": "Popular Health Concerns",
+    "packages": {
+      "cbc": {
+        "title": "Complete Blood Count",
+        "description": "Check your overall health with our comprehensive blood test"
+      },
+      "diabetes": {
+        "title": "Diabetes Screening",
+        "description": "Early detection and monitoring of diabetes"
+      },
+      "thyroid": {
+        "title": "Thyroid Profile",
+        "description": "Comprehensive analysis of thyroid function"
+      },
+      "heart": {
+        "title": "Heart Health",
+        "description": "Comprehensive heart risk assessment"
+      },
+      "vitamin": {
+        "title": "Vitamin Profile",
+        "description": "Check for vitamin deficiencies with our test"
+      },
+      "women": {
+        "title": "Women's Health",
+        "description": "Comprehensive panel designed for women's wellness"
+      }
+    }
+  },
+  "healthConcerns": {
+    "diabetes": "Diabetes",
+    "thyroid": "Thyroid",
+    "heart": "Heart",
+    "liver": "Liver",
+    "kidney": "Kidney",
+    "allergy": "Allergy"
+  },
+  "reports": {
+    "title": "Medical Reports",
+    "recentReports": "Recent Reports",
+    "allReports": "All Reports",
+    "downloadReport": "Download Report",
+    "shareReport": "Share Report"
+  },
+  "chat": {
+    "title": "Chat with Doctor",
+    "searchPlaceholder": "Search for doctors",
+    "startChat": "Start Chat",
+    "messageInput": "Type your message",
+    "send": "Send"
+  },
+  "account": {
+    "title": "My Account",
+    "signOut": "Sign Out",
+    "personalInfo": "Personal Information",
+    "security": "Security",
+    "notifications": "Notifications",
+    "paymentMethods": "Payment Methods",
+    "familyMembers": "Family Members",
+    "preferences": "Preferences",
+    "manageDetails": "Manage your personal details",
+    "saveChanges": "Save Changes",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "phone": "Phone Number",
+    "dob": "Date of Birth",
+    "gender": "Gender",
+    "addressInfo": "Address Information",
+    "manageAddresses": "Manage your addresses for sample collection",
+    "addAddress": "Add New Address",
+    "edit": "Edit",
+    "delete": "Delete",
+    "healthInfo": "Health Information",
+    "healthInfoDesc": "Your basic health information for better service",
+    "height": "Height",
+    "weight": "Weight",
+    "bloodGroup": "Blood Group",
+    "allergies": "Allergies",
+    "currentMedication": "Current Medication",
+    "addMedication": "Add Medication"
+  },
+  "languageSwitcher": {
+    "language": "Language",
+    "english": "English",
+    "hindi": "हिंदी",
+    "tamil": "தமிழ்",
+    "telugu": "తెలుగు",
+    "bengali": "বাংলা",
+    "odia": "ଓଡ଼ିଆ"
+  }
+}

@@ -1,0 +1,131 @@
+
+{
+  "common": {
+    "home": "হোম",
+    "tests": "পরীক্ষা",
+    "reports": "রিপোর্ট",
+    "chat": "চ্যাট",
+    "account": "অ্যাকাউন্ট",
+    "search": "খুঁজুন",
+    "off": "ছাড়",
+    "viewDetails": "বিস্তারিত দেখুন",
+    "bookAppointment": "অ্যাপয়েন্টমেন্ট বুক করুন",
+    "viewAll": "সব দেখুন",
+    "submit": "জমা দিন",
+    "cancel": "বাতিল করুন"
+  },
+  "header": {
+    "labTests": "ল্যাব পরীক্ষা",
+    "healthPackages": "স্বাস্থ্য প্যাকেজ",
+    "doctors": "ডাক্তার",
+    "healthBlogs": "স্বাস্থ্য ব্লগ"
+  },
+  "home": {
+    "welcomeMessage": "আপনার স্বাস্থ্য যাত্রা শুরু করুন",
+    "searchPlaceholder": "পরীক্ষা, ডাক্তার ইত্যাদি অনুসন্ধান করুন",
+    "popularTests": "জনপ্রিয় পরীক্ষা",
+    "viewAllTests": "সমস্ত পরীক্ষা দেখুন",
+    "upcomingAppointments": "আসন্ন অ্যাপয়েন্টমেন্ট",
+    "viewAllAppointments": "সমস্ত অ্যাপয়েন্টমেন্ট দেখুন",
+    "featuredDoctors": "বিশেষ ডাক্তার",
+    "viewAllDoctors": "সমস্ত ডাক্তার দেখুন",
+    "healthTips": "স্বাস্থ্য টিপস"
+  },
+  "tests": {
+    "title": "ল্যাব পরীক্ষা",
+    "bookTest": "একটি পরীক্ষা বুক করুন",
+    "testsIncluded": "পরীক্ষা অন্তর্ভুক্ত",
+    "turnaround": "২৪ ঘন্টা",
+    "availableToday": "আজ উপলব্ধ",
+    "bookNow": "এখনই বুক করুন",
+    "healthConcerns": "জনপ্রিয় স্বাস্থ্য উদ্বেগ",
+    "packages": {
+      "cbc": {
+        "title": "সম্পূর্ণ রক্ত গণনা",
+        "description": "আমাদের বিস্তৃত রক্ত পরীক্ষার সাথে আপনার সামগ্রিক স্বাস্থ্য পরীক্ষা করুন"
+      },
+      "diabetes": {
+        "title": "ডায়াবেটিস স্ক্রিনিং",
+        "description": "ডায়াবেটিসের প্রাথমিক সনাক্তকরণ এবং পর্যবেক্ষণ"
+      },
+      "thyroid": {
+        "title": "থাইরয়েড প্রোফাইল",
+        "description": "থাইরয়েড ফাংশনের বিস্তৃত বিশ্লেষণ"
+      },
+      "heart": {
+        "title": "হার্ট হেলথ",
+        "description": "বিস্তৃত হৃদরোগের ঝুঁকি মূল্যায়ন"
+      },
+      "vitamin": {
+        "title": "ভিটামিন প্রোফাইল",
+        "description": "আমাদের পরীক্ষার সাথে ভিটামিনের ঘাটতি পরীক্ষা করুন"
+      },
+      "women": {
+        "title": "মহিলা স্বাস্থ্য",
+        "description": "মহিলাদের সুস্থতার জন্য ডিজাইন করা বিস্তৃত প্যানেল"
+      }
+    }
+  },
+  "healthConcerns": {
+    "diabetes": "ডায়াবেটিস",
+    "thyroid": "থাইরয়েড",
+    "heart": "হৃদয়",
+    "liver": "লিভার",
+    "kidney": "কিডনি",
+    "allergy": "অ্যালার্জি"
+  },
+  "reports": {
+    "title": "মেডিকেল রিপোর্ট",
+    "recentReports": "সাম্প্রতিক রিপোর্ট",
+    "allReports": "সমস্ত রিপোর্ট",
+    "downloadReport": "রিপোর্ট ডাউনলোড করুন",
+    "shareReport": "রিপোর্ট শেয়ার করুন"
+  },
+  "chat": {
+    "title": "ডাক্তারের সাথে চ্যাট করুন",
+    "searchPlaceholder": "ডাক্তার খুঁজুন",
+    "startChat": "চ্যাট শুরু করুন",
+    "messageInput": "আপনার বার্তা টাইপ করুন",
+    "send": "পাঠান"
+  },
+  "account": {
+    "title": "আমার অ্যাকাউন্ট",
+    "signOut": "সাইন আউট",
+    "personalInfo": "ব্যক্তিগত তথ্য",
+    "security": "নিরাপত্তা",
+    "notifications": "বিজ্ঞপ্তি",
+    "paymentMethods": "পেমেন্ট পদ্ধতি",
+    "familyMembers": "পরিবারের সদস্য",
+    "preferences": "পছন্দসমূহ",
+    "manageDetails": "আপনার ব্যক্তিগত বিবরণ পরিচালনা করুন",
+    "saveChanges": "পরিবর্তনগুলি সংরক্ষণ করুন",
+    "firstName": "প্রথম নাম",
+    "lastName": "শেষ নাম",
+    "email": "ইমেল",
+    "phone": "ফোন নম্বর",
+    "dob": "জন্ম তারিখ",
+    "gender": "লিঙ্গ",
+    "addressInfo": "ঠিকানার তথ্য",
+    "manageAddresses": "নমুনা সংগ্রহের জন্য আপনার ঠিকানা পরিচালনা করুন",
+    "addAddress": "নতুন ঠিকানা যোগ করুন",
+    "edit": "সম্পাদনা করুন",
+    "delete": "মুছুন",
+    "healthInfo": "স্বাস্থ্য তথ্য",
+    "healthInfoDesc": "আরও ভাল সেবার জন্য আপনার মৌলিক স্বাস্থ্য তথ্য",
+    "height": "উচ্চতা",
+    "weight": "ওজন",
+    "bloodGroup": "রক্তের গ্রুপ",
+    "allergies": "অ্যালার্জি",
+    "currentMedication": "বর্তমান ওষুধ",
+    "addMedication": "ওষুধ যোগ করুন"
+  },
+  "languageSwitcher": {
+    "language": "ভাষা",
+    "english": "English",
+    "hindi": "हिंदी",
+    "tamil": "தமிழ்",
+    "telugu": "తెలుగు",
+    "bengali": "বাংলা",
+    "odia": "ଓଡ଼ିଆ"
+  }
+}

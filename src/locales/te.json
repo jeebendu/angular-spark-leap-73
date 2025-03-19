@@ -1,0 +1,131 @@
+
+{
+  "common": {
+    "home": "హోమ్",
+    "tests": "పరీక్షలు",
+    "reports": "నివేదికలు",
+    "chat": "చాట్",
+    "account": "ఖాతా",
+    "search": "శోధించండి",
+    "off": "తగ్గింపు",
+    "viewDetails": "వివరాలను చూడండి",
+    "bookAppointment": "అపాయింట్మెంట్ బుక్ చేసుకోండి",
+    "viewAll": "అన్నీ చూడండి",
+    "submit": "సమర్పించండి",
+    "cancel": "రద్దు చేయండి"
+  },
+  "header": {
+    "labTests": "ల్యాబ్ పరీక్షలు",
+    "healthPackages": "ఆరోగ్య ప్యాకేజీలు",
+    "doctors": "వైద్యులు",
+    "healthBlogs": "ఆరోగ్య బ్లాగులు"
+  },
+  "home": {
+    "welcomeMessage": "మీ ఆరోగ్య ప్రయాణాన్ని ప్రారంభించండి",
+    "searchPlaceholder": "పరీక్షలు, వైద్యులు మొదలైనవాటి కోసం శోధించండి",
+    "popularTests": "ప్రజాదరణ పొందిన పరీక్షలు",
+    "viewAllTests": "అన్ని పరీక్షలను చూడండి",
+    "upcomingAppointments": "రాబోయే అపాయింట్మెంట్లు",
+    "viewAllAppointments": "అన్ని అపాయింట్మెంట్లను చూడండి",
+    "featuredDoctors": "ఫీచర్డ్ వైద్యులు",
+    "viewAllDoctors": "అన్ని వైద్యులను చూడండి",
+    "healthTips": "ఆరోగ్య చిట్కాలు"
+  },
+  "tests": {
+    "title": "ల్యాబ్ పరీక్షలు",
+    "bookTest": "పరీక్ష బుక్ చేసుకోండి",
+    "testsIncluded": "పరీక్షలు చేర్చబడ్డాయి",
+    "turnaround": "24 గంటలు",
+    "availableToday": "ఈరోజు అందుబాటులో ఉంది",
+    "bookNow": "ఇప్పుడే బుక్ చేసుకోండి",
+    "healthConcerns": "ప్రజాదరణ పొందిన ఆరోగ్య సమస్యలు",
+    "packages": {
+      "cbc": {
+        "title": "సంపూర్ణ రక్త లెక్క",
+        "description": "మా సమగ్ర రక్త పరీక్షతో మీ మొత్తం ఆరోగ్యాన్ని తనిఖీ చేయండి"
+      },
+      "diabetes": {
+        "title": "మధుమేహ స్క్రీనింగ్",
+        "description": "మధుమేహం యొక్క ముందస్తు గుర్తింపు మరియు పర్యవేక్షణ"
+      },
+      "thyroid": {
+        "title": "థైరాయిడ్ ప్రొఫైల్",
+        "description": "థైరాయిడ్ ఫంక్షన్ యొక్క సమగ్ర విశ్లేషణ"
+      },
+      "heart": {
+        "title": "హృదయ ఆరోగ్యం",
+        "description": "సమగ్ర హృదయ ప్రమాద మదింపు"
+      },
+      "vitamin": {
+        "title": "విటమిన్ ప్రొఫైల్",
+        "description": "మా పరీక్షతో విటమిన్ లోపాలను తనిఖీ చేయండి"
+      },
+      "women": {
+        "title": "మహిళల ఆరోగ్యం",
+        "description": "మహిళల ఆరోగ్యం కోసం రూపొందించబడిన సమగ్ర ప్యానెల్"
+      }
+    }
+  },
+  "healthConcerns": {
+    "diabetes": "మధుమేహం",
+    "thyroid": "థైరాయిడ్",
+    "heart": "హృదయం",
+    "liver": "కాలేయం",
+    "kidney": "మూత్రపిండం",
+    "allergy": "అలర్జీ"
+  },
+  "reports": {
+    "title": "వైద్య నివేదికలు",
+    "recentReports": "ఇటీవలి నివేదికలు",
+    "allReports": "అన్ని నివేదికలు",
+    "downloadReport": "నివేదికను డౌన్‌లోడ్ చేయండి",
+    "shareReport": "నివేదికను షేర్ చేయండి"
+  },
+  "chat": {
+    "title": "వైద్యునితో చాట్ చేయండి",
+    "searchPlaceholder": "వైద్యుల కోసం శోధించండి",
+    "startChat": "చాట్ ప్రారంభించండి",
+    "messageInput": "మీ సందేశాన్ని టైప్ చేయండి",
+    "send": "పంపండి"
+  },
+  "account": {
+    "title": "నా ఖాతా",
+    "signOut": "సైన్ అవుట్",
+    "personalInfo": "వ్యక్తిగత సమాచారం",
+    "security": "భద్రత",
+    "notifications": "నోటిఫికేషన్లు",
+    "paymentMethods": "చెల్లింపు పద్ధతులు",
+    "familyMembers": "కుటుంబ సభ్యులు",
+    "preferences": "ప్రాధాన్యతలు",
+    "manageDetails": "మీ వ్యక్తిగత వివరాలను నిర్వహించండి",
+    "saveChanges": "మార్పులను సేవ్ చేయండి",
+    "firstName": "మొదటి పేరు",
+    "lastName": "చివరి పేరు",
+    "email": "ఇమెయిల్",
+    "phone": "ఫోన్ నంబర్",
+    "dob": "పుట్టిన తేదీ",
+    "gender": "లింగం",
+    "addressInfo": "చిరునామా సమాచారం",
+    "manageAddresses": "నమూనా సేకరణ కోసం మీ చిరునామాలను నిర్వహించండి",
+    "addAddress": "కొత్త చిరునామాను జోడించండి",
+    "edit": "సవరించు",
+    "delete": "తొలగించు",
+    "healthInfo": "ఆరోగ్య సమాచారం",
+    "healthInfoDesc": "మెరుగైన సేవ కోసం మీ ప్రాథమిక ఆరోగ్య సమాచారం",
+    "height": "ఎత్తు",
+    "weight": "బరువు",
+    "bloodGroup": "రక్త సమూహం",
+    "allergies": "అలర్జీలు",
+    "currentMedication": "ప్రస్తుత మందులు",
+    "addMedication": "మందు జోడించండి"
+  },
+  "languageSwitcher": {
+    "language": "భాష",
+    "english": "English",
+    "hindi": "हिंदी",
+    "tamil": "தமிழ்",
+    "telugu": "తెలుగు",
+    "bengali": "বাংলা",
+    "odia": "ଓଡ଼ିଆ"
+  }
+}

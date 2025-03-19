@@ -1,0 +1,131 @@
+
+{
+  "common": {
+    "home": "होम",
+    "tests": "टेस्ट",
+    "reports": "रिपोर्ट",
+    "chat": "चैट",
+    "account": "अकाउंट",
+    "search": "खोजें",
+    "off": "छूट",
+    "viewDetails": "विवरण देखें",
+    "bookAppointment": "अपॉइंटमेंट बुक करें",
+    "viewAll": "सभी देखें",
+    "submit": "सबमिट करें",
+    "cancel": "रद्द करें"
+  },
+  "header": {
+    "labTests": "लैब टेस्ट",
+    "healthPackages": "हेल्थ पैकेज",
+    "doctors": "डॉक्टर",
+    "healthBlogs": "हेल्थ ब्लॉग्स"
+  },
+  "home": {
+    "welcomeMessage": "अपनी स्वास्थ्य यात्रा शुरू करें",
+    "searchPlaceholder": "टेस्ट, डॉक्टर आदि के लिए खोजें",
+    "popularTests": "लोकप्रिय टेस्ट",
+    "viewAllTests": "सभी टेस्ट देखें",
+    "upcomingAppointments": "आगामी अपॉइंटमेंट",
+    "viewAllAppointments": "सभी अपॉइंटमेंट देखें",
+    "featuredDoctors": "विशेष डॉक्टर",
+    "viewAllDoctors": "सभी डॉक्टर देखें",
+    "healthTips": "स्वास्थ्य टिप्स"
+  },
+  "tests": {
+    "title": "लैब टेस्ट",
+    "bookTest": "टेस्ट बुक करें",
+    "testsIncluded": "शामिल टेस्ट",
+    "turnaround": "24 घंटे",
+    "availableToday": "आज उपलब्ध",
+    "bookNow": "अभी बुक करें",
+    "healthConcerns": "लोकप्रिय स्वास्थ्य चिंताएं",
+    "packages": {
+      "cbc": {
+        "title": "कंप्लीट ब्लड काउंट",
+        "description": "हमारे व्यापक रक्त परीक्षण के साथ अपने समग्र स्वास्थ्य की जांच करें"
+      },
+      "diabetes": {
+        "title": "डायबिटीज स्क्रीनिंग",
+        "description": "मधुमेह का शीघ्र पता लगाना और निगरानी"
+      },
+      "thyroid": {
+        "title": "थायराइड प्रोफाइल",
+        "description": "थायराइड फंक्शन का व्यापक विश्लेषण"
+      },
+      "heart": {
+        "title": "हृदय स्वास्थ्य",
+        "description": "व्यापक हृदय जोखिम मूल्यांकन"
+      },
+      "vitamin": {
+        "title": "विटामिन प्रोफाइल",
+        "description": "हमारे टेस्ट के साथ विटामिन की कमी की जांच करें"
+      },
+      "women": {
+        "title": "महिला स्वास्थ्य",
+        "description": "महिलाओं के कल्याण के लिए डिज़ाइन किया गया व्यापक पैनल"
+      }
+    }
+  },
+  "healthConcerns": {
+    "diabetes": "मधुमेह",
+    "thyroid": "थायराइड",
+    "heart": "हृदय",
+    "liver": "लिवर",
+    "kidney": "किडनी",
+    "allergy": "एलर्जी"
+  },
+  "reports": {
+    "title": "मेडिकल रिपोर्ट",
+    "recentReports": "हाल की रिपोर्ट",
+    "allReports": "सभी रिपोर्ट",
+    "downloadReport": "रिपोर्ट डाउनलोड करें",
+    "shareReport": "रिपोर्ट शेयर करें"
+  },
+  "chat": {
+    "title": "डॉक्टर से चैट करें",
+    "searchPlaceholder": "डॉक्टर के लिए खोजें",
+    "startChat": "चैट शुरू करें",
+    "messageInput": "अपना संदेश टाइप करें",
+    "send": "भेजें"
+  },
+  "account": {
+    "title": "मेरा अकाउंट",
+    "signOut": "साइन आउट",
+    "personalInfo": "व्यक्तिगत जानकारी",
+    "security": "सुरक्षा",
+    "notifications": "नोटिफिकेशन",
+    "paymentMethods": "भुगतान के तरीके",
+    "familyMembers": "परिवार के सदस्य",
+    "preferences": "प्राथमिकताएँ",
+    "manageDetails": "अपनी व्यक्तिगत जानकारी प्रबंधित करें",
+    "saveChanges": "परिवर्तन सहेजें",
+    "firstName": "पहला नाम",
+    "lastName": "अंतिम नाम",
+    "email": "ईमेल",
+    "phone": "फोन नंबर",
+    "dob": "जन्म तिथि",
+    "gender": "लिंग",
+    "addressInfo": "पता जानकारी",
+    "manageAddresses": "सैंपल कलेक्शन के लिए अपने पते प्रबंधित करें",
+    "addAddress": "नया पता जोड़ें",
+    "edit": "संपादित करें",
+    "delete": "हटाएं",
+    "healthInfo": "स्वास्थ्य जानकारी",
+    "healthInfoDesc": "बेहतर सेवा के लिए आपकी बुनियादी स्वास्थ्य जानकारी",
+    "height": "ऊंचाई",
+    "weight": "वजन",
+    "bloodGroup": "ब्लड ग्रुप",
+    "allergies": "एलर्जी",
+    "currentMedication": "वर्तमान दवाई",
+    "addMedication": "दवाई जोड़ें"
+  },
+  "languageSwitcher": {
+    "language": "भाषा",
+    "english": "English",
+    "hindi": "हिंदी",
+    "tamil": "தமிழ்",
+    "telugu": "తెలుగు",
+    "bengali": "বাংলা",
+    "odia": "ଓଡ଼ିଆ"
+  }
+}

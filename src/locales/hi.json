@@ -1,4 +1,3 @@
-
 {
   "common": {
     "home": "होम",
@@ -12,7 +11,8 @@
     "bookAppointment": "अपॉइंटमेंट बुक करें",
     "viewAll": "सभी देखें",
     "submit": "सबमिट करें",
-    "cancel": "रद्द करें"
+    "cancel": "रद्द करें",
+    "changed": "बदल गया"
   },
   "header": {
     "labTests": "लैब टेस्ट",

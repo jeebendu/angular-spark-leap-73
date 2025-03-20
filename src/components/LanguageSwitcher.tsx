@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import {
@@ -9,12 +9,21 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Globe } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 export function LanguageSwitcher() {
   const { t, i18n } = useTranslation();
+  const { toast } = useToast();
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
+    
+    // Show toast notification when language changes
+    toast({
+      title: t('languageSwitcher.language') + ' ' + t('common.changed'),
+      description: getCurrentLanguageFullName(lng),
+      variant: "default",
+    });
   };
 
   const getCurrentLanguageName = () => {
@@ -28,6 +37,23 @@ export function LanguageSwitcher() {
       default: return 'English';
     }
   };
+  
+  const getCurrentLanguageFullName = (lang: string) => {
+    switch(lang) {
+      case 'en': return 'English';
+      case 'hi': return 'हिंदी (Hindi)';
+      case 'ta': return 'தமிழ் (Tamil)';
+      case 'te': return 'తెలుగు (Telugu)';
+      case 'bn': return 'বাংলা (Bengali)';
+      case 'od': return 'ଓଡ଼ିଆ (Odia)';
+      default: return 'English';
+    }
+  };
+
+  // Save language preference when it changes
+  useEffect(() => {
+    localStorage.setItem('i18nextLng', i18n.language);
+  }, [i18n.language]);
 
   return (
     <DropdownMenu>

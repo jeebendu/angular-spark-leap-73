@@ -12,7 +12,8 @@
     "bookAppointment": "Book Appointment",
     "viewAll": "View All",
     "submit": "Submit",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "changed": "Changed"
   },
   "header": {
     "labTests": "Lab Tests",

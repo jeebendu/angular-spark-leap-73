@@ -3,72 +3,52 @@ import React, { useState, useRef } from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { LocationSelector } from "@/components/LocationSelector";
 import { SearchSuggestions } from "@/components/SearchSuggestions";
 
 export function SearchBar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const searchInputRef = useRef<HTMLInputElement>(null);
-  const suggestionsRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const isMobile = useIsMobile();
-  const navigate = useNavigate();
+  const searchRef = useRef<HTMLDivElement>(null);
 
-  const handleSearchFocus = () => {
-    setShowSuggestions(true);
-  };
-
-  const handleDoctorSearch = (term = "") => {
-    const searchTerm = term || searchQuery;
-    navigate(`/doctor-search${searchTerm ? `?query=${encodeURIComponent(searchTerm)}` : ""}`);
-    setShowSuggestions(false);
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    setShowSuggestions(e.target.value.length > 0);
   };
 
   const handleSuggestionClick = (suggestion: string) => {
     setSearchQuery(suggestion);
-    handleDoctorSearch(suggestion);
+    setShowSuggestions(false);
+    // In a real app, you would trigger a search here
   };
 
+  // Create the input component that will be passed as the trigger
+  const searchInput = (
+    <div className="relative flex-1">
+      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+      <Input
+        type="text"
+        placeholder="Search doctors, specialties, conditions..."
+        className="pl-10 pr-12 py-6 h-12 md:h-10 bg-white"
+        value={searchQuery}
+        onChange={handleSearchChange}
+        onFocus={() => searchQuery && setShowSuggestions(true)}
+      />
+    </div>
+  );
+
   return (
-    <div ref={containerRef} className="search-container flex items-center w-full max-w-3xl mx-auto relative">
-      {/* Locality field (35% - increased from 30%) */}
-      <div className="relative w-[35%]">
-        <LocationSelector />
-      </div>
-      
-      {/* Search doctors field (65% - reduced from 70%) */}
-      <div className="relative w-[65%] pl-3 flex items-center">
-        <div className="absolute left-5 top-1/2 transform -translate-y-1/2">
-          <Search className="h-4 w-4 text-muted-foreground" />
-        </div>
-        <Input 
-          ref={searchInputRef}
-          type="text" 
-          placeholder="Search doctors, specialties..." 
-          className="border-0 px-0 py-0 h-10 focus-visible:ring-0 placeholder:text-muted-foreground pl-10 bg-transparent"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onFocus={handleSearchFocus}
-        />
-        <Button 
-          className="rounded-full sky-button h-9 w-9 p-0 absolute right-0 top-0.5 md:flex hidden"
-          onClick={() => handleDoctorSearch()}
-        >
-          <Search className="h-4 w-4 text-white" />
-          <span className="sr-only">Search</span>
-        </Button>
-      </div>
-      
-      {/* Auto-suggestions dropdown */}
-      <SearchSuggestions 
+    <div className="flex items-center gap-2 w-full max-w-2xl relative" ref={searchRef}>
+      <SearchSuggestions
         isVisible={showSuggestions}
         searchQuery={searchQuery}
         onSuggestionClick={handleSuggestionClick}
-        containerRef={suggestionsRef}
+        containerRef={searchRef}
+        triggerElement={searchInput}
       />
+      <Button type="submit" className="sky-button">
+        <Search className="h-4 w-4" />
+        <span className="ml-2 hidden md:inline">Search</span>
+      </Button>
     </div>
   );
 }

@@ -1,381 +1,194 @@
 
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Bell, Calendar, MapPin, User, Menu, ChevronDown } from "lucide-react";
+import { Bell, Menu } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogTrigger,
-  DialogClose
-} from "@/components/ui/dialog";
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { X } from "lucide-react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { sheet } from "@/components/ui/sheet";
+import { Separator } from "@/components/ui/separator";
+import { SearchBar } from "@/components/SearchBar";
+import { LocationSelector } from "@/components/LocationSelector";
 
 export function Navbar() {
-  const { t } = useTranslation();
-  const [scrolled, setScrolled] = useState(false);
-  const isMobile = useIsMobile();
-  const [otpValue, setOtpValue] = useState("");
-  const [mobileNumber, setMobileNumber] = useState("");
-  const [isOtpSent, setIsOtpSent] = useState(false);
-  const [selectedCity, setSelectedCity] = useState("Bangalore");
-  const [cityDialogOpen, setCityDialogOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [countryCode, setCountryCode] = useState("+91");
-  const userName = "User";
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
-  // Add scroll effect
-  useEffect(() => {
-    const handleScroll = () => {
-      const isScrolled = window.scrollY > 10;
-      if (isScrolled !== scrolled) {
-        setScrolled(isScrolled);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [scrolled]);
-
-  const handleSendOtp = () => {
-    // Simulate OTP sending
-    setIsOtpSent(true);
+  const handleLogout = () => {
+    console.log("User logged out");
+    // In a real app, you would handle logout here
   };
 
-  const handleVerifyOtp = () => {
-    // Simulate OTP verification
-    if (otpValue.length === 6) {
-      // Handle successful verification
-      setIsLoggedIn(true);
-      console.log("OTP verified successfully");
-    }
-  };
-
-  const handleCitySelect = (city: string) => {
-    setSelectedCity(city);
-    setCityDialogOpen(false);
-  };
+  const { SheetSide, SheetTrigger, SheetContent } = sheet;
   
   return (
-    <header className={`py-3 px-4 md:px-6 sticky top-0 z-30 ${scrolled ? 'glass-header' : 'bg-white border-b'}`}>
-      <div className="container flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Link to="/" className="flex items-center gap-2">
-            <img 
-              src="https://res.cloudinary.com/dzxuxfagt/image/upload/h_100/assets/logo.png" 
-              alt="ClinicHub Logo" 
-              className="h-8"
-            />
-            <span className="font-semibold text-lg hidden md:block">ClinicHub</span>
-          </Link>
-          
-          {/* Location selection moved next to logo */}
-          <Dialog open={cityDialogOpen} onOpenChange={setCityDialogOpen}>
-            <DialogTrigger asChild>
-              <Button variant="ghost" className="gap-2 text-sm font-medium ml-2">
-                <MapPin className="text-primary h-4 w-4" />
-                <span className="font-medium">{selectedCity}</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-4xl p-8 bg-white modal-background">
-              <div className="absolute right-4 top-4">
-                <DialogClose asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-                    <X className="h-4 w-4" />
-                  </Button>
-                </DialogClose>
-              </div>
-              <DialogHeader>
-                <DialogTitle className="text-center text-2xl font-semibold mb-8">Select your city</DialogTitle>
-              </DialogHeader>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <button 
-                  onClick={() => handleCitySelect("Bangalore")} 
-                  className={`city-selector-card ${selectedCity === "Bangalore" ? "border-primary" : "border-gray-100"}`}
-                >
-                  <div className="city-icon">
-                    <img src="/lovable-uploads/d82a74cb-0b37-4b2c-8189-2b22f05c214a.png" alt="Bangalore" className="city-image" />
-                  </div>
-                  <span className="city-name">Bangalore</span>
-                </button>
-                <button 
-                  onClick={() => handleCitySelect("Mumbai")} 
-                  className={`city-selector-card ${selectedCity === "Mumbai" ? "border-primary" : "border-gray-100"}`}
-                >
-                  <div className="city-icon">
-                    <img src="/lovable-uploads/ee5e4d14-7a0c-42b8-8655-a67209502c36.png" alt="Mumbai" className="city-image" />
-                  </div>
-                  <span className="city-name">Mumbai</span>
-                </button>
-                <button 
-                  onClick={() => handleCitySelect("Delhi")} 
-                  className={`city-selector-card ${selectedCity === "Delhi" ? "border-primary" : "border-gray-100"}`}
-                >
-                  <div className="city-icon">
-                    <img src="https://placehold.co/200/eaf7fc/33C3F0?text=DEL&font=montserrat" alt="Delhi" className="city-image" />
-                  </div>
-                  <span className="city-name">Delhi</span>
-                </button>
-                <button 
-                  onClick={() => handleCitySelect("Hyderabad")} 
-                  className={`city-selector-card ${selectedCity === "Hyderabad" ? "border-primary" : "border-gray-100"}`}
-                >
-                  <div className="city-icon">
-                    <img src="https://placehold.co/200/eaf7fc/33C3F0?text=HYD&font=montserrat" alt="Hyderabad" className="city-image" />
-                  </div>
-                  <span className="city-name">Hyderabad</span>
-                </button>
-                <button 
-                  onClick={() => handleCitySelect("Chennai")} 
-                  className={`city-selector-card ${selectedCity === "Chennai" ? "border-primary" : "border-gray-100"}`}
-                >
-                  <div className="city-icon">
-                    <img src="https://placehold.co/200/eaf7fc/33C3F0?text=CHE&font=montserrat" alt="Chennai" className="city-image" />
-                  </div>
-                  <span className="city-name">Chennai</span>
-                </button>
-                <button 
-                  onClick={() => handleCitySelect("Kolkata")} 
-                  className={`city-selector-card ${selectedCity === "Kolkata" ? "border-primary" : "border-gray-100"}`}
-                >
-                  <div className="city-icon">
-                    <img src="https://placehold.co/200/eaf7fc/33C3F0?text=KOL&font=montserrat" alt="Kolkata" className="city-image" />
-                  </div>
-                  <span className="city-name">Kolkata</span>
-                </button>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </div>
-        
-        <div className="flex items-center gap-3 md:gap-6">
-          <nav className="hidden md:flex items-center gap-6">
-            <Link to="/" className="text-sm font-medium hover:text-primary transition-colors">
-              {t('common.home')}
-            </Link>
-            <Link to="/tests" className="text-sm font-medium hover:text-primary transition-colors">
-              {t('common.tests')}
-            </Link>
-            <Link to="/" className="text-sm font-medium hover:text-primary transition-colors">
-              {t('header.healthPackages')}
-            </Link>
-            <Link to="/reports" className="text-sm font-medium hover:text-primary transition-colors">
-              {t('common.reports')}
-            </Link>
-          </nav>
-          
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" className="text-muted-foreground relative hidden md:flex">
-              <Bell className="h-5 w-5" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
+    <header className="sticky top-0 z-40 w-full border-b border-b-gray-200 bg-white">
+      <div className="container flex h-16 items-center px-4 sm:px-6">
+        <SheetSide>
+          <SheetTrigger asChild className="lg:hidden block">
+            <Button variant="ghost" size="icon" className="-ml-3 h-10 w-10">
+              <Menu className="h-5 w-5" />
+              <span className="sr-only">Toggle menu</span>
             </Button>
-            <LanguageSwitcher />
+          </SheetTrigger>
+          <SheetContent side="left" className="w-[280px] p-0">
+            <nav className="flex flex-col h-full py-6 border-r bg-white">
+              <div className="px-3 py-2">
+                <Link to="/" className="flex items-center">
+                  <img 
+                    src="https://placehold.co/200x60/eaf7fc/33C3F0?text=logo&font=montserrat" 
+                    alt="ClinicHub Logo" 
+                    className="h-8"
+                  />
+                </Link>
+              </div>
+              <div className="space-y-1 px-3 mt-4">
+                <Link
+                  to="/"
+                  className="flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-100"
+                >
+                  Home
+                </Link>
+                <Link
+                  to="/doctor-search"
+                  className="flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-100"
+                >
+                  Find Doctors
+                </Link>
+                <Link
+                  to="/appointments"
+                  className="flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-100"
+                >
+                  Appointments
+                </Link>
+                <Link
+                  to="/tests"
+                  className="flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-100"
+                >
+                  Tests
+                </Link>
+                <Link
+                  to="/reports"
+                  className="flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-100"
+                >
+                  Reports
+                </Link>
+                <Link
+                  to="/chat"
+                  className="flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-100"
+                >
+                  Chat
+                </Link>
+              </div>
+              <Separator className="my-4" />
+              <div className="space-y-1 px-3">
+                <Link
+                  to="/account"
+                  className="flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-100"
+                >
+                  Account
+                </Link>
+                <button
+                  className="flex w-full items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-100 text-left"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </button>
+              </div>
+            </nav>
+          </SheetContent>
+        </SheetSide>
+        
+        <Link to="/" className="flex items-center">
+          <img 
+            src="https://placehold.co/200x60/eaf7fc/33C3F0?text=logo&font=montserrat" 
+            alt="ClinicHub Logo" 
+            className="h-8"
+          />
+        </Link>
+        
+        <nav className="hidden lg:flex mx-6 items-center space-x-2">
+          <Link
+            to="/"
+            className="text-sm font-medium px-3 py-2 rounded-md hover:bg-gray-100"
+          >
+            Home
+          </Link>
+          <Link
+            to="/doctor-search"
+            className="text-sm font-medium px-3 py-2 rounded-md hover:bg-gray-100"
+          >
+            Find Doctors
+          </Link>
+          <Link
+            to="/appointments"
+            className="text-sm font-medium px-3 py-2 rounded-md hover:bg-gray-100"
+          >
+            Appointments
+          </Link>
+          <Link
+            to="/tests"
+            className="text-sm font-medium px-3 py-2 rounded-md hover:bg-gray-100"
+          >
+            Tests
+          </Link>
+          <Link
+            to="/reports"
+            className="text-sm font-medium px-3 py-2 rounded-md hover:bg-gray-100"
+          >
+            Reports
+          </Link>
+          <Link
+            to="/chat"
+            className="text-sm font-medium px-3 py-2 rounded-md hover:bg-gray-100"
+          >
+            Chat
+          </Link>
+        </nav>
+        
+        <div className="flex-1 flex items-center justify-end space-x-4">
+          <div className="w-full max-w-xl flex items-center mx-auto hidden md:flex">
+            <div className="w-full flex items-center">
+              <LocationSelector />
+              <div className="flex-1">
+                <SearchBar />
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="relative"
+              aria-label="Notifications"
+            >
+              <Bell className="h-5 w-5" />
+              <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
+            </Button>
             
-            {/* Login Dialog with updated User icon */}
-            <Dialog>
-              <DialogTrigger asChild>
-                {isLoggedIn ? (
-                  <Avatar className="h-8 w-8 cursor-pointer">
-                    <AvatarFallback className="bg-primary text-white">{userName.charAt(0)}</AvatarFallback>
+            <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+                  <Avatar className="h-9 w-9">
+                    <AvatarImage src="https://github.com/shadcn.png" alt="Avatar" />
+                    <AvatarFallback>SC</AvatarFallback>
                   </Avatar>
-                ) : (
-                  <Button variant="ghost" size="icon" className="rounded-full">
-                    <User className="h-5 w-5" />
-                  </Button>
-                )}
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-md premium-login-dialog bg-white modal-background">
-                <DialogHeader>
-                  <DialogTitle className="text-center text-xl font-semibold">Login / Sign Up</DialogTitle>
-                </DialogHeader>
-                <Tabs defaultValue="login" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2 mb-4">
-                    <TabsTrigger value="login">Login</TabsTrigger>
-                    <TabsTrigger value="signup">Sign Up</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="login" className="space-y-4">
-                    {!isOtpSent ? (
-                      <>
-                        <div className="space-y-2">
-                          <label htmlFor="mobile" className="text-sm font-medium">
-                            Mobile Number
-                          </label>
-                          <div className="flex">
-                            <div className="w-[90px] mr-2">
-                              <Select value={countryCode} onValueChange={setCountryCode}>
-                                <SelectTrigger className="w-full">
-                                  <SelectValue placeholder="+91" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="+91">
-                                    <div className="flex items-center">
-                                      <img src="https://preview--appointify-platform-67.lovable.app/lovable-uploads/8ecf0148-aeef-4d33-acd7-b29efebedf9d.png" alt="India" className="h-4 w-6 mr-2" />
-                                      +91
-                                    </div>
-                                  </SelectItem>
-                                  <SelectItem value="+1">
-                                    <div className="flex items-center">
-                                      <span className="w-6 mr-2">🇺🇸</span>
-                                      +1
-                                    </div>
-                                  </SelectItem>
-                                  <SelectItem value="+44">
-                                    <div className="flex items-center">
-                                      <span className="w-6 mr-2">🇬🇧</span>
-                                      +44
-                                    </div>
-                                  </SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
-                            <Input
-                              id="mobile"
-                              type="tel"
-                              placeholder="Enter your mobile number"
-                              value={mobileNumber}
-                              onChange={(e) => setMobileNumber(e.target.value)}
-                              className="rounded-md border-gray-300 flex-1"
-                            />
-                          </div>
-                        </div>
-                        <Button 
-                          className="w-full sky-button" 
-                          onClick={handleSendOtp}
-                          disabled={mobileNumber.length !== 10}
-                        >
-                          Send OTP
-                        </Button>
-                      </>
-                    ) : (
-                      <>
-                        <div className="space-y-4">
-                          <label className="text-sm font-medium block mb-2 text-center">
-                            Enter OTP sent to {mobileNumber}
-                          </label>
-                          <div className="flex justify-center">
-                            <InputOTP 
-                              maxLength={6}
-                              value={otpValue} 
-                              onChange={setOtpValue}
-                              className="otp-input-premium"
-                            >
-                              <InputOTPGroup className="gap-4">
-                                <InputOTPSlot index={0} className="otp-slot" />
-                                <InputOTPSlot index={1} className="otp-slot" />
-                                <InputOTPSlot index={2} className="otp-slot" />
-                                <InputOTPSlot index={3} className="otp-slot" />
-                                <InputOTPSlot index={4} className="otp-slot" />
-                                <InputOTPSlot index={5} className="otp-slot" />
-                              </InputOTPGroup>
-                            </InputOTP>
-                          </div>
-                          <p className="text-xs text-center mt-2">
-                            Didn't receive the code? <button className="text-primary">Resend</button>
-                          </p>
-                        </div>
-                        <Button 
-                          className="w-full sky-button" 
-                          onClick={handleVerifyOtp}
-                          disabled={otpValue.length !== 6}
-                        >
-                          Verify OTP
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          className="w-full" 
-                          onClick={() => setIsOtpSent(false)}
-                        >
-                          Go Back
-                        </Button>
-                      </>
-                    )}
-                  </TabsContent>
-                  <TabsContent value="signup" className="space-y-4">
-                    <div className="space-y-2">
-                      <label htmlFor="fullname" className="text-sm font-medium">
-                        Full Name
-                      </label>
-                      <Input
-                        id="fullname"
-                        type="text"
-                        placeholder="Enter your full name"
-                        className="rounded-md border-gray-300"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label htmlFor="signupMobile" className="text-sm font-medium">
-                        Mobile Number
-                      </label>
-                      <div className="flex">
-                        <div className="w-[90px] mr-2">
-                          <Select value={countryCode} onValueChange={setCountryCode}>
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="+91" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="+91">
-                                <div className="flex items-center">
-                                  <img src="https://preview--appointify-platform-67.lovable.app/lovable-uploads/8ecf0148-aeef-4d33-acd7-b29efebedf9d.png" alt="India" className="h-4 w-6 mr-2" />
-                                  +91
-                                </div>
-                              </SelectItem>
-                              <SelectItem value="+1">
-                                <div className="flex items-center">
-                                  <span className="w-6 mr-2">🇺🇸</span>
-                                  +1
-                                </div>
-                              </SelectItem>
-                              <SelectItem value="+44">
-                                <div className="flex items-center">
-                                  <span className="w-6 mr-2">🇬🇧</span>
-                                  +44
-                                </div>
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <Input
-                          id="signupMobile"
-                          type="tel"
-                          placeholder="Enter your mobile number"
-                          className="rounded-md border-gray-300 flex-1"
-                        />
-                      </div>
-                    </div>
-                    <Button className="w-full sky-button">
-                      Continue
-                    </Button>
-                  </TabsContent>
-                </Tabs>
-              </DialogContent>
-            </Dialog>
-            
-            {isMobile && (
-              <Button variant="ghost" size="icon" className="text-muted-foreground ml-1">
-                <Menu className="h-5 w-5" />
-              </Button>
-            )}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <Link to="/account">
+                  <DropdownMenuItem>Account</DropdownMenuItem>
+                </Link>
+                <DropdownMenuItem onClick={handleLogout}>
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>

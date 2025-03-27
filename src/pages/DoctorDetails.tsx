@@ -1,423 +1,327 @@
 
 import { useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Clock,
-  Star,
-  MapPin,
-  Award,
-  ThumbsUp,
-  Languages,
-  CalendarDays,
-  Building,
-  CheckCircle2,
-  Phone,
-  Mail,
-  MessageSquare,
-  User,
-  Heart,
-  Share2,
-  ArrowLeft
-} from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Calendar, Building, Clock, Star, ThumbsUp, Award, GraduationCap, Languages, MessageCircle, Heart, MapPin } from "lucide-react";
+import { BookAppointmentModal } from "@/components/BookAppointmentModal";
 
-const DoctorDetails = () => {
+export default function DoctorDetails() {
+  const [selectedTab, setSelectedTab] = useState("overview");
   const { id } = useParams();
-  const [date, setDate] = useState<Date | undefined>(new Date());
-  const [selectedClinic, setSelectedClinic] = useState(0);
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null);
-  
-  // Mock doctor data (in a real app, you'd fetch this based on the ID)
+
+  // This would be fetched from an API in a real app
   const doctor = {
-    id: id || "1",
-    name: "Dr. Emily Johnson",
+    id: id,
+    name: "Dr. Sarah Johnson",
     specialty: "Cardiologist",
-    qualifications: "MBBS, MD (Cardiology), DNB",
-    experience: "12+ years",
     rating: 4.8,
-    reviewCount: 235,
-    consultationFee: "₹1,200",
-    bio: "Dr. Emily Johnson is a highly skilled cardiologist with over 12 years of experience in diagnosing and treating heart diseases. She specializes in interventional cardiology and has performed more than 1,000 cardiac procedures.",
-    languages: ["English", "Hindi", "Tamil"],
+    reviewCount: 120,
+    price: "₹1200",
+    experience: "12+ years",
+    description: "Dr. Sarah Johnson is a board-certified cardiologist with over 12 years of experience in diagnosing and treating heart conditions. She specializes in preventive cardiology, heart failure management, and cardiac rehabilitation.",
     education: [
-      { degree: "MBBS", institute: "AIIMS, New Delhi", year: "2008" },
-      { degree: "MD (Cardiology)", institute: "PGIMER, Chandigarh", year: "2012" },
-      { degree: "DNB (Cardiology)", institute: "National Board of Examinations", year: "2013" }
+      { degree: "MD in Cardiology", institution: "All India Institute of Medical Sciences, Delhi", year: "2010" },
+      { degree: "MBBS", institution: "Christian Medical College, Vellore", year: "2006" }
     ],
-    services: [
-      "Comprehensive Cardiac Evaluation",
-      "Echocardiography",
-      "ECG",
-      "Stress Testing",
-      "Heart Disease Management",
-      "Heart Failure Treatment"
-    ],
+    specializations: ["Preventive Cardiology", "Heart Failure Management", "Cardiac Rehabilitation", "Echocardiography"],
+    languages: ["English", "Hindi", "Tamil"],
     clinics: [
       {
+        id: "1",
         name: "HeartCare Clinic",
-        address: "123 ABC Road, Koramangala, Bangalore",
-        phone: "+91 9876543210",
-        timings: "9:00 AM - 6:00 PM",
-        days: "Monday to Saturday"
+        address: "123 Main Street, Koramangala, Bangalore",
+        timings: "Mon-Sat: 9:00 AM - 1:00 PM",
+        fees: "₹1200"
       },
       {
+        id: "2",
         name: "City Heart Center",
-        address: "456 XYZ Road, Indiranagar, Bangalore",
-        phone: "+91 9876543211",
-        timings: "10:00 AM - 4:00 PM",
-        days: "Monday, Wednesday, Friday"
+        address: "456 Park Avenue, Indiranagar, Bangalore",
+        timings: "Mon, Wed, Fri: 5:00 PM - 8:00 PM",
+        fees: "₹1500"
       }
-    ]
-  };
-  
-  const timeSlots = [
-    "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", 
-    "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM",
-    "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM", 
-    "04:00 PM", "04:30 PM", "05:00 PM", "05:30 PM"
-  ];
-  
-  const handleTimeSlotSelection = (slot: string) => {
-    setSelectedTimeSlot(slot);
+    ],
+    imageSrc: `https://placehold.co/400x400/eaf7fc/33C3F0?text=Dr.+${id}&font=montserrat`
   };
 
   return (
     <AppLayout>
-      <div className="container px-4 py-6 max-w-6xl mx-auto">
-        {/* Back button */}
-        <Link to="/doctor-search" className="flex items-center text-primary mb-6 hover:underline">
-          <ArrowLeft className="h-4 w-4 mr-1" />
-          Back to search
-        </Link>
-        
-        {/* Doctor Header */}
-        <div className="bg-white rounded-xl shadow-md overflow-hidden mb-6">
-          <div className="md:flex">
-            <div className="md:w-1/3 relative">
-              <img 
-                src={`https://placehold.co/600x400/eaf7fc/33C3F0?text=Dr.+Emily&font=montserrat`}
-                alt={doctor.name}
-                className="w-full h-full object-cover object-center"
-              />
-              <div className="absolute top-4 right-4 md:hidden">
-                <Button variant="outline" size="icon" className="rounded-full bg-white">
-                  <Heart className="h-5 w-5 text-rose-500" />
-                </Button>
-                <Button variant="outline" size="icon" className="rounded-full bg-white ml-2">
-                  <Share2 className="h-5 w-5" />
-                </Button>
+      <div className="grid gap-6 md:grid-cols-7">
+        {/* Doctor Profile Card */}
+        <Card className="md:col-span-2 border-none card-shadow h-fit">
+          <CardContent className="p-6">
+            <div className="flex flex-col items-center text-center">
+              <Avatar className="h-32 w-32 mb-4">
+                <AvatarImage src={doctor.imageSrc} alt={doctor.name} />
+                <AvatarFallback>{doctor.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+              </Avatar>
+              
+              <h1 className="text-xl font-bold">{doctor.name}</h1>
+              <p className="text-muted-foreground">{doctor.specialty}</p>
+              
+              <div className="flex items-center mt-2">
+                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                <span className="ml-1 text-sm font-medium">{doctor.rating}</span>
+                <span className="ml-1 text-sm text-muted-foreground">({doctor.reviewCount} reviews)</span>
               </div>
-            </div>
-            
-            <div className="p-6 md:w-2/3 flex flex-col justify-between">
-              <div>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h1 className="text-2xl font-bold text-gray-900">{doctor.name}</h1>
-                    <p className="text-gray-600">{doctor.specialty}</p>
-                    <p className="text-sm text-gray-500">{doctor.qualifications}</p>
-                    
-                    <div className="flex items-center mt-2">
-                      <div className="flex items-center">
-                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        <span className="ml-1 text-sm font-medium">{doctor.rating}</span>
-                        <span className="ml-1 text-sm text-gray-500">({doctor.reviewCount} reviews)</span>
-                      </div>
-                      <span className="mx-2 text-gray-300">|</span>
-                      <div className="flex items-center">
-                        <ThumbsUp className="h-4 w-4 text-primary" />
-                        <span className="ml-1 text-sm">98% Recommended</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex flex-wrap gap-2 mt-3">
-                      <Badge variant="outline" className="flex items-center gap-1 rounded-full px-3 py-1">
-                        <Award className="h-3 w-3" />
-                        <span>{doctor.experience}</span>
-                      </Badge>
-                      <Badge variant="outline" className="flex items-center gap-1 rounded-full px-3 py-1">
-                        <Languages className="h-3 w-3" />
-                        <span>{doctor.languages.join(", ")}</span>
-                      </Badge>
-                      <Badge variant="outline" className="flex items-center gap-1 rounded-full px-3 py-1">
-                        <Building className="h-3 w-3" />
-                        <span>{doctor.clinics.length} Clinics</span>
-                      </Badge>
-                    </div>
-                  </div>
-                  
-                  <div className="hidden md:flex">
-                    <Button variant="outline" size="icon" className="rounded-full">
-                      <Heart className="h-5 w-5 text-rose-500" />
-                    </Button>
-                    <Button variant="outline" size="icon" className="rounded-full ml-2">
-                      <Share2 className="h-5 w-5" />
-                    </Button>
-                  </div>
+              
+              <div className="mt-4 w-full">
+                <div className="flex justify-between text-sm mb-2">
+                  <span className="text-muted-foreground">Experience</span>
+                  <span className="font-medium">{doctor.experience}</span>
                 </div>
-                
-                <Separator className="my-4" />
-                
-                <p className="text-gray-700 text-sm md:text-base">{doctor.bio}</p>
-              </div>
-              
-              <div className="flex items-center justify-between mt-6">
-                <div>
-                  <p className="text-gray-500 text-sm">Consultation Fee</p>
-                  <p className="text-xl font-bold text-primary">{doctor.consultationFee}</p>
+                <div className="flex justify-between text-sm mb-2">
+                  <span className="text-muted-foreground">Consultation Fee</span>
+                  <span className="font-medium">{doctor.price}</span>
                 </div>
-                
-                <Button className="sky-button rounded-full">Book Appointment</Button>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        {/* Doctor Details Tabs */}
-        <div className="bg-white rounded-xl shadow-md overflow-hidden mb-6">
-          <Tabs defaultValue="clinics">
-            <TabsList className="w-full border-b">
-              <TabsTrigger value="clinics" className="flex-1">Clinics</TabsTrigger>
-              <TabsTrigger value="about" className="flex-1">About</TabsTrigger>
-              <TabsTrigger value="services" className="flex-1">Services</TabsTrigger>
-              <TabsTrigger value="reviews" className="flex-1">Reviews</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="clinics" className="p-6">
-              <h3 className="text-lg font-medium mb-4">Available Clinics</h3>
-              
-              <div className="grid md:grid-cols-2 gap-4">
-                {doctor.clinics.map((clinic, index) => (
-                  <Card key={index} className={`cursor-pointer border-2 ${selectedClinic === index ? 'border-primary' : 'border-gray-100'}`} onClick={() => setSelectedClinic(index)}>
-                    <CardContent className="p-4">
-                      <div className="flex justify-between">
-                        <div>
-                          <h4 className="font-medium text-base">{clinic.name}</h4>
-                          <p className="text-sm text-gray-500 flex items-start mt-1">
-                            <MapPin className="h-4 w-4 mr-1 shrink-0 mt-0.5" />
-                            {clinic.address}
-                          </p>
-                          <div className="flex items-center mt-2 text-sm text-gray-500">
-                            <CalendarDays className="h-4 w-4 mr-1" />
-                            <span>{clinic.days}</span>
-                          </div>
-                          <div className="flex items-center mt-1 text-sm text-gray-500">
-                            <Clock className="h-4 w-4 mr-1" />
-                            <span>{clinic.timings}</span>
-                          </div>
-                        </div>
-                        {selectedClinic === index && (
-                          <CheckCircle2 className="h-5 w-5 text-primary" />
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Languages</span>
+                  <span className="font-medium">{doctor.languages.join(", ")}</span>
+                </div>
               </div>
               
-              <div className="mt-8">
-                <h3 className="text-lg font-medium mb-4">Select Appointment Date & Time</h3>
-                
-                <div className="flex flex-col md:flex-row gap-6">
-                  <div className="md:w-1/2">
-                    <Calendar
-                      mode="single"
-                      selected={date}
-                      onSelect={setDate}
-                      className="rounded-md border"
-                    />
-                  </div>
-                  
-                  <div className="md:w-1/2">
-                    <h4 className="font-medium mb-2">Available Slots</h4>
-                    <div className="grid grid-cols-3 gap-2">
-                      {timeSlots.map((slot) => (
-                        <Button
-                          key={slot}
-                          variant={selectedTimeSlot === slot ? "default" : "outline"}
-                          size="sm"
-                          className={selectedTimeSlot === slot ? 'bg-primary text-white' : ''}
-                          onClick={() => handleTimeSlotSelection(slot)}
-                        >
-                          {slot}
-                        </Button>
-                      ))}
-                    </div>
-                    
-                    <Button className="w-full sky-button mt-6" disabled={!selectedTimeSlot}>
+              <div className="mt-6 space-y-3 w-full">
+                <BookAppointmentModal 
+                  doctorName={doctor.name}
+                  specialty={doctor.specialty}
+                  trigger={
+                    <Button className="w-full sky-button">
                       Book Appointment
                     </Button>
-                  </div>
-                </div>
+                  }
+                />
+                
+                <Button variant="outline" className="w-full">
+                  <MessageCircle className="h-4 w-4 mr-2" />
+                  Consult Online
+                </Button>
               </div>
-            </TabsContent>
+            </div>
+          </CardContent>
+        </Card>
+        
+        {/* Doctor Details */}
+        <div className="md:col-span-5">
+          <Tabs value={selectedTab} onValueChange={setSelectedTab}>
+            <TabsList className="grid grid-cols-3 mb-6">
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="reviews">Reviews</TabsTrigger>
+              <TabsTrigger value="faqs">FAQs</TabsTrigger>
+            </TabsList>
             
-            <TabsContent value="about" className="p-6">
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-lg font-medium mb-3">Education & Qualifications</h3>
-                  <div className="space-y-3">
-                    {doctor.education.map((edu, index) => (
-                      <div key={index} className="flex">
-                        <div className="mr-3 mt-1">
-                          <div className="h-2 w-2 rounded-full bg-primary"></div>
-                        </div>
-                        <div>
-                          <p className="font-medium">{edu.degree}</p>
-                          <p className="text-sm text-gray-500">{edu.institute} • {edu.year}</p>
+            <TabsContent value="overview" className="space-y-6">
+              <Card className="border-none card-shadow">
+                <CardContent className="p-6">
+                  <h2 className="text-lg font-semibold mb-3">About</h2>
+                  <p className="text-muted-foreground">{doctor.description}</p>
+                  
+                  <div className="grid gap-6 mt-6 md:grid-cols-2">
+                    <div>
+                      <h3 className="font-medium mb-3 flex items-center">
+                        <GraduationCap className="h-4 w-4 mr-2 text-primary" />
+                        Education
+                      </h3>
+                      <ul className="space-y-3">
+                        {doctor.education.map((edu, index) => (
+                          <li key={index} className="text-sm">
+                            <p className="font-medium">{edu.degree}</p>
+                            <p className="text-muted-foreground">{edu.institution}, {edu.year}</p>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    
+                    <div>
+                      <h3 className="font-medium mb-3 flex items-center">
+                        <Award className="h-4 w-4 mr-2 text-primary" />
+                        Specializations
+                      </h3>
+                      <ul className="flex flex-wrap gap-2">
+                        {doctor.specializations.map((spec, index) => (
+                          <li key={index} className="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs">
+                            {spec}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="border-none card-shadow">
+                <CardContent className="p-6">
+                  <h2 className="text-lg font-semibold mb-4">Clinic Locations</h2>
+                  
+                  <div className="space-y-4">
+                    {doctor.clinics.map((clinic, index) => (
+                      <div key={index} className="border rounded-lg p-4">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h3 className="font-medium">{clinic.name}</h3>
+                            <p className="text-sm text-muted-foreground mt-1 flex items-start">
+                              <MapPin className="h-4 w-4 mr-2 shrink-0 mt-0.5" />
+                              <span>{clinic.address}</span>
+                            </p>
+                            <p className="text-sm text-muted-foreground mt-1 flex items-center">
+                              <Clock className="h-4 w-4 mr-2" />
+                              <span>{clinic.timings}</span>
+                            </p>
+                            <p className="text-sm mt-1 flex items-center">
+                              <span className="font-medium">Consultation Fee: {clinic.fees}</span>
+                            </p>
+                          </div>
+                          
+                          <BookAppointmentModal 
+                            doctorName={doctor.name}
+                            specialty={doctor.specialty}
+                            trigger={
+                              <Button size="sm" className="sky-button whitespace-nowrap">
+                                Book Now
+                              </Button>
+                            }
+                          />
                         </div>
                       </div>
                     ))}
                   </div>
-                </div>
-                
-                <div>
-                  <h3 className="text-lg font-medium mb-3">Languages Spoken</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {doctor.languages.map((language, index) => (
-                      <Badge key={index} variant="secondary" className="rounded-full">
-                        {language}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-                
-                <div>
-                  <h3 className="text-lg font-medium mb-3">Contact Information</h3>
-                  <div className="space-y-2">
-                    <div className="flex items-center">
-                      <Phone className="h-4 w-4 mr-2 text-primary" />
-                      <span>+91 9876543210</span>
-                    </div>
-                    <div className="flex items-center">
-                      <Mail className="h-4 w-4 mr-2 text-primary" />
-                      <span>dr.emily@example.com</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="services" className="p-6">
-              <h3 className="text-lg font-medium mb-4">Services Offered</h3>
-              <div className="grid md:grid-cols-2 gap-4">
-                {doctor.services.map((service, index) => (
-                  <div key={index} className="flex items-start">
-                    <CheckCircle2 className="h-5 w-5 text-primary mr-2 mt-0.5" />
-                    <span>{service}</span>
-                  </div>
-                ))}
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="reviews" className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div>
-                  <h3 className="text-lg font-medium">Patient Reviews</h3>
-                  <div className="flex items-center mt-1">
-                    <div className="flex">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <Star 
-                          key={star} 
-                          className={`h-5 w-5 ${star <= Math.floor(doctor.rating) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} 
-                        />
-                      ))}
-                    </div>
-                    <span className="ml-2 text-sm font-medium">{doctor.rating} out of 5</span>
-                  </div>
-                </div>
-                
-                <Button variant="outline">Write a Review</Button>
-              </div>
+                </CardContent>
+              </Card>
               
-              <div className="space-y-4">
-                {[...Array(3)].map((_, index) => (
-                  <div key={index} className="border rounded-lg p-4">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start">
-                        <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center mr-3">
-                          <User className="h-6 w-6 text-gray-500" />
-                        </div>
-                        <div>
-                          <h4 className="font-medium">
-                            {["Rahul S.", "Priya M.", "Amit K."][index]}
-                          </h4>
-                          <div className="flex items-center mt-1">
-                            <div className="flex">
-                              {[1, 2, 3, 4, 5].map((star) => (
-                                <Star 
-                                  key={star} 
-                                  className={`h-3 w-3 ${star <= 5-(index % 2) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} 
-                                />
-                              ))}
+              <Card className="border-none card-shadow">
+                <CardContent className="p-6">
+                  <h2 className="text-lg font-semibold mb-4">Patient Experience</h2>
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium">Overall Rating</span>
+                      <div className="flex items-center">
+                        <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                        <span className="ml-1 font-medium">{doctor.rating} out of 5</span>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="flex flex-col items-center justify-center p-4 border rounded-lg">
+                        <ThumbsUp className="h-6 w-6 text-primary mb-2" />
+                        <span className="text-lg font-bold">98%</span>
+                        <span className="text-xs text-muted-foreground text-center">Patients recommend this doctor</span>
+                      </div>
+                      
+                      <div className="flex flex-col items-center justify-center p-4 border rounded-lg">
+                        <Clock className="h-6 w-6 text-primary mb-2" />
+                        <span className="text-lg font-bold">10 mins</span>
+                        <span className="text-xs text-muted-foreground text-center">Average wait time</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="reviews">
+              <Card className="border-none card-shadow">
+                <CardContent className="p-6">
+                  <h2 className="text-lg font-semibold mb-4">Patient Reviews</h2>
+                  
+                  <div className="space-y-6">
+                    {/* This would be mapped from actual reviews in a real app */}
+                    {[1, 2, 3].map((_, index) => (
+                      <div key={index} className="border-b pb-4 last:border-b-0 last:pb-0">
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-start">
+                            <Avatar className="h-10 w-10 mr-3">
+                              <AvatarFallback>
+                                {['JD', 'AB', 'SK'][index]}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <div className="flex items-center">
+                                <h4 className="font-medium">
+                                  {['John D.', 'Ananya B.', 'Suresh K.'][index]}
+                                </h4>
+                                <span className="text-xs text-muted-foreground ml-2">
+                                  {['2 weeks ago', '1 month ago', '3 months ago'][index]}
+                                </span>
+                              </div>
+                              <div className="flex items-center mt-1">
+                                {[...Array(5)].map((_, i) => (
+                                  <Star 
+                                    key={i}
+                                    className={`h-3 w-3 ${i < [5, 4, 5][index] ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+                                  />
+                                ))}
+                              </div>
                             </div>
-                            <span className="ml-2 text-xs text-gray-500">
-                              {["2 months ago", "1 week ago", "3 months ago"][index]}
-                            </span>
+                          </div>
+                          
+                          <div className="flex items-center text-sm">
+                            <Building className="h-3 w-3 mr-1" />
+                            <span>{doctor.clinics[index % doctor.clinics.length].name}</span>
                           </div>
                         </div>
+                        
+                        <p className="mt-3 text-sm">
+                          {[
+                            "Dr. Johnson was extremely knowledgeable and took the time to explain my condition in detail. Very professional and caring.",
+                            "Great experience overall. The doctor was punctual and addressed all my concerns. The clinic staff was also very helpful.",
+                            "Excellent doctor with a good bedside manner. Made me feel comfortable and provided clear guidance for my treatment."
+                          ][index]}
+                        </p>
                       </div>
-                    </div>
-                    <p className="mt-2 text-sm text-gray-700">
-                      {[
-                        "Dr. Johnson was very thorough in her examination and explained everything clearly. The staff was also very helpful and courteous.",
-                        "I had a great experience with Dr. Johnson. She took the time to listen to my concerns and provided a comprehensive treatment plan.",
-                        "Excellent doctor with great knowledge. Very patient and answered all my questions in detail. Highly recommended!"
-                      ][index]}
-                    </p>
+                    ))}
                   </div>
-                ))}
-              </div>
-              
-              <Button variant="outline" className="w-full mt-4">
-                Load More Reviews
-              </Button>
-            </TabsContent>
-          </Tabs>
-        </div>
-        
-        {/* Similar Doctors */}
-        <div className="mb-8">
-          <h3 className="text-xl font-bold mb-4">Similar Specialists</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {[...Array(3)].map((_, index) => (
-              <Card key={index} className="overflow-hidden border-none card-shadow">
-                <CardContent className="p-0">
-                  <div className="flex items-center p-4">
-                    <div className="w-16 h-16 rounded-full overflow-hidden mr-3">
-                      <img 
-                        src={`https://placehold.co/200/eaf7fc/33C3F0?text=Dr.+${index+1}&font=montserrat`}
-                        alt={`Dr. ${index+1}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-base">{`Dr. ${["Robert Smith", "Sarah Williams", "James Brown"][index]}`}</h4>
-                      <p className="text-sm text-gray-500">{["Cardiologist", "Cardiologist", "Cardiac Surgeon"][index]}</p>
-                      <div className="flex items-center mt-1">
-                        <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                        <span className="ml-1 text-xs">{4.5 + (index * 0.1)}</span>
-                        <span className="ml-1 text-xs text-gray-500">({150 + (index * 25)})</span>
-                      </div>
-                    </div>
-                  </div>
-                  <Button variant="outline" className="m-4 w-[calc(100%-32px)] border-primary text-primary hover:bg-primary hover:text-white">
-                    View Profile
+                  
+                  <Button variant="outline" className="w-full mt-6">
+                    Load More Reviews
                   </Button>
                 </CardContent>
               </Card>
-            ))}
-          </div>
+            </TabsContent>
+            
+            <TabsContent value="faqs">
+              <Card className="border-none card-shadow">
+                <CardContent className="p-6">
+                  <h2 className="text-lg font-semibold mb-4">Frequently Asked Questions</h2>
+                  
+                  <div className="space-y-4">
+                    {[
+                      {
+                        q: "What conditions does Dr. Johnson treat?", 
+                        a: "Dr. Johnson specializes in treating various heart conditions including coronary artery disease, heart failure, arrhythmias, heart valve diseases, and hypertension."
+                      },
+                      {
+                        q: "How should I prepare for my appointment?", 
+                        a: "Please bring your previous medical records, list of medications, and recent test results if any. It's also helpful to prepare a list of your symptoms and questions beforehand."
+                      },
+                      {
+                        q: "Does Dr. Johnson provide online consultations?", 
+                        a: "Yes, Dr. Johnson offers online consultations for follow-up appointments and non-emergency situations."
+                      },
+                      {
+                        q: "What payment methods are accepted?", 
+                        a: "The clinic accepts cash, all major credit/debit cards, and popular digital payment methods. They also provide assistance with insurance claims."
+                      },
+                      {
+                        q: "How long does a typical consultation last?", 
+                        a: "Initial consultations typically last 30-45 minutes, while follow-up appointments are usually 15-20 minutes."
+                      }
+                    ].map((faq, index) => (
+                      <div key={index} className="border-b pb-4 last:border-b-0 last:pb-0">
+                        <h3 className="font-medium mb-2">{faq.q}</h3>
+                        <p className="text-sm text-muted-foreground">{faq.a}</p>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </AppLayout>
   );
-};
-
-export default DoctorDetails;
+}

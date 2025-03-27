@@ -99,15 +99,16 @@ export function LocationSelector() {
     <div className="relative w-full pr-2 border-r border-gray-200">
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
-          <Button 
-            variant="ghost"
-            className="w-full justify-start px-3 py-0 h-10 text-left font-normal focus-visible:ring-0 text-sm"
-          >
-            <MapPin className="h-4 w-4 mr-2 text-primary" />
-            <span className="truncate">{location.locality || "Select your city..."}</span>
-          </Button>
+          <Input 
+            type="text" 
+            placeholder="Select your city..." 
+            className="border-0 px-3 py-0 h-10 focus-visible:ring-0 placeholder:text-muted-foreground cursor-pointer text-sm bg-transparent"
+            onClick={() => setIsOpen(true)}
+            value={location.locality || ""}
+            readOnly
+          />
         </PopoverTrigger>
-        <PopoverContent className="w-[320px] p-4 bg-white shadow-lg border border-gray-200 z-50" align="start" sideOffset={5}>
+        <PopoverContent className="w-[320px] p-4 bg-white modal-background" align="start">
           <div className="space-y-4">
             <h3 className="font-medium flex items-center">
               <MapPin className="h-4 w-4 mr-2 text-primary" />
@@ -118,7 +119,7 @@ export function LocationSelector() {
               <Input 
                 type="text" 
                 placeholder="Enter locality or PIN code" 
-                className="border border-gray-300 rounded-md px-4 py-2 w-full bg-white"
+                className="border border-gray-300 rounded-md px-4 py-2 w-full bg-transparent"
                 value={locationInput}
                 onChange={(e) => setLocationInput(e.target.value)}
               />

@@ -61,7 +61,6 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
     "01:00 PM", "02:00 PM", "03:00 PM", "04:00 PM"
   ];
   
-  // Changed the step order to better match the flow
   const stepLabels = ["Clinic", "Date & Time", "Patient", "Review", "Payment"];
   
   const goToStep = (stepNumber: number) => {
@@ -136,7 +135,7 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
       <DialogTrigger asChild>
         {trigger}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[900px] p-0 overflow-hidden">
+      <DialogContent className="sm:max-w-[800px] p-0 overflow-hidden">
         <DialogHeader className="p-6 pb-2">
           <DialogTitle>Book an Appointment</DialogTitle>
         </DialogHeader>

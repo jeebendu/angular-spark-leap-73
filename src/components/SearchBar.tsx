@@ -79,15 +79,18 @@ export function SearchBar() {
       
       {/* Search doctors field (70%) */}
       <div className="relative w-[70%] pl-3 flex items-center">
+        <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+          <Search className="h-4 w-4 text-muted-foreground" />
+        </div>
         <Input 
           type="text" 
           placeholder="Search doctors, specialties..." 
-          className="border-0 px-0 py-0 h-10 focus-visible:ring-0 placeholder:text-muted-foreground pl-0"
+          className="border-0 px-0 py-0 h-10 focus-visible:ring-0 placeholder:text-muted-foreground pl-8"
           onClick={handleDoctorSearch}
           readOnly
         />
         <Button 
-          className="rounded-full sky-button h-9 w-9 p-0 absolute right-0 top-0.5"
+          className="rounded-full sky-button h-9 w-9 p-0 absolute right-0 top-0.5 md:flex hidden"
           onClick={handleDoctorSearch}
         >
           <Search className="h-4 w-4 text-white" />

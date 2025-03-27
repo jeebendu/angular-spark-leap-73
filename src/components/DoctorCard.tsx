@@ -11,9 +11,16 @@ interface DoctorCardProps {
   reviewCount: number;
   price: string;
   imageSrc: string;
+  onBookNow?: (name: string) => void;
 }
 
-export function DoctorCard({ name, specialty, rating, reviewCount, price, imageSrc }: DoctorCardProps) {
+export function DoctorCard({ name, specialty, rating, reviewCount, price, imageSrc, onBookNow }: DoctorCardProps) {
+  const handleBookNow = () => {
+    if (onBookNow) {
+      onBookNow(name);
+    }
+  };
+
   return (
     <motion.div
       whileHover={{ y: -5, transition: { duration: 0.2 } }}
@@ -46,7 +53,13 @@ export function DoctorCard({ name, specialty, rating, reviewCount, price, imageS
             
             <div className="flex items-center justify-between mt-3">
               <span className="font-semibold">{price}</span>
-              <Button size="sm" className="sky-button rounded-full">Book Now</Button>
+              <Button 
+                size="sm" 
+                className="sky-button rounded-full"
+                onClick={handleBookNow}
+              >
+                Book Now
+              </Button>
             </div>
           </div>
         </CardContent>

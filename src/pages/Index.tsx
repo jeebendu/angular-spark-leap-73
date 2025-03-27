@@ -1,10 +1,10 @@
+
 import { Calendar, Star, Award, ThumbsUp, Clock, ChevronRight } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import { SearchBar } from "@/components/SearchBar";
-import { DoctorCard } from "@/components/DoctorCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { SpecialtyList } from "@/components/SpecialtyList";
+import { Specializations } from "@/components/Specializations";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -153,57 +153,15 @@ const Index = () => {
           </div>
         </motion.section>
 
-        {/* Specialties Section - Temporarily Hidden */}
-        {showSpecialties && (
-          <motion.section 
-            className="mb-10"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.5 }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg sm:text-xl font-semibold">Browse by Specialty</h2>
-              <Dialog open={allSpecialtiesOpen} onOpenChange={setAllSpecialtiesOpen}>
-                <DialogTrigger asChild>
-                  <Button 
-                    variant="link" 
-                    className="text-primary text-sm sm:text-base flex items-center"
-                  >
-                    See More <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="glass-morphism md:max-w-3xl bg-white">
-                  <DialogHeader>
-                    <DialogTitle className="text-center text-xl font-semibold mb-4">All Specialties</DialogTitle>
-                  </DialogHeader>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-h-[60vh] overflow-y-auto scrollbar-hide">
-                    {[...Array(16)].map((_, index) => {
-                      const specialties = [
-                        { name: "Cardiology", icon: <Award className="h-5 w-5" /> },
-                        { name: "Neurology", icon: <Award className="h-5 w-5" /> },
-                        { name: "Ophthalmology", icon: <Award className="h-5 w-5" /> },
-                        { name: "Internal Medicine", icon: <Award className="h-5 w-5" /> },
-                        { name: "Orthopedics", icon: <Award className="h-5 w-5" /> },
-                        { name: "Pediatrics", icon: <Award className="h-5 w-5" /> },
-                        { name: "Dentistry", icon: <Award className="h-5 w-5" /> },
-                        { name: "General Health", icon: <Award className="h-5 w-5" /> }
-                      ];
-                      const specialty = specialties[index % 8];
-                      
-                      return (
-                        <div key={index} className="specialty-item">
-                          <div className="specialty-icon">{specialty.icon}</div>
-                          <span className="text-sm font-medium">{specialty.name}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </div>
-            <SpecialtyList />
-          </motion.section>
-        )}
+        {/* Specializations Section */}
+        <motion.section
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
+          className="mb-10"
+        >
+          <Specializations />
+        </motion.section>
 
         {/* Key Features */}
         <motion.section 
@@ -241,59 +199,6 @@ const Index = () => {
                 <p className="text-xs sm:text-sm text-muted-foreground">Thousands of 5-star reviews from satisfied patients</p>
               </CardContent>
             </Card>
-          </div>
-        </motion.section>
-
-        {/* Popular Doctors - Modified to remove tabs */}
-        <motion.section
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.0, duration: 0.5 }}
-        >
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg sm:text-xl font-semibold">Top Rated Doctors</h2>
-            <Button 
-              variant="link" 
-              className="text-primary text-sm sm:text-base flex items-center"
-              onClick={() => navigate("/doctor-search")}
-            >
-              View All <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            <DoctorCard
-              name="Dr. Melissa Thompson"
-              specialty="Cardiologist"
-              rating={4.9}
-              reviewCount={124}
-              price="₹1,200"
-              imageSrc="https://placehold.co/400x300/eaf7fc/33C3F0?text=Dr.+Thompson&font=montserrat"
-            />
-            <DoctorCard
-              name="Dr. James Wilson"
-              specialty="Neurologist"
-              rating={4.7}
-              reviewCount={98}
-              price="₹1,500"
-              imageSrc="https://placehold.co/400x300/eaf7fc/33C3F0?text=Dr.+Wilson&font=montserrat"
-            />
-            <DoctorCard
-              name="Dr. Emily Parker"
-              specialty="Dermatologist"
-              rating={4.8}
-              reviewCount={156}
-              price="₹1,350"
-              imageSrc="https://placehold.co/400x300/eaf7fc/33C3F0?text=Dr.+Parker&font=montserrat"
-            />
-            <DoctorCard
-              name="Dr. Robert Kim"
-              specialty="Pediatrician"
-              rating={4.9}
-              reviewCount={210}
-              price="₹1,100"
-              imageSrc="https://placehold.co/400x300/eaf7fc/33C3F0?text=Dr.+Kim&font=montserrat"
-            />
           </div>
         </motion.section>
       </div>

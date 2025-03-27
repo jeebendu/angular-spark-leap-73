@@ -3,10 +3,8 @@ import { Calendar, Star, Award, ThumbsUp, Clock, ChevronRight } from "lucide-rea
 import { AppLayout } from "@/components/AppLayout";
 import { SearchBar } from "@/components/SearchBar";
 import { DoctorCard } from "@/components/DoctorCard";
-import { AppointmentCard } from "@/components/AppointmentCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SpecialtyList } from "@/components/SpecialtyList";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -24,6 +22,7 @@ const Index = () => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const [allSpecialtiesOpen, setAllSpecialtiesOpen] = useState(false);
+  const [showSpecialties, setShowSpecialties] = useState(false); // Temporarily hide specialties
 
   const handleViewAllAppointments = () => {
     navigate("/appointments");
@@ -31,7 +30,7 @@ const Index = () => {
 
   return (
     <AppLayout>
-      <div className="container px-4 py-6">
+      <div className="container px-4 py-6 max-w-5xl mx-auto">
         {/* Hero Section */}
         <motion.section 
           className="mb-8"
@@ -155,57 +154,59 @@ const Index = () => {
           </div>
         </motion.section>
 
-        {/* Specialties Section */}
-        <motion.section 
-          className="mb-10"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6, duration: 0.5 }}
-        >
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg sm:text-xl font-semibold">Browse by Specialty</h2>
-            <Dialog open={allSpecialtiesOpen} onOpenChange={setAllSpecialtiesOpen}>
-              <DialogTrigger asChild>
-                <Button 
-                  variant="link" 
-                  className="text-primary text-sm sm:text-base flex items-center"
-                >
-                  See More <ChevronRight className="h-4 w-4" />
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="glass-morphism md:max-w-3xl">
-                <DialogHeader>
-                  <DialogTitle className="text-center text-xl font-semibold mb-4">All Specialties</DialogTitle>
-                </DialogHeader>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-h-[60vh] overflow-y-auto scrollbar-hide">
-                  {/* We render a larger list of specialties here */}
-                  {[...Array(16)].map((_, index) => {
-                    // Use the first 8 specialties from SpecialtyList and repeat them
-                    const specialties = [
-                      { name: "Cardiology", icon: <Award className="h-5 w-5" /> },
-                      { name: "Neurology", icon: <Award className="h-5 w-5" /> },
-                      { name: "Ophthalmology", icon: <Award className="h-5 w-5" /> },
-                      { name: "Internal Medicine", icon: <Award className="h-5 w-5" /> },
-                      { name: "Orthopedics", icon: <Award className="h-5 w-5" /> },
-                      { name: "Pediatrics", icon: <Award className="h-5 w-5" /> },
-                      { name: "Dentistry", icon: <Award className="h-5 w-5" /> },
-                      { name: "General Health", icon: <Award className="h-5 w-5" /> }
-                    ];
-                    const specialty = specialties[index % 8];
-                    
-                    return (
-                      <div key={index} className="specialty-item">
-                        <div className="specialty-icon">{specialty.icon}</div>
-                        <span className="text-sm font-medium">{specialty.name}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </DialogContent>
-            </Dialog>
-          </div>
-          <SpecialtyList />
-        </motion.section>
+        {/* Specialties Section - Temporarily Hidden */}
+        {showSpecialties && (
+          <motion.section 
+            className="mb-10"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg sm:text-xl font-semibold">Browse by Specialty</h2>
+              <Dialog open={allSpecialtiesOpen} onOpenChange={setAllSpecialtiesOpen}>
+                <DialogTrigger asChild>
+                  <Button 
+                    variant="link" 
+                    className="text-primary text-sm sm:text-base flex items-center"
+                  >
+                    See More <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="glass-morphism md:max-w-3xl bg-white">
+                  <DialogHeader>
+                    <DialogTitle className="text-center text-xl font-semibold mb-4">All Specialties</DialogTitle>
+                  </DialogHeader>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-h-[60vh] overflow-y-auto scrollbar-hide">
+                    {/* We render a larger list of specialties here */}
+                    {[...Array(16)].map((_, index) => {
+                      // Use the first 8 specialties from SpecialtyList and repeat them
+                      const specialties = [
+                        { name: "Cardiology", icon: <Award className="h-5 w-5" /> },
+                        { name: "Neurology", icon: <Award className="h-5 w-5" /> },
+                        { name: "Ophthalmology", icon: <Award className="h-5 w-5" /> },
+                        { name: "Internal Medicine", icon: <Award className="h-5 w-5" /> },
+                        { name: "Orthopedics", icon: <Award className="h-5 w-5" /> },
+                        { name: "Pediatrics", icon: <Award className="h-5 w-5" /> },
+                        { name: "Dentistry", icon: <Award className="h-5 w-5" /> },
+                        { name: "General Health", icon: <Award className="h-5 w-5" /> }
+                      ];
+                      const specialty = specialties[index % 8];
+                      
+                      return (
+                        <div key={index} className="specialty-item">
+                          <div className="specialty-icon">{specialty.icon}</div>
+                          <span className="text-sm font-medium">{specialty.name}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+            <SpecialtyList />
+          </motion.section>
+        )}
 
         {/* Key Features */}
         <motion.section 
@@ -246,7 +247,7 @@ const Index = () => {
           </div>
         </motion.section>
 
-        {/* Popular Doctors */}
+        {/* Popular Doctors - Modified to remove tabs */}
         <motion.section
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -254,95 +255,49 @@ const Index = () => {
         >
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg sm:text-xl font-semibold">Top Rated Doctors</h2>
-            <Button variant="link" className="text-primary text-sm sm:text-base flex items-center">
+            <Button 
+              variant="link" 
+              className="text-primary text-sm sm:text-base flex items-center"
+              onClick={() => navigate("/doctor-search")}
+            >
               View All <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
           
-          <Tabs defaultValue="all">
-            <TabsList className="mb-4 bg-white border border-gray-100 overflow-x-auto scrollbar-hide">
-              <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="cardiologist">Cardiologist</TabsTrigger>
-              <TabsTrigger value="dermatologist">Dermatologist</TabsTrigger>
-              <TabsTrigger value="pediatrician">Pediatrician</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="all" className="mt-0">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                <DoctorCard
-                  name="Dr. Melissa Thompson"
-                  specialty="Cardiologist"
-                  rating={4.9}
-                  reviewCount={124}
-                  price="₹1,200"
-                  imageSrc="https://placehold.co/400x300/eaf7fc/33C3F0?text=Dr.+Thompson&font=montserrat"
-                />
-                <DoctorCard
-                  name="Dr. James Wilson"
-                  specialty="Neurologist"
-                  rating={4.7}
-                  reviewCount={98}
-                  price="₹1,500"
-                  imageSrc="https://placehold.co/400x300/eaf7fc/33C3F0?text=Dr.+Wilson&font=montserrat"
-                />
-                <DoctorCard
-                  name="Dr. Emily Parker"
-                  specialty="Dermatologist"
-                  rating={4.8}
-                  reviewCount={156}
-                  price="₹1,350"
-                  imageSrc="https://placehold.co/400x300/eaf7fc/33C3F0?text=Dr.+Parker&font=montserrat"
-                />
-                <DoctorCard
-                  name="Dr. Robert Kim"
-                  specialty="Pediatrician"
-                  rating={4.9}
-                  reviewCount={210}
-                  price="₹1,100"
-                  imageSrc="https://placehold.co/400x300/eaf7fc/33C3F0?text=Dr.+Kim&font=montserrat"
-                />
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="cardiologist" className="mt-0">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                <DoctorCard
-                  name="Dr. Melissa Thompson"
-                  specialty="Cardiologist"
-                  rating={4.9}
-                  reviewCount={124}
-                  price="₹1,200"
-                  imageSrc="https://placehold.co/400x300/eaf7fc/33C3F0?text=Dr.+Thompson&font=montserrat"
-                />
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="dermatologist" className="mt-0">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                <DoctorCard
-                  name="Dr. Emily Parker"
-                  specialty="Dermatologist"
-                  rating={4.8}
-                  reviewCount={156}
-                  price="₹1,350"
-                  imageSrc="https://placehold.co/400x300/eaf7fc/33C3F0?text=Dr.+Parker&font=montserrat"
-                />
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="pediatrician" className="mt-0">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                <DoctorCard
-                  name="Dr. Robert Kim"
-                  specialty="Pediatrician"
-                  rating={4.9}
-                  reviewCount={210}
-                  price="₹1,100"
-                  imageSrc="https://placehold.co/400x300/eaf7fc/33C3F0?text=Dr.+Kim&font=montserrat"
-                />
-              </div>
-            </TabsContent>
-          </Tabs>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <DoctorCard
+              name="Dr. Melissa Thompson"
+              specialty="Cardiologist"
+              rating={4.9}
+              reviewCount={124}
+              price="₹1,200"
+              imageSrc="https://placehold.co/400x300/eaf7fc/33C3F0?text=Dr.+Thompson&font=montserrat"
+            />
+            <DoctorCard
+              name="Dr. James Wilson"
+              specialty="Neurologist"
+              rating={4.7}
+              reviewCount={98}
+              price="₹1,500"
+              imageSrc="https://placehold.co/400x300/eaf7fc/33C3F0?text=Dr.+Wilson&font=montserrat"
+            />
+            <DoctorCard
+              name="Dr. Emily Parker"
+              specialty="Dermatologist"
+              rating={4.8}
+              reviewCount={156}
+              price="₹1,350"
+              imageSrc="https://placehold.co/400x300/eaf7fc/33C3F0?text=Dr.+Parker&font=montserrat"
+            />
+            <DoctorCard
+              name="Dr. Robert Kim"
+              specialty="Pediatrician"
+              rating={4.9}
+              reviewCount={210}
+              price="₹1,100"
+              imageSrc="https://placehold.co/400x300/eaf7fc/33C3F0?text=Dr.+Kim&font=montserrat"
+            />
+          </div>
         </motion.section>
       </div>
     </AppLayout>

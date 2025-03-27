@@ -111,7 +111,7 @@
   }
 
   .glass-morphism {
-    @apply backdrop-blur-lg bg-white/90 shadow-lg border border-white/20;
+    @apply backdrop-blur-lg bg-white shadow-lg border border-white/20;
   }
   
   /* City selector dialog styling */

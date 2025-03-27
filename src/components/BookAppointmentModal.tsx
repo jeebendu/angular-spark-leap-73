@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -62,6 +62,20 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
   ];
   
   const stepLabels = ["Clinic", "Date & Time", "Patient", "Review", "Payment"];
+  
+  // Auto-advance to next step when date and time are selected
+  useEffect(() => {
+    if (step === 2 && selectedDate && selectedTime) {
+      // Add a small delay to allow user to see their selection before advancing
+      const timer = setTimeout(() => {
+        if (validateCurrentStep()) {
+          setStep(3);
+        }
+      }, 800);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [selectedDate, selectedTime, step]);
   
   const goToStep = (stepNumber: number) => {
     if (stepNumber <= step || validateCurrentStep()) {
@@ -135,7 +149,7 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
       <DialogTrigger asChild>
         {trigger}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[800px] p-0 overflow-hidden">
+      <DialogContent className="sm:max-w-[800px] p-0 overflow-hidden bg-white modal-background">
         <DialogHeader className="p-6 pb-2">
           <DialogTitle>Book an Appointment</DialogTitle>
         </DialogHeader>

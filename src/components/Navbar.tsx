@@ -87,7 +87,7 @@ export function Navbar() {
               alt="ClinicHub Logo" 
               className="h-8"
             />
-            <span className="font-semibold text-lg hidden md:block">ClinicHub</span>
+            {/* Removed the ClinicHub text span as requested */}
           </Link>
           
           {/* Location selection moved next to logo */}

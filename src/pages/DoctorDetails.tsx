@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
@@ -26,6 +25,7 @@ import {
   Share2,
   ArrowLeft
 } from "lucide-react";
+import { BookAppointmentModal } from "@/components/BookAppointmentModal";
 
 const DoctorDetails = () => {
   const { id } = useParams();
@@ -173,7 +173,13 @@ const DoctorDetails = () => {
                   <p className="text-xl font-bold text-primary">{doctor.consultationFee}</p>
                 </div>
                 
-                <Button className="sky-button rounded-full">Book Appointment</Button>
+                <BookAppointmentModal 
+                  doctorName={doctor.name}
+                  specialty={doctor.specialty}
+                  trigger={
+                    <Button className="sky-button rounded-full">Book Appointment</Button>
+                  }
+                />
               </div>
             </div>
           </div>
@@ -250,9 +256,15 @@ const DoctorDetails = () => {
                       ))}
                     </div>
                     
-                    <Button className="w-full sky-button mt-6" disabled={!selectedTimeSlot}>
-                      Book Appointment
-                    </Button>
+                    <BookAppointmentModal 
+                      doctorName={doctor.name}
+                      specialty={doctor.specialty}
+                      trigger={
+                        <Button className="w-full sky-button mt-6" disabled={!selectedTimeSlot}>
+                          Book Appointment
+                        </Button>
+                      }
+                    />
                   </div>
                 </div>
               </div>
@@ -407,9 +419,11 @@ const DoctorDetails = () => {
                       </div>
                     </div>
                   </div>
-                  <Button variant="outline" className="m-4 w-[calc(100%-32px)] border-primary text-primary hover:bg-primary hover:text-white">
-                    View Profile
-                  </Button>
+                  <Link to={`/doctor/${index + 2}`}>
+                    <Button variant="outline" className="m-4 w-[calc(100%-32px)] border-primary text-primary hover:bg-primary hover:text-white">
+                      View Profile
+                    </Button>
+                  </Link>
                 </CardContent>
               </Card>
             ))}

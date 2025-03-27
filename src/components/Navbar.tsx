@@ -82,9 +82,11 @@ export function Navbar() {
       <div className="container flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Link to="/" className="flex items-center gap-2">
-            <div className="sky-gradient rounded-md w-8 h-8 flex items-center justify-center">
-              <span className="text-white font-bold text-lg">C</span>
-            </div>
+            <img 
+              src="https://res.cloudinary.com/dzxuxfagt/image/upload/h_100/assets/logo.png" 
+              alt="ClinicHub Logo" 
+              className="h-8"
+            />
             <span className="font-semibold text-lg hidden md:block">ClinicHub</span>
           </Link>
           
@@ -131,7 +133,7 @@ export function Navbar() {
                   className={`city-selector-card ${selectedCity === "Delhi" ? "border-primary" : "border-gray-100"}`}
                 >
                   <div className="city-icon">
-                    <MapPin className="h-10 w-10 text-gray-700" />
+                    <img src="https://placehold.co/200/eaf7fc/33C3F0?text=DEL&font=montserrat" alt="Delhi" className="city-image" />
                   </div>
                   <span className="city-name">Delhi</span>
                 </button>
@@ -140,7 +142,7 @@ export function Navbar() {
                   className={`city-selector-card ${selectedCity === "Hyderabad" ? "border-primary" : "border-gray-100"}`}
                 >
                   <div className="city-icon">
-                    <MapPin className="h-10 w-10 text-gray-700" />
+                    <img src="https://placehold.co/200/eaf7fc/33C3F0?text=HYD&font=montserrat" alt="Hyderabad" className="city-image" />
                   </div>
                   <span className="city-name">Hyderabad</span>
                 </button>
@@ -149,7 +151,7 @@ export function Navbar() {
                   className={`city-selector-card ${selectedCity === "Chennai" ? "border-primary" : "border-gray-100"}`}
                 >
                   <div className="city-icon">
-                    <MapPin className="h-10 w-10 text-gray-700" />
+                    <img src="https://placehold.co/200/eaf7fc/33C3F0?text=CHE&font=montserrat" alt="Chennai" className="city-image" />
                   </div>
                   <span className="city-name">Chennai</span>
                 </button>
@@ -158,7 +160,7 @@ export function Navbar() {
                   className={`city-selector-card ${selectedCity === "Kolkata" ? "border-primary" : "border-gray-100"}`}
                 >
                   <div className="city-icon">
-                    <MapPin className="h-10 w-10 text-gray-700" />
+                    <img src="https://placehold.co/200/eaf7fc/33C3F0?text=KOL&font=montserrat" alt="Kolkata" className="city-image" />
                   </div>
                   <span className="city-name">Kolkata</span>
                 </button>

@@ -50,11 +50,37 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
   ];
   
   const goToStep = (stepNumber: number) => {
-    setStep(stepNumber);
+    if (stepNumber <= step || validateCurrentStep()) {
+      setStep(stepNumber);
+    }
+  };
+  
+  const validateCurrentStep = () => {
+    // Simple validation for each step
+    switch(step) {
+      case 1:
+        if (!selectedDate || !selectedTime) {
+          toast({
+            title: "Required fields missing",
+            description: "Please select both date and time for your appointment.",
+            variant: "destructive"
+          });
+          return false;
+        }
+        return true;
+      case 2:
+        // No validation needed for patient selection
+        return true;
+      case 3:
+        // No validation needed for appointment details
+        return true;
+      default:
+        return true;
+    }
   };
   
   const nextStep = () => {
-    if (step < 4) {
+    if (validateCurrentStep() && step < 4) {
       setStep(step + 1);
     }
   };
@@ -85,7 +111,7 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
       <DialogTrigger asChild>
         {trigger}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden">
+      <DialogContent className="sm:max-w-[700px] p-0 overflow-hidden">
         <DialogHeader className="p-6 pb-2">
           <DialogTitle>Book an Appointment</DialogTitle>
         </DialogHeader>
@@ -95,43 +121,51 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-2 w-full">
               <div 
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${
                   step >= 1 ? "bg-primary text-white" : "bg-gray-200 text-gray-500"
-                } cursor-pointer`}
+                } cursor-pointer shadow-sm hover:shadow-md transition-all`}
                 onClick={() => goToStep(1)}
               >
-                {step > 1 ? <Check className="h-4 w-4" /> : "1"}
+                {step > 1 ? <Check className="h-5 w-5" /> : "1"}
               </div>
               <div className={`h-1 flex-grow ${step >= 2 ? "bg-primary" : "bg-gray-200"}`}></div>
               
               <div 
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${
                   step >= 2 ? "bg-primary text-white" : "bg-gray-200 text-gray-500"
-                } cursor-pointer`}
-                onClick={() => step > 1 ? goToStep(2) : null}
+                } cursor-pointer shadow-sm hover:shadow-md transition-all`}
+                onClick={() => step > 1 || validateCurrentStep() ? goToStep(2) : null}
               >
-                {step > 2 ? <Check className="h-4 w-4" /> : "2"}
+                {step > 2 ? <Check className="h-5 w-5" /> : "2"}
               </div>
               <div className={`h-1 flex-grow ${step >= 3 ? "bg-primary" : "bg-gray-200"}`}></div>
               
               <div 
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${
                   step >= 3 ? "bg-primary text-white" : "bg-gray-200 text-gray-500"
-                } cursor-pointer`}
-                onClick={() => step > 2 ? goToStep(3) : null}
+                } cursor-pointer shadow-sm hover:shadow-md transition-all`}
+                onClick={() => step > 2 || (validateCurrentStep() && step > 1) ? goToStep(3) : null}
               >
-                {step > 3 ? <Check className="h-4 w-4" /> : "3"}
+                {step > 3 ? <Check className="h-5 w-5" /> : "3"}
               </div>
               <div className={`h-1 flex-grow ${step >= 4 ? "bg-primary" : "bg-gray-200"}`}></div>
               
               <div 
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${
                   step >= 4 ? "bg-primary text-white" : "bg-gray-200 text-gray-500"
-                }`}
+                } cursor-pointer shadow-sm hover:shadow-md transition-all`}
+                onClick={() => step > 3 || (validateCurrentStep() && step > 2) ? goToStep(4) : null}
               >
                 4
               </div>
             </div>
+          </div>
+
+          <div className="flex justify-center mb-6 text-sm">
+            <div className={`mx-2 font-medium ${step === 1 ? "text-primary" : "text-gray-500"}`}>Date & Time</div>
+            <div className={`mx-2 font-medium ${step === 2 ? "text-primary" : "text-gray-500"}`}>Patient</div>
+            <div className={`mx-2 font-medium ${step === 3 ? "text-primary" : "text-gray-500"}`}>Details</div>
+            <div className={`mx-2 font-medium ${step === 4 ? "text-primary" : "text-gray-500"}`}>Payment</div>
           </div>
           
           {/* Step 1: Select Date and Time */}
@@ -193,13 +227,13 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
                   onValueChange={setSelectedMember}
                   className="space-y-3"
                 >
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-50">
                     <RadioGroupItem value="self" id="self" />
                     <Label htmlFor="self" className="cursor-pointer">Myself</Label>
                   </div>
                   
                   {familyMembers.map((member) => (
-                    <div key={member.id} className="flex items-center space-x-2">
+                    <div key={member.id} className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-50">
                       <RadioGroupItem value={member.id} id={`member-${member.id}`} />
                       <Label htmlFor={`member-${member.id}`} className="cursor-pointer">
                         {member.name} ({member.relationship})
@@ -274,7 +308,7 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
                 Payment Information
               </h3>
               
-              <div className="border rounded-lg p-4 mb-6">
+              <div className="border rounded-lg p-4 mb-6 bg-gray-50">
                 <div className="flex justify-between mb-2">
                   <span className="text-gray-500">Consultation Fee</span>
                   <span className="font-medium">₹800</span>
@@ -301,17 +335,17 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
                   onValueChange={setPaymentMethod}
                   className="space-y-3"
                 >
-                  <div className="flex items-center space-x-2 border rounded-lg p-3">
+                  <div className="flex items-center space-x-2 border rounded-lg p-3 hover:border-primary transition-colors">
                     <RadioGroupItem value="card" id="card" />
                     <Label htmlFor="card" className="cursor-pointer flex-1">Credit/Debit Card</Label>
                   </div>
                   
-                  <div className="flex items-center space-x-2 border rounded-lg p-3">
+                  <div className="flex items-center space-x-2 border rounded-lg p-3 hover:border-primary transition-colors">
                     <RadioGroupItem value="upi" id="upi" />
                     <Label htmlFor="upi" className="cursor-pointer flex-1">UPI</Label>
                   </div>
                   
-                  <div className="flex items-center space-x-2 border rounded-lg p-3">
+                  <div className="flex items-center space-x-2 border rounded-lg p-3 hover:border-primary transition-colors">
                     <RadioGroupItem value="netbanking" id="netbanking" />
                     <Label htmlFor="netbanking" className="cursor-pointer flex-1">Net Banking</Label>
                   </div>

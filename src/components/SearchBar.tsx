@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { MapPin, Navigation, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -22,6 +21,7 @@ export function SearchBar() {
   const [locationSuggestions, setLocationSuggestions] = useState<string[]>([]);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const { location, setLocation } = useLocation();
@@ -150,18 +150,9 @@ export function SearchBar() {
   ];
 
   return (
-    <div className="search-container flex items-center w-full max-w-2xl mx-auto">
-      {/* Logo */}
-      <div className="flex items-center pr-4 mr-2">
-        <img 
-          src="https://res.cloudinary.com/dzxuxfagt/image/upload/h_100/assets/logo.png" 
-          alt="ClinicHub Logo" 
-          className="h-8"
-        />
-      </div>
-      
-      {/* Locality field (25%) */}
-      <div className="relative w-[25%] pr-2 border-r border-gray-200">
+    <div ref={containerRef} className="search-container flex items-center w-full max-w-3xl mx-auto relative">
+      {/* Locality field (20%) */}
+      <div className="relative w-[20%] pr-2 border-r border-gray-200">
         <Popover open={isOpen} onOpenChange={setIsOpen}>
           <PopoverTrigger asChild>
             <Input 
@@ -276,8 +267,8 @@ export function SearchBar() {
         </Popover>
       </div>
       
-      {/* Search doctors field (75%) */}
-      <div className="relative w-[75%] pl-3 flex items-center">
+      {/* Search doctors field (80%) */}
+      <div className="relative w-[80%] pl-3 flex items-center">
         <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
           <Search className="h-4 w-4 text-muted-foreground" />
         </div>

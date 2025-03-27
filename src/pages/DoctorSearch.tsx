@@ -20,6 +20,7 @@ import {
   Filter,
   Heart,
   LayoutList,
+  MapPin,
   Rows,
   Search, 
   SlidersHorizontal, 

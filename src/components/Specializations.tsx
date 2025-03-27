@@ -1,5 +1,5 @@
 
-import { Heart, Activity, Brain, Bone, Stethoscope, Syringe, Flask, Microscope, Plus } from "lucide-react";
+import { Heart, Activity, Brain, Bone, Stethoscope, Syringe, Microscope, Plus, TestTube, Vial } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 
@@ -27,7 +27,7 @@ export function Specializations() {
     },
     { 
       name: "Pharmacy", 
-      icon: <Flask className="w-6 h-6 text-blue-500" />,
+      icon: <Vial className="w-6 h-6 text-blue-500" />,
       bg: "bg-blue-50" 
     },
     { 
@@ -42,7 +42,7 @@ export function Specializations() {
     },
     { 
       name: "Lab Tests", 
-      icon: <Flask className="w-6 h-6 text-cyan-500" />,
+      icon: <TestTube className="w-6 h-6 text-cyan-500" />,
       bg: "bg-cyan-50" 
     },
     { 

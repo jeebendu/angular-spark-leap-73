@@ -18,6 +18,8 @@ export function SearchBar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setShowSuggestions] = useState(false);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+  const [locationInput, setLocationInput] = useState("");
+  const [locationSuggestions, setLocationSuggestions] = useState<string[]>([]);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
@@ -42,6 +44,22 @@ export function SearchBar() {
     };
   }, []);
 
+  // Simulate Google Maps API location suggestions
+  useEffect(() => {
+    if (locationInput.length >= 3) {
+      // This would be replaced with actual Google Maps API call
+      const mockLocations = [
+        `${locationInput} North, Bangalore`,
+        `${locationInput} South, Bangalore`,
+        `${locationInput} East, Delhi`,
+        `${locationInput} West, Mumbai`,
+      ];
+      setLocationSuggestions(mockLocations);
+    } else {
+      setLocationSuggestions([]);
+    }
+  }, [locationInput]);
+
   const handleSearchFocus = () => {
     setShowSuggestions(true);
   };
@@ -55,6 +73,20 @@ export function SearchBar() {
   const handleSuggestionClick = (suggestion: string) => {
     setSearchQuery(suggestion);
     handleDoctorSearch(suggestion);
+  };
+
+  const handleLocationSuggestionClick = (suggestion: string) => {
+    setLocationInput("");
+    setLocation({
+      locality: suggestion,
+      coordinates: {
+        // In a real app, we would get actual coordinates from Google Maps API
+        latitude: 12.9716 + Math.random() * 0.05,
+        longitude: 77.5946 + Math.random() * 0.05
+      }
+    });
+    setLocationSuggestions([]);
+    setIsOpen(false);
   };
 
   const detectCurrentLocation = () => {
@@ -118,18 +150,27 @@ export function SearchBar() {
   ];
 
   return (
-    <div className="search-container flex items-center w-full max-w-xl mx-auto">
-      {/* Locality field (30%) */}
-      <div className="relative w-[30%] pr-2 border-r border-gray-200">
+    <div className="search-container flex items-center w-full max-w-2xl mx-auto">
+      {/* Logo */}
+      <div className="flex items-center pr-4 mr-2">
+        <img 
+          src="https://res.cloudinary.com/dzxuxfagt/image/upload/h_100/assets/logo.png" 
+          alt="ClinicHub Logo" 
+          className="h-8"
+        />
+      </div>
+      
+      {/* Locality field (25%) */}
+      <div className="relative w-[25%] pr-2 border-r border-gray-200">
         <Popover open={isOpen} onOpenChange={setIsOpen}>
           <PopoverTrigger asChild>
             <Input 
               type="text" 
               placeholder="Location..." 
-              className="border-0 px-3 py-0 h-10 focus-visible:ring-0 placeholder:text-muted-foreground cursor-pointer text-sm"
-              readOnly
+              className="border-0 px-3 py-0 h-10 focus-visible:ring-0 placeholder:text-muted-foreground cursor-pointer text-sm bg-transparent"
               onClick={() => setIsOpen(true)}
               value={location.locality || ""}
+              readOnly
             />
           </PopoverTrigger>
           <PopoverContent className="w-[320px] p-4 bg-white modal-background" align="start">
@@ -140,8 +181,27 @@ export function SearchBar() {
                 <Input 
                   type="text" 
                   placeholder="Enter locality or PIN code" 
-                  className="border border-gray-300 rounded-md px-4 py-2 w-full"
+                  className="border border-gray-300 rounded-md px-4 py-2 w-full bg-transparent"
+                  value={locationInput}
+                  onChange={(e) => setLocationInput(e.target.value)}
                 />
+                
+                {locationSuggestions.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-50 max-h-60 overflow-y-auto">
+                    {locationSuggestions.map((suggestion, index) => (
+                      <div 
+                        key={index}
+                        className="px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm"
+                        onClick={() => handleLocationSuggestionClick(suggestion)}
+                      >
+                        <div className="flex items-center">
+                          <MapPin className="h-3 w-3 text-gray-500 mr-2" />
+                          <span>{suggestion}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
               
               <Button 
@@ -216,8 +276,8 @@ export function SearchBar() {
         </Popover>
       </div>
       
-      {/* Search doctors field (70%) */}
-      <div className="relative w-[70%] pl-3 flex items-center">
+      {/* Search doctors field (75%) */}
+      <div className="relative w-[75%] pl-3 flex items-center">
         <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
           <Search className="h-4 w-4 text-muted-foreground" />
         </div>
@@ -225,7 +285,7 @@ export function SearchBar() {
           ref={searchInputRef}
           type="text" 
           placeholder="Search doctors, specialties..." 
-          className="border-0 px-0 py-0 h-10 focus-visible:ring-0 placeholder:text-muted-foreground pl-8"
+          className="border-0 px-0 py-0 h-10 focus-visible:ring-0 placeholder:text-muted-foreground pl-8 bg-transparent"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onFocus={handleSearchFocus}
@@ -237,30 +297,31 @@ export function SearchBar() {
           <Search className="h-4 w-4 text-white" />
           <span className="sr-only">Search</span>
         </Button>
-        
-        {/* Auto-suggestions dropdown */}
-        {suggestions && (
-          <div 
-            ref={suggestionsRef}
-            className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-50 max-h-60 overflow-y-auto"
-          >
-            {mockSuggestions
-              .filter(s => !searchQuery || s.toLowerCase().includes(searchQuery.toLowerCase()))
-              .map((suggestion, index) => (
-                <div 
-                  key={index}
-                  className="px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm"
-                  onClick={() => handleSuggestionClick(suggestion)}
-                >
-                  <div className="flex items-center">
-                    <Search className="h-3 w-3 text-gray-500 mr-2" />
-                    <span>{suggestion}</span>
-                  </div>
-                </div>
-              ))}
-          </div>
-        )}
       </div>
+      
+      {/* Auto-suggestions dropdown - positioned absolutely to be outside the card */}
+      {suggestions && (
+        <div 
+          ref={suggestionsRef}
+          className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-50 max-h-60 overflow-y-auto"
+          style={{ width: "100%" }}
+        >
+          {mockSuggestions
+            .filter(s => !searchQuery || s.toLowerCase().includes(searchQuery.toLowerCase()))
+            .map((suggestion, index) => (
+              <div 
+                key={index}
+                className="px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm"
+                onClick={() => handleSuggestionClick(suggestion)}
+              >
+                <div className="flex items-center">
+                  <Search className="h-3 w-3 text-gray-500 mr-2" />
+                  <span>{suggestion}</span>
+                </div>
+              </div>
+            ))}
+        </div>
+      )}
     </div>
   );
 }

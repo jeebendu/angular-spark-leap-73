@@ -37,7 +37,7 @@ const Appointments = () => {
                   placeholder="Search appointments..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pr-10"
+                  className="pr-10 bg-transparent"
                 />
                 <Search className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
               </div>
@@ -98,6 +98,7 @@ const Appointments = () => {
                     time="11:30 AM"
                     imageSrc="https://placehold.co/200/eaf7fc/33C3F0?text=JW&font=montserrat"
                     status="completed"
+                    className="opacity-70"
                   />
                   <AppointmentCard
                     doctorName="Dr. Emily Parker"
@@ -106,6 +107,7 @@ const Appointments = () => {
                     time="09:15 AM"
                     imageSrc="https://placehold.co/200/eaf7fc/33C3F0?text=EP&font=montserrat"
                     status="completed"
+                    className="opacity-70"
                   />
                   <AppointmentCard
                     doctorName="Dr. Robert Kim"
@@ -114,6 +116,7 @@ const Appointments = () => {
                     time="02:00 PM"
                     imageSrc="https://placehold.co/200/eaf7fc/33C3F0?text=RK&font=montserrat"
                     status="completed"
+                    className="opacity-70"
                   />
                 </div>
               </TabsContent>

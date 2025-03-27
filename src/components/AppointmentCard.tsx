@@ -3,6 +3,7 @@ import { Calendar, Clock, Video } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 interface AppointmentCardProps {
   doctorName: string;
@@ -11,16 +12,31 @@ interface AppointmentCardProps {
   time: string;
   imageSrc: string;
   status: "upcoming" | "completed" | "cancelled";
+  className?: string;
+  forUser?: string;
 }
 
-export function AppointmentCard({ doctorName, specialty, date, time, imageSrc, status }: AppointmentCardProps) {
+export function AppointmentCard({ 
+  doctorName, 
+  specialty, 
+  date, 
+  time, 
+  imageSrc, 
+  status, 
+  className,
+  forUser = "You"
+}: AppointmentCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
+      className={className}
     >
-      <Card className="overflow-hidden border-none card-shadow">
+      <Card className={cn(
+        "overflow-hidden border-none card-shadow",
+        status === "cancelled" && "border-l-4 border-l-red-500"
+      )}>
         <CardContent className="p-4">
           <div className="flex gap-3">
             <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
@@ -45,10 +61,14 @@ export function AppointmentCard({ doctorName, specialty, date, time, imageSrc, s
           </div>
           
           <div className="flex items-center justify-between mt-3 pt-3 border-t">
-            <div>
+            <div className="flex items-center gap-2">
               {status === "upcoming" && <span className="text-xs px-2 py-1 bg-blue-50 text-primary rounded-full">Upcoming</span>}
               {status === "completed" && <span className="text-xs px-2 py-1 bg-green-50 text-green-600 rounded-full">Completed</span>}
               {status === "cancelled" && <span className="text-xs px-2 py-1 bg-red-50 text-red-600 rounded-full">Cancelled</span>}
+              
+              {forUser !== "You" && (
+                <span className="text-xs text-gray-500">For: {forUser}</span>
+              )}
             </div>
             
             {status === "upcoming" && (

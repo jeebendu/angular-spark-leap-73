@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { Input } from "@/components/ui/input";
@@ -82,6 +81,45 @@ const DoctorSearch = () => {
     "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM",
     "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM", 
     "04:00 PM", "04:30 PM", "05:00 PM", "05:30 PM"
+  ];
+
+  const doctorClinics = [
+    [
+      { name: "HeartCare Clinic", location: "Koramangala" },
+      { name: "City Heart Center", location: "Indiranagar" }
+    ],
+    [
+      { name: "Neuroscience Institute", location: "JP Nagar" },
+      { name: "Brain & Spine Center", location: "Whitefield" },
+      { name: "City Neuro Hospital", location: "MG Road" }
+    ],
+    [
+      { name: "Orthopedic Specialties", location: "Marathahalli" }
+    ],
+    [
+      { name: "Skin & Care Center", location: "Jayanagar" },
+      { name: "Derma Solutions", location: "Electronic City" }
+    ],
+    [
+      { name: "Kids Care Hospital", location: "Banashankari" },
+      { name: "Children's Special Clinic", location: "HSR Layout" }
+    ],
+    [
+      { name: "General Health Center", location: "Malleshwaram" },
+      { name: "Family Health Clinic", location: "BTM Layout" }
+    ],
+    [
+      { name: "Vision Care Center", location: "Richmond Road" },
+      { name: "Eye Specialists", location: "Koramangala" }
+    ],
+    [
+      { name: "Dental Care Clinic", location: "Indiranagar" },
+      { name: "Smile Specialists", location: "JP Nagar" }
+    ],
+    [
+      { name: "Women's Health Center", location: "Jayanagar" },
+      { name: "Mother & Child Clinic", location: "Whitefield" }
+    ]
   ];
 
   const toggleSpecialty = (specialty: string) => {
@@ -520,12 +558,16 @@ const DoctorSearch = () => {
                     transition={{ delay: index * 0.05, duration: 0.3 }}
                   >
                     <DoctorCard
+                      id={String(index + 1)}
                       name={`Dr. ${["Robert", "Emily", "James", "Sarah", "Michael", "Jennifer"][index % 6]} ${["Smith", "Johnson", "Williams", "Brown", "Jones", "Miller"][index % 6]}`}
                       specialty={["Cardiologist", "Neurologist", "Orthopedist", "Dermatologist", "Pediatrician", "Ophthalmologist"][index % 6]}
                       rating={4 + (index % 10) / 10}
                       reviewCount={80 + index * 5}
                       price={`₹${900 + index * 100}`}
                       imageSrc={`https://placehold.co/400x300/eaf7fc/33C3F0?text=Dr.+${index+1}&font=montserrat`}
+                      experience={`${8 + (index % 15)}+ years`}
+                      languages={index % 3 === 0 ? ["English", "Hindi", "Tamil"] : ["English", "Hindi"]}
+                      clinics={doctorClinics[index % doctorClinics.length]}
                       onBookNow={(name) => handleBookAppointment(name)}
                     />
                   </motion.div>
@@ -539,6 +581,7 @@ const DoctorSearch = () => {
                   const rating = 4 + (index % 10) / 10;
                   const reviewCount = 80 + index * 5;
                   const price = `₹${900 + index * 100}`;
+                  const clinics = doctorClinics[index % doctorClinics.length];
                   
                   return (
                     <motion.div
@@ -581,7 +624,7 @@ const DoctorSearch = () => {
                                 
                                 <div className="mt-3 flex flex-wrap gap-2">
                                   <div className="px-3 py-1 bg-gray-100 rounded-full text-xs flex items-center">
-                                    <span>10+ years exp.</span>
+                                    <span>{8 + (index % 15)}+ years exp.</span>
                                   </div>
                                   <div className="px-3 py-1 bg-gray-100 rounded-full text-xs flex items-center">
                                     <span>English, Hindi</span>
@@ -591,24 +634,59 @@ const DoctorSearch = () => {
                                   </div>
                                 </div>
                                 
+                                <div className="mt-3 space-y-1">
+                                  <p className="text-xs font-medium">Available at:</p>
+                                  <div className="flex flex-wrap gap-2">
+                                    {clinics.map((clinic, cIndex) => (
+                                      <div 
+                                        key={cIndex} 
+                                        className="px-3 py-1 bg-blue-50 rounded-full text-xs flex items-center"
+                                      >
+                                        <MapPin className="h-3 w-3 mr-1 text-primary" />
+                                        <span>{clinic.name}, {clinic.location}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                                
                                 <div className="mt-4 flex items-center justify-between md:hidden">
+                                  <div className="space-x-2">
+                                    <Button 
+                                      size="sm" 
+                                      variant="outline"
+                                      className="rounded-full border-primary text-primary"
+                                      onClick={() => window.location.href = `/doctor/${index + 1}`}
+                                    >
+                                      Profile
+                                    </Button>
+                                    <Button 
+                                      size="sm" 
+                                      className="sky-button rounded-full"
+                                      onClick={() => handleBookAppointment(name)}
+                                    >
+                                      Book Now
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              <div className="flex items-center justify-end md:w-32 hidden md:flex">
+                                <div className="space-y-2">
                                   <Button 
-                                    size="sm" 
-                                    className="sky-button rounded-full"
+                                    size="sm"
+                                    variant="outline"
+                                    className="w-full rounded-full border-primary text-primary"
+                                    onClick={() => window.location.href = `/doctor/${index + 1}`}
+                                  >
+                                    Profile
+                                  </Button>
+                                  <Button 
+                                    className="w-full sky-button rounded-full"
                                     onClick={() => handleBookAppointment(name)}
                                   >
                                     Book Now
                                   </Button>
                                 </div>
-                              </div>
-                              
-                              <div className="flex items-center justify-end md:w-32 hidden md:flex">
-                                <Button 
-                                  className="sky-button rounded-full"
-                                  onClick={() => handleBookAppointment(name)}
-                                >
-                                  Book Now
-                                </Button>
                               </div>
                             </div>
                           </div>

@@ -1,20 +1,41 @@
 
-import { Star, ThumbsUp } from "lucide-react";
+import { Star, ThumbsUp, MapPin, Building } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
 interface DoctorCardProps {
+  id: string;
   name: string;
   specialty: string;
   rating: number;
   reviewCount: number;
   price: string;
   imageSrc: string;
+  experience?: string;
+  languages?: string[];
+  clinics?: {
+    name: string;
+    location: string;
+  }[];
   onBookNow?: (name: string) => void;
 }
 
-export function DoctorCard({ name, specialty, rating, reviewCount, price, imageSrc, onBookNow }: DoctorCardProps) {
+export function DoctorCard({ 
+  id,
+  name, 
+  specialty, 
+  rating, 
+  reviewCount, 
+  price, 
+  imageSrc, 
+  experience = "10+ years",
+  languages = ["English", "Hindi"],
+  clinics = [],
+  onBookNow 
+}: DoctorCardProps) {
   const handleBookNow = () => {
     if (onBookNow) {
       onBookNow(name);
@@ -42,8 +63,15 @@ export function DoctorCard({ name, specialty, rating, reviewCount, price, imageS
             </div>
           </div>
           <div className="p-4">
-            <h3 className="font-semibold text-base mb-1">{name}</h3>
-            <p className="text-muted-foreground text-sm mb-2">{specialty}</p>
+            <div className="flex justify-between items-start">
+              <div>
+                <h3 className="font-semibold text-base mb-1">{name}</h3>
+                <p className="text-muted-foreground text-sm mb-2">{specialty}</p>
+              </div>
+              <Badge variant="outline" className="text-xs px-2 py-0.5">
+                {experience}
+              </Badge>
+            </div>
             
             <div className="flex items-center gap-1 mb-3">
               <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
@@ -51,15 +79,44 @@ export function DoctorCard({ name, specialty, rating, reviewCount, price, imageS
               <span className="text-sm text-muted-foreground">({reviewCount})</span>
             </div>
             
+            {clinics.length > 0 && (
+              <div className="mb-3 space-y-1">
+                <p className="text-xs font-medium flex items-center">
+                  <Building className="h-3 w-3 mr-1 text-gray-500" />
+                  Available at:
+                </p>
+                {clinics.slice(0, 2).map((clinic, index) => (
+                  <div key={index} className="flex items-start text-xs text-gray-600">
+                    <MapPin className="h-3 w-3 mr-1 mt-0.5 text-gray-500 shrink-0" />
+                    <p className="truncate">{clinic.name}, {clinic.location}</p>
+                  </div>
+                ))}
+                {clinics.length > 2 && (
+                  <p className="text-xs text-primary">+{clinics.length - 2} more locations</p>
+                )}
+              </div>
+            )}
+            
             <div className="flex items-center justify-between mt-3">
               <span className="font-semibold">{price}</span>
-              <Button 
-                size="sm" 
-                className="sky-button rounded-full"
-                onClick={handleBookNow}
-              >
-                Book Now
-              </Button>
+              <div className="space-x-2">
+                <Link to={`/doctor/${id}`}>
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    className="rounded-full border-primary text-primary hover:bg-primary hover:text-white"
+                  >
+                    Profile
+                  </Button>
+                </Link>
+                <Button 
+                  size="sm" 
+                  className="sky-button rounded-full"
+                  onClick={handleBookNow}
+                >
+                  Book
+                </Button>
+              </div>
             </div>
           </div>
         </CardContent>

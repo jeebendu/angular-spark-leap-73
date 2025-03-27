@@ -114,6 +114,12 @@
     @apply backdrop-blur-lg bg-white shadow-lg border border-white/20;
   }
   
+  /* Modal background styling */
+  .modal-background {
+    background-color: #00000052;
+    backdrop-filter: blur(5.43656px);
+  }
+  
   /* City selector dialog styling */
   .city-selector-card {
     @apply flex flex-col items-center justify-center p-4 rounded-xl border-2 bg-white hover:border-primary transition-all duration-200;
@@ -137,7 +143,7 @@
   }
   
   .otp-input-premium {
-    @apply flex justify-center;
+    @apply flex justify-center gap-2;
   }
   
   .otp-slot {

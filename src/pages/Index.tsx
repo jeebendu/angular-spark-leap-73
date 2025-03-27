@@ -30,7 +30,7 @@ const Index = () => {
 
   return (
     <AppLayout>
-      <div className="container px-4 py-6 max-w-5xl mx-auto">
+      <div className="container px-4 py-6 max-w-4xl mx-auto">
         {/* Hero Section */}
         <motion.section 
           className="mb-8"

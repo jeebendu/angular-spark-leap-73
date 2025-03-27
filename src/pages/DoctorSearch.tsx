@@ -1,15 +1,9 @@
-
 import { useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { 
-  Slider,
-  SliderTrack,
-  SliderRange,
-  SliderThumb
-} from "@/components/ui/slider";
+import { Slider } from "@/components/ui/slider";
 import { DoctorCard } from "@/components/DoctorCard";
 import { 
   Select,

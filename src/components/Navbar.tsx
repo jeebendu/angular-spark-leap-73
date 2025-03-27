@@ -23,6 +23,7 @@ import { Input } from "@/components/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { X } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 export function Navbar() {
   const { t } = useTranslation();
@@ -33,6 +34,8 @@ export function Navbar() {
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [selectedCity, setSelectedCity] = useState("Bangalore");
   const [cityDialogOpen, setCityDialogOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const userName = "User";
   
   // Add scroll effect
   useEffect(() => {
@@ -56,6 +59,7 @@ export function Navbar() {
     // Simulate OTP verification
     if (otpValue.length === 6) {
       // Handle successful verification
+      setIsLoggedIn(true);
       console.log("OTP verified successfully");
     }
   };
@@ -76,7 +80,7 @@ export function Navbar() {
             <span className="font-semibold text-lg hidden md:block">ClinicHub</span>
           </Link>
           
-          {/* Location selection */}
+          {/* Location selection moved next to logo */}
           <Dialog open={cityDialogOpen} onOpenChange={setCityDialogOpen}>
             <DialogTrigger asChild>
               <Button variant="ghost" className="gap-2 text-sm font-medium ml-2">
@@ -84,7 +88,7 @@ export function Navbar() {
                 <span className="font-medium">{selectedCity}</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="glass-morphism max-w-4xl p-8">
+            <DialogContent className="modal-background bg-white max-w-4xl p-8">
               <div className="absolute right-4 top-4">
                 <DialogClose asChild>
                   <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
@@ -178,15 +182,20 @@ export function Navbar() {
             </Button>
             <LanguageSwitcher />
             
-            {/* Login Dialog */}
+            {/* Login Dialog with updated User icon */}
             <Dialog>
               <DialogTrigger asChild>
-                <Button className="sky-button rounded-full">
-                  <User className="h-4 w-4 mr-2" />
-                  {!isMobile && t('common.account')}
-                </Button>
+                {isLoggedIn ? (
+                  <Avatar className="h-8 w-8 cursor-pointer">
+                    <AvatarFallback className="bg-primary text-white">{userName.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                ) : (
+                  <Button variant="ghost" size="icon" className="rounded-full">
+                    <User className="h-5 w-5" />
+                  </Button>
+                )}
               </DialogTrigger>
-              <DialogContent className="sm:max-w-md premium-login-dialog">
+              <DialogContent className="sm:max-w-md premium-login-dialog modal-background">
                 <DialogHeader>
                   <DialogTitle className="text-center text-xl font-semibold">Login / Sign Up</DialogTitle>
                 </DialogHeader>

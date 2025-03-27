@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { MapPin, Navigation } from "lucide-react";
+import { MapPin, Navigation, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -78,7 +78,7 @@ export function SearchBar() {
       </div>
       
       {/* Search doctors field (70%) */}
-      <div className="relative w-[70%] pl-3">
+      <div className="relative w-[70%] pl-3 flex items-center">
         <Input 
           type="text" 
           placeholder="Search doctors, specialties..." 
@@ -86,14 +86,13 @@ export function SearchBar() {
           onClick={handleDoctorSearch}
           readOnly
         />
-        {!isMobile && (
-          <Button 
-            className="rounded-full sky-button h-9 w-9 p-0 absolute right-0 top-0.5"
-            onClick={handleDoctorSearch}
-          >
-            <span className="sr-only">Search</span>
-          </Button>
-        )}
+        <Button 
+          className="rounded-full sky-button h-9 w-9 p-0 absolute right-0 top-0.5"
+          onClick={handleDoctorSearch}
+        >
+          <Search className="h-4 w-4 text-white" />
+          <span className="sr-only">Search</span>
+        </Button>
       </div>
     </div>
   );

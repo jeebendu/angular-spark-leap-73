@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Check, ChevronLeft, ChevronRight, Calendar, Users, CreditCard } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, Calendar, Users, CreditCard, Building } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -36,6 +36,7 @@ interface FamilyMember {
 export function BookAppointmentModal({ doctorName, specialty, trigger }: BookAppointmentModalProps) {
   const [step, setStep] = useState(1);
   const [open, setOpen] = useState(false);
+  const [selectedClinic, setSelectedClinic] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedMember, setSelectedMember] = useState("self");
@@ -49,6 +50,13 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
     { id: "3", name: "Jane Smith", relationship: "Parent" }
   ];
   
+  // Mock data for clinics
+  const clinics = [
+    { id: "1", name: "HealthFirst Clinic, Indiranagar", address: "100 Main St, Indiranagar, Bangalore" },
+    { id: "2", name: "MediCare Center, Koramangala", address: "200 Park Ave, Koramangala, Bangalore" },
+    { id: "3", name: "WellBeing Hospital, HSR Layout", address: "300 Oak Rd, HSR Layout, Bangalore" }
+  ];
+  
   const goToStep = (stepNumber: number) => {
     if (stepNumber <= step || validateCurrentStep()) {
       setStep(stepNumber);
@@ -59,6 +67,16 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
     // Simple validation for each step
     switch(step) {
       case 1:
+        if (!selectedClinic) {
+          toast({
+            title: "Please select a clinic",
+            description: "You need to select a clinic to proceed.",
+            variant: "destructive"
+          });
+          return false;
+        }
+        return true;
+      case 2:
         if (!selectedDate || !selectedTime) {
           toast({
             title: "Required fields missing",
@@ -68,10 +86,10 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
           return false;
         }
         return true;
-      case 2:
+      case 3:
         // No validation needed for patient selection
         return true;
-      case 3:
+      case 4:
         // No validation needed for appointment details
         return true;
       default:
@@ -80,7 +98,7 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
   };
   
   const nextStep = () => {
-    if (validateCurrentStep() && step < 4) {
+    if (validateCurrentStep() && step < 5) {
       setStep(step + 1);
     }
   };
@@ -97,7 +115,13 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
       description: `Your appointment has been confirmed for ${selectedDate} at ${selectedTime}.`,
     });
     setOpen(false);
+    // Reset state
     setStep(1);
+    setSelectedClinic("");
+    setSelectedDate("");
+    setSelectedTime("");
+    setSelectedMember("self");
+    setPaymentMethod("card");
   };
   
   // Mock data for available times
@@ -111,7 +135,7 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
       <DialogTrigger asChild>
         {trigger}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[700px] p-0 overflow-hidden">
+      <DialogContent className="sm:max-w-[800px] p-0 overflow-hidden">
         <DialogHeader className="p-6 pb-2">
           <DialogTitle>Book an Appointment</DialogTitle>
         </DialogHeader>
@@ -156,20 +180,66 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
                 } cursor-pointer shadow-sm hover:shadow-md transition-all`}
                 onClick={() => step > 3 || (validateCurrentStep() && step > 2) ? goToStep(4) : null}
               >
-                4
+                {step > 4 ? <Check className="h-5 w-5" /> : "4"}
+              </div>
+              <div className={`h-1 flex-grow ${step >= 5 ? "bg-primary" : "bg-gray-200"}`}></div>
+              
+              <div 
+                className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${
+                  step >= 5 ? "bg-primary text-white" : "bg-gray-200 text-gray-500"
+                } cursor-pointer shadow-sm hover:shadow-md transition-all`}
+                onClick={() => step > 4 || (validateCurrentStep() && step > 3) ? goToStep(5) : null}
+              >
+                5
               </div>
             </div>
           </div>
 
           <div className="flex justify-center mb-6 text-sm">
-            <div className={`mx-2 font-medium ${step === 1 ? "text-primary" : "text-gray-500"}`}>Date & Time</div>
-            <div className={`mx-2 font-medium ${step === 2 ? "text-primary" : "text-gray-500"}`}>Patient</div>
-            <div className={`mx-2 font-medium ${step === 3 ? "text-primary" : "text-gray-500"}`}>Details</div>
-            <div className={`mx-2 font-medium ${step === 4 ? "text-primary" : "text-gray-500"}`}>Payment</div>
+            <div className={`mx-2 font-medium ${step === 1 ? "text-primary" : "text-gray-500"}`}>Clinic</div>
+            <div className={`mx-2 font-medium ${step === 2 ? "text-primary" : "text-gray-500"}`}>Date & Time</div>
+            <div className={`mx-2 font-medium ${step === 3 ? "text-primary" : "text-gray-500"}`}>Patient</div>
+            <div className={`mx-2 font-medium ${step === 4 ? "text-primary" : "text-gray-500"}`}>Review</div>
+            <div className={`mx-2 font-medium ${step === 5 ? "text-primary" : "text-gray-500"}`}>Payment</div>
           </div>
           
-          {/* Step 1: Select Date and Time */}
+          {/* Step 1: Select Clinic */}
           {step === 1 && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-medium mb-4 flex items-center">
+                  <Building className="mr-2 h-5 w-5" />
+                  Select Clinic
+                </h3>
+                
+                <RadioGroup 
+                  value={selectedClinic} 
+                  onValueChange={setSelectedClinic}
+                  className="space-y-3"
+                >
+                  {clinics.map((clinic) => (
+                    <div 
+                      key={clinic.id} 
+                      className={`border rounded-lg p-4 transition-colors ${
+                        selectedClinic === clinic.id ? "border-primary" : "border-gray-200"
+                      }`}
+                    >
+                      <div className="flex items-start">
+                        <RadioGroupItem value={clinic.id} id={`clinic-${clinic.id}`} className="mt-1" />
+                        <Label htmlFor={`clinic-${clinic.id}`} className="ml-2 cursor-pointer">
+                          <div className="font-medium">{clinic.name}</div>
+                          <div className="text-sm text-gray-500">{clinic.address}</div>
+                        </Label>
+                      </div>
+                    </div>
+                  ))}
+                </RadioGroup>
+              </div>
+            </div>
+          )}
+          
+          {/* Step 2: Select Date and Time */}
+          {step === 2 && (
             <div className="space-y-6">
               <div>
                 <h3 className="text-lg font-medium mb-4 flex items-center">
@@ -211,8 +281,8 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
             </div>
           )}
           
-          {/* Step 2: Patient Details */}
-          {step === 2 && (
+          {/* Step 3: Patient Details */}
+          {step === 3 && (
             <div className="space-y-6">
               <div>
                 <h3 className="text-lg font-medium mb-4 flex items-center">
@@ -254,10 +324,10 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
             </div>
           )}
           
-          {/* Step 3: Appointment Details */}
-          {step === 3 && (
+          {/* Step 4: Review Appointment Details */}
+          {step === 4 && (
             <div className="space-y-6">
-              <h3 className="text-lg font-medium mb-4">Appointment Details</h3>
+              <h3 className="text-lg font-medium mb-4">Review Appointment Details</h3>
               
               <div className="space-y-4">
                 <div className="flex flex-col space-y-1">
@@ -268,6 +338,13 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
                 <div className="flex flex-col space-y-1">
                   <span className="text-sm text-gray-500">Specialty</span>
                   <span className="font-medium">{specialty || "Cardiologist"}</span>
+                </div>
+                
+                <div className="flex flex-col space-y-1">
+                  <span className="text-sm text-gray-500">Clinic</span>
+                  <span className="font-medium">
+                    {clinics.find(c => c.id === selectedClinic)?.name || "Not selected"}
+                  </span>
                 </div>
                 
                 <div className="flex flex-col space-y-1">
@@ -300,8 +377,8 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
             </div>
           )}
           
-          {/* Step 4: Payment Information */}
-          {step === 4 && (
+          {/* Step 5: Payment Information */}
+          {step === 5 && (
             <div className="space-y-6">
               <h3 className="text-lg font-medium mb-4 flex items-center">
                 <CreditCard className="mr-2 h-5 w-5" />
@@ -370,7 +447,7 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
             <div></div>
           )}
           
-          {step < 4 ? (
+          {step < 5 ? (
             <Button onClick={nextStep} className="sky-button">
               Continue
               <ChevronRight className="ml-1 h-4 w-4" />

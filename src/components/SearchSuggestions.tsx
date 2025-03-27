@@ -1,6 +1,5 @@
 
 import { Search } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 interface SearchSuggestionsProps {
   isVisible: boolean;

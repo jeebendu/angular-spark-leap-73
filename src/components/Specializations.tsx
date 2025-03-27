@@ -1,7 +1,7 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Heart, Activity, Brain, Bone, Stethoscope, Syringe, Microscope, Plus, TestTube, Eye, Tooth, Baby, User, Lungs, Ear, Virus, Pill, FirstAid, Leaf } from "lucide-react";
+import { Heart, Activity, Brain, Bone, Stethoscope, Syringe, Microscope, Plus, TestTube, Eye, 
+  ShieldAlert, Baby, User, Thermometer, Ear, ShieldCheck, Pill, Cross, Leaf } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { AllSpecializationsModal } from "./AllSpecializationsModal";
@@ -68,7 +68,7 @@ export function Specializations() {
     },
     { 
       name: "Dentistry", 
-      icon: <Tooth className="w-6 h-6 text-amber-600" />,
+      icon: <ShieldAlert className="w-6 h-6 text-amber-600" />,
       bg: "bg-amber-50" 
     },
     { 
@@ -83,7 +83,7 @@ export function Specializations() {
     },
     { 
       name: "Pulmonology", 
-      icon: <Lungs className="w-6 h-6 text-blue-500" />,
+      icon: <Thermometer className="w-6 h-6 text-blue-500" />,
       bg: "bg-blue-50" 
     },
     { 
@@ -93,7 +93,7 @@ export function Specializations() {
     },
     { 
       name: "Infectious Disease", 
-      icon: <Virus className="w-6 h-6 text-red-600" />,
+      icon: <ShieldCheck className="w-6 h-6 text-red-600" />,
       bg: "bg-red-50" 
     },
     { 
@@ -103,7 +103,7 @@ export function Specializations() {
     },
     { 
       name: "Emergency Medicine", 
-      icon: <FirstAid className="w-6 h-6 text-red-500" />,
+      icon: <Cross className="w-6 h-6 text-red-500" />,
       bg: "bg-red-50" 
     }
   ];

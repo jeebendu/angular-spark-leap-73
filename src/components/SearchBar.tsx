@@ -1,5 +1,5 @@
 
-import { useState, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -34,21 +34,21 @@ export function SearchBar() {
 
   return (
     <div ref={containerRef} className="search-container flex items-center w-full max-w-3xl mx-auto relative">
-      {/* Locality field (30% - increased from 20%) */}
-      <div className="relative w-[30%]">
+      {/* Locality field (35% - increased from 30%) */}
+      <div className="relative w-[35%]">
         <LocationSelector />
       </div>
       
-      {/* Search doctors field (70% - reduced from 80%) */}
-      <div className="relative w-[70%] pl-3 flex items-center">
-        <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+      {/* Search doctors field (65% - reduced from 70%) */}
+      <div className="relative w-[65%] pl-3 flex items-center">
+        <div className="absolute left-5 top-1/2 transform -translate-y-1/2">
           <Search className="h-4 w-4 text-muted-foreground" />
         </div>
         <Input 
           ref={searchInputRef}
           type="text" 
           placeholder="Search doctors, specialties..." 
-          className="border-0 px-0 py-0 h-10 focus-visible:ring-0 placeholder:text-muted-foreground pl-8 bg-transparent"
+          className="border-0 px-0 py-0 h-10 focus-visible:ring-0 placeholder:text-muted-foreground pl-10 bg-transparent"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onFocus={handleSearchFocus}

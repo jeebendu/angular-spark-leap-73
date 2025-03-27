@@ -1,8 +1,16 @@
 
-import { Calendar } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import React, { useState } from "react";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface DateTimeSelectionStepProps {
   selectedDate: string;
@@ -19,24 +27,53 @@ export function DateTimeSelectionStep({
   setSelectedTime, 
   availableTimes 
 }: DateTimeSelectionStepProps) {
+  const [date, setDate] = useState<Date | undefined>(
+    selectedDate ? new Date(selectedDate) : undefined
+  );
+
+  const handleDateSelect = (selectedDate: Date | undefined) => {
+    setDate(selectedDate);
+    if (selectedDate) {
+      setSelectedDate(format(selectedDate, "yyyy-MM-dd"));
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-medium mb-4 flex items-center">
-          <Calendar className="mr-2 h-5 w-5" />
+          <CalendarIcon className="mr-2 h-5 w-5" />
           Select Date and Time
         </h3>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6">
           <div>
-            <Label htmlFor="appointmentDate">Date</Label>
-            <Input 
-              id="appointmentDate" 
-              type="date" 
-              className="mt-1 bg-transparent"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-            />
+            <Label>Date</Label>
+            <div className="mt-1">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !date && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {date ? format(date, "PPP") : <span>Pick a date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 z-50 pointer-events-auto" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={handleDateSelect}
+                    initialFocus
+                    className="p-3 pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
           </div>
           
           <div>

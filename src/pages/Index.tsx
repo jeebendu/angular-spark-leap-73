@@ -22,7 +22,7 @@ const Index = () => {
           transition={{ duration: 0.5 }}
         >
           <div className="rounded-xl bg-white p-6 mb-6 md:p-8 overflow-hidden relative card-shadow">
-            <div className="w-full">
+            <div className="w-full text-center">
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -40,12 +40,47 @@ const Index = () => {
           </div>
         </motion.section>
 
+        {/* Upcoming Appointments */}
+        <motion.section 
+          className="mb-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+        >
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold">Your Upcoming Appointments</h2>
+            <Button variant="link" className="text-primary">View All</Button>
+          </div>
+          <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+            <div className="min-w-[300px] md:w-1/2">
+              <AppointmentCard
+                doctorName="Dr. Sarah Johnson"
+                specialty="Cardiologist"
+                date="Today, 15 May"
+                time="10:00 AM"
+                imageSrc="https://placehold.co/200/eaf7fc/33C3F0?text=SJ&font=montserrat"
+                status="upcoming"
+              />
+            </div>
+            <div className="min-w-[300px] md:w-1/2">
+              <AppointmentCard
+                doctorName="Dr. Michael Chen"
+                specialty="Dermatologist"
+                date="Tomorrow, 16 May"
+                time="02:30 PM"
+                imageSrc="https://placehold.co/200/eaf7fc/33C3F0?text=MC&font=montserrat"
+                status="upcoming"
+              />
+            </div>
+          </div>
+        </motion.section>
+
         {/* Specialties Section */}
         <motion.section 
           className="mb-10"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
         >
           <h2 className="text-xl font-semibold mb-4">Browse by Specialty</h2>
           <SpecialtyList />
@@ -56,7 +91,7 @@ const Index = () => {
           className="mb-10"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.6, duration: 0.5 }}
+          transition={{ delay: 0.8, duration: 0.5 }}
         >
           <h2 className="text-xl font-semibold mb-4">Why Choose ClinicHub</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -87,37 +122,6 @@ const Index = () => {
                 <p className="text-sm text-muted-foreground">Thousands of 5-star reviews from satisfied patients</p>
               </CardContent>
             </Card>
-          </div>
-        </motion.section>
-
-        {/* Upcoming Appointments */}
-        <motion.section 
-          className="mb-10"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8, duration: 0.5 }}
-        >
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">Your Upcoming Appointments</h2>
-            <Button variant="link" className="text-primary">View All</Button>
-          </div>
-          <div className="grid gap-4">
-            <AppointmentCard
-              doctorName="Dr. Sarah Johnson"
-              specialty="Cardiologist"
-              date="Today, 15 May"
-              time="10:00 AM"
-              imageSrc="https://placehold.co/200/eaf7fc/33C3F0?text=SJ&font=montserrat"
-              status="upcoming"
-            />
-            <AppointmentCard
-              doctorName="Dr. Michael Chen"
-              specialty="Dermatologist"
-              date="Tomorrow, 16 May"
-              time="02:30 PM"
-              imageSrc="https://placehold.co/200/eaf7fc/33C3F0?text=MC&font=montserrat"
-              status="upcoming"
-            />
           </div>
         </motion.section>
 

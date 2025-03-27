@@ -19,16 +19,21 @@ import { ReviewStep } from "@/components/appointment/steps/ReviewStep";
 import { PaymentStep } from "@/components/appointment/steps/PaymentStep";
 import { NavigationButtons } from "@/components/appointment/NavigationButtons";
 
+// Import the appointment service
+import { 
+  validateCurrentStep, 
+  bookAppointment, 
+  getClinics, 
+  getAvailableTimes, 
+  getFamilyMembers,
+  getClinicById,
+  getFamilyMemberById
+} from "@/services/appointmentService";
+
 interface BookAppointmentModalProps {
   doctorName?: string;
   specialty?: string;
   trigger: React.ReactNode;
-}
-
-interface FamilyMember {
-  id: string;
-  name: string;
-  relationship: string;
 }
 
 export function BookAppointmentModal({ doctorName, specialty, trigger }: BookAppointmentModalProps) {
@@ -41,25 +46,10 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
   const [paymentMethod, setPaymentMethod] = useState("card");
   const { toast } = useToast();
   
-  // Mock data for family members
-  const familyMembers: FamilyMember[] = [
-    { id: "1", name: "Sarah Smith", relationship: "Spouse" },
-    { id: "2", name: "Alex Smith", relationship: "Child" },
-    { id: "3", name: "Jane Smith", relationship: "Parent" }
-  ];
-  
-  // Mock data for clinics
-  const clinics = [
-    { id: "1", name: "HealthFirst Clinic, Indiranagar", address: "100 Main St, Indiranagar, Bangalore" },
-    { id: "2", name: "MediCare Center, Koramangala", address: "200 Park Ave, Koramangala, Bangalore" },
-    { id: "3", name: "WellBeing Hospital, HSR Layout", address: "300 Oak Rd, HSR Layout, Bangalore" }
-  ];
-  
-  // Available times
-  const availableTimes = [
-    "09:00 AM", "10:00 AM", "11:00 AM", 
-    "01:00 PM", "02:00 PM", "03:00 PM", "04:00 PM"
-  ];
+  // Get data from service
+  const clinics = getClinics();
+  const familyMembers = getFamilyMembers();
+  const availableTimes = getAvailableTimes();
   
   const stepLabels = ["Clinic", "Date & Time", "Patient", "Review", "Payment"];
   
@@ -68,57 +58,29 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
     if (step === 2 && selectedDate && selectedTime) {
       // Add a small delay to allow user to see their selection before advancing
       const timer = setTimeout(() => {
-        if (validateCurrentStep()) {
+        if (validateCurrentStep(step, { 
+          selectedClinic, selectedDate, selectedTime, selectedMember, doctorName, specialty 
+        }, { toast })) {
           setStep(3);
         }
       }, 800);
       
       return () => clearTimeout(timer);
     }
-  }, [selectedDate, selectedTime, step]);
+  }, [selectedDate, selectedTime, step, selectedClinic, selectedMember, doctorName, specialty, toast]);
   
   const goToStep = (stepNumber: number) => {
-    if (stepNumber <= step || validateCurrentStep()) {
+    if (stepNumber <= step || validateCurrentStep(step, { 
+      selectedClinic, selectedDate, selectedTime, selectedMember, doctorName, specialty 
+    }, { toast })) {
       setStep(stepNumber);
     }
   };
   
-  const validateCurrentStep = () => {
-    // Simple validation for each step
-    switch(step) {
-      case 1:
-        if (!selectedClinic) {
-          toast({
-            title: "Please select a clinic",
-            description: "You need to select a clinic to proceed.",
-            variant: "destructive"
-          });
-          return false;
-        }
-        return true;
-      case 2:
-        if (!selectedDate || !selectedTime) {
-          toast({
-            title: "Required fields missing",
-            description: "Please select both date and time for your appointment.",
-            variant: "destructive"
-          });
-          return false;
-        }
-        return true;
-      case 3:
-        // No validation needed for patient selection
-        return true;
-      case 4:
-        // No validation needed for appointment details
-        return true;
-      default:
-        return true;
-    }
-  };
-  
   const nextStep = () => {
-    if (validateCurrentStep() && step < 5) {
+    if (validateCurrentStep(step, { 
+      selectedClinic, selectedDate, selectedTime, selectedMember, doctorName, specialty 
+    }, { toast }) && step < 5) {
       setStep(step + 1);
     }
   };
@@ -130,12 +92,21 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
   };
   
   const handleBookAppointment = () => {
-    toast({
-      title: "Appointment Booked!",
-      description: `Your appointment has been confirmed for ${selectedDate} at ${selectedTime}.`,
-    });
+    bookAppointment({
+      selectedClinic,
+      selectedDate,
+      selectedTime,
+      selectedMember,
+      doctorName,
+      specialty
+    }, { toast });
+    
     setOpen(false);
     // Reset state
+    resetForm();
+  };
+  
+  const resetForm = () => {
     setStep(1);
     setSelectedClinic("");
     setSelectedDate("");
@@ -145,7 +116,10 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
   };
   
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={(newOpen) => {
+      setOpen(newOpen);
+      if (!newOpen) resetForm();
+    }}>
       <DialogTrigger asChild>
         {trigger}
       </DialogTrigger>
@@ -160,7 +134,9 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
             currentStep={step} 
             totalSteps={5} 
             onStepClick={goToStep} 
-            validateCurrentStep={validateCurrentStep} 
+            validateCurrentStep={() => validateCurrentStep(step, { 
+              selectedClinic, selectedDate, selectedTime, selectedMember, doctorName, specialty 
+            }, { toast })} 
           />
 
           {/* Step labels */}

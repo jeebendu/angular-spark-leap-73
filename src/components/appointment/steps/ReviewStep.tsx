@@ -1,18 +1,6 @@
 
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-
-interface Clinic {
-  id: string;
-  name: string;
-  address: string;
-}
-
-interface FamilyMember {
-  id: string;
-  name: string;
-  relationship: string;
-}
+import { ClipboardCheck } from "lucide-react";
+import { getClinicById, getFamilyMemberById, Clinic, FamilyMember } from "@/services/appointmentService";
 
 interface ReviewStepProps {
   doctorName?: string;
@@ -28,61 +16,55 @@ interface ReviewStepProps {
 export function ReviewStep({ 
   doctorName, 
   specialty, 
-  selectedClinic,
-  clinics,
-  selectedDate,
-  selectedTime,
-  selectedMember,
-  familyMembers
+  selectedClinic, 
+  clinics, 
+  selectedDate, 
+  selectedTime, 
+  selectedMember, 
+  familyMembers 
 }: ReviewStepProps) {
+  const clinic = getClinicById(selectedClinic);
+  const patient = getFamilyMemberById(selectedMember);
+
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-medium mb-4">Review Appointment Details</h3>
+      <h3 className="text-lg font-medium mb-4 flex items-center">
+        <ClipboardCheck className="mr-2 h-5 w-5" />
+        Review Appointment Details
+      </h3>
       
-      <div className="space-y-4">
-        <div className="flex flex-col space-y-1">
-          <span className="text-sm text-gray-500">Doctor</span>
-          <span className="font-medium">{doctorName || "Dr. Sarah Johnson"}</span>
+      <div className="bg-gray-50 rounded-lg p-4 space-y-4">
+        <div className="space-y-2">
+          <h4 className="font-medium text-sm">Doctor</h4>
+          <div className="bg-white p-3 rounded-md">
+            <p className="font-medium">{doctorName || "Selected Doctor"}</p>
+            {specialty && <p className="text-sm text-gray-500">{specialty}</p>}
+          </div>
         </div>
         
-        <div className="flex flex-col space-y-1">
-          <span className="text-sm text-gray-500">Specialty</span>
-          <span className="font-medium">{specialty || "Cardiologist"}</span>
+        <div className="space-y-2">
+          <h4 className="font-medium text-sm">Clinic</h4>
+          <div className="bg-white p-3 rounded-md">
+            <p className="font-medium">{clinic?.name}</p>
+            <p className="text-sm text-gray-500">{clinic?.address}</p>
+          </div>
         </div>
         
-        <div className="flex flex-col space-y-1">
-          <span className="text-sm text-gray-500">Clinic</span>
-          <span className="font-medium">
-            {clinics.find(c => c.id === selectedClinic)?.name || "Not selected"}
-          </span>
+        <div className="space-y-2">
+          <h4 className="font-medium text-sm">Date & Time</h4>
+          <div className="bg-white p-3 rounded-md">
+            <p className="font-medium">{selectedDate}</p>
+            <p className="text-sm text-gray-500">{selectedTime}</p>
+          </div>
         </div>
         
-        <div className="flex flex-col space-y-1">
-          <span className="text-sm text-gray-500">Date</span>
-          <span className="font-medium">{selectedDate || "Not selected"}</span>
+        <div className="space-y-2">
+          <h4 className="font-medium text-sm">Patient</h4>
+          <div className="bg-white p-3 rounded-md">
+            <p className="font-medium">{patient?.name}</p>
+            <p className="text-sm text-gray-500">{patient?.relationship}</p>
+          </div>
         </div>
-        
-        <div className="flex flex-col space-y-1">
-          <span className="text-sm text-gray-500">Time</span>
-          <span className="font-medium">{selectedTime || "Not selected"}</span>
-        </div>
-        
-        <div className="flex flex-col space-y-1">
-          <span className="text-sm text-gray-500">Patient</span>
-          <span className="font-medium">
-            {selectedMember === "self" 
-              ? "You" 
-              : familyMembers.find(m => m.id === selectedMember)?.name || "Not selected"}
-          </span>
-        </div>
-      </div>
-      
-      <div className="border-t pt-4 mt-4">
-        <Label className="block mb-2">Reason for Visit (Optional)</Label>
-        <Input 
-          placeholder="Enter the reason for your visit" 
-          className="bg-transparent"
-        />
       </div>
     </div>
   );

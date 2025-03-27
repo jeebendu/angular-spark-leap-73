@@ -28,13 +28,13 @@ export function LanguageSwitcher() {
 
   const getCurrentLanguageName = () => {
     switch(i18n.language) {
-      case 'en': return 'English';
-      case 'hi': return 'हिंदी';
-      case 'ta': return 'தமிழ்';
-      case 'te': return 'తెలుగు';
-      case 'bn': return 'বাংলা';
-      case 'od': return 'ଓଡ଼ିଆ';
-      default: return 'English';
+      case 'en': return 'EN';
+      case 'hi': return 'HI';
+      case 'ta': return 'TA';
+      case 'te': return 'TE';
+      case 'bn': return 'BN';
+      case 'od': return 'OD';
+      default: return 'EN';
     }
   };
   
@@ -58,9 +58,9 @@ export function LanguageSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="h-9 px-3 gap-2 border border-gray-300 rounded-md hover:bg-gray-100">
+        <Button variant="outline" size="sm" className="h-9 px-3 gap-2 border border-gray-200 rounded-full hover:bg-gray-100">
           <Globe className="h-4 w-4 text-primary" />
-          <span className="text-sm font-medium">{getCurrentLanguageName()}</span>
+          <span className="text-sm font-medium md:inline hidden">{getCurrentLanguageName()}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">

@@ -18,11 +18,11 @@ export function MobileNavigation() {
         </Link>
         <Link to="/tests" className={`flex flex-col items-center p-2 ${location.pathname === '/tests' ? 'text-primary' : 'text-muted-foreground'}`}>
           <Search className="w-5 h-5" />
-          <span className="text-xs mt-1">Tests</span>
+          <span className="text-xs mt-1">Find</span>
         </Link>
         <Link to="/reports" className={`flex flex-col items-center p-2 ${location.pathname === '/reports' ? 'text-primary' : 'text-muted-foreground'}`}>
           <Calendar className="w-5 h-5" />
-          <span className="text-xs mt-1">Reports</span>
+          <span className="text-xs mt-1">Bookings</span>
         </Link>
         <Link to="/chat" className={`flex flex-col items-center p-2 ${location.pathname === '/chat' ? 'text-primary' : 'text-muted-foreground'}`}>
           <MessageSquare className="w-5 h-5" />
@@ -30,7 +30,7 @@ export function MobileNavigation() {
         </Link>
         <Link to="/account" className={`flex flex-col items-center p-2 ${location.pathname === '/account' ? 'text-primary' : 'text-muted-foreground'}`}>
           <User className="w-5 h-5" />
-          <span className="text-xs mt-1">Account</span>
+          <span className="text-xs mt-1">Profile</span>
         </Link>
       </nav>
     </div>

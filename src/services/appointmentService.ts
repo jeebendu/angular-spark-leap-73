@@ -1,4 +1,3 @@
-
 import { type ToasterToast } from "@/hooks/use-toast";
 
 // Types
@@ -10,8 +9,8 @@ export interface Clinic {
 
 export interface FamilyMember {
   id: string;
-  name: string;
   relationship: string;
+  name: string;
 }
 
 interface AppointmentDetails {

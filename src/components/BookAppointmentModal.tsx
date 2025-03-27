@@ -44,7 +44,7 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedMember, setSelectedMember] = useState("self");
   const [paymentMethod, setPaymentMethod] = useState("card");
-  const { toast } = useToast();
+  const toastObject = useToast();
   
   // Get data from service
   const clinics = getClinics();
@@ -60,19 +60,19 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
       const timer = setTimeout(() => {
         if (validateCurrentStep(step, { 
           selectedClinic, selectedDate, selectedTime, selectedMember, doctorName, specialty 
-        }, { toast })) {
+        }, toastObject)) {
           setStep(3);
         }
       }, 800);
       
       return () => clearTimeout(timer);
     }
-  }, [selectedDate, selectedTime, step, selectedClinic, selectedMember, doctorName, specialty, toast]);
+  }, [selectedDate, selectedTime, step, selectedClinic, selectedMember, doctorName, specialty, toastObject]);
   
   const goToStep = (stepNumber: number) => {
     if (stepNumber <= step || validateCurrentStep(step, { 
       selectedClinic, selectedDate, selectedTime, selectedMember, doctorName, specialty 
-    }, { toast })) {
+    }, toastObject)) {
       setStep(stepNumber);
     }
   };
@@ -80,7 +80,7 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
   const nextStep = () => {
     if (validateCurrentStep(step, { 
       selectedClinic, selectedDate, selectedTime, selectedMember, doctorName, specialty 
-    }, { toast }) && step < 5) {
+    }, toastObject) && step < 5) {
       setStep(step + 1);
     }
   };
@@ -99,7 +99,7 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
       selectedMember,
       doctorName,
       specialty
-    }, { toast });
+    }, toastObject);
     
     setOpen(false);
     // Reset state
@@ -136,7 +136,7 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
             onStepClick={goToStep} 
             validateCurrentStep={() => validateCurrentStep(step, { 
               selectedClinic, selectedDate, selectedTime, selectedMember, doctorName, specialty 
-            }, { toast })} 
+            }, toastObject)} 
           />
 
           {/* Step labels */}

@@ -1,5 +1,5 @@
 
-import { useToast } from "@/components/ui/use-toast";
+import { type ToasterToast } from "@/hooks/use-toast";
 
 // Types
 export interface Clinic {
@@ -23,6 +23,12 @@ interface AppointmentDetails {
   specialty?: string;
 }
 
+export interface ToastHelpers {
+  toast: (props: any) => { id: string; dismiss: () => void; update: (props: ToasterToast) => void };
+  dismiss: (toastId?: string) => void;
+  toasts: ToasterToast[];
+}
+
 // Mock data for family members
 export const getFamilyMembers = (): FamilyMember[] => [
   { id: "1", name: "Sarah Smith", relationship: "Spouse" },
@@ -44,9 +50,9 @@ export const getAvailableTimes = (): string[] => [
 ];
 
 // Validation functions
-export const validateClinicSelection = (selectedClinic: string, toast: ReturnType<typeof useToast>): boolean => {
+export const validateClinicSelection = (selectedClinic: string, toastHelpers: ToastHelpers): boolean => {
   if (!selectedClinic) {
-    toast.toast({
+    toastHelpers.toast({
       title: "Please select a clinic",
       description: "You need to select a clinic to proceed.",
       variant: "destructive"
@@ -59,10 +65,10 @@ export const validateClinicSelection = (selectedClinic: string, toast: ReturnTyp
 export const validateDateTimeSelection = (
   selectedDate: string, 
   selectedTime: string,
-  toast: ReturnType<typeof useToast>
+  toastHelpers: ToastHelpers
 ): boolean => {
   if (!selectedDate || !selectedTime) {
-    toast.toast({
+    toastHelpers.toast({
       title: "Required fields missing",
       description: "Please select both date and time for your appointment.",
       variant: "destructive"
@@ -80,13 +86,13 @@ export const validateReviewStep = (): boolean => true;
 export const validateCurrentStep = (
   step: number,
   appointmentDetails: AppointmentDetails,
-  toast: ReturnType<typeof useToast>
+  toastHelpers: ToastHelpers
 ): boolean => {
   switch(step) {
     case 1:
-      return validateClinicSelection(appointmentDetails.selectedClinic, toast);
+      return validateClinicSelection(appointmentDetails.selectedClinic, toastHelpers);
     case 2:
-      return validateDateTimeSelection(appointmentDetails.selectedDate, appointmentDetails.selectedTime, toast);
+      return validateDateTimeSelection(appointmentDetails.selectedDate, appointmentDetails.selectedTime, toastHelpers);
     case 3:
       return validatePatientSelection();
     case 4:
@@ -99,10 +105,10 @@ export const validateCurrentStep = (
 // Book appointment function
 export const bookAppointment = (
   appointmentDetails: AppointmentDetails,
-  toast: ReturnType<typeof useToast>
+  toastHelpers: ToastHelpers
 ): void => {
   // In a real app, this would make an API call to save the appointment
-  toast.toast({
+  toastHelpers.toast({
     title: "Appointment Booked!",
     description: `Your appointment has been confirmed for ${appointmentDetails.selectedDate} at ${appointmentDetails.selectedTime}.`,
   });

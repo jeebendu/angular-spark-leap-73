@@ -1,10 +1,11 @@
 
 import { Link } from "react-router-dom";
-import { Bell, Calendar, Globe, MessageSquare, Search, User } from "lucide-react";
+import { Bell, Calendar, Globe, MapPin, MessageSquare, Search, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export function Navbar() {
   const { t } = useTranslation();
@@ -32,6 +33,22 @@ export function Navbar() {
           </div>
           <span className="font-semibold text-lg hidden md:block">ClinicHub</span>
         </Link>
+        
+        <div className="hidden md:flex items-center gap-3 mr-4">
+          <MapPin className="text-primary h-4 w-4" />
+          <Select defaultValue="bangalore">
+            <SelectTrigger className="border-0 px-0 py-0 h-auto w-auto bg-transparent focus:ring-0 font-medium">
+              <SelectValue placeholder="Select location" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="bangalore">Bangalore</SelectItem>
+              <SelectItem value="mumbai">Mumbai</SelectItem>
+              <SelectItem value="delhi">Delhi</SelectItem>
+              <SelectItem value="hyderabad">Hyderabad</SelectItem>
+              <SelectItem value="chennai">Chennai</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
         
         <div className="hidden md:flex items-center gap-6">
           <nav className="flex items-center gap-6">

@@ -21,8 +21,8 @@ const Index = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="rounded-xl bg-white p-6 mb-6 md:p-8 lg:flex items-center justify-between overflow-hidden relative card-shadow">
-            <div className="mb-6 lg:mb-0 lg:max-w-lg">
+          <div className="rounded-xl bg-white p-6 mb-6 md:p-8 overflow-hidden relative card-shadow">
+            <div className="w-full">
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -35,16 +35,6 @@ const Index = () => {
               </motion.div>
               
               <SearchBar />
-            </div>
-            <div className="hidden lg:block max-w-xs relative z-10">
-              <motion.img 
-                src="https://placehold.co/400x300/eaf7fc/33C3F0?text=Doctor+Consultation&font=montserrat" 
-                alt="Doctor consultation"
-                className="rounded-lg shadow-lg"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.3, duration: 0.5 }}
-              />
             </div>
             <div className="absolute -right-16 -bottom-16 w-64 h-64 rounded-full opacity-10 sky-gradient"></div>
           </div>

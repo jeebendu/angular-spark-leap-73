@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Bell, Menu } from "lucide-react";
@@ -9,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
+import { sheet } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import { SearchBar } from "@/components/SearchBar";
 import { LocationSelector } from "@/components/LocationSelector";
@@ -21,11 +22,13 @@ export function Navbar() {
     console.log("User logged out");
     // In a real app, you would handle logout here
   };
+
+  const { SheetSide, SheetTrigger, SheetContent } = sheet;
   
   return (
     <header className="sticky top-0 z-40 w-full border-b border-b-gray-200 bg-white">
       <div className="container flex h-16 items-center px-4 sm:px-6">
-        <Sheet>
+        <SheetSide>
           <SheetTrigger asChild className="lg:hidden block">
             <Button variant="ghost" size="icon" className="-ml-3 h-10 w-10">
               <Menu className="h-5 w-5" />
@@ -98,7 +101,7 @@ export function Navbar() {
               </div>
             </nav>
           </SheetContent>
-        </Sheet>
+        </SheetSide>
         
         <Link to="/" className="flex items-center">
           <img 

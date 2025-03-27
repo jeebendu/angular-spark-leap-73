@@ -1,5 +1,5 @@
 
-import { Heart, Brain, Eye, Stethoscope, Bone, Baby, Tooth, Activity } from "lucide-react";
+import { Heart, Brain, Eye, Stethoscope, Bone, Baby, Activity, Scissors } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface SpecialtyItemProps {
@@ -29,7 +29,7 @@ export function SpecialtyList() {
     { name: "Internal Medicine", icon: <Stethoscope className="h-5 w-5" /> },
     { name: "Orthopedics", icon: <Bone className="h-5 w-5" /> },
     { name: "Pediatrics", icon: <Baby className="h-5 w-5" /> },
-    { name: "Dentistry", icon: <Tooth className="h-5 w-5" /> },
+    { name: "Dentistry", icon: <Scissors className="h-5 w-5" /> },
     { name: "General Health", icon: <Activity className="h-5 w-5" /> }
   ];
   

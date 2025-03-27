@@ -109,6 +109,10 @@
   .search-container {
     @apply bg-white p-2 rounded-full border border-gray-200 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/30 transition-all duration-200 shadow-sm;
   }
+
+  .glass-morphism {
+    @apply backdrop-blur-lg bg-white/90 shadow-lg border border-white/20;
+  }
 }
 
 /* Animation classes */

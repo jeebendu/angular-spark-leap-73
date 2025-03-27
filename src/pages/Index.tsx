@@ -1,5 +1,5 @@
 
-import { Calendar, MapPin, Star, FileText, Award, ThumbsUp, Clock } from "lucide-react";
+import { Calendar, MapPin, Star, FileText, Award, ThumbsUp, Clock, ChevronRight } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import { SearchBar } from "@/components/SearchBar";
 import { DoctorCard } from "@/components/DoctorCard";
@@ -9,8 +9,26 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SpecialtyList } from "@/components/SpecialtyList";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useNavigate } from "react-router-dom";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const Index = () => {
+  const isMobile = useIsMobile();
+  const navigate = useNavigate();
+  const [allSpecialtiesOpen, setAllSpecialtiesOpen] = useState(false);
+
+  const handleViewAllAppointments = () => {
+    navigate("/reports");
+  };
+
   return (
     <AppLayout>
       <div className="container px-4 py-6">
@@ -27,6 +45,7 @@ const Index = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
+                className={isMobile ? "hidden" : "block"}
               >
                 <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2">Find and Book the Best Doctors</h1>
                 <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6">
@@ -49,39 +68,39 @@ const Index = () => {
         >
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg sm:text-xl font-semibold">Your Upcoming Appointments</h2>
-            <Button variant="link" className="text-primary text-sm sm:text-base">View All</Button>
+            <Button 
+              variant="link" 
+              className="text-primary text-sm sm:text-base flex items-center"
+              onClick={handleViewAllAppointments}
+            >
+              View All <ChevronRight className="h-4 w-4" />
+            </Button>
           </div>
-          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-            <div className="min-w-[280px] sm:min-w-[300px] md:min-w-0 md:w-1/2 lg:w-1/3">
-              <AppointmentCard
-                doctorName="Dr. Sarah Johnson"
-                specialty="Cardiologist"
-                date="Today, 15 May"
-                time="10:00 AM"
-                imageSrc="https://placehold.co/200/eaf7fc/33C3F0?text=SJ&font=montserrat"
-                status="upcoming"
-              />
-            </div>
-            <div className="min-w-[280px] sm:min-w-[300px] md:min-w-0 md:w-1/2 lg:w-1/3">
-              <AppointmentCard
-                doctorName="Dr. Michael Chen"
-                specialty="Dermatologist"
-                date="Tomorrow, 16 May"
-                time="02:30 PM"
-                imageSrc="https://placehold.co/200/eaf7fc/33C3F0?text=MC&font=montserrat"
-                status="upcoming"
-              />
-            </div>
-            <div className="min-w-[280px] sm:min-w-[300px] md:min-w-0 md:w-1/2 lg:w-1/3">
-              <AppointmentCard
-                doctorName="Dr. Emma Wilson"
-                specialty="Pediatrician"
-                date="18 May"
-                time="11:15 AM"
-                imageSrc="https://placehold.co/200/eaf7fc/33C3F0?text=EW&font=montserrat"
-                status="upcoming"
-              />
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <AppointmentCard
+              doctorName="Dr. Sarah Johnson"
+              specialty="Cardiologist"
+              date="Today, 15 May"
+              time="10:00 AM"
+              imageSrc="https://placehold.co/200/eaf7fc/33C3F0?text=SJ&font=montserrat"
+              status="upcoming"
+            />
+            <AppointmentCard
+              doctorName="Dr. Michael Chen"
+              specialty="Dermatologist"
+              date="Tomorrow, 16 May"
+              time="02:30 PM"
+              imageSrc="https://placehold.co/200/eaf7fc/33C3F0?text=MC&font=montserrat"
+              status="upcoming"
+            />
+            <AppointmentCard
+              doctorName="Dr. Emma Wilson"
+              specialty="Pediatrician"
+              date="18 May"
+              time="11:15 AM"
+              imageSrc="https://placehold.co/200/eaf7fc/33C3F0?text=EW&font=montserrat"
+              status="upcoming"
+            />
           </div>
         </motion.section>
 
@@ -92,7 +111,48 @@ const Index = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.5 }}
         >
-          <h2 className="text-lg sm:text-xl font-semibold mb-4">Browse by Specialty</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg sm:text-xl font-semibold">Browse by Specialty</h2>
+            <Dialog open={allSpecialtiesOpen} onOpenChange={setAllSpecialtiesOpen}>
+              <DialogTrigger asChild>
+                <Button 
+                  variant="link" 
+                  className="text-primary text-sm sm:text-base flex items-center"
+                >
+                  See More <ChevronRight className="h-4 w-4" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="glass-morphism md:max-w-3xl">
+                <DialogHeader>
+                  <DialogTitle className="text-center text-xl font-semibold mb-4">All Specialties</DialogTitle>
+                </DialogHeader>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-h-[60vh] overflow-y-auto scrollbar-hide">
+                  {/* We render a larger list of specialties here */}
+                  {[...Array(16)].map((_, index) => {
+                    // Use the first 8 specialties from SpecialtyList and repeat them
+                    const specialties = [
+                      { name: "Cardiology", icon: <Award className="h-5 w-5" /> },
+                      { name: "Neurology", icon: <Award className="h-5 w-5" /> },
+                      { name: "Ophthalmology", icon: <Award className="h-5 w-5" /> },
+                      { name: "Internal Medicine", icon: <Award className="h-5 w-5" /> },
+                      { name: "Orthopedics", icon: <Award className="h-5 w-5" /> },
+                      { name: "Pediatrics", icon: <Award className="h-5 w-5" /> },
+                      { name: "Dentistry", icon: <Award className="h-5 w-5" /> },
+                      { name: "General Health", icon: <Award className="h-5 w-5" /> }
+                    ];
+                    const specialty = specialties[index % 8];
+                    
+                    return (
+                      <div key={index} className="specialty-item">
+                        <div className="specialty-icon">{specialty.icon}</div>
+                        <span className="text-sm font-medium">{specialty.name}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
           <SpecialtyList />
         </motion.section>
 
@@ -143,7 +203,9 @@ const Index = () => {
         >
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg sm:text-xl font-semibold">Top Rated Doctors</h2>
-            <Button variant="link" className="text-primary text-sm sm:text-base">View All</Button>
+            <Button variant="link" className="text-primary text-sm sm:text-base flex items-center">
+              View All <ChevronRight className="h-4 w-4" />
+            </Button>
           </div>
           
           <Tabs defaultValue="all">

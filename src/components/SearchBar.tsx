@@ -15,15 +15,15 @@ export function SearchBar() {
   const isMobile = useIsMobile();
 
   return (
-    <div className="search-container flex flex-col sm:flex-row items-center w-full max-w-3xl mx-auto">
-      {/* In mobile, we swap the order of the fields */}
-      <div className={`relative flex-1 px-3 w-full ${isMobile ? 'order-2' : 'order-1'}`}>
+    <div className="search-container flex items-center w-full max-w-3xl mx-auto">
+      {/* Locality field (30%) */}
+      <div className="relative w-[30%] pr-2 border-r border-gray-200">
         <Popover open={isOpen} onOpenChange={setIsOpen}>
           <PopoverTrigger asChild>
             <Input 
               type="text" 
               placeholder="Locality, Pincode..." 
-              className="border-0 px-0 py-0 h-9 focus-visible:ring-0 placeholder:text-muted-foreground min-w-[140px] cursor-pointer"
+              className="border-0 px-3 py-0 h-10 focus-visible:ring-0 placeholder:text-muted-foreground cursor-pointer"
               readOnly
               onClick={() => setIsOpen(true)}
             />
@@ -35,27 +35,35 @@ export function SearchBar() {
               <div className="relative">
                 <Input 
                   type="text" 
-                  placeholder="Enter city name or PIN code" 
-                  className="border border-gray-300 rounded-full px-4 py-2 w-full"
+                  placeholder="Enter locality or PIN code" 
+                  className="border border-gray-300 rounded-md px-4 py-2 w-full"
                 />
               </div>
               
-              <Button variant="outline" className="w-full flex items-center justify-center gap-2 border border-gray-300 rounded-full">
+              <Button variant="outline" className="w-full flex items-center justify-center gap-2 border border-gray-300 rounded-md">
                 <Navigation className="h-4 w-4 text-primary" />
                 Use current location
               </Button>
               
               <div className="pt-2">
-                <h4 className="font-medium text-sm mb-3">Popular Cities</h4>
-                <div className="grid grid-cols-2 gap-y-4">
-                  <button className="text-left font-medium text-sm hover:text-primary">Delhi</button>
-                  <button className="text-left font-medium text-sm hover:text-primary">Mumbai</button>
-                  <button className="text-left font-medium text-sm hover:text-primary">Bangalore</button>
-                  <button className="text-left font-medium text-sm hover:text-primary">Hyderabad</button>
-                  <button className="text-left font-medium text-sm hover:text-primary">Chennai</button>
-                  <button className="text-left font-medium text-sm hover:text-primary">Kolkata</button>
-                  <button className="text-left font-medium text-sm hover:text-primary">Bhubaneswar</button>
-                  <button className="text-left font-medium text-sm hover:text-primary">Pune</button>
+                <h4 className="font-medium text-sm mb-3">Popular Locations</h4>
+                <div className="grid grid-cols-1 gap-y-2">
+                  <button className="text-left px-2 py-1.5 rounded-md hover:bg-gray-100 font-medium text-sm hover:text-primary flex items-center">
+                    <MapPin className="h-3.5 w-3.5 mr-2 text-gray-500" />
+                    Koramangala, Bangalore
+                  </button>
+                  <button className="text-left px-2 py-1.5 rounded-md hover:bg-gray-100 font-medium text-sm hover:text-primary flex items-center">
+                    <MapPin className="h-3.5 w-3.5 mr-2 text-gray-500" />
+                    Indiranagar, Bangalore
+                  </button>
+                  <button className="text-left px-2 py-1.5 rounded-md hover:bg-gray-100 font-medium text-sm hover:text-primary flex items-center">
+                    <MapPin className="h-3.5 w-3.5 mr-2 text-gray-500" />
+                    HSR Layout, Bangalore
+                  </button>
+                  <button className="text-left px-2 py-1.5 rounded-md hover:bg-gray-100 font-medium text-sm hover:text-primary flex items-center">
+                    <MapPin className="h-3.5 w-3.5 mr-2 text-gray-500" />
+                    Whitefield, Bangalore
+                  </button>
                 </div>
               </div>
             </div>
@@ -63,17 +71,17 @@ export function SearchBar() {
         </Popover>
       </div>
       
-      <div className={`relative flex items-center w-full sm:w-auto px-3 border-t sm:border-t-0 sm:border-l border-gray-200 mt-2 sm:mt-0 pt-2 sm:pt-0 ${isMobile ? 'order-1' : 'order-2'}`}>
+      {/* Search doctors field (70%) */}
+      <div className="relative w-[70%] pl-3">
         <Input 
           type="text" 
           placeholder="Search doctors, specialties..." 
-          className="border-0 px-0 py-0 h-9 focus-visible:ring-0 placeholder:text-muted-foreground"
+          className="border-0 px-0 py-0 h-10 focus-visible:ring-0 placeholder:text-muted-foreground pl-0"
         />
+        <Button className="rounded-full sky-button h-9 w-9 p-0 absolute right-0 top-0.5">
+          <Search className="h-4 w-4" />
+        </Button>
       </div>
-      
-      <Button className="rounded-full sky-button h-9 w-9 p-0 mt-2 sm:mt-0 ml-auto sm:ml-0 order-3">
-        <Search className="h-4 w-4" />
-      </Button>
     </div>
   );
 }

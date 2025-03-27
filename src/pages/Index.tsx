@@ -1,5 +1,5 @@
 
-import { Calendar, MapPin, Star, FileText, Award, ThumbsUp, Clock, ChevronRight } from "lucide-react";
+import { Calendar, Star, Award, ThumbsUp, Clock, ChevronRight } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import { SearchBar } from "@/components/SearchBar";
 import { DoctorCard } from "@/components/DoctorCard";
@@ -26,7 +26,7 @@ const Index = () => {
   const [allSpecialtiesOpen, setAllSpecialtiesOpen] = useState(false);
 
   const handleViewAllAppointments = () => {
-    navigate("/reports");
+    navigate("/appointments");
   };
 
   return (
@@ -76,30 +76,81 @@ const Index = () => {
               View All <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <AppointmentCard
-              doctorName="Dr. Sarah Johnson"
-              specialty="Cardiologist"
-              date="Today, 15 May"
-              time="10:00 AM"
-              imageSrc="https://placehold.co/200/eaf7fc/33C3F0?text=SJ&font=montserrat"
-              status="upcoming"
-            />
-            <AppointmentCard
-              doctorName="Dr. Michael Chen"
-              specialty="Dermatologist"
-              date="Tomorrow, 16 May"
-              time="02:30 PM"
-              imageSrc="https://placehold.co/200/eaf7fc/33C3F0?text=MC&font=montserrat"
-              status="upcoming"
-            />
-            <AppointmentCard
-              doctorName="Dr. Emma Wilson"
-              specialty="Pediatrician"
-              date="18 May"
-              time="11:15 AM"
-              imageSrc="https://placehold.co/200/eaf7fc/33C3F0?text=EW&font=montserrat"
-              status="upcoming"
+          <div className="appointment-row">
+            <div className="appointment-card-small">
+              <div className="flex gap-3">
+                <div className="w-12 h-12 rounded-full overflow-hidden">
+                  <img 
+                    src="https://placehold.co/200/eaf7fc/33C3F0?text=SJ&font=montserrat" 
+                    alt="Dr. Sarah Johnson" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-medium text-sm">Dr. Sarah Johnson</h3>
+                  <p className="text-xs text-gray-500">Cardiologist</p>
+                  <div className="flex items-center mt-2 text-xs">
+                    <Calendar className="h-3 w-3 mr-1 text-primary" />
+                    <span>Today, 10:00 AM</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="appointment-card-small">
+              <div className="flex gap-3">
+                <div className="w-12 h-12 rounded-full overflow-hidden">
+                  <img 
+                    src="https://placehold.co/200/eaf7fc/33C3F0?text=MC&font=montserrat" 
+                    alt="Dr. Michael Chen" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-medium text-sm">Dr. Michael Chen</h3>
+                  <p className="text-xs text-gray-500">Dermatologist</p>
+                  <div className="flex items-center mt-2 text-xs">
+                    <Calendar className="h-3 w-3 mr-1 text-primary" />
+                    <span>Tomorrow, 02:30 PM</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="appointment-card-small">
+              <div className="flex gap-3">
+                <div className="w-12 h-12 rounded-full overflow-hidden">
+                  <img 
+                    src="https://placehold.co/200/eaf7fc/33C3F0?text=EW&font=montserrat" 
+                    alt="Dr. Emma Wilson" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-medium text-sm">Dr. Emma Wilson</h3>
+                  <p className="text-xs text-gray-500">Pediatrician</p>
+                  <div className="flex items-center mt-2 text-xs">
+                    <Calendar className="h-3 w-3 mr-1 text-primary" />
+                    <span>18 May, 11:15 AM</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.section>
+        
+        {/* Promotional Banner */}
+        <motion.section
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.5 }}
+          className="mb-10"
+        >
+          <div className="promo-banner">
+            <img 
+              src="https://preview--appointify-platform-67.lovable.app/lovable-uploads/8ecf0148-aeef-4d33-acd7-b29efebedf9d.png" 
+              alt="Health Promotion" 
+              className="w-full h-auto rounded-xl"
             />
           </div>
         </motion.section>

@@ -113,6 +113,50 @@
   .glass-morphism {
     @apply backdrop-blur-lg bg-white/90 shadow-lg border border-white/20;
   }
+  
+  /* City selector dialog styling */
+  .city-selector-card {
+    @apply flex flex-col items-center justify-center p-4 rounded-xl border-2 bg-white hover:border-primary transition-all duration-200;
+  }
+  
+  .city-icon {
+    @apply w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center mb-3;
+  }
+  
+  .city-image {
+    @apply w-12 h-12 object-contain;
+  }
+  
+  .city-name {
+    @apply font-medium text-gray-800;
+  }
+  
+  /* Premium login dialog styling */
+  .premium-login-dialog {
+    @apply bg-white rounded-xl p-6 border-0 shadow-xl max-w-md mx-auto;
+  }
+  
+  .otp-input-premium {
+    @apply flex justify-center;
+  }
+  
+  .otp-slot {
+    @apply h-12 w-12 text-lg bg-white border-2 border-gray-300 rounded-md focus:border-primary focus:ring-1 focus:ring-primary;
+  }
+  
+  /* Appointment card styles for the row layout */
+  .appointment-row {
+    @apply flex flex-nowrap gap-4 overflow-x-auto pb-4 scrollbar-hide;
+  }
+  
+  .appointment-card-small {
+    @apply flex-shrink-0 bg-white rounded-xl border border-gray-100 shadow-sm p-3 w-[280px];
+  }
+  
+  /* Banner styling */
+  .promo-banner {
+    @apply w-full rounded-xl overflow-hidden my-6 relative;
+  }
 }
 
 /* Animation classes */

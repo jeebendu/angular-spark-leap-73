@@ -1,23 +1,17 @@
 
 import { Link } from "react-router-dom";
-import { Bell, Calendar, Globe, MapPin, MessageSquare, Search, User, Menu } from "lucide-react";
+import { Bell, Calendar, MapPin, User, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
-import { 
   Dialog, 
   DialogContent, 
   DialogHeader, 
   DialogTitle, 
-  DialogTrigger 
+  DialogTrigger,
+  DialogClose
 } from "@/components/ui/dialog";
 import { 
   Tabs, 
@@ -28,6 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { X } from "lucide-react";
 
 export function Navbar() {
   const { t } = useTranslation();
@@ -36,6 +31,8 @@ export function Navbar() {
   const [otpValue, setOtpValue] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [isOtpSent, setIsOtpSent] = useState(false);
+  const [selectedCity, setSelectedCity] = useState("Bangalore");
+  const [cityDialogOpen, setCityDialogOpen] = useState(false);
   
   // Add scroll effect
   useEffect(() => {
@@ -62,31 +59,100 @@ export function Navbar() {
       console.log("OTP verified successfully");
     }
   };
+
+  const handleCitySelect = (city: string) => {
+    setSelectedCity(city);
+    setCityDialogOpen(false);
+  };
   
   return (
     <header className={`py-3 px-4 md:px-6 sticky top-0 z-30 ${scrolled ? 'glass-header' : 'bg-white border-b'}`}>
       <div className="container flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <div className="sky-gradient rounded-md w-8 h-8 flex items-center justify-center">
-            <span className="text-white font-bold text-lg">C</span>
-          </div>
-          <span className="font-semibold text-lg hidden md:block">ClinicHub</span>
-        </Link>
-        
-        <div className="flex items-center gap-3 mr-4">
-          <MapPin className="text-primary h-4 w-4 block" />
-          <Select defaultValue="bangalore">
-            <SelectTrigger className="border-0 px-0 py-0 h-auto w-auto bg-transparent focus:ring-0 font-medium">
-              <SelectValue placeholder="Select location" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="bangalore">Bangalore</SelectItem>
-              <SelectItem value="mumbai">Mumbai</SelectItem>
-              <SelectItem value="delhi">Delhi</SelectItem>
-              <SelectItem value="hyderabad">Hyderabad</SelectItem>
-              <SelectItem value="chennai">Chennai</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2">
+            <div className="sky-gradient rounded-md w-8 h-8 flex items-center justify-center">
+              <span className="text-white font-bold text-lg">C</span>
+            </div>
+            <span className="font-semibold text-lg hidden md:block">ClinicHub</span>
+          </Link>
+          
+          {/* Location selection */}
+          <Dialog open={cityDialogOpen} onOpenChange={setCityDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="ghost" className="gap-2 text-sm font-medium ml-2">
+                <MapPin className="text-primary h-4 w-4" />
+                <span className="font-medium">{selectedCity}</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="glass-morphism max-w-4xl p-8">
+              <div className="absolute right-4 top-4">
+                <DialogClose asChild>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                    <X className="h-4 w-4" />
+                  </Button>
+                </DialogClose>
+              </div>
+              <DialogHeader>
+                <DialogTitle className="text-center text-2xl font-semibold mb-8">Select your city</DialogTitle>
+              </DialogHeader>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <button 
+                  onClick={() => handleCitySelect("Bangalore")} 
+                  className={`city-selector-card ${selectedCity === "Bangalore" ? "border-primary" : "border-gray-100"}`}
+                >
+                  <div className="city-icon">
+                    <img src="/lovable-uploads/d82a74cb-0b37-4b2c-8189-2b22f05c214a.png" alt="Bangalore" className="city-image" />
+                  </div>
+                  <span className="city-name">Bangalore</span>
+                </button>
+                <button 
+                  onClick={() => handleCitySelect("Mumbai")} 
+                  className={`city-selector-card ${selectedCity === "Mumbai" ? "border-primary" : "border-gray-100"}`}
+                >
+                  <div className="city-icon">
+                    <img src="/lovable-uploads/ee5e4d14-7a0c-42b8-8655-a67209502c36.png" alt="Mumbai" className="city-image" />
+                  </div>
+                  <span className="city-name">Mumbai</span>
+                </button>
+                <button 
+                  onClick={() => handleCitySelect("Delhi")} 
+                  className={`city-selector-card ${selectedCity === "Delhi" ? "border-primary" : "border-gray-100"}`}
+                >
+                  <div className="city-icon">
+                    <MapPin className="h-10 w-10 text-gray-700" />
+                  </div>
+                  <span className="city-name">Delhi</span>
+                </button>
+                <button 
+                  onClick={() => handleCitySelect("Hyderabad")} 
+                  className={`city-selector-card ${selectedCity === "Hyderabad" ? "border-primary" : "border-gray-100"}`}
+                >
+                  <div className="city-icon">
+                    <MapPin className="h-10 w-10 text-gray-700" />
+                  </div>
+                  <span className="city-name">Hyderabad</span>
+                </button>
+                <button 
+                  onClick={() => handleCitySelect("Chennai")} 
+                  className={`city-selector-card ${selectedCity === "Chennai" ? "border-primary" : "border-gray-100"}`}
+                >
+                  <div className="city-icon">
+                    <MapPin className="h-10 w-10 text-gray-700" />
+                  </div>
+                  <span className="city-name">Chennai</span>
+                </button>
+                <button 
+                  onClick={() => handleCitySelect("Kolkata")} 
+                  className={`city-selector-card ${selectedCity === "Kolkata" ? "border-primary" : "border-gray-100"}`}
+                >
+                  <div className="city-icon">
+                    <MapPin className="h-10 w-10 text-gray-700" />
+                  </div>
+                  <span className="city-name">Kolkata</span>
+                </button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
         
         <div className="flex items-center gap-3 md:gap-6">
@@ -106,9 +172,6 @@ export function Navbar() {
           </nav>
           
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" className="text-muted-foreground hidden md:flex">
-              <Search className="h-5 w-5" />
-            </Button>
             <Button variant="ghost" size="icon" className="text-muted-foreground relative hidden md:flex">
               <Bell className="h-5 w-5" />
               <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
@@ -123,7 +186,7 @@ export function Navbar() {
                   {!isMobile && t('common.account')}
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-md glass-morphism border-0 bg-white/90 backdrop-blur-lg">
+              <DialogContent className="sm:max-w-md premium-login-dialog">
                 <DialogHeader>
                   <DialogTitle className="text-center text-xl font-semibold">Login / Sign Up</DialogTitle>
                 </DialogHeader>
@@ -158,23 +221,24 @@ export function Navbar() {
                       </>
                     ) : (
                       <>
-                        <div className="space-y-2">
+                        <div className="space-y-4">
                           <label className="text-sm font-medium block mb-2 text-center">
                             Enter OTP sent to {mobileNumber}
                           </label>
                           <div className="flex justify-center">
                             <InputOTP 
+                              maxLength={6}
                               value={otpValue} 
                               onChange={setOtpValue}
-                              maxLength={6}
+                              className="otp-input-premium"
                             >
                               <InputOTPGroup>
-                                <InputOTPSlot index={0} />
-                                <InputOTPSlot index={1} />
-                                <InputOTPSlot index={2} />
-                                <InputOTPSlot index={3} />
-                                <InputOTPSlot index={4} />
-                                <InputOTPSlot index={5} />
+                                <InputOTPSlot index={0} className="otp-slot" />
+                                <InputOTPSlot index={1} className="otp-slot" />
+                                <InputOTPSlot index={2} className="otp-slot" />
+                                <InputOTPSlot index={3} className="otp-slot" />
+                                <InputOTPSlot index={4} className="otp-slot" />
+                                <InputOTPSlot index={5} className="otp-slot" />
                               </InputOTPGroup>
                             </InputOTP>
                           </div>
@@ -200,7 +264,6 @@ export function Navbar() {
                     )}
                   </TabsContent>
                   <TabsContent value="signup" className="space-y-4">
-                    {/* Same logic as login but with additional fields if needed */}
                     <div className="space-y-2">
                       <label htmlFor="fullname" className="text-sm font-medium">
                         Full Name

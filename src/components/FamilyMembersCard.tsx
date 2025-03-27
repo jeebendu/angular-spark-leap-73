@@ -81,7 +81,10 @@ export function FamilyMembersCard() {
   const onAddSubmit = (values: z.infer<typeof formSchema>) => {
     const newMember: FamilyMember = {
       id: Date.now().toString(),
-      ...values,
+      name: values.name,
+      age: values.age,
+      gender: values.gender,
+      relationship: values.relationship
     };
     
     setMembers([...members, newMember]);
@@ -99,7 +102,13 @@ export function FamilyMembersCard() {
     
     const updatedMembers = members.map(member => 
       member.id === editingMember.id 
-        ? { ...member, ...values } 
+        ? { 
+            ...member, 
+            name: values.name,
+            age: values.age,
+            gender: values.gender,
+            relationship: values.relationship
+          } 
         : member
     );
     

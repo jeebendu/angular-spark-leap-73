@@ -34,7 +34,7 @@ export function SearchBar() {
               onClick={() => setIsOpen(true)}
             />
           </PopoverTrigger>
-          <PopoverContent className="w-[350px] p-4 bg-white" align="start">
+          <PopoverContent className="w-[350px] p-4 bg-white modal-background" align="start">
             <div className="space-y-4">
               <h3 className="font-medium text-lg">Search City or PIN</h3>
               

@@ -1,4 +1,3 @@
-
 import { Calendar, Star, Award, ThumbsUp, Clock, ChevronRight } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import { SearchBar } from "@/components/SearchBar";
@@ -30,7 +29,7 @@ const Index = () => {
 
   return (
     <AppLayout>
-      <div className="container px-4 py-6 max-w-4xl mx-auto">
+      <div className="container px-4 py-6 max-w-[1120px] mx-auto">
         {/* Hero Section */}
         <motion.section 
           className="mb-8"
@@ -178,9 +177,7 @@ const Index = () => {
                     <DialogTitle className="text-center text-xl font-semibold mb-4">All Specialties</DialogTitle>
                   </DialogHeader>
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-h-[60vh] overflow-y-auto scrollbar-hide">
-                    {/* We render a larger list of specialties here */}
                     {[...Array(16)].map((_, index) => {
-                      // Use the first 8 specialties from SpecialtyList and repeat them
                       const specialties = [
                         { name: "Cardiology", icon: <Award className="h-5 w-5" /> },
                         { name: "Neurology", icon: <Award className="h-5 w-5" /> },

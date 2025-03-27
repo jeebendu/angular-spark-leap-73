@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { Bell, Calendar, MapPin, User, Menu } from "lucide-react";
+import { Bell, Calendar, MapPin, User, Menu, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
@@ -24,6 +24,13 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp
 import { useIsMobile } from "@/hooks/use-mobile";
 import { X } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export function Navbar() {
   const { t } = useTranslation();
@@ -35,6 +42,7 @@ export function Navbar() {
   const [selectedCity, setSelectedCity] = useState("Bangalore");
   const [cityDialogOpen, setCityDialogOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [countryCode, setCountryCode] = useState("+91");
   const userName = "User";
   
   // Add scroll effect
@@ -88,7 +96,7 @@ export function Navbar() {
                 <span className="font-medium">{selectedCity}</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="modal-background bg-white max-w-4xl p-8">
+            <DialogContent className="max-w-4xl p-8 bg-white modal-background">
               <div className="absolute right-4 top-4">
                 <DialogClose asChild>
                   <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
@@ -195,7 +203,7 @@ export function Navbar() {
                   </Button>
                 )}
               </DialogTrigger>
-              <DialogContent className="sm:max-w-md premium-login-dialog modal-background">
+              <DialogContent className="sm:max-w-md premium-login-dialog bg-white modal-background">
                 <DialogHeader>
                   <DialogTitle className="text-center text-xl font-semibold">Login / Sign Up</DialogTitle>
                 </DialogHeader>
@@ -211,14 +219,43 @@ export function Navbar() {
                           <label htmlFor="mobile" className="text-sm font-medium">
                             Mobile Number
                           </label>
-                          <Input
-                            id="mobile"
-                            type="tel"
-                            placeholder="Enter your mobile number"
-                            value={mobileNumber}
-                            onChange={(e) => setMobileNumber(e.target.value)}
-                            className="rounded-md border-gray-300"
-                          />
+                          <div className="flex">
+                            <div className="w-[90px] mr-2">
+                              <Select value={countryCode} onValueChange={setCountryCode}>
+                                <SelectTrigger className="w-full">
+                                  <SelectValue placeholder="+91" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="+91">
+                                    <div className="flex items-center">
+                                      <img src="https://preview--appointify-platform-67.lovable.app/lovable-uploads/8ecf0148-aeef-4d33-acd7-b29efebedf9d.png" alt="India" className="h-4 w-6 mr-2" />
+                                      +91
+                                    </div>
+                                  </SelectItem>
+                                  <SelectItem value="+1">
+                                    <div className="flex items-center">
+                                      <span className="w-6 mr-2">🇺🇸</span>
+                                      +1
+                                    </div>
+                                  </SelectItem>
+                                  <SelectItem value="+44">
+                                    <div className="flex items-center">
+                                      <span className="w-6 mr-2">🇬🇧</span>
+                                      +44
+                                    </div>
+                                  </SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <Input
+                              id="mobile"
+                              type="tel"
+                              placeholder="Enter your mobile number"
+                              value={mobileNumber}
+                              onChange={(e) => setMobileNumber(e.target.value)}
+                              className="rounded-md border-gray-300 flex-1"
+                            />
+                          </div>
                         </div>
                         <Button 
                           className="w-full sky-button" 
@@ -241,7 +278,7 @@ export function Navbar() {
                               onChange={setOtpValue}
                               className="otp-input-premium"
                             >
-                              <InputOTPGroup>
+                              <InputOTPGroup className="gap-4">
                                 <InputOTPSlot index={0} className="otp-slot" />
                                 <InputOTPSlot index={1} className="otp-slot" />
                                 <InputOTPSlot index={2} className="otp-slot" />
@@ -288,12 +325,41 @@ export function Navbar() {
                       <label htmlFor="signupMobile" className="text-sm font-medium">
                         Mobile Number
                       </label>
-                      <Input
-                        id="signupMobile"
-                        type="tel"
-                        placeholder="Enter your mobile number"
-                        className="rounded-md border-gray-300"
-                      />
+                      <div className="flex">
+                        <div className="w-[90px] mr-2">
+                          <Select value={countryCode} onValueChange={setCountryCode}>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="+91" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="+91">
+                                <div className="flex items-center">
+                                  <img src="https://preview--appointify-platform-67.lovable.app/lovable-uploads/8ecf0148-aeef-4d33-acd7-b29efebedf9d.png" alt="India" className="h-4 w-6 mr-2" />
+                                  +91
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="+1">
+                                <div className="flex items-center">
+                                  <span className="w-6 mr-2">🇺🇸</span>
+                                  +1
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="+44">
+                                <div className="flex items-center">
+                                  <span className="w-6 mr-2">🇬🇧</span>
+                                  +44
+                                </div>
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <Input
+                          id="signupMobile"
+                          type="tel"
+                          placeholder="Enter your mobile number"
+                          className="rounded-md border-gray-300 flex-1"
+                        />
+                      </div>
                     </div>
                     <Button className="w-full sky-button">
                       Continue

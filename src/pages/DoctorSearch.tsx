@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { Input } from "@/components/ui/input";
@@ -12,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, SlidersHorizontal, Heart, Star, X, Filter } from "lucide-react";
+import { Search, SlidersHorizontal, Heart, Star, X, Filter, Check } from "lucide-react";
 import { 
   Dialog,
   DialogContent,
@@ -29,6 +30,7 @@ const DoctorSearch = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [priceRange, setPriceRange] = useState([500, 2000]);
   const [filterOpen, setFilterOpen] = useState(false);
+  const [selectedSpecialties, setSelectedSpecialties] = useState<string[]>([]);
   const isMobile = useIsMobile();
   
   const specialties = [
@@ -41,6 +43,14 @@ const DoctorSearch = () => {
     "Internal Medicine",
     "Ophthalmology"
   ];
+
+  const toggleSpecialty = (specialty: string) => {
+    if (selectedSpecialties.includes(specialty)) {
+      setSelectedSpecialties(selectedSpecialties.filter(s => s !== specialty));
+    } else {
+      setSelectedSpecialties([...selectedSpecialties, specialty]);
+    }
+  };
   
   return (
     <AppLayout>
@@ -74,7 +84,7 @@ const DoctorSearch = () => {
                   <span>Filters</span>
                 </Button>
               </DialogTrigger>
-              <DialogContent className="bg-white sm:max-w-md">
+              <DialogContent className="bg-white sm:max-w-md modal-background">
                 <DialogHeader>
                   <DialogTitle className="flex justify-between items-center">
                     <span>Filters</span>
@@ -89,18 +99,22 @@ const DoctorSearch = () => {
                   {/* Mobile filters */}
                   <div className="space-y-2">
                     <h3 className="font-medium">Specialty</h3>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="All Specialties" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {specialties.map((specialty) => (
-                          <SelectItem key={specialty} value={specialty.toLowerCase()}>
-                            {specialty}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <div className="flex flex-wrap gap-2">
+                      {specialties.map((specialty) => (
+                        <Button
+                          key={specialty}
+                          variant={selectedSpecialties.includes(specialty) ? "default" : "outline"}
+                          size="sm"
+                          className={`rounded-full text-xs ${selectedSpecialties.includes(specialty) ? 'bg-primary text-white' : 'bg-white'}`}
+                          onClick={() => toggleSpecialty(specialty)}
+                        >
+                          {specialty}
+                          {selectedSpecialties.includes(specialty) && (
+                            <X className="ml-1 h-3 w-3" />
+                          )}
+                        </Button>
+                      ))}
+                    </div>
                   </div>
                   
                   <div className="space-y-2">
@@ -182,19 +196,20 @@ const DoctorSearch = () => {
                   <div className="space-y-6">
                     <div className="space-y-2">
                       <h4 className="font-medium">Specialty</h4>
-                      <div className="space-y-1">
+                      <div className="flex flex-wrap gap-2">
                         {specialties.map((specialty) => (
-                          <div key={specialty} className="flex items-center">
-                            <input
-                              type="radio"
-                              id={specialty.toLowerCase()}
-                              name="specialty"
-                              className="mr-2 h-4 w-4 text-primary"
-                            />
-                            <label htmlFor={specialty.toLowerCase()} className="text-sm">
-                              {specialty}
-                            </label>
-                          </div>
+                          <Button
+                            key={specialty}
+                            variant={selectedSpecialties.includes(specialty) ? "default" : "outline"}
+                            size="sm"
+                            className={`rounded-full text-xs ${selectedSpecialties.includes(specialty) ? 'bg-primary text-white' : 'bg-white'}`}
+                            onClick={() => toggleSpecialty(specialty)}
+                          >
+                            {specialty}
+                            {selectedSpecialties.includes(specialty) && (
+                              <X className="ml-1 h-3 w-3" />
+                            )}
+                          </Button>
                         ))}
                       </div>
                     </div>
@@ -219,22 +234,14 @@ const DoctorSearch = () => {
                       <h4 className="font-medium">Availability</h4>
                       <div className="space-y-2">
                         <div className="flex items-center">
-                          <input
-                            type="checkbox"
-                            id="available-today"
-                            className="mr-2 h-4 w-4 text-primary"
-                          />
-                          <label htmlFor="available-today" className="text-sm">
+                          <Switch id="desktop-available-today" className="mr-2" />
+                          <label htmlFor="desktop-available-today" className="text-sm">
                             Available Today
                           </label>
                         </div>
                         <div className="flex items-center">
-                          <input
-                            type="checkbox"
-                            id="available-week"
-                            className="mr-2 h-4 w-4 text-primary"
-                          />
-                          <label htmlFor="available-week" className="text-sm">
+                          <Switch id="desktop-available-week" className="mr-2" />
+                          <label htmlFor="desktop-available-week" className="text-sm">
                             Available This Week
                           </label>
                         </div>
@@ -245,23 +252,15 @@ const DoctorSearch = () => {
                       <h4 className="font-medium">Rating</h4>
                       <div className="space-y-2">
                         <div className="flex items-center">
-                          <input
-                            type="checkbox"
-                            id="rating-4-plus"
-                            className="mr-2 h-4 w-4 text-primary"
-                          />
-                          <label htmlFor="rating-4-plus" className="text-sm flex items-center">
+                          <Switch id="desktop-rating-4-plus" className="mr-2" />
+                          <label htmlFor="desktop-rating-4-plus" className="text-sm flex items-center">
                             <span>4+</span>
                             <Star className="h-3 w-3 fill-yellow-400 text-yellow-400 ml-1" />
                           </label>
                         </div>
                         <div className="flex items-center">
-                          <input
-                            type="checkbox"
-                            id="rating-3-plus"
-                            className="mr-2 h-4 w-4 text-primary"
-                          />
-                          <label htmlFor="rating-3-plus" className="text-sm flex items-center">
+                          <Switch id="desktop-rating-3-plus" className="mr-2" />
+                          <label htmlFor="desktop-rating-3-plus" className="text-sm flex items-center">
                             <span>3+</span>
                             <Star className="h-3 w-3 fill-yellow-400 text-yellow-400 ml-1" />
                           </label>

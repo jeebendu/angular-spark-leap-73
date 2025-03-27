@@ -1,4 +1,13 @@
-import { type ToasterToast } from "@/hooks/use-toast";
+// We need to manually define the ToasterToast type since it's not exported from the module
+interface ToasterToast {
+  id: string;
+  title?: React.ReactNode;
+  description?: React.ReactNode;
+  action?: React.ReactElement;
+  variant?: "default" | "destructive";
+  open?: boolean;
+  dismiss?: () => void;
+}
 
 // Types
 export interface Clinic {

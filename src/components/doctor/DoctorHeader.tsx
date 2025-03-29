@@ -111,6 +111,7 @@ export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
               trigger={
                 <Button className="sky-button rounded-full">Book Appointment</Button>
               }
+              id={doctor.id}
             />
           </div>
         </div>

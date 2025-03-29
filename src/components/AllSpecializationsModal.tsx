@@ -5,12 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Specialization } from "./Specializations";
 
-type Specialization = {
-  name: string;
-  icon: JSX.Element;
-  bg: string;
-};
+// type Specialization = {
+//   name: string;
+//   icon: JSX.Element;
+//   bg: string;
+// };
 
 interface AllSpecializationsModalProps {
   isOpen: boolean;
@@ -60,9 +61,10 @@ export function AllSpecializationsModal({ isOpen, onClose, specializations }: Al
               onClick={() => handleSpecializationClick(spec.name)}
               className="flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
             >
-              <div className={`w-16 h-16 rounded-full ${spec.bg} flex items-center justify-center mb-2`}>
+              {/* <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-2`}>
                 {spec.icon}
-              </div>
+              </div> */}
+                {spec.icon}
               <span className="text-sm font-medium text-center">{spec.name}</span>
             </div>
           ))}

@@ -9,11 +9,84 @@ interface ToasterToast {
   dismiss?: () => void;
 }
 
-// Types
+export class Patient {
+  id: number;
+  branch: Branch;
+  user: User;
+  uid?: string;
+  firstname: string;
+  lastname: string;
+  dob?: Date;
+  age?: number;
+  gender?: string;
+  alternativeContact?: string;
+  whatsappNo?: string;
+  address?: string;
+  city?: string;
+  country?: Country;
+  state?: State;
+  district?: District;
+
+}
+export interface User {
+  id: number;
+  branch: Branch;
+  name: string;
+  username: string;
+  email: string;
+  phone: string;
+  password: string;
+  effectiveTo?: Date;
+  effectiveFrom?: Date;
+  role: Role;
+
+}
+
+export interface Role {
+  id: number;
+  name: string;
+}
+
 export interface Clinic {
+  id: string; // Corresponds to Long in Java
+  name: string;
+  email: string;
+  contact: string;
+  address: string;
+  branchList: Branch[]; 
+}
+
+export interface Branch {
+  id: string; // Corresponds to Long in Java
+  name: string;
+  code: string;
+  location: string;
+  active: boolean;
+  state: State; // Assuming State is another model class
+  district: District; // Assuming District is another model class
+  country: Country; // Assuming Country is another model class
+  city: string;
+  mapurl: string;
+  pincode: number;
+  image: string;
+  latitude: number;
+  longitude: number;
+}
+
+export interface State {
   id: string;
   name: string;
-  address: string;
+  code: string;
+}
+export interface District {
+  id: string;
+  name: string;
+  code:string;
+}
+export interface Country {
+  id: string;
+  name: string;
+  code: string;
 }
 
 export interface FamilyMember {
@@ -23,7 +96,7 @@ export interface FamilyMember {
 }
 
 interface AppointmentDetails {
-  selectedClinic: string;
+  selectedClinic: Branch;
   selectedDate: string;
   selectedTime: string;
   selectedMember: string;
@@ -44,12 +117,12 @@ export const getFamilyMembers = (): FamilyMember[] => [
   { id: "3", name: "Jane Smith", relationship: "Parent" }
 ];
 
-// Mock data for clinics
-export const getClinics = (): Clinic[] => [
-  { id: "1", name: "HealthFirst Clinic, Indiranagar", address: "100 Main St, Indiranagar, Bangalore" },
-  { id: "2", name: "MediCare Center, Koramangala", address: "200 Park Ave, Koramangala, Bangalore" },
-  { id: "3", name: "WellBeing Hospital, HSR Layout", address: "300 Oak Rd, HSR Layout, Bangalore" }
-];
+// // Mock data for clinics
+// export const getClinics = (): Clinic[] => [
+//   { id: "1", name: "HealthFirst Clinic, Indiranagar", address: "100 Main St, Indiranagar, Bangalore" },
+//   { id: "2", name: "MediCare Center, Koramangala", address: "200 Park Ave, Koramangala, Bangalore" },
+//   { id: "3", name: "WellBeing Hospital, HSR Layout", address: "300 Oak Rd, HSR Layout, Bangalore" }
+// ];
 
 // Available times
 export const getAvailableTimes = (): string[] => [
@@ -58,8 +131,8 @@ export const getAvailableTimes = (): string[] => [
 ];
 
 // Validation functions
-export const validateClinicSelection = (selectedClinic: string, toastHelpers: ToastHelpers): boolean => {
-  if (!selectedClinic) {
+export const validateClinicSelection = (selectedClinic: Branch, toastHelpers: ToastHelpers): boolean => {
+  if (!selectedClinic.id) {
     toastHelpers.toast({
       title: "Please select a clinic",
       description: "You need to select a clinic to proceed.",
@@ -125,10 +198,10 @@ export const bookAppointment = (
   console.log("Appointment booked:", appointmentDetails);
 };
 
-// Get clinic by ID
-export const getClinicById = (clinicId: string): Clinic | undefined => {
-  return getClinics().find(clinic => clinic.id === clinicId);
-};
+// // Get clinic by ID
+// export const getClinicById = (clinicId: string): Clinic | undefined => {
+//   return getClinics().find(clinic => clinic.id === clinicId);
+// };
 
 // Get family member by ID
 export const getFamilyMemberById = (memberId: string): FamilyMember | undefined => {

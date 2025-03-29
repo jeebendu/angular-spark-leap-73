@@ -7,6 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { DoctorCard } from "@/components/DoctorCard";
+
+import { getAllDoctorClinic } from "@/services/allDoctorClinicService";
+
+
+
 import { 
   Select,
   SelectContent,
@@ -51,6 +56,102 @@ import { useLocation } from "@/contexts/LocationContext";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/components/ui/use-toast";
 
+
+
+
+export interface DoctorClinic {
+  id: number;
+  doctor: Doctor;
+  clinic: Clinic;
+}
+
+export interface Doctor {
+  id: number;
+  userId: number;
+  user: User;
+  uid: string;
+  image: string;
+  designation: string;
+  isExternal: boolean;
+  expYear: string;
+  qualification: string;
+  joiningDate: Date;
+  specialization: string;
+  specializationList: Specialisation[];
+  language:string;
+  languageList:languageList[]
+  serviceList: ServiceList[];
+  branchList: Branch[];
+}
+export interface languageList {
+  id: number;
+  name: string;
+}
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  // branch: Branch=new Branch();
+  phone: string ;
+}
+
+export interface Clinic {
+  id: number;
+  name: string;
+  email: string;
+  contact: string;
+  address: string;
+  branchList: Branch[];
+}
+
+export interface Branch {
+  id: number;
+  name: string;
+  code: string;
+  location: string;
+  active: boolean;
+  state: State;
+  district: District;
+  country: Country;
+  city: string;
+  mapurl: string;
+  pincode: number;
+  image: string;
+  latitude: number;
+  longitude: number;
+}
+
+export interface Country {
+  id: number;
+  name: string;
+  code: string;
+}
+
+export interface State {
+  id: number;
+  name: string;
+  code: string;
+}
+
+export interface District {
+  id: number;
+  name: string;
+  code: string;
+}
+
+export interface Specialisation {
+  id: number;
+  name: string;
+  icon: string;
+  doctorCount: number;
+}
+
+export interface ServiceList {
+  id: number;
+  name: string;
+  price: number;
+}
+
 const DoctorSearch = () => {
   const [searchParams] = useSearchParams();
   const initialQuery = searchParams.get("query") || "";
@@ -73,12 +174,14 @@ const DoctorSearch = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
-  const [selectedClinic, setSelectedClinic] = useState<string | null>(null);
+  const [selectedClinic, setSelectedClinic] = useState<number | null>(null);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [doctors, setDoctors] = useState<any[]>([]);
   const [showNoMoreDoctors, setShowNoMoreDoctors] = useState(false);
+  const [allDoctorClinic, setAllDoctorClinic] = useState<DoctorClinic[]>([]);
+  //  const [specializationList, setSpecializationList] = useState<Specialization[]>([]);
   
   const observer = useRef<IntersectionObserver>();
   const isMobile = useIsMobile();
@@ -147,6 +250,22 @@ const DoctorSearch = () => {
       { id: "9b", name: "Mother & Child Clinic", location: "Whitefield", distance: "13.2 km", available: false }
     ]
   ];
+
+    useEffect(() => {
+    getAllDoctorClinicList();
+  },[]);
+  
+  const getAllDoctorClinicList=async()=>{
+    try {
+      const data= await getAllDoctorClinic();
+      console.log("********************************8",data.content);
+      setAllDoctorClinic(data);
+  
+    } catch (error) {
+      console.log(error);
+    }
+  
+  }
 
   // Generate initial set of doctors
   useEffect(() => {
@@ -265,7 +384,7 @@ const DoctorSearch = () => {
     }
   };
   
-  const handleBookAppointment = (doctorName: string, clinicId?: string) => {
+  const handleBookAppointment = (doctorName: string, clinicId?: number) => {
     setSelectedDoctor(doctorName);
     setBookingOpen(true);
     setBookingStep(1);
@@ -788,7 +907,7 @@ const DoctorSearch = () => {
         
         {/* Doctor Results */}
         <div className="flex-1">
-          {loading && doctors.length === 0 && (
+          {loading && allDoctorClinic.length === 0 && (
             <div className="flex flex-col items-center justify-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
               <p className="mt-4 text-muted-foreground">Loading doctors...</p>
@@ -797,29 +916,29 @@ const DoctorSearch = () => {
           
           {viewMode === "grid" ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {doctors.map((doctor, index) => {
+              {allDoctorClinic.map((doctor, index) => {
                 // Determine if this is the last element for infinite scroll
-                const isLastItem = index === doctors.length - 1;
+                const isLastItem = index === allDoctorClinic.length - 1;
                 
                 return (
                   <motion.div
-                    key={doctor.id}
+                    key={doctor.doctor.id}
                     ref={isLastItem ? lastDoctorElementRef : null}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index % 12 * 0.05, duration: 0.3 }}
                   >
                     <DoctorCard
-                      id={doctor.id}
-                      name={doctor.name}
-                      specialty={doctor.specialty}
-                      rating={doctor.rating}
-                      reviewCount={doctor.reviewCount}
-                      price={`₹${doctor.price}`}
-                      imageSrc={doctor.imageSrc}
-                      experience={doctor.experience}
-                      languages={doctor.languages}
-                      clinics={doctor.clinics}
+                      id={doctor.doctor.id}
+                      name={doctor.doctor.user.name}
+                      specialty={doctor.doctor.specialization}
+                      rating={doctor.doctor.id}
+                      reviewCount={doctor.doctor.id}
+                      price={`₹${doctor.doctor.id}`}
+                      imageSrc={doctor.doctor.image}
+                      experience={doctor.doctor.expYear}
+                      languages={doctor.doctor.language}
+                      clinics={doctor.doctor.branchList}
                       onBookNow={(name) => handleBookAppointment(name)}
                     />
                   </motion.div>
@@ -828,9 +947,9 @@ const DoctorSearch = () => {
             </div>
           ) : (
             <div className="flex flex-col gap-4">
-              {doctors.map((doctor, index) => {
+              {allDoctorClinic.map((doctor, index) => {
                 // Determine if this is the last element for infinite scroll
-                const isLastItem = index === doctors.length - 1;
+                const isLastItem = index === allDoctorClinic.length - 1;
                 
                 return (
                   <motion.div
@@ -846,8 +965,8 @@ const DoctorSearch = () => {
                         <div className="flex flex-col md:flex-row">
                           <div className="md:w-1/4 w-full aspect-[3/2] md:aspect-square relative">
                             <img 
-                              src={doctor.imageSrc}
-                              alt={doctor.name}
+                              src={doctor.doctor.image}
+                              alt={doctor.doctor.user.name}
                               className="w-full h-full object-cover"
                             />
                             <div className="absolute top-2 right-2 bg-white/80 backdrop-blur-sm px-2 py-1 rounded-full text-xs font-medium text-primary flex items-center">
@@ -860,25 +979,25 @@ const DoctorSearch = () => {
                             <div className="flex-1">
                               <div className="flex flex-wrap items-start justify-between">
                                 <div>
-                                  <h3 className="font-semibold text-base md:text-lg">{doctor.name}</h3>
-                                  <p className="text-muted-foreground text-sm">{doctor.specialty}</p>
+                                  <h3 className="font-semibold text-base md:text-lg">{doctor.doctor.user.name}</h3>
+                                  <p className="text-muted-foreground text-sm">{doctor.doctor.specialization}</p>
                                   
                                   <div className="flex items-center gap-1 mt-1">
                                     <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                                    <span className="text-sm font-medium">{doctor.rating}</span>
-                                    <span className="text-sm text-muted-foreground">({doctor.reviewCount})</span>
+                                    <span className="text-sm font-medium">{doctor.doctor.id}</span>
+                                    <span className="text-sm text-muted-foreground">({doctor.doctor.uid})</span>
                                   </div>
                                 </div>
                                 
-                                <span className="font-semibold md:text-lg">₹{doctor.price}</span>
+                                <span className="font-semibold md:text-lg">₹{doctor.doctor.id}</span>
                               </div>
                               
                               <div className="mt-3 flex flex-wrap gap-2">
                                 <div className="px-3 py-1 bg-gray-100 rounded-full text-xs flex items-center">
-                                  <span>{doctor.experience}</span>
+                                  <span>{doctor.doctor.expYear} years</span>
                                 </div>
                                 <div className="px-3 py-1 bg-gray-100 rounded-full text-xs flex items-center">
-                                  <span>{doctor.languages.join(", ")}</span>
+                                  <span>{doctor.doctor.language}</span>
                                 </div>
                                 <div className="px-3 py-1 bg-gray-100 rounded-full text-xs flex items-center">
                                   <span>Available today</span>
@@ -888,13 +1007,13 @@ const DoctorSearch = () => {
                               <div className="mt-3">
                                 <p className="text-xs font-medium mb-2">Available at:</p>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                  {doctor.clinics.map((clinic, cIndex) => (
+                                  {doctor.doctor.branchList.map((clinic, cIndex) => (
                                     <TooltipProvider key={clinic.id}>
                                       <Tooltip>
                                         <TooltipTrigger asChild>
                                           <div 
-                                            className={`px-3 py-2 ${clinic.available ? 'bg-blue-50' : 'bg-gray-100'} rounded-lg text-xs flex items-center justify-between cursor-pointer hover:bg-blue-100 transition-colors`}
-                                            onClick={() => clinic.available && handleBookAppointment(doctor.name, clinic.id)}
+                                            className={`px-3 py-2 ${clinic.active ? 'bg-blue-50' : 'bg-gray-100'} rounded-lg text-xs flex items-center justify-between cursor-pointer hover:bg-blue-100 transition-colors`}
+                                            onClick={() => clinic.active && handleBookAppointment(doctor.doctor.user.name, clinic.id)}
                                           >
                                             <div className="flex items-center">
                                               <Building className="h-3 w-3 mr-2 text-primary" />
@@ -905,12 +1024,12 @@ const DoctorSearch = () => {
                                             </div>
                                             <div className="flex items-center">
                                               <Navigation className="h-3 w-3 mr-1 text-gray-500" />
-                                              <span className="text-gray-500">{clinic.distance}</span>
+                                              <span className="text-gray-500">{clinic.latitude}</span>
                                             </div>
                                           </div>
                                         </TooltipTrigger>
                                         <TooltipContent side="bottom">
-                                          {clinic.available ? (
+                                          {clinic.active ? (
                                             <p className="text-xs">Click to book appointment at this clinic</p>
                                           ) : (
                                             <p className="text-xs">No appointments available at this clinic</p>
@@ -928,14 +1047,14 @@ const DoctorSearch = () => {
                                     size="sm" 
                                     variant="outline"
                                     className="rounded-full border-primary text-primary"
-                                    onClick={() => window.location.href = `/doctor/${doctor.id}`}
+                                    onClick={() => window.location.href = `/doctor/${doctor.doctor.id}`}
                                   >
                                     Profile
                                   </Button>
                                   <Button 
                                     size="sm" 
                                     className="sky-button rounded-full"
-                                    onClick={() => handleBookAppointment(doctor.name)}
+                                    onClick={() => handleBookAppointment(doctor.doctor.user.name)}
                                   >
                                     Book Now
                                   </Button>
@@ -949,13 +1068,13 @@ const DoctorSearch = () => {
                                   size="sm"
                                   variant="outline"
                                   className="w-full rounded-full border-primary text-primary"
-                                  onClick={() => window.location.href = `/doctor/${doctor.id}`}
+                                  onClick={() => window.location.href = `/doctor/${doctor.doctor.id}`}
                                 >
                                   Profile
                                 </Button>
                                 <Button 
                                   className="w-full sky-button rounded-full"
-                                  onClick={() => handleBookAppointment(doctor.name)}
+                                  onClick={() => handleBookAppointment(doctor.doctor.user.name)}
                                 >
                                   Book Now
                                 </Button>

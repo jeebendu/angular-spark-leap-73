@@ -5,26 +5,26 @@ import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
   DialogTrigger,
   DialogClose
 } from "@/components/ui/dialog";
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger
 } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { X } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { 
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -32,6 +32,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import authService from "@/services/authService";
+import { sendOtp } from "@/services/authHandler"; // Import the sendOtp function
+import { verifyOTPAndLogin } from "@/services/authHandler";
+
 import { toast } from "@/hooks/use-toast";
 import {
   DropdownMenu,
@@ -41,6 +44,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+export interface AuthUser {
+  email: string | null;
+  reason: "login";
+  tenant: "dev";
+  otp: string | null;
+  authToken: string | null;
+  phone: string | null;
+}
+
 
 export function Navbar() {
   const { t } = useTranslation();
@@ -53,29 +66,40 @@ export function Navbar() {
   const [cityDialogOpen, setCityDialogOpen] = useState(false);
   const [loginDialogOpen, setLoginDialogOpen] = useState(false);
   const [countryCode, setCountryCode] = useState("+91");
-  
+
+
+  // Example of assigning mobileNumber to AuthUser
+  const [authUser, setAuthUser] = useState<AuthUser>({
+    email: "",
+    reason: "login",
+    tenant: "dev",
+    phone: "",
+    otp: "",
+    authToken: ""
+  });
+
   // Get user info from auth service
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userInfo, setUserInfo] = useState<{name: string, mobile: string} | null>(null);
-  
+  const [userInfo, setUserInfo] = useState<{ name: string, mobile: string } | null>(null);
+
   // Check authentication status when component mounts
   useEffect(() => {
     const checkAuth = () => {
       const loggedIn = authService.isLoggedIn();
       setIsLoggedIn(loggedIn);
-      
+
       if (loggedIn) {
         setUserInfo(authService.getCurrentUser());
       }
     };
-    
+
     checkAuth();
-    
+
     // Listen for storage events (in case login/logout happens in another tab)
     window.addEventListener('storage', checkAuth);
     return () => window.removeEventListener('storage', checkAuth);
   }, []);
-  
+
   // Add scroll effect
   useEffect(() => {
     const handleScroll = () => {
@@ -90,8 +114,8 @@ export function Navbar() {
   }, [scrolled]);
 
   const handleSendOtp = async () => {
-    // Validate mobile number
-    if (mobileNumber.length !== 10) {
+
+    if (authUser.phone.length !== 10) {
       toast({
         title: "Invalid mobile number",
         description: "Please enter a valid 10 digit mobile number",
@@ -99,15 +123,19 @@ export function Navbar() {
       });
       return;
     }
-    
+
     // Send OTP
-    const success = await authService.sendOtp(mobileNumber);
-    if (success) {
+    const success = await sendOtp(authUser);
+    console.log("success");
+    if (success.status) {
       setIsOtpSent(true);
       toast({
         title: "OTP Sent",
-        description: `Please enter the last 5 digits of ${mobileNumber} as OTP`,
+        description: `Please enter the last 5 digits of ${authUser.phone} as OTP`,
       });
+      const token = success.message.split("::")[0];
+      setAuthUser((prev) => ({ ...prev, authToken: token }));
+
     } else {
       toast({
         title: "Failed to send OTP",
@@ -118,22 +146,23 @@ export function Navbar() {
   };
 
   const handleVerifyOtp = async () => {
-    if (otpValue.length !== 5) {
+   
+    if (authUser.otp.length !== 6) {
       toast({
         title: "Invalid OTP",
-        description: "Please enter a valid 5 digit OTP",
+        description: "Please enter a valid 6 digit OTP",
         variant: "destructive"
       });
       return;
     }
-    
-    const success = await authService.verifyOtp(otpValue);
-    if (success) {
+
+    const success = await verifyOTPAndLogin(authUser);
+    if (success.status) {
       // Close dialog and update state
       setLoginDialogOpen(false);
       setIsLoggedIn(true);
       setUserInfo(authService.getCurrentUser());
-      
+
       toast({
         title: "Login Successful",
         description: "You are now logged in",
@@ -151,7 +180,7 @@ export function Navbar() {
     authService.logout();
     setIsLoggedIn(false);
     setUserInfo(null);
-    
+
     toast({
       title: "Logged Out",
       description: "You have been logged out successfully",
@@ -162,25 +191,40 @@ export function Navbar() {
     setSelectedCity(city);
     setCityDialogOpen(false);
   };
-  
+
   const resetLoginForm = () => {
     setMobileNumber("");
     setOtpValue("");
     setIsOtpSent(false);
   };
-  
+
+  // ************************
+
+  const handleMobileEmailChange = (e: any) => {
+    setAuthUser((prev) => ({ ...prev, [e.target.name]: e.target.value })); // Assign to AuthUser
+
+  }
+const otpHandler=(val:string)=>{
+console.log(val)
+  setOtpValue(val)
+  setAuthUser((prev)=>({ ...prev, otp:val}));
+
+}
+
+ 
+
   return (
     <header className={`py-3 px-4 md:px-6 sticky top-0 z-30 ${scrolled ? 'glass-header' : 'bg-white border-b'}`}>
       <div className="container flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Link to="/" className="flex items-center gap-2">
-            <img 
-              src="https://res.cloudinary.com/dzxuxfagt/image/upload/h_100/assets/logo.png" 
-              alt="ClinicHub Logo" 
+            <img
+              src="https://res.cloudinary.com/dzxuxfagt/image/upload/h_100/assets/logo.png"
+              alt="ClinicHub Logo"
               className="h-8"
             />
           </Link>
-          
+
           {/* Location selection moved next to logo */}
           <Dialog open={cityDialogOpen} onOpenChange={setCityDialogOpen}>
             <DialogTrigger asChild>
@@ -201,8 +245,8 @@ export function Navbar() {
                 <DialogTitle className="text-center text-2xl font-semibold mb-8">Select your city</DialogTitle>
               </DialogHeader>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <button 
-                  onClick={() => handleCitySelect("Bangalore")} 
+                <button
+                  onClick={() => handleCitySelect("Bangalore")}
                   className={`city-selector-card ${selectedCity === "Bangalore" ? "border-primary" : "border-gray-100"}`}
                 >
                   <div className="city-icon bg-sky-50 p-3 rounded-full">
@@ -210,8 +254,8 @@ export function Navbar() {
                   </div>
                   <span className="city-name">Bangalore</span>
                 </button>
-                <button 
-                  onClick={() => handleCitySelect("Mumbai")} 
+                <button
+                  onClick={() => handleCitySelect("Mumbai")}
                   className={`city-selector-card ${selectedCity === "Mumbai" ? "border-primary" : "border-gray-100"}`}
                 >
                   <div className="city-icon bg-sky-50 p-3 rounded-full">
@@ -219,8 +263,8 @@ export function Navbar() {
                   </div>
                   <span className="city-name">Mumbai</span>
                 </button>
-                <button 
-                  onClick={() => handleCitySelect("Delhi")} 
+                <button
+                  onClick={() => handleCitySelect("Delhi")}
                   className={`city-selector-card ${selectedCity === "Delhi" ? "border-primary" : "border-gray-100"}`}
                 >
                   <div className="city-icon bg-sky-50 p-3 rounded-full">
@@ -228,8 +272,8 @@ export function Navbar() {
                   </div>
                   <span className="city-name">Delhi</span>
                 </button>
-                <button 
-                  onClick={() => handleCitySelect("Hyderabad")} 
+                <button
+                  onClick={() => handleCitySelect("Hyderabad")}
                   className={`city-selector-card ${selectedCity === "Hyderabad" ? "border-primary" : "border-gray-100"}`}
                 >
                   <div className="city-icon bg-sky-50 p-3 rounded-full">
@@ -237,8 +281,8 @@ export function Navbar() {
                   </div>
                   <span className="city-name">Hyderabad</span>
                 </button>
-                <button 
-                  onClick={() => handleCitySelect("Chennai")} 
+                <button
+                  onClick={() => handleCitySelect("Chennai")}
                   className={`city-selector-card ${selectedCity === "Chennai" ? "border-primary" : "border-gray-100"}`}
                 >
                   <div className="city-icon bg-sky-50 p-3 rounded-full">
@@ -246,8 +290,8 @@ export function Navbar() {
                   </div>
                   <span className="city-name">Chennai</span>
                 </button>
-                <button 
-                  onClick={() => handleCitySelect("Kolkata")} 
+                <button
+                  onClick={() => handleCitySelect("Kolkata")}
                   className={`city-selector-card ${selectedCity === "Kolkata" ? "border-primary" : "border-gray-100"}`}
                 >
                   <div className="city-icon bg-sky-50 p-3 rounded-full">
@@ -259,7 +303,7 @@ export function Navbar() {
             </DialogContent>
           </Dialog>
         </div>
-        
+
         <div className="flex items-center gap-3 md:gap-6">
           <nav className="hidden md:flex items-center gap-6">
             <Link to="/" className="text-sm font-medium hover:text-primary transition-colors">
@@ -275,14 +319,14 @@ export function Navbar() {
               {t('common.reports')}
             </Link>
           </nav>
-          
+
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="icon" className="text-muted-foreground relative hidden md:flex">
               <Bell className="h-5 w-5" />
               <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
             </Button>
             <LanguageSwitcher />
-            
+
             {/* Login Dialog with updated User icon */}
             {isLoggedIn ? (
               <DropdownMenu>
@@ -373,19 +417,35 @@ export function Navbar() {
                                 id="mobile"
                                 type="tel"
                                 placeholder="Enter your mobile number"
-                                value={mobileNumber}
-                                onChange={(e) => setMobileNumber(e.target.value)}
+                                value={authUser.phone}
+                                name="phone"
+                                onChange={(e) => handleMobileEmailChange(e)}
                                 className="rounded-md border-gray-300 flex-1"
                               />
                             </div>
-                            <p className="text-xs text-gray-500 mt-1">
+
+                            <label htmlFor="email" className="text-sm font-medium">
+                             Email Id
+                            </label>
+                            <Input
+                              id="email"
+                              type="email"
+                              placeholder="Enter your Email id "
+                              value={authUser.email}
+                              name="email"
+                              onChange={(e) => handleMobileEmailChange(e)}
+                              className="rounded-md border-gray-300 flex-1"
+                            />
+
+
+                            {/* <p className="text-xs text-gray-500 mt-1">
                               For demo: OTP will be the last 5 digits of your mobile number
-                            </p>
+                            </p> */}
                           </div>
-                          <Button 
-                            className="w-full sky-button" 
+                          <Button
+                            className="w-full sky-button"
                             onClick={handleSendOtp}
-                            disabled={mobileNumber.length !== 10}
+                            disabled={authUser.phone.length !== 10}
                           >
                             Send OTP
                           </Button>
@@ -397,10 +457,10 @@ export function Navbar() {
                               Enter OTP sent to {mobileNumber}
                             </label>
                             <div className="flex justify-center">
-                              <InputOTP 
-                                maxLength={5}
-                                value={otpValue} 
-                                onChange={setOtpValue}
+                              <InputOTP
+                                maxLength={6}
+                                value={otpValue}
+                                onChange={(e) =>otpHandler(e)}
                                 className="otp-input-premium"
                               >
                                 <InputOTPGroup className="gap-4">
@@ -409,6 +469,7 @@ export function Navbar() {
                                   <InputOTPSlot index={2} className="otp-slot" />
                                   <InputOTPSlot index={3} className="otp-slot" />
                                   <InputOTPSlot index={4} className="otp-slot" />
+                                  <InputOTPSlot index={5} className="otp-slot" />
                                 </InputOTPGroup>
                               </InputOTP>
                             </div>
@@ -419,16 +480,16 @@ export function Navbar() {
                               For demo: Use the last 5 digits of your mobile number as OTP
                             </p>
                           </div>
-                          <Button 
-                            className="w-full sky-button" 
+                          <Button
+                            className="w-full sky-button"
                             onClick={handleVerifyOtp}
-                            disabled={otpValue.length !== 5}
+                            disabled={otpValue.length !== 6}
                           >
                             Verify OTP
                           </Button>
-                          <Button 
-                            variant="outline" 
-                            className="w-full" 
+                          <Button
+                            variant="outline"
+                            className="w-full"
                             onClick={() => setIsOtpSent(false)}
                           >
                             Go Back
@@ -496,7 +557,7 @@ export function Navbar() {
                 </DialogContent>
               </Dialog>
             )}
-            
+
             {isMobile && (
               <Button variant="ghost" size="icon" className="text-muted-foreground ml-1">
                 <Menu className="h-5 w-5" />

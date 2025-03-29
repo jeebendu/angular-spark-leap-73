@@ -1,12 +1,12 @@
 
 import { ClipboardCheck } from "lucide-react";
-import { getClinicById, getFamilyMemberById, Clinic, FamilyMember } from "@/services/appointmentService";
+import {  getFamilyMemberById, Clinic, FamilyMember, Branch } from "@/services/appointmentService";
 
 interface ReviewStepProps {
   doctorName?: string;
   specialty?: string;
-  selectedClinic: string;
-  clinics: Clinic[];
+  selectedClinic: Branch;
+  clinics: Branch[];
   selectedDate: string;
   selectedTime: string;
   selectedMember: string;
@@ -23,7 +23,7 @@ export function ReviewStep({
   selectedMember, 
   familyMembers 
 }: ReviewStepProps) {
-  const clinic = getClinicById(selectedClinic);
+  const clinic =null;
   const patient = getFamilyMemberById(selectedMember);
 
   return (

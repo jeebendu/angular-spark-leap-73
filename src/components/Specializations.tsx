@@ -1,13 +1,29 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Heart, Activity, Brain, Bone, Stethoscope, Syringe, Microscope, Plus, TestTube, Eye, 
   ShieldAlert, Baby, User, Thermometer, Ear, ShieldCheck, Pill, Cross, Leaf } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { AllSpecializationsModal } from "./AllSpecializationsModal";
+import {getSpecialisation} from "@/services/specilisationservice";
+import { setSeconds } from "date-fns";
+
+export interface Specialization {
+  name: string;
+  icon: string;
+  id: string;
+}
 
 export function Specializations() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [specializationList, setSpecializationList] = useState<Specialization[]>([]);
+  const [specialization, setSpecialization] = useState({
+    name: "",
+    icon: "",
+    id: ""
+  });
+
   const navigate = useNavigate();
 
   const specializations = [
@@ -112,6 +128,25 @@ export function Specializations() {
     navigate(`/doctor-search?specialty=${encodeURIComponent(specialization)}`);
   };
 
+  
+  useEffect(() => {
+getAllSpecialization();
+},[]);
+
+const getAllSpecialization=async()=>{
+  try {
+    const data= await getSpecialisation();
+    console.log(data);
+    setSpecializationList(data);
+
+  } catch (error) {
+    console.log(error);
+  }
+
+}
+
+
+
   return (
     <>
       <div className="py-8 bg-green-50 rounded-xl">
@@ -122,7 +157,7 @@ export function Specializations() {
         </div>
         
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 px-4">
-          {specializations.map((item, index) => (
+          {specializationList.slice(0, 19).map((item, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}
@@ -131,7 +166,7 @@ export function Specializations() {
               className="flex flex-col items-center cursor-pointer"
               onClick={() => handleSpecializationClick(item.name)}
             >
-              <div className={`w-16 h-16 rounded-full ${item.bg} flex items-center justify-center mb-2`}>
+              <div className={`w-16 h-16 rounded-full  flex items-center justify-center mb-2`}>
                 {item.icon}
               </div>
               <span className="text-sm font-medium text-center">{item.name}</span>
@@ -141,7 +176,7 @@ export function Specializations() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: specializations.length * 0.05, duration: 0.3 }}
+            transition={{ delay: specializationList.length * 0.05, duration: 0.3 }}
             className="flex flex-col items-center cursor-pointer"
             onClick={() => setIsModalOpen(true)}
           >
@@ -166,7 +201,7 @@ export function Specializations() {
       <AllSpecializationsModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
-        specializations={allSpecializations} 
+        specializations={specializationList} 
       />
     </>
   );

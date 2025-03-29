@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { Branch, Clinic, languageList } from "@/pages/DoctorSearch";
 
 interface DoctorCardProps {
-  id: string;
+  id: number;
   name: string;
   specialty: string;
   rating: number;
@@ -15,11 +16,8 @@ interface DoctorCardProps {
   price: string;
   imageSrc: string;
   experience?: string;
-  languages?: string[];
-  clinics?: {
-    name: string;
-    location: string;
-  }[];
+  languages?:string;
+  clinics: Branch[];
   onBookNow?: (name: string) => void;
 }
 
@@ -31,9 +29,9 @@ export function DoctorCard({
   reviewCount, 
   price, 
   imageSrc, 
-  experience = "10+ years",
-  languages = ["English", "Hindi"],
-  clinics = [],
+  experience ,
+  languages,
+  clinics ,
   onBookNow 
 }: DoctorCardProps) {
   const handleBookNow = () => {

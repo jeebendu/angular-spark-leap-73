@@ -1,4 +1,7 @@
+import { AuthUser } from '@/components/Navbar';
 import apiService from './apiService';
+import axios from 'axios';
+
 
 // Types for authentication
 export interface LoginResponse {
@@ -36,14 +39,15 @@ class AuthService {
   }
 
   // Function to send OTP to mobile number
-  async sendOtp(mobileNumber: string): Promise<boolean> {
+  async sendOtp(authUser: AuthUser): Promise<boolean> {
     try {
+     
       // In a real app, this would call the API to send OTP
       // For demo, we'll simulate it
-      console.log(`OTP sent to ${mobileNumber}`);
+      console.log(`OTP sent to ${authUser.phone}`);
       
       // Store the mobile number to verify later
-      localStorage.setItem('pending_mobile', mobileNumber);
+      localStorage.setItem('pending_mobile', authUser.phone);
       
       return true;
     } catch (error) {
@@ -51,6 +55,13 @@ class AuthService {
       return false;
     }
   }
+
+
+
+
+
+
+
 
   // Function to verify OTP
   async verifyOtp(otp: string): Promise<boolean> {

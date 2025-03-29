@@ -1,25 +1,29 @@
 
-import { Building } from "lucide-react";
+import { Braces, Building } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Branch, Clinic } from "@/services/appointmentService";
+import { useEffect } from "react";
 
-interface Clinic {
-  id: string;
-  name: string;
-  address: string;
-}
+
+
+
+
 
 interface ClinicSelectionStepProps {
-  selectedClinic: string;
-  setSelectedClinic: (clinicId: string) => void;
-  clinics: Clinic[];
+  selectedClinic: Branch;
+  setSelectedClinic: (branch: Branch) => void;
+  branches: Branch[];
 }
 
 export function ClinicSelectionStep({ 
   selectedClinic, 
   setSelectedClinic, 
-  clinics 
+  branches 
 }: ClinicSelectionStepProps) {
+
+
+
   return (
     <div className="space-y-6">
       <div>
@@ -29,22 +33,22 @@ export function ClinicSelectionStep({
         </h3>
         
         <RadioGroup 
-          value={selectedClinic} 
+          value={selectedClinic?.id} 
           onValueChange={setSelectedClinic}
           className="space-y-3"
         >
-          {clinics.map((clinic) => (
+          {branches.map((branch) => (
             <div 
-              key={clinic.id} 
+              key={branch.id} 
               className={`border rounded-lg p-4 transition-colors ${
-                selectedClinic === clinic.id ? "border-primary" : "border-gray-200"
+                selectedClinic === branch ? "border-primary" : "border-gray-200"
               }`}
             >
               <div className="flex items-start">
-                <RadioGroupItem value={clinic.id} id={`clinic-${clinic.id}`} className="mt-1" />
-                <Label htmlFor={`clinic-${clinic.id}`} className="ml-2 cursor-pointer">
-                  <div className="font-medium">{clinic.name}</div>
-                  <div className="text-sm text-gray-500">{clinic.address}</div>
+                <RadioGroupItem value={branch.id} id={`clinic-${branch.id}`} className="mt-1" />
+                <Label htmlFor={`clinic-${branch.id}`} className="ml-2 cursor-pointer">
+                  <div className="font-medium">{branch.name}</div>
+                  <div className="text-sm text-gray-500">{`${branch.city}, ${branch.district.name}, ${branch.state.name}`}</div>
                 </Label>
               </div>
             </div>

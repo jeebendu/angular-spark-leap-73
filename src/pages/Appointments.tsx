@@ -141,7 +141,7 @@ const Appointments = () => {
             <p className="text-gray-600 mb-4">Search for doctors and book your next appointment in just a few clicks.</p>
             <Button className="sky-button">
               <Calendar className="h-4 w-4 mr-2" />
-              Book an Appointment
+              Book an Appointment...
             </Button>
           </div>
         </motion.div>

@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
 
+import { getDoctorById } from "@/services/doctorService";
+
 // Import the refactored components
 import { StepIndicator } from "@/components/appointment/StepIndicator";
 import { StepLabels } from "@/components/appointment/StepLabels";
@@ -20,77 +22,84 @@ import { PaymentStep } from "@/components/appointment/steps/PaymentStep";
 import { NavigationButtons } from "@/components/appointment/NavigationButtons";
 
 // Import the appointment service
-import { 
-  validateCurrentStep, 
-  bookAppointment, 
-  getClinics, 
-  getAvailableTimes, 
+import {
+  validateCurrentStep,
+  bookAppointment,
+  // getClinics, 
+  getAvailableTimes,
   getFamilyMembers,
-  getClinicById,
-  getFamilyMemberById
+  // getClinicById,
+  getFamilyMemberById,
+  Branch
 } from "@/services/appointmentService";
 
 interface BookAppointmentModalProps {
   doctorName?: string;
   specialty?: string;
   trigger: React.ReactNode;
+  id?: string;
 }
 
-export function BookAppointmentModal({ doctorName, specialty, trigger }: BookAppointmentModalProps) {
+export function BookAppointmentModal({ doctorName, specialty, trigger, id }: BookAppointmentModalProps) {
   const [step, setStep] = useState(1);
   const [open, setOpen] = useState(false);
-  const [selectedClinic, setSelectedClinic] = useState("");
+  const [selectedClinic, setSelectedClinic] = useState<Branch>();
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedMember, setSelectedMember] = useState("self");
   const [paymentMethod, setPaymentMethod] = useState("card");
   const toastObject = useToast();
-  
+
   // Get data from service
-  const clinics = getClinics();
+  // const clinics = getClinics();
+
+  const [clinics, setClinics] = useState<Branch[]>();
+  // let clinics = [];
+
+
   const familyMembers = getFamilyMembers();
   const availableTimes = getAvailableTimes();
-  
+
   const stepLabels = ["Clinic", "Date & Time", "Patient", "Review", "Payment"];
-  
+
   // Auto-advance to next step when date and time are selected
   useEffect(() => {
     if (step === 2 && selectedDate && selectedTime) {
       // Add a small delay to allow user to see their selection before advancing
       const timer = setTimeout(() => {
-        if (validateCurrentStep(step, { 
-          selectedClinic, selectedDate, selectedTime, selectedMember, doctorName, specialty 
+        if (validateCurrentStep(step, {
+          selectedClinic, selectedDate, selectedTime, selectedMember, doctorName, specialty
         }, toastObject)) {
           setStep(3);
         }
       }, 800);
-      
+
       return () => clearTimeout(timer);
     }
   }, [selectedDate, selectedTime, step, selectedClinic, selectedMember, doctorName, specialty, toastObject]);
-  
+
   const goToStep = (stepNumber: number) => {
-    if (stepNumber <= step || validateCurrentStep(step, { 
-      selectedClinic, selectedDate, selectedTime, selectedMember, doctorName, specialty 
+    if (stepNumber <= step || validateCurrentStep(step, {
+      selectedClinic, selectedDate, selectedTime, selectedMember, doctorName, specialty
     }, toastObject)) {
       setStep(stepNumber);
     }
   };
-  
+
   const nextStep = () => {
-    if (validateCurrentStep(step, { 
-      selectedClinic, selectedDate, selectedTime, selectedMember, doctorName, specialty 
+    if (validateCurrentStep(step, {
+      selectedClinic, selectedDate, selectedTime, selectedMember, doctorName, specialty
     }, toastObject) && step < 5) {
       setStep(step + 1);
     }
   };
-  
+
   const prevStep = () => {
     if (step > 1) {
       setStep(step - 1);
     }
   };
-  
+
   const handleBookAppointment = () => {
     bookAppointment({
       selectedClinic,
@@ -100,21 +109,33 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
       doctorName,
       specialty
     }, toastObject);
-    
+
     setOpen(false);
     // Reset state
     resetForm();
   };
-  
+
   const resetForm = () => {
     setStep(1);
-    setSelectedClinic("");
+    setSelectedClinic(null);
     setSelectedDate("");
     setSelectedTime("");
     setSelectedMember("self");
     setPaymentMethod("card");
   };
-  
+
+
+  useEffect(() => {
+    FetchDoctorByDoctorId();
+  }, [id]);
+
+
+
+  const FetchDoctorByDoctorId = async () => {
+    const data = await getDoctorById(id);
+    setClinics(data.branchList);
+  }
+
   return (
     <Dialog open={open} onOpenChange={(newOpen) => {
       setOpen(newOpen);
@@ -127,32 +148,32 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
         <DialogHeader className="p-6 pb-2">
           <DialogTitle>Book an Appointment</DialogTitle>
         </DialogHeader>
-        
+
         <div className="px-6 pt-2 pb-6">
           {/* Step indicator */}
-          <StepIndicator 
-            currentStep={step} 
-            totalSteps={5} 
-            onStepClick={goToStep} 
-            validateCurrentStep={() => validateCurrentStep(step, { 
-              selectedClinic, selectedDate, selectedTime, selectedMember, doctorName, specialty 
-            }, toastObject)} 
+          <StepIndicator
+            currentStep={step}
+            totalSteps={5}
+            onStepClick={goToStep}
+            validateCurrentStep={() => validateCurrentStep(step, {
+              selectedClinic, selectedDate, selectedTime, selectedMember, doctorName, specialty
+            }, toastObject)}
           />
 
           {/* Step labels */}
           <StepLabels labels={stepLabels} currentStep={step} />
-          
+
           {/* Step content */}
           {step === 1 && (
-            <ClinicSelectionStep 
+            <ClinicSelectionStep
               selectedClinic={selectedClinic}
               setSelectedClinic={setSelectedClinic}
-              clinics={clinics}
+              branches={clinics}
             />
           )}
-          
+
           {step === 2 && (
-            <DateTimeSelectionStep 
+            <DateTimeSelectionStep
               selectedDate={selectedDate}
               setSelectedDate={setSelectedDate}
               selectedTime={selectedTime}
@@ -160,17 +181,17 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
               availableTimes={availableTimes}
             />
           )}
-          
+
           {step === 3 && (
-            <PatientSelectionStep 
+            <PatientSelectionStep
               selectedMember={selectedMember}
               setSelectedMember={setSelectedMember}
               familyMembers={familyMembers}
             />
           )}
-          
+
           {step === 4 && (
-            <ReviewStep 
+            <ReviewStep
               doctorName={doctorName}
               specialty={specialty}
               selectedClinic={selectedClinic}
@@ -181,17 +202,17 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
               familyMembers={familyMembers}
             />
           )}
-          
+
           {step === 5 && (
-            <PaymentStep 
+            <PaymentStep
               paymentMethod={paymentMethod}
               setPaymentMethod={setPaymentMethod}
             />
           )}
         </div>
-        
+
         {/* Navigation Buttons */}
-        <NavigationButtons 
+        <NavigationButtons
           step={step}
           totalSteps={5}
           onNext={nextStep}

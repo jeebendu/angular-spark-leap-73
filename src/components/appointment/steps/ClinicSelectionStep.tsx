@@ -2,17 +2,12 @@
 import { Braces, Building } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Branch, Clinic } from "@/services/appointmentService";
+import { Branch } from "@/services/appointmentService";
 import { useEffect } from "react";
-
-
-
-
-
 
 interface ClinicSelectionStepProps {
   selectedClinic: Branch;
-  setSelectedClinic: (branch: Branch) => void;
+  setSelectedClinic: (branch: Branch | string) => void;
   branches: Branch[];
 }
 
@@ -21,9 +16,6 @@ export function ClinicSelectionStep({
   setSelectedClinic, 
   branches 
 }: ClinicSelectionStepProps) {
-
-
-
   return (
     <div className="space-y-6">
       <div>
@@ -34,18 +26,22 @@ export function ClinicSelectionStep({
         
         <RadioGroup 
           value={selectedClinic?.id} 
-          onValueChange={setSelectedClinic}
+          onValueChange={(value) => {
+            // Find the branch object by id and pass it
+            const branch = branches.find(branch => branch.id.toString() === value);
+            setSelectedClinic(branch || value);
+          }}
           className="space-y-3"
         >
-          {branches.map((branch) => (
+          {branches?.map((branch) => (
             <div 
               key={branch.id} 
               className={`border rounded-lg p-4 transition-colors ${
-                selectedClinic === branch ? "border-primary" : "border-gray-200"
+                selectedClinic?.id === branch.id ? "border-primary" : "border-gray-200"
               }`}
             >
               <div className="flex items-start">
-                <RadioGroupItem value={branch.id} id={`clinic-${branch.id}`} className="mt-1" />
+                <RadioGroupItem value={branch.id.toString()} id={`clinic-${branch.id}`} className="mt-1" />
                 <Label htmlFor={`clinic-${branch.id}`} className="ml-2 cursor-pointer">
                   <div className="font-medium">{branch.name}</div>
                   <div className="text-sm text-gray-500">{`${branch.city}, ${branch.district.name}, ${branch.state.name}`}</div>

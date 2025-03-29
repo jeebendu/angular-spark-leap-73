@@ -1,5 +1,5 @@
-import axiosInstance from "./axiosInterceptor";
 
+import axiosInstance from "./axiosInterceptor";
 
 export const getDoctorById = async (id) => {
     const BASE_URL = import.meta.env.VITE_BASE_URL

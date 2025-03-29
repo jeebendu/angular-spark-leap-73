@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,8 +14,8 @@ import Account from "./pages/Account";
 import Appointments from "./pages/Appointments";
 import DoctorSearch from "./pages/DoctorSearch";
 import DoctorDetails from "./pages/DoctorDetails";
+import AppointmentDetails from "./pages/AppointmentDetails";
 
-// Custom component to prevent re-renders
 const ScrollToTop = () => {
   const { pathname } = useLocation();
 
@@ -51,9 +50,9 @@ const App = () => (
             <Route path="/chat" element={<Chat />} />
             <Route path="/account" element={<Account />} />
             <Route path="/appointments" element={<Appointments />} />
+            <Route path="/appointments/:id" element={<AppointmentDetails />} />
             <Route path="/doctor-search" element={<DoctorSearch />} />
             <Route path="/doctor/:id" element={<DoctorDetails />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

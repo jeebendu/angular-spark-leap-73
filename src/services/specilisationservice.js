@@ -3,13 +3,11 @@ import axiosInstance from './axiosInterceptor.js';
 
 export const getSpecialisation = async () => {
     try {
-        const BASE_URL = import.meta.env.VITE_BASE_URL; // Replace with your actual environment variable
-  
+        const BASE_URL = import.meta.env.VITE_BASE_URL;
         const response = await axiosInstance.get(`${BASE_URL}/v1/public/doctor/specialization/list`);
         return response.data;
     } catch (error) {
         console.error("Error fetching specializations:", error);
+        throw error;
     }
-
-}
-
+};

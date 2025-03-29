@@ -1,4 +1,5 @@
 
+// Rename the file to have the correct extension
 import axiosInstance from "./axiosInterceptor";
 
 export const getAllDoctorClinic = async () => {

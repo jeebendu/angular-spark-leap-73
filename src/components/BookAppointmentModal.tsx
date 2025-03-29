@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import {
   Dialog,
@@ -43,7 +42,7 @@ interface BookAppointmentModalProps {
 export function BookAppointmentModal({ doctorName, specialty, trigger, id }: BookAppointmentModalProps) {
   const [step, setStep] = useState(1);
   const [open, setOpen] = useState(false);
-  const [selectedClinic, setSelectedClinic] = useState<Branch>();
+  const [selectedClinic, setSelectedClinic] = useState<Branch | null>(null);
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedMember, setSelectedMember] = useState("self");
@@ -126,15 +125,31 @@ export function BookAppointmentModal({ doctorName, specialty, trigger, id }: Boo
 
 
   useEffect(() => {
-    FetchDoctorByDoctorId();
+    if (id) {
+      FetchDoctorByDoctorId();
+    }
   }, [id]);
 
 
 
   const FetchDoctorByDoctorId = async () => {
+    if (!id) return;
+    
     const data = await getDoctorById(id);
     setClinics(data.branchList);
   }
+
+  // Handle clinic selection that accepts either Branch object or string id
+  const handleClinicSelection = (branchOrId: Branch | string) => {
+    if (typeof branchOrId === 'string') {
+      // If string id is provided, find the corresponding branch
+      const branch = clinics?.find(clinic => clinic.id.toString() === branchOrId);
+      setSelectedClinic(branch || null);
+    } else {
+      // If Branch object is provided, use it directly
+      setSelectedClinic(branchOrId);
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={(newOpen) => {
@@ -167,8 +182,8 @@ export function BookAppointmentModal({ doctorName, specialty, trigger, id }: Boo
           {step === 1 && (
             <ClinicSelectionStep
               selectedClinic={selectedClinic}
-              setSelectedClinic={setSelectedClinic}
-              branches={clinics}
+              setSelectedClinic={handleClinicSelection}
+              branches={clinics || []}
             />
           )}
 

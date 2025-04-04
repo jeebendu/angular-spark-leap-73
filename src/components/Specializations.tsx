@@ -5,8 +5,7 @@ import { Heart, Activity, Brain, Bone, Stethoscope, Syringe, Microscope, Plus, T
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { AllSpecializationsModal } from "./AllSpecializationsModal";
-import {getSpecialisation} from "@/services/specilisationservice";
-import { setSeconds } from "date-fns";
+import { getSpecialisation } from "@/services/specialisationService";
 
 export interface Specialization {
   name: string;
@@ -74,7 +73,6 @@ export function Specializations() {
     }
   ];
   
-  // Extended specializations list for the modal
   const allSpecializations = [
     ...specializations,
     { 
@@ -130,22 +128,18 @@ export function Specializations() {
 
   
   useEffect(() => {
-getAllSpecialization();
-},[]);
+    getAllSpecialization();
+  },[]);
 
-const getAllSpecialization=async()=>{
-  try {
-    const data= await getSpecialisation();
-    console.log(data);
-    setSpecializationList(data);
-
-  } catch (error) {
-    console.log(error);
-  }
-
-}
-
-
+  const getAllSpecialization = async () => {
+    try {
+      const data = await getSpecialisation();
+      console.log(data);
+      setSpecializationList(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <>

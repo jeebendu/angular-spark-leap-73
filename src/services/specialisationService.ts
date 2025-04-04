@@ -1,5 +1,5 @@
 
-import axiosInstance from './axiosInterceptor.js';
+import axiosInstance from "./axiosInterceptor";
 
 export const getSpecialisation = async () => {
     try {

@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,6 +16,9 @@ import Appointments from "./pages/Appointments";
 import DoctorSearch from "./pages/DoctorSearch";
 import DoctorDetails from "./pages/DoctorDetails";
 import AppointmentDetails from "./pages/AppointmentDetails";
+import PatientLogin from "./pages/PatientLogin";
+import DoctorLogin from "./pages/DoctorLogin";
+import DoctorDashboard from "./pages/DoctorDashboard";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -44,7 +48,9 @@ const App = () => (
         <BrowserRouter>
           <ScrollToTop />
           <Routes>
+            {/* Patient Routes */}
             <Route path="/" element={<Index />} />
+            <Route path="/login" element={<PatientLogin />} />
             <Route path="/tests" element={<Tests />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/chat" element={<Chat />} />
@@ -53,6 +59,12 @@ const App = () => (
             <Route path="/appointments/:id" element={<AppointmentDetails />} />
             <Route path="/doctor-search" element={<DoctorSearch />} />
             <Route path="/doctor/:id" element={<DoctorDetails />} />
+            
+            {/* Doctor Routes */}
+            <Route path="/doctor/login" element={<DoctorLogin />} />
+            <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
+            
+            {/* 404 Route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

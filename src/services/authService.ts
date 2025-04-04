@@ -1,7 +1,5 @@
-import { AuthUser } from '@/components/Navbar';
+import { UserInfo } from '@/types/auth';
 import apiService from './apiService';
-import axios from 'axios';
-
 
 // Types for authentication
 export interface LoginResponse {
@@ -9,14 +7,9 @@ export interface LoginResponse {
   user: {
     name: string;
     mobile: string;
+    userType?: string;
     // Other user properties
   };
-}
-
-export interface UserInfo {
-  name: string;
-  mobile: string;
-  // Other user properties
 }
 
 class AuthService {
@@ -39,15 +32,15 @@ class AuthService {
   }
 
   // Function to send OTP to mobile number
-  async sendOtp(authUser: AuthUser): Promise<boolean> {
+  async sendOtp(authUser: any): Promise<boolean> {
     try {
-     
       // In a real app, this would call the API to send OTP
       // For demo, we'll simulate it
       console.log(`OTP sent to ${authUser.phone}`);
       
       // Store the mobile number to verify later
       localStorage.setItem('pending_mobile', authUser.phone);
+      localStorage.setItem('pending_usertype', authUser.userType || 'patient');
       
       return true;
     } catch (error) {
@@ -56,19 +49,13 @@ class AuthService {
     }
   }
 
-
-
-
-
-
-
-
   // Function to verify OTP
   async verifyOtp(otp: string): Promise<boolean> {
     try {
       // In a real app, this would call the API to verify OTP
       // For demo, we'll check if OTP is the last 5 digits of the mobile number
       const mobileNumber = localStorage.getItem('pending_mobile') || '';
+      const userType = localStorage.getItem('pending_usertype') || 'patient';
       const expectedOtp = mobileNumber.slice(-5);
       
       if (otp === expectedOtp) {
@@ -78,12 +65,14 @@ class AuthService {
         // Store token and user info
         localStorage.setItem('auth_token', token);
         localStorage.setItem('user_info', JSON.stringify({
-          name: 'User',
-          mobile: mobileNumber
+          name: userType === 'doctor' ? 'Dr. Smith' : 'User',
+          mobile: mobileNumber,
+          userType: userType
         }));
         
         // Clean up
         localStorage.removeItem('pending_mobile');
+        localStorage.removeItem('pending_usertype');
         
         return true;
       }
@@ -105,6 +94,18 @@ class AuthService {
   private generateRandomToken(): string {
     return Math.random().toString(36).substring(2, 15) + 
            Math.random().toString(36).substring(2, 15);
+  }
+
+  // Function to check if current user is a doctor
+  isDoctor(): boolean {
+    const user = this.getCurrentUser();
+    return user?.userType === 'doctor';
+  }
+
+  // Function to check if current user is a patient
+  isPatient(): boolean {
+    const user = this.getCurrentUser();
+    return !user?.userType || user?.userType === 'patient';
   }
 }
 

@@ -23,8 +23,8 @@ export function AllSpecializationsModal({ isOpen, onClose, specializations }: Al
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
-  const handleSpecializationClick = (specialization: string) => {
-    navigate(`/doctor-search?specialty=${encodeURIComponent(specialization)}`);
+  const handleSpecializationClick = (id:number) => {
+    navigate(`/doctor-search?specialty=${encodeURIComponent(id)}`);
     onClose();
   };
 
@@ -58,7 +58,7 @@ export function AllSpecializationsModal({ isOpen, onClose, specializations }: Al
           {filteredSpecializations.map((spec, index) => (
             <div
               key={index}
-              onClick={() => handleSpecializationClick(spec.name)}
+              onClick={() => handleSpecializationClick(Number(spec.id))}
               className="flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
             >
               {/* <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-2`}>

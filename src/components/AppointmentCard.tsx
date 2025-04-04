@@ -1,5 +1,5 @@
 
-import { Calendar, Clock, Video } from "lucide-react";
+import { Calendar, Clock, Download, Share2, Video } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
@@ -8,10 +8,10 @@ import { cn } from "@/lib/utils";
 interface AppointmentCardProps {
   doctorName: string;
   specialty: string;
-  date: string;
-  time: string;
+  date: Date | string;
+  time: Date | string;
   imageSrc: string;
-  status: "upcoming" | "completed" | "cancelled";
+  status: string;
   className?: string;
   forUser?: string;
 }
@@ -26,6 +26,8 @@ export function AppointmentCard({
   className,
   forUser = "You"
 }: AppointmentCardProps) {
+  const formattedDate = date instanceof Date ? date.toLocaleDateString() : date;
+  const formattedTime = time instanceof Date ? time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : time;
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -50,11 +52,11 @@ export function AppointmentCard({
               <div className="flex items-center gap-4 mt-2">
                 <div className="flex items-center gap-1">
                   <Calendar className="h-3 w-3 text-primary" />
-                  <span className="text-xs">{date}</span>
+                  <span className="text-xs">{formattedDate}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Clock className="h-3 w-3 text-primary" />
-                  <span className="text-xs">{time}</span>
+                  <span className="text-xs">{formattedTime}</span>
                 </div>
               </div>
             </div>
@@ -74,12 +76,21 @@ export function AppointmentCard({
             {status === "upcoming" && (
               <div className="flex gap-2">
                 <Button size="sm" variant="outline" className="text-xs h-8 rounded-full">Reschedule</Button>
-                <Button size="sm" className="text-xs h-8 sky-button rounded-full gap-1">
+                {/* <Button size="sm" className="text-xs h-8 sky-button rounded-full gap-1">
                   <Video className="h-3 w-3" />
                   Join
-                </Button>
+                </Button> */}
               </div>
             )}
+              <div className="flex gap-2">
+              <Button variant="outline" size="sm" className="h-8 px-2">
+                <Share2 className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="sm" className="h-8 px-2">
+                <Download className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="sm" className="h-8">View</Button>
+            </div>
           </div>
         </CardContent>
       </Card>

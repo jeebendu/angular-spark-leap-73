@@ -55,7 +55,7 @@ export interface AuthUser {
 }
 
 
-export function Navbar() {
+export function Navbar({isRequiredLogins}) {
   const { t } = useTranslation();
   const [scrolled, setScrolled] = useState(false);
   const isMobile = useIsMobile();
@@ -211,7 +211,12 @@ console.log(val)
 
 }
 
- 
+useEffect(() => {
+  if (isRequiredLogins) {
+    setLoginDialogOpen(true);
+    console.log("Login required:", isRequiredLogins);
+  }
+}, [isRequiredLogins]);
 
   return (
     <header className={`py-3 px-4 md:px-6 sticky top-0 z-30 ${scrolled ? 'glass-header' : 'bg-white border-b'}`}>

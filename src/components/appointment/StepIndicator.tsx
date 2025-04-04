@@ -21,7 +21,7 @@ export function StepIndicator({
     <div className="flex items-center justify-between mb-8">
       <div className="flex items-center gap-2 w-full">
         {steps.map((step, index) => (
-          <React.Fragment key={step}>
+          <React.Fragment key={index}>
             <div 
               className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${
                 currentStep >= step ? "bg-primary text-white" : "bg-gray-200 text-gray-500"

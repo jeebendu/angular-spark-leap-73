@@ -11,8 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
-import { fetchMyProfilePatient } from "@/services/UserSeviceHandler";
-import { updatePatientInfo } from "@/services/UserSeviceHandler";
+import { fetchMyProfilePatient ,updatePatientInfo} from "@/services/UserSeviceHandler";
 import { Patient } from "@/services/appointmentService";
 import { toast } from "@/hooks/use-toast";
 

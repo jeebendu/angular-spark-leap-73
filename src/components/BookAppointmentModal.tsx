@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import {
   Dialog,
@@ -8,14 +9,18 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
 
-import { getDoctorById } from "@/services/doctorService";
+import { slotByDrAndBranchId ,saveAppointment} from '@/services/AppointmentServiceHandler';
+
+import {getPatietRelationList,fetchMyProfilePatient} from "@/services/UserSeviceHandler";
+
+import { getDoctorById,getDoctorClinicDRAndBranchId } from "@/services/DoctorService";
 
 // Import the refactored components
 import { StepIndicator } from "@/components/appointment/StepIndicator";
 import { StepLabels } from "@/components/appointment/StepLabels";
 import { ClinicSelectionStep } from "@/components/appointment/steps/ClinicSelectionStep";
 import { DateTimeSelectionStep } from "@/components/appointment/steps/DateTimeSelectionStep";
-import { PatientSelectionStep } from "@/components/appointment/steps/PatientSelectionStep";
+import {  PatientSelectionStep } from "@/components/appointment/steps/PatientSelectionStep";
 import { ReviewStep } from "@/components/appointment/steps/ReviewStep";
 import { PaymentStep } from "@/components/appointment/steps/PaymentStep";
 import { NavigationButtons } from "@/components/appointment/NavigationButtons";
@@ -23,37 +28,144 @@ import { NavigationButtons } from "@/components/appointment/NavigationButtons";
 // Import the appointment service
 import {
   validateCurrentStep,
+  validateCurrentAppointmentStep,
   bookAppointment,
   // getClinics, 
   getAvailableTimes,
   getFamilyMembers,
   // getClinicById,
   getFamilyMemberById,
-  Branch
+  Branch,
+  Patient,
+  User
 } from "@/services/appointmentService";
+import { Country, DoctorClinic, State } from "@/pages/DoctorSearch";
+import { Specialization } from "./Specializations";
+
+export interface Appointments {
+  id: number;
+  appointmentDate: Date;
+  status: string;
+  branch: Branch;
+  patient: Patient;
+  doctor: Doctor;
+  // appointmentType: AppointmentType;
+  // visitType: VisitType;
+  slot: Slot;
+  familyMember: FamilyMember;
+  doctorClinic:DoctorClinic;
+}
+export interface AppointmentType {
+  id: number;
+  name: string;
+}
+
+
+export class FamilyMember {
+  id: string;
+  patient:Patient
+  name: string;
+  relationship: string;
+  age: number;
+  phone: string;
+  gender: string;
+}
+
+export interface VisitType {
+  id: number;
+  name: string;
+}
+export class Doctor {
+  id: number;
+  user?: User;
+  uid?: string;
+  desgination?: string;
+  external: boolean;
+  firstname: string;
+  lastname: string;
+  email?: string;
+  phone?: string;
+  expYear?: number;
+  qualification?: string;
+  biography?: string;
+  gender?: number;
+  verified: boolean;
+  joiningDate?: Date;
+  about?: string;
+  image?: string;
+  pincode?: string;
+  city?: string;
+  state?: State;
+  country?: Country;
+  // district?: District;
+  // percentages: Percentage[];
+  specializationList: Specialization[];
+  // serviceList: EnquiryServiceType[];
+  // branchList: Branch[];
+  // languageList: Language[];
+}
+
+// export interface Specialization {
+//   id: number;
+//   name: string;
+// }
+
+export class Slot {
+  id: number;
+  doctor?: Doctor;
+  branch?: Branch;
+  startTime?:Date | string; // Using string to represent LocalTime
+  endTime?: string; // Using string to represent LocalTime
+  availableSlots: number;
+  // status?: SlotStatus;
+  date?: Date;
+  duration?: number;
+  slotType?: String;
+  status?: string;
+
+}
 
 interface BookAppointmentModalProps {
   doctorName?: string;
   specialty?: string;
   trigger: React.ReactNode;
   id?: string;
+  opening: boolean; 
+  onClose: () => void;
 }
 
-export function BookAppointmentModal({ doctorName, specialty, trigger, id }: BookAppointmentModalProps) {
+
+export function BookAppointmentModal({ doctorName, specialty, trigger, id,opening, onClose }: BookAppointmentModalProps) {
   const [step, setStep] = useState(1);
   const [open, setOpen] = useState(false);
-  const [selectedClinic, setSelectedClinic] = useState<Branch | null>(null);
+  const [selectedClinic, setSelectedClinic] = useState<Branch>();
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedMember, setSelectedMember] = useState("self");
   const [paymentMethod, setPaymentMethod] = useState("card");
   const toastObject = useToast();
 
-  // Get data from service
-  // const clinics = getClinics();
+  const [familyMemberList, setFamilyMembersList] = useState<FamilyMember[]>([]);
 
   const [clinics, setClinics] = useState<Branch[]>();
   // let clinics = [];
+
+  const [slotList, setSlotList] = useState<Slot[]>([]);
+
+  const [appointment, setAppointment] = useState({
+    id: null,
+    appointmentDate: null,
+    status: null,
+    branch: null, // Initialize as null if no default constructor is available
+    patient: null,
+    doctor: null, // Initialize as null if no default constructor is available
+    appointmentType: null,
+    visitType: null,
+    slot: null,
+    familyMember: null,
+    doctorClinic:null
+  });
+
 
 
   const familyMembers = getFamilyMembers();
@@ -61,34 +173,15 @@ export function BookAppointmentModal({ doctorName, specialty, trigger, id }: Boo
 
   const stepLabels = ["Clinic", "Date & Time", "Patient", "Review", "Payment"];
 
-  // Auto-advance to next step when date and time are selected
-  useEffect(() => {
-    if (step === 2 && selectedDate && selectedTime) {
-      // Add a small delay to allow user to see their selection before advancing
-      const timer = setTimeout(() => {
-        if (validateCurrentStep(step, {
-          selectedClinic, selectedDate, selectedTime, selectedMember, doctorName, specialty
-        }, toastObject)) {
-          setStep(3);
-        }
-      }, 800);
-
-      return () => clearTimeout(timer);
-    }
-  }, [selectedDate, selectedTime, step, selectedClinic, selectedMember, doctorName, specialty, toastObject]);
-
   const goToStep = (stepNumber: number) => {
-    if (stepNumber <= step || validateCurrentStep(step, {
-      selectedClinic, selectedDate, selectedTime, selectedMember, doctorName, specialty
-    }, toastObject)) {
+    if (stepNumber <= step || validateCurrentAppointmentStep(step, appointment, toastObject)) {
       setStep(stepNumber);
     }
   };
 
   const nextStep = () => {
-    if (validateCurrentStep(step, {
-      selectedClinic, selectedDate, selectedTime, selectedMember, doctorName, specialty
-    }, toastObject) && step < 5) {
+    console.log(appointment)
+    if (validateCurrentAppointmentStep(step, appointment, toastObject) && step < 5) {
       setStep(step + 1);
     }
   };
@@ -100,20 +193,10 @@ export function BookAppointmentModal({ doctorName, specialty, trigger, id }: Boo
   };
 
   const handleBookAppointment = () => {
-    bookAppointment({
-      selectedClinic,
-      selectedDate,
-      selectedTime,
-      selectedMember,
-      doctorName,
-      specialty
-    }, toastObject);
-
-    setOpen(false);
-    // Reset state
-    resetForm();
+    createAppointment();
   };
 
+  
   const resetForm = () => {
     setStep(1);
     setSelectedClinic(null);
@@ -125,36 +208,107 @@ export function BookAppointmentModal({ doctorName, specialty, trigger, id }: Boo
 
 
   useEffect(() => {
-    if (id) {
-      FetchDoctorByDoctorId();
-    }
+    FetchDoctorByDoctorId(Number(id));
+    fetchPatientProfile();
   }, [id]);
+  
+  async function fetchPatientProfile(){
+    const data = await fetchMyProfilePatient();
+    setAppointment((prev) => ({ ...prev, patient: data }));
+    fetchFamilyMembers(data.id);
+  }
+  
+ const  reloadFamilyMember=async()=>{
+  fetchFamilyMembers(appointment.patient.id);
+  }
 
+  const fetchFamilyMembers=async(id:number)=>{
+    const data= await getPatietRelationList(id);
+    setFamilyMembersList(data);
+  }
+  const FetchDoctorByDoctorId = async (drid:number) => {
+    const data = await getDoctorById(drid);
+    setAppointment((prev) => ({ ...prev, doctor: data }));
 
-
-  const FetchDoctorByDoctorId = async () => {
-    if (!id) return;
-    
-    const data = await getDoctorById(id);
     setClinics(data.branchList);
   }
 
-  // Handle clinic selection that accepts either Branch object or string id
-  const handleClinicSelection = (branchOrId: Branch | string) => {
-    if (typeof branchOrId === 'string') {
-      // If string id is provided, find the corresponding branch
-      const branch = clinics?.find(clinic => clinic.id.toString() === branchOrId);
-      setSelectedClinic(branch || null);
-    } else {
-      // If Branch object is provided, use it directly
-      setSelectedClinic(branchOrId);
+  const handleSetBranch = (currectSelectBranch: Branch) => {
+    setAppointment((prev) => ({ ...prev, branch: currectSelectBranch }));
+    fetchSlotDat(currectSelectBranch,new Date());
+    fetchDoctorClinicObj(currectSelectBranch);
+  }
+  
+  const fetchDoctorClinicObj=async(branch:Branch)=>{
+    try {
+      const data=await getDoctorClinicDRAndBranchId(appointment?.doctor.id,branch?.id);
+      setAppointment((prev) => ({ ...prev, doctorClinic: data }));
+    } catch (error) {
+      console.log("Something went wrong");
     }
-  };
+  }
+
+
+  const handleSlotClick = (slot: Slot) => {
+    setAppointment((prev) => ({ ...prev, slot: slot }));
+  }
+
+  const onDateSelectHandler = (date: Date) => {
+    fetchSlotDat(appointment.branch,date);
+  }
+
+
+
+  const fetchSlotDat = async (currectSelectBranch: Branch,date:Date) => {
+    const filterData = {
+      doctor: appointment.doctor,
+      branch: currectSelectBranch,
+      date: date
+    }
+    const data = await slotByDrAndBranchId(filterData);
+    setSlotList(data);
+  }
+
+  const handleMemberSelection = (member: FamilyMember) => {
+    setAppointment((prev) => ({ ...prev, familyMember: member }));
+    }
+
+    const  createAppointment=async()=>{
+      const data = await saveAppointment(appointment);
+      if(data?.status){
+        toastObject.toast({
+          title: "Appointment Booked",
+          description: "Your appointment has been booked successfully.",
+          variant: "default"
+        });
+        
+        bookAppointment({
+          selectedClinic,
+          selectedDate,
+          selectedTime,
+          selectedMember,
+          doctorName,
+          specialty
+        }, toastObject);
+        setOpen(false);
+        onClose();
+        resetForm();
+    
+      }  
+    else{
+      toastObject.toast({
+        title: "Failed to create appointment",
+        description: "Please try again later.",
+        variant: "destructive"
+      });
+    }
+
+  }
 
   return (
-    <Dialog open={open} onOpenChange={(newOpen) => {
+    <Dialog open={open && opening} onOpenChange={(newOpen) => {
       setOpen(newOpen);
-      if (!newOpen) resetForm();
+      if (!newOpen) {resetForm();onClose();}
     }}>
       <DialogTrigger asChild>
         {trigger}
@@ -170,9 +324,7 @@ export function BookAppointmentModal({ doctorName, specialty, trigger, id }: Boo
             currentStep={step}
             totalSteps={5}
             onStepClick={goToStep}
-            validateCurrentStep={() => validateCurrentStep(step, {
-              selectedClinic, selectedDate, selectedTime, selectedMember, doctorName, specialty
-            }, toastObject)}
+            validateCurrentStep={() => validateCurrentAppointmentStep(step, appointment, toastObject)}
           />
 
           {/* Step labels */}
@@ -181,40 +333,33 @@ export function BookAppointmentModal({ doctorName, specialty, trigger, id }: Boo
           {/* Step content */}
           {step === 1 && (
             <ClinicSelectionStep
-              selectedClinic={selectedClinic}
-              setSelectedClinic={handleClinicSelection}
-              branches={clinics || []}
+              appointmentObj={appointment}
+              setSelectedClinic={handleSetBranch}
+              branches={clinics}
             />
           )}
 
           {step === 2 && (
             <DateTimeSelectionStep
-              selectedDate={selectedDate}
-              setSelectedDate={setSelectedDate}
-              selectedTime={selectedTime}
-              setSelectedTime={setSelectedTime}
-              availableTimes={availableTimes}
+              slotList={slotList}
+              appointmentObj={appointment}
+              handleSlotClick={handleSlotClick}
+              onDateSelectHandler={onDateSelectHandler}
             />
           )}
 
           {step === 3 && (
             <PatientSelectionStep
-              selectedMember={selectedMember}
-              setSelectedMember={setSelectedMember}
-              familyMembers={familyMembers}
+              appointmentObj={appointment}
+              familyMembers={familyMemberList}
+              reloadFamilyMember={reloadFamilyMember}
+              handleMemberSelection={handleMemberSelection}
             />
           )}
 
           {step === 4 && (
             <ReviewStep
-              doctorName={doctorName}
-              specialty={specialty}
-              selectedClinic={selectedClinic}
-              clinics={clinics}
-              selectedDate={selectedDate}
-              selectedTime={selectedTime}
-              selectedMember={selectedMember}
-              familyMembers={familyMembers}
+            appointmentObj={appointment}
             />
           )}
 

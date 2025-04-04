@@ -6,14 +6,31 @@ import { DoctorHeader } from "@/components/doctor/DoctorHeader";
 import { DoctorDetailsTabs } from "@/components/doctor/DoctorDetailsTabs";
 import { SimilarDoctors } from "@/components/doctor/SimilarDoctors";
 import { useEffect, useState } from "react";
+import { getDoctorDetails } from "@/services/doctorDetailsService";
+import { Clinic } from "@/services/appointmentService";
+import { boolean } from "zod";
 
 // Type for doctor
-interface Doctor {
-  id: string;
+export interface Doctor {
+  id: number;
+  firstname: string;
   name: string;
-  specialty: string;
-  qualifications: string;
-  experience: string;
+  lastname: string;
+  about: string;
+  qualification: string;
+  desgination: string;
+  email: string;
+  expYear: number;
+  specializationList: Specialization[];
+  clinics: Clinic[];
+  languageList:LanguagesList[];
+  branchList:Branch[];
+  serviceList:ServiceList[];
+  patitientList:PatientList[];
+  phone:string;
+  pincode:string;
+  joiningDate:Date;
+  biography: string;
   rating: number;
   reviewCount: number;
   consultationFee: string;
@@ -23,75 +40,84 @@ interface Doctor {
     degree: string;
     institute: string;
     year: string;
+    
   }[];
   services: string[];
-  clinics: {
-    name: string;
-    address: string;
-    phone: string;
-    timings: string;
-    days: string;
-  }[];
+ 
+
+}
+export interface Specialization {
+  id: string;
+  name: string;
+}
+export interface ServiceList {
+  id: string;
+  name: string;
+}
+export interface LanguagesList {
+  id: string;
+  name: string;
+}
+
+
+export interface Branch{
+  id: number;
+  name: string;
+  location: string;
+  state: string;
+  city: string;
+  district: string;
+  pincode: string;
+  country: string;
+  latitude: number;
+  longitude: number;
+
+}
+export interface PatientList{
+  id: number;
+  firstname: string;
+  lastname: string;
+
 }
 
 const DoctorDetails = () => {
   const { id } = useParams();
   const location = useLocation();
-  const [doctor, setDoctor] = useState<Doctor | null>(null);
+  const [doctor, setDoctorsDetails] = useState<Doctor>();
+  const [loading, setLoading] = useState(false);
   
+ 
+
   // Use an effect to load doctor data and only re-run when ID changes
   useEffect(() => {
-    // In a real app, this would fetch from API
-    const mockDoctor: Doctor = {
-      id: id || "1",
-      name: "Dr. Emily Johnson",
-      specialty: "Cardiologist",
-      qualifications: "MBBS, MD (Cardiology), DNB",
-      experience: "12+ years",
-      rating: 4.8,
-      reviewCount: 235,
-      consultationFee: "₹1,200",
-      bio: "Dr. Emily Johnson is a highly skilled cardiologist with over 12 years of experience in diagnosing and treating heart diseases. She specializes in interventional cardiology and has performed more than 1,000 cardiac procedures.",
-      languages: ["English", "Hindi", "Tamil"],
-      education: [
-        { degree: "MBBS", institute: "AIIMS, New Delhi", year: "2008" },
-        { degree: "MD (Cardiology)", institute: "PGIMER, Chandigarh", year: "2012" },
-        { degree: "DNB (Cardiology)", institute: "National Board of Examinations", year: "2013" }
-      ],
-      services: [
-        "Comprehensive Cardiac Evaluation",
-        "Echocardiography",
-        "ECG",
-        "Stress Testing",
-        "Heart Disease Management",
-        "Heart Failure Treatment"
-      ],
-      clinics: [
-        {
-          name: "HeartCare Clinic",
-          address: "123 ABC Road, Koramangala, Bangalore",
-          phone: "+91 9876543210",
-          timings: "9:00 AM - 6:00 PM",
-          days: "Monday to Saturday"
-        },
-        {
-          name: "City Heart Center",
-          address: "456 XYZ Road, Indiranagar, Bangalore",
-          phone: "+91 9876543211",
-          timings: "10:00 AM - 4:00 PM",
-          days: "Monday, Wednesday, Friday"
-        }
-      ]
-    };
+    fetchDoctorDetails(Number(id));
+    // const timer = setTimeout(() => {
+    //   // setDoctorsDetails(mockDoctor);
+    // }, 100);
     
-    // For demo, let's pretend we're fetching data
-    const timer = setTimeout(() => {
-      setDoctor(mockDoctor);
-    }, 100);
-    
-    return () => clearTimeout(timer);
+    // return () => clearTimeout(timer);
   }, [id]); // Only re-run if the ID changes
   
+
+  const fetchDoctorDetails = async (id:number) => {
+    try{
+      const data = await getDoctorDetails(id);
+      setDoctorsDetails(data);
+    }
+    catch(error){
+      console.error("Error fetching doctors:", error);
+    }finally{
+      setLoading(false);
+    }
+  };
+
+
+  const [isRequiredLogin,setIsRequiredLogin] = useState<number>();
+
+  const handleButtonClick = () => {
+    setIsRequiredLogin(Math.random());
+  };
+
   // Show loading state if doctor is null
   if (!doctor) {
     return (
@@ -104,7 +130,7 @@ const DoctorDetails = () => {
   }
 
   return (
-    <AppLayout>
+<AppLayout isRequiredLogin={isRequiredLogin}>
       <div className="container px-4 py-6 max-w-6xl mx-auto">
         {/* Back button */}
         <Link to="/doctor-search" className="flex items-center text-primary mb-6 hover:underline">
@@ -113,13 +139,34 @@ const DoctorDetails = () => {
         </Link>
         
         {/* Doctor Header */}
-        <DoctorHeader doctor={doctor} />
+        <DoctorHeader 
+    
+          doctor={doctor} 
+          id={id}
+          specializationList={doctor.specializationList} 
+          languageList={doctor.languageList}
+          clinics={doctor.clinics} 
+          onButtonClick={handleButtonClick}
+        />
         
         {/* Doctor Details Tabs */}
-        <DoctorDetailsTabs doctor={doctor} />
+        <DoctorDetailsTabs   doctor={doctor} 
+        clinics={doctor.clinics}
+          specializationList={doctor.specializationList}
+          branchList={doctor.branchList}
+          languageList={doctor.languageList}
+          serviceList={doctor.serviceList}
+         
+         
+         />
         
         {/* Similar Doctors */}
-        <SimilarDoctors />
+        <SimilarDoctors   
+        specializationList={doctor.specializationList}
+        latitude={doctor.branchList[0]?.latitude}
+        longitude={doctor.branchList[0]?.longitude}
+        
+        />
       </div>
     </AppLayout>
   );

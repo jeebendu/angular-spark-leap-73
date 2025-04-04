@@ -4,33 +4,21 @@ import { ClinicsTab } from "./ClinicsTab";
 import { AboutTab } from "./AboutTab";
 import { ServicesTab } from "./ServicesTab";
 import { ReviewsTab } from "./ReviewsTab";
+import { Branch, Doctor, LanguagesList, PatientList, ServiceList, Specialization } from "@/pages/DoctorDetails";
+import { Clinic } from "@/services/appointmentService";
 
-interface Doctor {
-  name: string;
-  specialty: string;
-  rating: number;
-  reviewCount: number;
-  education: {
-    degree: string;
-    institute: string;
-    year: string;
-  }[];
-  languages: string[];
-  services: string[];
-  clinics: {
-    name: string;
-    address: string;
-    phone: string;
-    timings: string;
-    days: string;
-  }[];
-}
+
 
 interface DoctorDetailsTabsProps {
   doctor: Doctor;
+  clinics: Clinic[];
+  specializationList: Specialization[];
+  branchList:Branch[];
+  languageList:LanguagesList[];
+  serviceList:ServiceList[];
 }
 
-export const DoctorDetailsTabs = ({ doctor }: DoctorDetailsTabsProps) => {
+export const DoctorDetailsTabs = ({ doctor,specializationList=[],branchList,languageList =[],serviceList=[]}: DoctorDetailsTabsProps) => {
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden mb-6">
       <Tabs defaultValue="clinics">
@@ -40,29 +28,35 @@ export const DoctorDetailsTabs = ({ doctor }: DoctorDetailsTabsProps) => {
           <TabsTrigger value="services" className="flex-1">Services</TabsTrigger>
           <TabsTrigger value="reviews" className="flex-1">Reviews</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="clinics">
           <ClinicsTab 
-            clinics={doctor.clinics} 
-            doctor={{ name: doctor.name, specialty: doctor.specialty }} 
+            branchList={branchList} 
+            doctor={{ name: doctor.name, specialty: doctor.specializationList[0]?.name }} 
+          
           />
         </TabsContent>
         
         <TabsContent value="about">
           <AboutTab 
+           doctor={doctor}
             education={doctor.education}
             languages={doctor.languages}
+            languageList={languageList}
+           
           />
         </TabsContent>
         
         <TabsContent value="services">
-          <ServicesTab services={doctor.services} />
+          <ServicesTab services={doctor.services}
+           serviceList={serviceList} />
         </TabsContent>
         
         <TabsContent value="reviews">
           <ReviewsTab 
-            rating={doctor.rating}
-            reviewCount={doctor.reviewCount}
+            // rating={doctor.rating}
+            // reviewCount={doctor.reviewCount}
+            
           />
         </TabsContent>
       </Tabs>

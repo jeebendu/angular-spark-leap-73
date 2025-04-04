@@ -1,3 +1,6 @@
+import { Appointments, Slot } from "@/components/BookAppointmentModal";
+import { Country, District, State } from "@/pages/DoctorSearch";
+
 // We need to manually define the ToasterToast type since it's not exported from the module
 interface ToasterToast {
   id: string;
@@ -56,7 +59,7 @@ export interface Clinic {
   branchList: Branch[]; 
 }
 
-export interface Branch {
+export class Branch {
   id: string; // Corresponds to Long in Java
   name: string;
   code: string;
@@ -73,21 +76,7 @@ export interface Branch {
   longitude: number;
 }
 
-export interface State {
-  id: string;
-  name: string;
-  code: string;
-}
-export interface District {
-  id: string;
-  name: string;
-  code:string;
-}
-export interface Country {
-  id: string;
-  name: string;
-  code: string;
-}
+
 
 export interface FamilyMember {
   id: string;
@@ -132,6 +121,7 @@ export const getAvailableTimes = (): string[] => [
 
 // Validation functions
 export const validateClinicSelection = (selectedClinic: Branch, toastHelpers: ToastHelpers): boolean => {
+  console.log(selectedClinic);
   if (!selectedClinic.id) {
     toastHelpers.toast({
       title: "Please select a clinic",
@@ -159,6 +149,21 @@ export const validateDateTimeSelection = (
   return true;
 };
 
+export const validateSlotSelection = (
+  slot: Slot, 
+  toastHelpers: ToastHelpers
+): boolean => {
+  if (!slot?.id) {
+    toastHelpers.toast({
+      title: "Required fields missing",
+      description: "Please select both date and time for your appointment.",
+      variant: "destructive"
+    });
+    return false;
+  }
+  return true;
+};
+
 // No validation needed for patient selection and review steps
 export const validatePatientSelection = (): boolean => true;
 export const validateReviewStep = (): boolean => true;
@@ -174,6 +179,26 @@ export const validateCurrentStep = (
       return validateClinicSelection(appointmentDetails.selectedClinic, toastHelpers);
     case 2:
       return validateDateTimeSelection(appointmentDetails.selectedDate, appointmentDetails.selectedTime, toastHelpers);
+    case 3:
+      return validatePatientSelection();
+    case 4:
+      return validateReviewStep();
+    default:
+      return true;
+  }
+};
+
+export const validateCurrentAppointmentStep = (
+  step: number,
+  appointment: Appointments,
+  toastHelpers: ToastHelpers
+): boolean => {
+  console.log(appointment)
+  switch(step) {
+    case 1:
+      return validateClinicSelection(appointment.branch, toastHelpers);
+    case 2:
+      return validateSlotSelection(appointment.slot, toastHelpers);
     case 3:
       return validatePatientSelection();
     case 4:

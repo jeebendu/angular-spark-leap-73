@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Branch, Clinic, languageList } from "@/pages/DoctorSearch";
+import { Branch, languageList } from "@/pages/DoctorSearch";
 
 interface DoctorCardProps {
   id: number;

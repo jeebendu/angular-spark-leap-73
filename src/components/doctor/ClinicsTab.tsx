@@ -4,27 +4,22 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 import { MapPin, CalendarDays, Clock, CheckCircle2 } from "lucide-react";
-import { BookAppointmentModal } from "@/components/BookAppointmentModal";
+import { BookAppointmentModal, Doctor } from "@/components/BookAppointmentModal";
+import { Branch } from "@/pages/DoctorDetails";
 
-interface Clinic {
-  name: string;
-  address: string;
-  phone: string;
-  timings: string;
-  days: string;
-}
 
-interface Doctor {
-  name: string;
-  specialty: string;
-}
+// interface Doctor {
+//   name: string;
+//   specialty: string;
+// }
 
 interface ClinicsTabProps {
-  clinics: Clinic[];
+
+  branchList: Branch[];
   doctor: Doctor;
 }
 
-export const ClinicsTab = ({ clinics, doctor }: ClinicsTabProps) => {
+export const ClinicsTab = ({ branchList, doctor }: ClinicsTabProps) => {
   const [selectedClinic, setSelectedClinic] = useState(0);
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null);
@@ -45,7 +40,7 @@ export const ClinicsTab = ({ clinics, doctor }: ClinicsTabProps) => {
       <h3 className="text-lg font-medium mb-4">Available Clinics</h3>
       
       <div className="grid md:grid-cols-2 gap-4">
-        {clinics.map((clinic, index) => (
+        {branchList.map((clinic, index) => (
           <Card key={index} className={`cursor-pointer border-2 ${selectedClinic === index ? 'border-primary' : 'border-gray-100'}`} onClick={() => setSelectedClinic(index)}>
             <CardContent className="p-4">
               <div className="flex justify-between">
@@ -53,15 +48,15 @@ export const ClinicsTab = ({ clinics, doctor }: ClinicsTabProps) => {
                   <h4 className="font-medium text-base">{clinic.name}</h4>
                   <p className="text-sm text-gray-500 flex items-start mt-1">
                     <MapPin className="h-4 w-4 mr-1 shrink-0 mt-0.5" />
-                    {clinic.address}
+                    {clinic.location},{clinic.city} ,{clinic.pincode}
                   </p>
                   <div className="flex items-center mt-2 text-sm text-gray-500">
                     <CalendarDays className="h-4 w-4 mr-1" />
-                    <span>{clinic.days}</span>
+                    <span>clinic.days</span>
                   </div>
                   <div className="flex items-center mt-1 text-sm text-gray-500">
                     <Clock className="h-4 w-4 mr-1" />
-                    <span>{clinic.timings}</span>
+                    <span>clinic.timings</span>
                   </div>
                 </div>
                 {selectedClinic === index && (
@@ -103,8 +98,8 @@ export const ClinicsTab = ({ clinics, doctor }: ClinicsTabProps) => {
             </div>
             
             <BookAppointmentModal 
-              doctorName={doctor.name}
-              specialty={doctor.specialty}
+              doctorName={doctor.firstname + " " + doctor.lastname}
+              specialty={doctor.qualification}
               trigger={
                 <Button className="w-full sky-button mt-6" disabled={!selectedTimeSlot}>
                   Book Appointment

@@ -1,13 +1,9 @@
-
 import axios from 'axios';
-
-// Import environment variables
-const DEV = import.meta.env.VITE_DEV; 
-const X_APP_TOKEN = import.meta.env.VITE_X_APP_TOKEN;
-const BASE_URL = import.meta.env.VITE_BASE_URL;
-
-const token = localStorage.getItem('auth_token') || null;
-
+// import { BASE_URL, DEV, X_APP_TOKEN } from '@env'; // Import environment variables
+const BASE_URL=import.meta.env.VITE_BASE_URL
+const DEV=import.meta.env.VITE_DEV
+const X_APP_TOKEN=import.meta.env.VITE_X_APP_TOKEN
+const token=localStorage.getItem('auth_token') || null;
 // Create an Axios instance
 const axiosInstance = axios.create({
   baseURL: BASE_URL, // Set the base URL
@@ -19,7 +15,7 @@ axiosInstance.interceptors.request.use(
     // Add headers to every request
     config.headers['Dev'] = DEV;
     config.headers['X-App-Token'] = X_APP_TOKEN;
-    if(token != null) {
+    if(token!=null) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
   
@@ -32,3 +28,4 @@ axiosInstance.interceptors.request.use(
 );
 
 export default axiosInstance;
+

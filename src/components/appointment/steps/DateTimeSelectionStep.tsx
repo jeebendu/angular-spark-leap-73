@@ -11,31 +11,38 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Appointments, Slot } from "@/components/BookAppointmentModal";
 
 interface DateTimeSelectionStepProps {
-  selectedDate: string;
-  setSelectedDate: (date: string) => void;
-  selectedTime: string;
-  setSelectedTime: (time: string) => void;
-  availableTimes: string[];
+  slotList: Slot[];
+  appointmentObj: Appointments;
+  handleSlotClick: (slot: Slot) => void;
+  onDateSelectHandler: (date: Date) => void;
 }
 
-export function DateTimeSelectionStep({ 
-  selectedDate, 
-  setSelectedDate, 
-  selectedTime, 
-  setSelectedTime, 
-  availableTimes 
-}: DateTimeSelectionStepProps) {
-  const [date, setDate] = useState<Date | undefined>(
-    selectedDate ? new Date(selectedDate) : undefined
-  );
 
-  const handleDateSelect = (selectedDate: Date | undefined) => {
-    setDate(selectedDate);
-    if (selectedDate) {
-      setSelectedDate(format(selectedDate, "yyyy-MM-dd"));
-    }
+
+export function DateTimeSelectionStep({
+  slotList,
+  appointmentObj,
+  handleSlotClick,
+  onDateSelectHandler
+}: DateTimeSelectionStepProps) {
+
+  const [date, setDate] = useState<Date | undefined>(
+    appointmentObj?.slot?.date ? new Date(appointmentObj.slot.date) : new Date()
+  );
+  const handleDateSelect = async (date: Date) => {
+    setDate(date);
+    onDateSelectHandler(date);
+  }
+
+  const handleSlotSelect = (slot: Slot) => {
+    // setDate(selectedDate);
+    // if (selectedDate) {
+    //   setSelectedDate(format(selectedDate, "yyyy-MM-dd"));
+    // }
+    handleSlotClick(slot);
   };
 
   return (
@@ -45,7 +52,7 @@ export function DateTimeSelectionStep({
           <CalendarIcon className="mr-2 h-5 w-5" />
           Select Date and Time
         </h3>
-        
+
         <div className="grid grid-cols-1 gap-6">
           <div>
             <Label>Date</Label>
@@ -75,20 +82,25 @@ export function DateTimeSelectionStep({
               </Popover>
             </div>
           </div>
-          
+
           <div>
             <Label>Available Time Slots</Label>
             <div className="grid grid-cols-3 gap-2 mt-1">
-              {availableTimes.map((time) => (
+              {slotList.map((slot) => (
                 <Button
-                  key={time}
-                  variant={selectedTime === time ? "default" : "outline"}
+                  key={slot?.id}
+                  variant={appointmentObj?.slot?.startTime === slot?.startTime ? "default" : "outline"}
                   className={`text-xs h-8 ${
-                    selectedTime === time ? "sky-button" : ""
+                    slot.availableSlots <= 0
+                      ? "bg-red-500 text-white cursor-not-allowed"
+                      : appointmentObj?.slot?.startTime === slot?.startTime
+                      ? "sky-button"
+                      : ""
                   }`}
-                  onClick={() => setSelectedTime(time)}
+                  disabled={slot.availableSlots <= 0}
+                  onClick={() => handleSlotSelect(slot)}
                 >
-                  {time}
+                  {slot.startTime}
                 </Button>
               ))}
             </div>

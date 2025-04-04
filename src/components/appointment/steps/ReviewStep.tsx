@@ -1,30 +1,16 @@
 
 import { ClipboardCheck } from "lucide-react";
-import {  getFamilyMemberById, Clinic, FamilyMember, Branch } from "@/services/appointmentService";
+import { Appointments } from "@/components/BookAppointmentModal";
 
 interface ReviewStepProps {
-  doctorName?: string;
-  specialty?: string;
-  selectedClinic: Branch;
-  clinics: Branch[];
-  selectedDate: string;
-  selectedTime: string;
-  selectedMember: string;
-  familyMembers: FamilyMember[];
+  appointmentObj?: Appointments;
 }
 
-export function ReviewStep({ 
-  doctorName, 
-  specialty, 
-  selectedClinic, 
-  clinics, 
-  selectedDate, 
-  selectedTime, 
-  selectedMember, 
-  familyMembers 
+export function ReviewStep({
+  appointmentObj
 }: ReviewStepProps) {
-  const clinic =null;
-  const patient = getFamilyMemberById(selectedMember);
+  const clinic = null;
+  // const patient = getFamilyMemberById(selectedMember);
 
   return (
     <div className="space-y-6">
@@ -32,37 +18,40 @@ export function ReviewStep({
         <ClipboardCheck className="mr-2 h-5 w-5" />
         Review Appointment Details
       </h3>
-      
+
       <div className="bg-gray-50 rounded-lg p-4 space-y-4">
         <div className="space-y-2">
           <h4 className="font-medium text-sm">Doctor</h4>
           <div className="bg-white p-3 rounded-md">
-            <p className="font-medium">{doctorName || "Selected Doctor"}</p>
-            {specialty && <p className="text-sm text-gray-500">{specialty}</p>}
+            <p className="font-medium">{appointmentObj?.doctor.firstname || "Selected Doctor"} {appointmentObj?.doctor.lastname}</p>
+            {appointmentObj?.doctor && <p className="text-sm text-gray-500">{appointmentObj.doctor.specializationList[0].name}</p>}
           </div>
         </div>
-        
+
         <div className="space-y-2">
           <h4 className="font-medium text-sm">Clinic</h4>
           <div className="bg-white p-3 rounded-md">
-            <p className="font-medium">{clinic?.name}</p>
-            <p className="text-sm text-gray-500">{clinic?.address}</p>
+            <p className="font-medium">{appointmentObj?.branch.name}</p>
+            <p className="text-sm text-gray-500">{appointmentObj?.branch.city}</p>
           </div>
         </div>
-        
+
         <div className="space-y-2">
           <h4 className="font-medium text-sm">Date & Time</h4>
           <div className="bg-white p-3 rounded-md">
-            <p className="font-medium">{selectedDate}</p>
-            <p className="text-sm text-gray-500">{selectedTime}</p>
+            <p className="font-medium">
+              {appointmentObj?.slot.date ? new Date(appointmentObj.slot.date).toLocaleDateString() : "N/A"}
+            </p>
+            <p className="text-sm text-gray-500">{appointmentObj?.slot.startTime}</p>
           </div>
         </div>
-        
+
         <div className="space-y-2">
           <h4 className="font-medium text-sm">Patient</h4>
           <div className="bg-white p-3 rounded-md">
-            <p className="font-medium">{patient?.name}</p>
-            <p className="text-sm text-gray-500">{patient?.relationship}</p>
+            <p className="font-medium">
+              {appointmentObj?.familyMember?.id ? appointmentObj?.familyMember.name : appointmentObj.patient.firstname + " " + appointmentObj.patient.lastname}</p>
+            <p className="text-sm text-gray-500">{appointmentObj?.familyMember?.id ? appointmentObj?.familyMember.relationship : "My Self"}</p>
           </div>
         </div>
       </div>

@@ -8,18 +8,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { DoctorCard } from "@/components/DoctorCard";
 
-import { getAllDoctorClinic } from "@/services/allDoctorClinicService";
+import { getAllDoctorClinic } from "@/services/alldoctorclinicService";
+import { getSpecialisation } from "@/services/specilisationservice";
 
 
 
-import { 
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { 
+import {
   ArrowUpDown,
   Calendar,
   Check,
@@ -29,15 +30,15 @@ import {
   LayoutList,
   MapPin,
   Rows,
-  Search, 
-  SlidersHorizontal, 
-  Star, 
+  Search,
+  SlidersHorizontal,
+  Star,
   X,
   HelpCircle,
   Building,
   Navigation
 } from "lucide-react";
-import { 
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -55,8 +56,26 @@ import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { useLocation } from "@/contexts/LocationContext";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/components/ui/use-toast";
+import { Specialization, Specializations } from "@/components/Specializations";
+import { getSpecialisationAll } from "@/services/specilisationservice";
+import { getLanguageList } from "@/services/specilisationservice";
+import { Clinic} from "@/services/appointmentService";
+import { LanguagesList } from "./DoctorDetails";
 
 
+
+export interface SearchDoctorClinic {
+  specialisations: Specialization[];
+  gender: number;
+  expYearFirst: number;
+  expYearLast: number;
+  languageList: languageList[];
+  latitude: number;
+  longitude: number;
+  radius: number;
+  rating: number;
+
+}
 
 
 export interface DoctorClinic {
@@ -77,12 +96,13 @@ export interface Doctor {
   qualification: string;
   joiningDate: Date;
   specialization: string;
-  specializationList: Specialisation[];
+  specializationList: Specialization[];
   language:string;
   languageList:languageList[]
   serviceList: ServiceList[];
   branchList: Branch[];
 }
+
 export interface languageList {
   id: number;
   name: string;
@@ -92,17 +112,10 @@ export interface User {
   name: string;
   email: string;
   // branch: Branch=new Branch();
-  phone: string ;
+  phone: string;
 }
 
-export interface Clinic {
-  id: number;
-  name: string;
-  email: string;
-  contact: string;
-  address: string;
-  branchList: Branch[];
-}
+
 
 export interface Branch {
   id: number;
@@ -139,12 +152,12 @@ export interface District {
   code: string;
 }
 
-export interface Specialisation {
-  id: number;
-  name: string;
-  icon: string;
-  doctorCount: number;
-}
+// export interface Specialisation {
+//   id: number;
+//   name: string;
+//   icon: string;
+//   doctorCount: number;
+// }
 
 export interface ServiceList {
   id: number;
@@ -155,14 +168,17 @@ export interface ServiceList {
 const DoctorSearch = () => {
   const [searchParams] = useSearchParams();
   const initialQuery = searchParams.get("query") || "";
-  const initialSpecialty = searchParams.get("specialty") || "";
-  
+  const initialSpecialty = searchParams.get("specialty") || null;
+  console.log("initialSpecialtyyyyy", initialSpecialty);
+
+  const latitude = searchParams.get("latitude");
+  const longitude = searchParams.get("longitude");
+  const radius = searchParams.get("radius") ? parseFloat(searchParams.get("radius")!) : null;
+
   const [searchTerm, setSearchTerm] = useState(initialQuery);
   const [priceRange, setPriceRange] = useState([500, 2000]);
   const [filterOpen, setFilterOpen] = useState(false);
-  const [selectedSpecialties, setSelectedSpecialties] = useState<string[]>(
-    initialSpecialty ? [initialSpecialty] : []
-  );
+  const [selectedSpecialties, setSelectedSpecialties] = useState<Specialization[]>([]);
   const [selectedGenders, setSelectedGenders] = useState<string[]>([]);
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
   const [selectedExperience, setSelectedExperience] = useState<string[]>([]);
@@ -181,13 +197,34 @@ const DoctorSearch = () => {
   const [doctors, setDoctors] = useState<any[]>([]);
   const [showNoMoreDoctors, setShowNoMoreDoctors] = useState(false);
   const [allDoctorClinic, setAllDoctorClinic] = useState<DoctorClinic[]>([]);
+
+  const [specialization, setSpecialization] = useState<Specialization[]>([]);
+
+  const [specializationList, setSpecializationList] = useState<Specialization[]>([]);
+
+  const [allLanguage, setAllLanguage] = useState<languageList[]>([]);
+
+
+  const [searchdoctorclinic, setSearchDoctorClinic] = useState<SearchDoctorClinic>({
+    specialisations: [],
+    gender: null,
+    expYearFirst: null,
+    expYearLast: null,
+    languageList: [],
+    latitude: latitude ? parseFloat(latitude) : null,
+    longitude: longitude ? parseFloat(longitude) : null,
+    radius: radius || 0,
+    rating: null
+  });
+
+
   //  const [specializationList, setSpecializationList] = useState<Specialization[]>([]);
-  
+
   const observer = useRef<IntersectionObserver>();
   const isMobile = useIsMobile();
   const { location } = useLocation();
   const { toast } = useToast();
-  
+
   const specialties = [
     "All Specialties",
     "Cardiology",
@@ -204,11 +241,11 @@ const DoctorSearch = () => {
   const genders = ["Male", "Female"];
   const languages = ["English", "Hindi", "Tamil", "Telugu", "Kannada", "Malayalam"];
   const experienceRanges = ["0-5 years", "5-10 years", "10-15 years", "15+ years"];
-  
+
   const timeSlots = [
-    "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", 
+    "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM",
     "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM",
-    "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM", 
+    "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM",
     "04:00 PM", "04:30 PM", "05:00 PM", "05:30 PM"
   ];
 
@@ -251,65 +288,136 @@ const DoctorSearch = () => {
     ]
   ];
 
-    useEffect(() => {
-    getAllDoctorClinicList();
-  },[]);
-  
-  const getAllDoctorClinicList=async()=>{
+  //   const searchdoctorclinics={
+
+  //     specialisations:specialization,
+
+  // }
+
+
+  const AllNullSearchValue = async () => {
+
+    const data = await getAllDoctorClinic(searchdoctorclinic);
+    console.log("data", data);
+    setAllDoctorClinic(data);
+
+
+  }
+
+
+  useEffect(() => {
+    console.log("useEffect triggered");
+    getAllSpecialization();
+    getAllLanguageList();
+    initializeData();
+  }, []);
+
+  const initializeData = async () => {
     try {
-      const data= await getAllDoctorClinic();
-      console.log("********************************8",data.content);
-      setAllDoctorClinic(data);
-  
+      const data = await getSpecializationById(initialSpecialty);
+
+      setSearchDoctorClinic((prev) => {
+        if (prev.specialisations.some((spec) => spec.id === data.id)) {
+          return prev; // Avoid duplicate updates
+        }
+
+        const updatedSearchDoctorClinic = {
+          ...prev,
+          specialisations: [...prev.specialisations, data],
+        };
+
+        console.log("Initial Specializations:", updatedSearchDoctorClinic);
+        getAllDoctorClinicList(updatedSearchDoctorClinic);
+
+        return updatedSearchDoctorClinic;
+      });
     } catch (error) {
-      console.log(error);
+      console.error("Error in initializeData:", error);
     }
-  
+  };
+
+  const getAllDoctorClinicList = async (updatedSearchDoctorClinic) => {
+    try {
+      console.log("Fetching Doctor Clinic List for:", updatedSearchDoctorClinic);
+      const data = await getAllDoctorClinic(updatedSearchDoctorClinic);
+      console.log("Fetched Data:", data);
+      setAllDoctorClinic(data);
+    } catch (error) {
+      console.error("Error in getAllDoctorClinicList:", error);
+    }
+  };
+
+  const getSpecializationById = async (id: string) => {
+    try {
+      return await getSpecialisation(id);
+    } catch (error) {
+      console.error("Error in getSpecializationById:", error);
+    }
+  };
+
+  const getAllSpecialization = async () => {
+    try {
+      const data = await getSpecialisationAll();
+      console.log("Fetched Specializations:", data);
+      setSpecializationList(data);
+    } catch (error) {
+      console.error("Error in getAllSpecialization:", error);
+    }
+  };
+
+  const getAllLanguageList = async () => {
+    try {
+      const data = await getLanguageList();
+      console.log("Fetched Languages:", data);
+      setAllLanguage(data);
+    } catch (error) {
+      console.error("Error in getAllLanguageList:", error);
+    }
   }
 
   // Generate initial set of doctors
-  useEffect(() => {
-    // Simulate API fetch delay
-    setLoading(true);
-    setTimeout(() => {
-      const initialDoctors = [...Array(12)].map((_, index) => ({
-        id: String(index + 1),
-        name: `Dr. ${["Robert", "Emily", "James", "Sarah", "Michael", "Jennifer", "David", "Maria", "Thomas", "Jessica", "William", "Lisa"][index % 12]} ${["Smith", "Johnson", "Williams", "Brown", "Jones", "Miller", "Davis", "Garcia", "Rodriguez", "Wilson"][index % 10]}`,
-        specialty: ["Cardiologist", "Neurologist", "Orthopedist", "Dermatologist", "Pediatrician", "Ophthalmologist", "Dentist", "Gynecologist", "ENT Specialist", "Psychiatrist"][index % 10],
-        rating: 4 + (index % 10) / 10,
-        reviewCount: 80 + index * 5,
-        price: 900 + index * 100,
-        imageSrc: `https://placehold.co/400x300/eaf7fc/33C3F0?text=Dr.+${index+1}&font=montserrat`,
-        experience: `${8 + (index % 15)}+ years`,
-        languages: index % 3 === 0 ? ["English", "Hindi", "Tamil"] : ["English", "Hindi"],
-        clinics: doctorClinics[index % doctorClinics.length]
-      }));
-      
-      setDoctors(initialDoctors);
-      setLoading(false);
-    }, 1000);
-  }, []);
+  // useEffect(() => {
+  //   // Simulate API fetch delay
+  //   setLoading(true);
+  //   setTimeout(() => {
+  //     const initialDoctors = [...Array(12)].map((_, index) => ({
+  //       id: String(index + 1),
+  //       name: `Dr. ${["Robert", "Emily", "James", "Sarah", "Michael", "Jennifer", "David", "Maria", "Thomas", "Jessica", "William", "Lisa"][index % 12]} ${["Smith", "Johnson", "Williams", "Brown", "Jones", "Miller", "Davis", "Garcia", "Rodriguez", "Wilson"][index % 10]}`,
+  //       specialty: ["Cardiologist", "Neurologist", "Orthopedist", "Dermatologist", "Pediatrician", "Ophthalmologist", "Dentist", "Gynecologist", "ENT Specialist", "Psychiatrist"][index % 10],
+  //       rating: 4 + (index % 10) / 10,
+  //       reviewCount: 80 + index * 5,
+  //       price: 900 + index * 100,
+  //       imageSrc: `https://placehold.co/400x300/eaf7fc/33C3F0?text=Dr.+${index+1}&font=montserrat`,
+  //       experience: `${8 + (index % 15)}+ years`,
+  //       languages: index % 3 === 0 ? ["English", "Hindi", "Tamil"] : ["English", "Hindi"],
+  //       clinics: doctorClinics[index % doctorClinics.length]
+  //     }));
+
+  //     setDoctors(initialDoctors);
+  //     setLoading(false);
+  //   }, 1000);
+  // }, []);
 
   // Setup infinite scrolling
   const lastDoctorElementRef = useCallback((node: HTMLDivElement | null) => {
     if (loading) return;
-    
+
     if (observer.current) observer.current.disconnect();
-    
+
     observer.current = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting && hasMore) {
         loadMoreDoctors();
       }
     });
-    
+
     if (node) observer.current.observe(node);
   }, [loading, hasMore]);
 
   const loadMoreDoctors = () => {
     if (!hasMore || loading) return;
-    
+
     setLoading(true);
-    
+
     // Simulate API fetch with timeout
     setTimeout(() => {
       if (page >= 3) {
@@ -318,7 +426,7 @@ const DoctorSearch = () => {
         setLoading(false);
         return;
       }
-      
+
       const newDoctors = [...Array(8)].map((_, index) => {
         const realIndex = page * 12 + index;
         return {
@@ -328,13 +436,13 @@ const DoctorSearch = () => {
           rating: 4 + (realIndex % 10) / 10,
           reviewCount: 80 + realIndex * 5,
           price: 900 + realIndex * 100,
-          imageSrc: `https://placehold.co/400x300/eaf7fc/33C3F0?text=Dr.+${realIndex+1}&font=montserrat`,
+          imageSrc: `https://placehold.co/400x300/eaf7fc/33C3F0?text=Dr.+${realIndex + 1}&font=montserrat`,
           experience: `${8 + (realIndex % 15)}+ years`,
           languages: realIndex % 3 === 0 ? ["English", "Hindi", "Tamil"] : ["English", "Hindi"],
           clinics: doctorClinics[realIndex % doctorClinics.length]
         };
       });
-      
+
       setDoctors(prev => [...prev, ...newDoctors]);
       setPage(prev => prev + 1);
       setLoading(false);
@@ -352,54 +460,127 @@ const DoctorSearch = () => {
     }
   }, [initialSpecialty]);
 
-  const toggleSpecialty = (specialty: string) => {
-    if (selectedSpecialties.includes(specialty)) {
-      setSelectedSpecialties(selectedSpecialties.filter(s => s !== specialty));
-    } else {
-      setSelectedSpecialties([...selectedSpecialties, specialty]);
-    }
+
+
+
+
+  const toggleSpecialty = (specialty: Specialization) => {
+    setSearchDoctorClinic((prev) => {
+      const isSelected = prev.specialisations.some((spec) => spec.id === specialty.id);
+
+      const updatedSpecialisations = isSelected
+        ? prev.specialisations.filter((spec) => spec.id !== specialty.id) // Remove if already selected
+        : [...prev.specialisations, specialty]; // Add if not selected
+
+      const updatedSearchDoctorClinic = {
+        ...prev,
+        specialisations: updatedSpecialisations,
+      };
+
+      console.log("Updated Specializations:", updatedSearchDoctorClinic);
+
+      getAllDoctorClinicList(updatedSearchDoctorClinic);
+      return updatedSearchDoctorClinic;
+    });
   };
-  
-  const toggleGender = (gender: string) => {
-    if (selectedGenders.includes(gender)) {
-      setSelectedGenders(selectedGenders.filter(g => g !== gender));
-    } else {
-      setSelectedGenders([...selectedGenders, gender]);
-    }
+
+  const toggleGender = (gender: number) => {
+    setSearchDoctorClinic((prev) => {
+      const isSelected = prev.gender === gender;
+
+      const updatedSearchDoctorClinic = {
+        ...prev,
+        gender: isSelected ? null : gender, // Reset to null if already selected
+      };
+
+      console.log("Updated Gender:", updatedSearchDoctorClinic);
+
+      getAllDoctorClinicList(updatedSearchDoctorClinic);
+      return updatedSearchDoctorClinic;
+    });
   };
-  
-  const toggleLanguage = (language: string) => {
-    if (selectedLanguages.includes(language)) {
-      setSelectedLanguages(selectedLanguages.filter(l => l !== language));
-    } else {
-      setSelectedLanguages([...selectedLanguages, language]);
-    }
+
+  const toggleLanguage = (language: languageList) => {
+    setSearchDoctorClinic((prev) => {
+      const isSelected = prev.languageList.some((l) => l.id === language.id);
+
+      const updatedLanguages = isSelected
+        ? prev.languageList.filter((l) => l.id !== language.id) // Remove if selected
+        : [...prev.languageList, language]; // Add if not selected
+
+      const updatedSearchDoctorClinic = {
+        ...prev,
+        languageList: updatedLanguages, // Always keep it an array (never null)
+      };
+
+      console.log("Updated Languages:", updatedSearchDoctorClinic);
+
+      getAllDoctorClinicList(updatedSearchDoctorClinic);
+      return updatedSearchDoctorClinic;
+    });
   };
-  
+
   const toggleExperience = (experience: string) => {
-    if (selectedExperience.includes(experience)) {
-      setSelectedExperience(selectedExperience.filter(e => e !== experience));
-    } else {
-      setSelectedExperience([...selectedExperience, experience]);
+    console.log("Experience toggled:", experience);
+
+    // Extract the min and max years from the selected range
+    let [minExp, maxExp] = experience.split("-").map((num) => parseInt(num));
+
+    // Handle "15+ years" case separately (since it doesn't have an explicit max value)
+    if (experience === "15+ years") {
+      minExp = 15;
+      maxExp = null; // No upper limit for 15+ years
     }
+
+    setSearchDoctorClinic((prev) => {
+      const isSelected =
+        prev.expYearFirst === minExp && prev.expYearLast === maxExp;
+
+      const updatedSearchDoctorClinic = {
+        ...prev,
+        expYearFirst: isSelected ? null : minExp,
+        expYearLast: isSelected ? null : maxExp,
+      };
+
+      console.log("Updated Experience Range:", updatedSearchDoctorClinic);
+
+      getAllDoctorClinicList(updatedSearchDoctorClinic);
+      return updatedSearchDoctorClinic;
+    });
   };
+
+  const toggleRating = (rating: number) => {
+    setSearchDoctorClinic((prev) => {
+      const isSelected = prev.rating === rating;
   
+      const updatedSearchDoctorClinic = {
+        ...prev,
+        rating: isSelected ? null : rating, // Reset to null if already selected
+      };
+  
+      console.log("Updated Rating:", updatedSearchDoctorClinic);
+  
+      getAllDoctorClinicList(updatedSearchDoctorClinic);
+      return updatedSearchDoctorClinic;
+    });
+  };
+
   const handleBookAppointment = (doctorName: string, clinicId?: number) => {
     setSelectedDoctor(doctorName);
     setBookingOpen(true);
     setBookingStep(1);
-    
+
     if (clinicId) {
       setSelectedClinic(clinicId);
       // If clinic is selected directly, skip to step 2
       setBookingStep(2);
     }
   };
-  
+
   const handleSlotSelection = (slot: string) => {
     setSelectedSlot(slot);
   };
-  
+
   const nextStep = () => {
     if (bookingStep < 4) {
       setBookingStep(bookingStep + 1);
@@ -408,7 +589,7 @@ const DoctorSearch = () => {
       setSuccessDialogOpen(true);
     }
   };
-  
+
   const prevStep = () => {
     if (bookingStep > 1) {
       setBookingStep(bookingStep - 1);
@@ -436,7 +617,7 @@ const DoctorSearch = () => {
         return "Apply filters to refine your search";
     }
   };
-  
+
   return (
     <AppLayout>
       <div className="mb-8">
@@ -449,7 +630,7 @@ const DoctorSearch = () => {
           </div>
         )}
       </div>
-      
+
       {/* Search Bar */}
       <div className="flex items-center gap-2 mb-6">
         <div className="relative flex-1">
@@ -462,7 +643,7 @@ const DoctorSearch = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        
+
         <div className="flex gap-2">
           <Select value={sortBy} onValueChange={setSortBy}>
             <SelectTrigger className="w-[160px] md:flex hidden">
@@ -476,7 +657,7 @@ const DoctorSearch = () => {
               <SelectItem value="experience">Experience</SelectItem>
             </SelectContent>
           </Select>
-          
+
           <ToggleGroup type="single" value={viewMode} onValueChange={(value) => value && setViewMode(value as "grid" | "list")}>
             <ToggleGroupItem value="grid" aria-label="Grid view" className="md:flex hidden">
               <LayoutList className="h-4 w-4" />
@@ -485,12 +666,12 @@ const DoctorSearch = () => {
               <Rows className="h-4 w-4" />
             </ToggleGroupItem>
           </ToggleGroup>
-          
+
           {isMobile ? (
             <Dialog open={filterOpen} onOpenChange={setFilterOpen}>
               <DialogTrigger asChild>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="flex items-center gap-2 border border-gray-200 bg-white"
                 >
                   <Filter className="h-4 w-4" />
@@ -513,84 +694,96 @@ const DoctorSearch = () => {
                   <div className="space-y-2">
                     <h3 className="font-medium">Specialty</h3>
                     <div className="flex flex-wrap gap-2">
-                      {specialties.map((specialty) => (
-                        <Button
-                          key={specialty}
-                          variant={selectedSpecialties.includes(specialty) ? "default" : "outline"}
-                          size="sm"
-                          className={`rounded-full text-xs ${selectedSpecialties.includes(specialty) ? 'bg-primary text-white' : 'bg-white'}`}
-                          onClick={() => toggleSpecialty(specialty)}
-                        >
-                          {specialty}
-                          {selectedSpecialties.includes(specialty) && (
-                            <X className="ml-1 h-3 w-3" />
-                          )}
-                        </Button>
-                      ))}
+                      {specializationList.map((specialty) => {
+                        const isSelected = searchdoctorclinic.specialisations.some((s) => s.id === specialty.id);
+
+                        return (
+                          <Button
+                            key={specialty.id}
+                            variant={isSelected ? "default" : "outline"}
+                            size="sm"
+                            className={`rounded-full text-xs ${isSelected ? 'bg-primary text-white' : 'bg-white'}`}
+                            onClick={() => {
+                              console.log(`Specialty clicked: ${specialty.name}`);
+                              toggleSpecialty(specialty);
+                            }}
+                          >
+                            {specialty.name}
+                            {isSelected && <X className="ml-1 h-3 w-3" />}
+                          </Button>
+                        );
+                      })}
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <h3 className="font-medium">Gender</h3>
                     <div className="flex flex-wrap gap-2">
-                      {genders.map((gender) => (
-                        <Button
-                          key={gender}
-                          variant={selectedGenders.includes(gender) ? "default" : "outline"}
-                          size="sm"
-                          className={`rounded-full text-xs ${selectedGenders.includes(gender) ? 'bg-primary text-white' : 'bg-white'}`}
-                          onClick={() => toggleGender(gender)}
-                        >
-                          {gender}
-                          {selectedGenders.includes(gender) && (
-                            <X className="ml-1 h-3 w-3" />
-                          )}
-                        </Button>
-                      ))}
+                      {[{ label: "Male", value: 1 }, { label: "Female", value: 0 }].map(({ label, value }) => {
+                        const isSelected = searchdoctorclinic.gender === value;
+
+                        return (
+                          <Button
+                            key={label}
+                            variant={isSelected ? "default" : "outline"}
+                            size="sm"
+                            className={`rounded-full text-xs ${isSelected ? 'bg-primary text-white' : 'bg-white'}`}
+                            onClick={() => toggleGender(value)}
+                          >
+                            {label}
+                            {isSelected && <X className="ml-1 h-3 w-3" />}
+                          </Button>
+                        );
+                      })}
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <h3 className="font-medium">Experience</h3>
                     <div className="flex flex-wrap gap-2">
-                      {experienceRanges.map((experience) => (
-                        <Button
-                          key={experience}
-                          variant={selectedExperience.includes(experience) ? "default" : "outline"}
-                          size="sm"
-                          className={`rounded-full text-xs ${selectedExperience.includes(experience) ? 'bg-primary text-white' : 'bg-white'}`}
-                          onClick={() => toggleExperience(experience)}
-                        >
-                          {experience}
-                          {selectedExperience.includes(experience) && (
-                            <X className="ml-1 h-3 w-3" />
-                          )}
-                        </Button>
-                      ))}
+                      {experienceRanges.map((experience) => {
+                        let [minExp] = experience.split("-").map((num) => parseInt(num));
+                        const isSelected = searchdoctorclinic.expYearFirst === minExp;
+
+                        return (
+                          <Button
+                            key={experience}
+                            variant={isSelected ? "default" : "outline"}
+                            size="sm"
+                            className={`rounded-full text-xs ${isSelected ? 'bg-primary text-white' : 'bg-white'}`}
+                            onClick={() => toggleExperience(experience)}
+                          >
+                            {experience}
+                            {isSelected && <X className="ml-1 h-3 w-3" />}
+                          </Button>
+                        );
+                      })}
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <h3 className="font-medium">Languages</h3>
                     <div className="flex flex-wrap gap-2">
-                      {languages.map((language) => (
-                        <Button
-                          key={language}
-                          variant={selectedLanguages.includes(language) ? "default" : "outline"}
-                          size="sm"
-                          className={`rounded-full text-xs ${selectedLanguages.includes(language) ? 'bg-primary text-white' : 'bg-white'}`}
-                          onClick={() => toggleLanguage(language)}
-                        >
-                          {language}
-                          {selectedLanguages.includes(language) && (
-                            <X className="ml-1 h-3 w-3" />
-                          )}
-                        </Button>
-                      ))}
+                      {allLanguage.map((language) => {
+                        const isSelected = searchdoctorclinic.languageList.some((l) => l.id === language.id);
+
+                        return (
+                          <Button
+                            key={language.id}
+                            variant={isSelected ? "default" : "outline"}
+                            size="sm"
+                            className={`rounded-full text-xs ${isSelected ? 'bg-primary text-white' : 'bg-white'}`}
+                            onClick={() => toggleLanguage(language)}
+                          >
+                            {language.name}
+                            {isSelected && <X className="ml-1 h-3 w-3" />}
+                          </Button>
+                        );
+                      })}
                     </div>
                   </div>
-                  
-                  <div className="space-y-2">
+
+                  {/* <div className="space-y-2">
                     <h3 className="font-medium">Price Range</h3>
                     <div className="px-2">
                       <Slider
@@ -604,9 +797,9 @@ const DoctorSearch = () => {
                         <span>₹{priceRange[1]}</span>
                       </div>
                     </div>
-                  </div>
-                  
-                  <div className="space-y-2">
+                  </div> */}
+
+               {/*   <div className="space-y-2">
                     <h3 className="font-medium">Availability</h3>
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
@@ -618,28 +811,32 @@ const DoctorSearch = () => {
                         <Switch id="available-week" />
                       </div>
                     </div>
-                  </div>
-                  
-                  <div className="space-y-2">
+                  </div> */}
+
+             {/*       <div className="space-y-2">
                     <h3 className="font-medium">Rating</h3>
                     <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm flex items-center">
-                          <span>4+</span>
-                          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400 ml-1" />
-                        </span>
-                        <Switch id="rating-4" />
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm flex items-center">
-                          <span>3+</span>
-                          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400 ml-1" />
-                        </span>
-                        <Switch id="rating-3" />
-                      </div>
+                      {[4, 3].map((rating) => {
+                        const isSelected = searchdoctorclinic.rating === rating;
+
+                        return (
+                          <div key={rating} className="flex items-center">
+                            <Switch
+                              id={`desktop-rating-${rating}-plus`}
+                              className="mr-2"
+                              checked={isSelected}
+                              onCheckedChange={() => toggleRating(rating)}
+                            />
+                            <label htmlFor={`desktop-rating-${rating}-plus`} className="text-sm flex items-center">
+                              <span>{rating}+</span>
+                              <Star className="h-3 w-3 fill-yellow-400 text-yellow-400 ml-1" />
+                            </label>
+                          </div>
+                        );
+                      })}
                     </div>
-                  </div>
-                  
+                  </div> */}
+
                   <div className="pt-4">
                     <Button className="w-full sky-button">Apply Filters</Button>
                   </div>
@@ -647,8 +844,8 @@ const DoctorSearch = () => {
               </DialogContent>
             </Dialog>
           ) : (
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="flex items-center gap-2 border border-gray-200 bg-white"
               onClick={() => setFilterOpen(!filterOpen)}
             >
@@ -658,7 +855,7 @@ const DoctorSearch = () => {
           )}
         </div>
       </div>
-      
+
       <div className="flex flex-col md:flex-row gap-6">
         {/* Filters - Desktop */}
         {!isMobile && (
@@ -678,7 +875,7 @@ const DoctorSearch = () => {
                     </Tooltip>
                   </TooltipProvider>
                 </h3>
-                
+
                 <div className="space-y-6">
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
@@ -695,23 +892,28 @@ const DoctorSearch = () => {
                       </TooltipProvider>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      {specialties.map((specialty) => (
-                        <Button
-                          key={specialty}
-                          variant={selectedSpecialties.includes(specialty) ? "default" : "outline"}
-                          size="sm"
-                          className={`rounded-full text-xs ${selectedSpecialties.includes(specialty) ? 'bg-primary text-white' : 'bg-white'}`}
-                          onClick={() => toggleSpecialty(specialty)}
-                        >
-                          {specialty}
-                          {selectedSpecialties.includes(specialty) && (
-                            <X className="ml-1 h-3 w-3" />
-                          )}
-                        </Button>
-                      ))}
+                      {specializationList.map((specialty) => {
+                        const isSelected = searchdoctorclinic.specialisations.some((s) => s.id === specialty.id);
+
+                        return (
+                          <Button
+                            key={specialty.id}
+                            variant={isSelected ? "default" : "outline"}
+                            size="sm"
+                            className={`rounded-full text-xs ${isSelected ? 'bg-primary text-white' : 'bg-white'}`}
+                            onClick={() => {
+                              console.log(`Specialty clicked: ${specialty.name}`);
+                              toggleSpecialty(specialty);
+                            }}
+                          >
+                            {specialty.name}
+                            {isSelected && <X className="ml-1 h-3 w-3" />}
+                          </Button>
+                        );
+                      })}
                     </div>
                   </div>
-                  
+                  </div>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <h4 className="font-medium">Gender</h4>
@@ -726,24 +928,26 @@ const DoctorSearch = () => {
                         </Tooltip>
                       </TooltipProvider>
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                      {genders.map((gender) => (
-                        <Button
-                          key={gender}
-                          variant={selectedGenders.includes(gender) ? "default" : "outline"}
-                          size="sm"
-                          className={`rounded-full text-xs ${selectedGenders.includes(gender) ? 'bg-primary text-white' : 'bg-white'}`}
-                          onClick={() => toggleGender(gender)}
-                        >
-                          {gender}
-                          {selectedGenders.includes(gender) && (
-                            <X className="ml-1 h-3 w-3" />
-                          )}
-                        </Button>
-                      ))}
+                    <div className="flex gap-2">
+                      {[{ label: "Male", value: 1 }, { label: "Female", value: 0 }].map(({ label, value }) => {
+                        const isSelected = searchdoctorclinic.gender === value;
+
+                        return (
+                          <Button
+                            key={label}
+                            variant={isSelected ? "default" : "outline"}
+                            size="sm"
+                            className={`rounded-full text-xs ${isSelected ? 'bg-primary text-white' : 'bg-white'}`}
+                            onClick={() => toggleGender(value)}
+                          >
+                            {label}
+                            {isSelected && <X className="ml-1 h-3 w-3" />}
+                          </Button>
+                        );
+                      })}
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <h4 className="font-medium">Experience</h4>
@@ -759,23 +963,26 @@ const DoctorSearch = () => {
                       </TooltipProvider>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      {experienceRanges.map((experience) => (
-                        <Button
-                          key={experience}
-                          variant={selectedExperience.includes(experience) ? "default" : "outline"}
-                          size="sm"
-                          className={`rounded-full text-xs ${selectedExperience.includes(experience) ? 'bg-primary text-white' : 'bg-white'}`}
-                          onClick={() => toggleExperience(experience)}
-                        >
-                          {experience}
-                          {selectedExperience.includes(experience) && (
-                            <X className="ml-1 h-3 w-3" />
-                          )}
-                        </Button>
-                      ))}
+                      {experienceRanges.map((experience) => {
+                        let [minExp] = experience.split("-").map((num) => parseInt(num));
+                        const isSelected = searchdoctorclinic.expYearFirst === minExp;
+
+                        return (
+                          <Button
+                            key={experience}
+                            variant={isSelected ? "default" : "outline"}
+                            size="sm"
+                            className={`rounded-full text-xs ${isSelected ? 'bg-primary text-white' : 'bg-white'}`}
+                            onClick={() => toggleExperience(experience)}
+                          >
+                            {experience}
+                            {isSelected && <X className="ml-1 h-3 w-3" />}
+                          </Button>
+                        );
+                      })}
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <h4 className="font-medium">Languages</h4>
@@ -791,24 +998,26 @@ const DoctorSearch = () => {
                       </TooltipProvider>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      {languages.map((language) => (
-                        <Button
-                          key={language}
-                          variant={selectedLanguages.includes(language) ? "default" : "outline"}
-                          size="sm"
-                          className={`rounded-full text-xs ${selectedLanguages.includes(language) ? 'bg-primary text-white' : 'bg-white'}`}
-                          onClick={() => toggleLanguage(language)}
-                        >
-                          {language}
-                          {selectedLanguages.includes(language) && (
-                            <X className="ml-1 h-3 w-3" />
-                          )}
-                        </Button>
-                      ))}
+                      {allLanguage.map((language) => {
+                        const isSelected = searchdoctorclinic.languageList.some((l) => l.id === language.id);
+
+                        return (
+                          <Button
+                            key={language.id}
+                            variant={isSelected ? "default" : "outline"}
+                            size="sm"
+                            className={`rounded-full text-xs ${isSelected ? 'bg-primary text-white' : 'bg-white'}`}
+                            onClick={() => toggleLanguage(language)}
+                          >
+                            {language.name}
+                            {isSelected && <X className="ml-1 h-3 w-3" />}
+                          </Button>
+                        );
+                      })}
                     </div>
                   </div>
-                  
-                  <div className="space-y-2">
+
+                  {/* <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <h4 className="font-medium">Price Range</h4>
                       <TooltipProvider>
@@ -834,9 +1043,9 @@ const DoctorSearch = () => {
                         <span>₹{priceRange[1]}</span>
                       </div>
                     </div>
-                  </div>
-                  
-                  <div className="space-y-2">
+                  </div> */}
+
+                {/* <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <h4 className="font-medium">Availability</h4>
                       <TooltipProvider>
@@ -864,9 +1073,9 @@ const DoctorSearch = () => {
                         </label>
                       </div>
                     </div>
-                  </div>
-                  
-                  <div className="space-y-2">
+                  </div> */}
+
+                  {/* <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <h4 className="font-medium">Rating</h4>
                       <TooltipProvider>
@@ -881,30 +1090,33 @@ const DoctorSearch = () => {
                       </TooltipProvider>
                     </div>
                     <div className="space-y-2">
-                      <div className="flex items-center">
-                        <Switch id="desktop-rating-4-plus" className="mr-2" />
-                        <label htmlFor="desktop-rating-4-plus" className="text-sm flex items-center">
-                          <span>4+</span>
-                          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400 ml-1" />
-                        </label>
-                      </div>
-                      <div className="flex items-center">
-                        <Switch id="desktop-rating-3-plus" className="mr-2" />
-                        <label htmlFor="desktop-rating-3-plus" className="text-sm flex items-center">
-                          <span>3+</span>
-                          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400 ml-1" />
-                        </label>
-                      </div>
+                      {[4, 3].map((rating) => {
+                        const isSelected = searchdoctorclinic.rating === rating;
+
+                        return (
+                          <div key={rating} className="flex items-center">
+                            <Switch
+                              id={`desktop-rating-${rating}-plus`}
+                              className="mr-2"
+                              checked={isSelected}
+                              onCheckedChange={() => toggleRating(rating)}
+                            />
+                            <label htmlFor={`desktop-rating-${rating}-plus`} className="text-sm flex items-center">
+                              <span>{rating}+</span>
+                              <Star className="h-3 w-3 fill-yellow-400 text-yellow-400 ml-1" />
+                            </label>
+                          </div>
+                        );
+                      })}
                     </div>
-                  </div>
-                  
-                  <Button className="w-full sky-button">Apply Filters</Button>
-                </div>
+
+                   <Button className="w-full sky-button">Apply Filters</Button> 
+                </div> */}
               </CardContent>
             </Card>
           </div>
         )}
-        
+
         {/* Doctor Results */}
         <div className="flex-1">
           {loading && allDoctorClinic.length === 0 && (
@@ -913,13 +1125,13 @@ const DoctorSearch = () => {
               <p className="mt-4 text-muted-foreground">Loading doctors...</p>
             </div>
           )}
-          
+
           {viewMode === "grid" ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {allDoctorClinic.map((doctor, index) => {
                 // Determine if this is the last element for infinite scroll
                 const isLastItem = index === allDoctorClinic.length - 1;
-                
+
                 return (
                   <motion.div
                     key={doctor.doctor.id}
@@ -950,7 +1162,7 @@ const DoctorSearch = () => {
               {allDoctorClinic.map((doctor, index) => {
                 // Determine if this is the last element for infinite scroll
                 const isLastItem = index === allDoctorClinic.length - 1;
-                
+
                 return (
                   <motion.div
                     key={doctor.id}
@@ -964,7 +1176,7 @@ const DoctorSearch = () => {
                       <CardContent className="p-0">
                         <div className="flex flex-col md:flex-row">
                           <div className="md:w-1/4 w-full aspect-[3/2] md:aspect-square relative">
-                            <img 
+                            <img
                               src={doctor.doctor.image}
                               alt={doctor.doctor.user.name}
                               className="w-full h-full object-cover"
@@ -974,24 +1186,24 @@ const DoctorSearch = () => {
                               98% Recommended
                             </div>
                           </div>
-                          
+
                           <div className="flex-1 p-4 flex flex-col md:flex-row">
                             <div className="flex-1">
                               <div className="flex flex-wrap items-start justify-between">
                                 <div>
                                   <h3 className="font-semibold text-base md:text-lg">{doctor.doctor.user.name}</h3>
                                   <p className="text-muted-foreground text-sm">{doctor.doctor.specialization}</p>
-                                  
+
                                   <div className="flex items-center gap-1 mt-1">
                                     <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                                     <span className="text-sm font-medium">{doctor.doctor.id}</span>
                                     <span className="text-sm text-muted-foreground">({doctor.doctor.uid})</span>
                                   </div>
                                 </div>
-                                
+
                                 <span className="font-semibold md:text-lg">₹{doctor.doctor.id}</span>
                               </div>
-                              
+
                               <div className="mt-3 flex flex-wrap gap-2">
                                 <div className="px-3 py-1 bg-gray-100 rounded-full text-xs flex items-center">
                                   <span>{doctor.doctor.expYear} years</span>
@@ -1003,7 +1215,7 @@ const DoctorSearch = () => {
                                   <span>Available today</span>
                                 </div>
                               </div>
-                              
+
                               <div className="mt-3">
                                 <p className="text-xs font-medium mb-2">Available at:</p>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -1011,7 +1223,7 @@ const DoctorSearch = () => {
                                     <TooltipProvider key={clinic.id}>
                                       <Tooltip>
                                         <TooltipTrigger asChild>
-                                          <div 
+                                          <div
                                             className={`px-3 py-2 ${clinic.active ? 'bg-blue-50' : 'bg-gray-100'} rounded-lg text-xs flex items-center justify-between cursor-pointer hover:bg-blue-100 transition-colors`}
                                             onClick={() => clinic.active && handleBookAppointment(doctor.doctor.user.name, clinic.id)}
                                           >
@@ -1040,19 +1252,19 @@ const DoctorSearch = () => {
                                   ))}
                                 </div>
                               </div>
-                              
+
                               <div className="mt-4 flex items-center justify-between md:hidden">
                                 <div className="space-x-2">
-                                  <Button 
-                                    size="sm" 
+                                  <Button
+                                    size="sm"
                                     variant="outline"
                                     className="rounded-full border-primary text-primary"
                                     onClick={() => window.location.href = `/doctor/${doctor.doctor.id}`}
                                   >
                                     Profile
                                   </Button>
-                                  <Button 
-                                    size="sm" 
+                                  <Button
+                                    size="sm"
                                     className="sky-button rounded-full"
                                     onClick={() => handleBookAppointment(doctor.doctor.user.name)}
                                   >
@@ -1061,10 +1273,10 @@ const DoctorSearch = () => {
                                 </div>
                               </div>
                             </div>
-                            
+
                             <div className="flex items-center justify-end md:w-32 hidden md:flex">
                               <div className="space-y-2">
-                                <Button 
+                                <Button
                                   size="sm"
                                   variant="outline"
                                   className="w-full rounded-full border-primary text-primary"
@@ -1072,7 +1284,7 @@ const DoctorSearch = () => {
                                 >
                                   Profile
                                 </Button>
-                                <Button 
+                                <Button
                                   className="w-full sky-button rounded-full"
                                   onClick={() => handleBookAppointment(doctor.doctor.user.name)}
                                 >
@@ -1089,7 +1301,7 @@ const DoctorSearch = () => {
               })}
             </div>
           )}
-          
+
           {/* Loading indicator at bottom */}
           {loading && doctors.length > 0 && (
             <div className="flex justify-center items-center py-8">
@@ -1097,7 +1309,7 @@ const DoctorSearch = () => {
               <span className="ml-3 text-sm text-muted-foreground">Loading more doctors...</span>
             </div>
           )}
-          
+
           {/* No more doctors message */}
           {showNoMoreDoctors && (
             <div className="text-center py-8 border-t mt-6">
@@ -1107,21 +1319,21 @@ const DoctorSearch = () => {
           )}
         </div>
       </div>
-      
+
       {/* Booking Dialog */}
       <Dialog open={bookingOpen} onOpenChange={setBookingOpen}>
         <DialogContent className="bg-white sm:max-w-lg modal-background">
           <DialogHeader>
             <DialogTitle>Book Appointment</DialogTitle>
           </DialogHeader>
-          
+
           {bookingStep === 1 && (
             <div className="space-y-4">
               <h3 className="font-medium text-lg">Select Clinic</h3>
               <div className="space-y-3 max-h-[50vh] overflow-y-auto pr-2">
                 {/* Get the right clinics for the selected doctor */}
                 {doctors.find(d => d.name === selectedDoctor)?.clinics.map((clinic, index) => (
-                  <div 
+                  <div
                     key={clinic.id}
                     className={`p-3 border rounded-lg hover:border-primary cursor-pointer transition-all ${selectedClinic === clinic.id ? 'border-primary bg-blue-50' : ''} ${!clinic.available ? 'opacity-60 cursor-not-allowed' : ''}`}
                     onClick={() => clinic.available && setSelectedClinic(clinic.id)}
@@ -1142,8 +1354,8 @@ const DoctorSearch = () => {
                           <span>{clinic.distance} from your location</span>
                         </div>
                       </div>
-                      <Checkbox 
-                        id={`clinic-${index}`} 
+                      <Checkbox
+                        id={`clinic-${index}`}
                         checked={selectedClinic === clinic.id}
                         disabled={!clinic.available}
                       />
@@ -1151,10 +1363,10 @@ const DoctorSearch = () => {
                   </div>
                 ))}
               </div>
-              
+
               <div className="pt-4 flex justify-end">
-                <Button 
-                  className="sky-button" 
+                <Button
+                  className="sky-button"
                   onClick={nextStep}
                   disabled={!selectedClinic}
                 >
@@ -1163,11 +1375,11 @@ const DoctorSearch = () => {
               </div>
             </div>
           )}
-          
+
           {bookingStep === 2 && (
             <div className="space-y-4">
               <h3 className="font-medium text-lg">Select Date & Time</h3>
-              
+
               <div className="flex flex-col sm:flex-row gap-4">
                 <div className="sm:w-1/2">
                   <CalendarComponent
@@ -1177,7 +1389,7 @@ const DoctorSearch = () => {
                     className="rounded-md border"
                   />
                 </div>
-                
+
                 <div className="sm:w-1/2">
                   <h4 className="font-medium mb-2">Available Slots</h4>
                   <div className="grid grid-cols-2 gap-2">
@@ -1195,18 +1407,18 @@ const DoctorSearch = () => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="pt-4 flex justify-between">
                 <Button variant="outline" onClick={prevStep}>Back</Button>
                 <Button className="sky-button" onClick={nextStep} disabled={!selectedSlot}>Continue</Button>
               </div>
             </div>
           )}
-          
+
           {bookingStep === 3 && (
             <div className="space-y-4">
               <h3 className="font-medium text-lg">Patient Information</h3>
-              
+
               <div className="grid gap-4">
                 <div className="grid sm:grid-cols-2 gap-3">
                   <div>
@@ -1218,34 +1430,34 @@ const DoctorSearch = () => {
                     <Input placeholder="Enter last name" />
                   </div>
                 </div>
-                
+
                 <div>
                   <label className="text-sm font-medium mb-1 block">Email</label>
                   <Input type="email" placeholder="Enter email address" />
                 </div>
-                
+
                 <div>
                   <label className="text-sm font-medium mb-1 block">Phone Number</label>
                   <Input type="tel" placeholder="Enter phone number" />
                 </div>
-                
+
                 <div>
                   <label className="text-sm font-medium mb-1 block">Reason for Visit</label>
                   <Input placeholder="Briefly describe your symptoms or reason" />
                 </div>
               </div>
-              
+
               <div className="pt-4 flex justify-between">
                 <Button variant="outline" onClick={prevStep}>Back</Button>
                 <Button className="sky-button" onClick={nextStep}>Continue</Button>
               </div>
             </div>
           )}
-          
+
           {bookingStep === 4 && (
             <div className="space-y-4">
               <h3 className="font-medium text-lg">Confirm Appointment</h3>
-              
+
               <div className="bg-gray-50 p-4 rounded-lg space-y-3">
                 <div className="flex justify-between">
                   <span className="text-sm text-muted-foreground">Doctor</span>
@@ -1273,7 +1485,7 @@ const DoctorSearch = () => {
                   <p className="text-xs text-muted-foreground mt-1">Payment to be made at the clinic</p>
                 </div>
               </div>
-              
+
               <div className="pt-4 flex justify-between">
                 <Button variant="outline" onClick={prevStep}>Back</Button>
                 <Button className="sky-button" onClick={nextStep}>Confirm Booking</Button>
@@ -1282,7 +1494,7 @@ const DoctorSearch = () => {
           )}
         </DialogContent>
       </Dialog>
-      
+
       {/* Success Dialog */}
       <AlertDialog open={successDialogOpen} onOpenChange={setSuccessDialogOpen}>
         <AlertDialogContent className="bg-white modal-background">
@@ -1292,7 +1504,7 @@ const DoctorSearch = () => {
               Your appointment has been successfully booked
             </AlertDialogDescription>
           </AlertDialogHeader>
-          
+
           <div className="flex flex-col items-center py-4">
             <div className="bg-gray-50 p-4 rounded-lg w-full max-w-sm mx-auto">
               <div className="flex justify-between mb-1">
@@ -1314,16 +1526,16 @@ const DoctorSearch = () => {
                 </span>
               </div>
             </div>
-            
+
             <div className="my-4 bg-white p-2 border rounded-lg">
               <img src="https://placehold.co/200/eaf7fc/33C3F0?text=QR+Code&font=montserrat" alt="Appointment QR Code" className="w-32 h-32 mx-auto" />
             </div>
-            
+
             <p className="text-sm text-center text-muted-foreground">
               Show this QR code at the clinic reception
             </p>
           </div>
-          
+
           <AlertDialogFooter className="flex flex-col sm:flex-row gap-2">
             <AlertDialogCancel className="sm:mt-0">Close</AlertDialogCancel>
             <AlertDialogAction className="sky-button">Download Receipt</AlertDialogAction>

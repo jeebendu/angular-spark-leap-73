@@ -18,7 +18,7 @@ import DashboardPage from "./pages/doctor/Dashboard";
 import DoctorAppointmentsPage from "./pages/doctor/Appointments";
 import ProcessAppointment from "./pages/doctor/ProcessAppointment";
 import DoctorOnboardingPage from "./pages/doctor/Onboarding";
-import DoctorSchedulePage from "./pages/doctor/Schedule";
+import { DoctorSchedulePage } from "./pages/doctor/Schedule";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();

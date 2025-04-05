@@ -758,4 +758,90 @@ const DoctorSearch = () => {
               
               <div className="bg-gray-50 p-4 rounded-lg space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-sm text-
+                  <span className="text-sm text-muted-foreground">Doctor</span>
+                  <span className="text-sm font-medium">{selectedDoctor}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">Date</span>
+                  <span className="text-sm font-medium">{date?.toLocaleDateString()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">Time</span>
+                  <span className="text-sm font-medium">{selectedSlot}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">Clinic</span>
+                  <span className="text-sm font-medium">
+                    {doctors.find(d => d.name === selectedDoctor)?.clinics.find(c => c.id === selectedClinic)?.name}
+                  </span>
+                </div>
+                <div className="pt-2 border-t">
+                  <div className="flex justify-between font-medium">
+                    <span>Consultation Fee</span>
+                    <span>₹{doctors.find(d => d.name === selectedDoctor)?.price || 1200}</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">Payment to be made at the clinic</p>
+                </div>
+              </div>
+              
+              <div className="pt-4 flex justify-between">
+                <Button variant="outline" onClick={prevStep}>Back</Button>
+                <Button className="sky-button" onClick={nextStep}>Confirm Booking</Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+      
+      {/* Success Dialog */}
+      <AlertDialog open={successDialogOpen} onOpenChange={setSuccessDialogOpen}>
+        <AlertDialogContent className="bg-white modal-background">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-center text-xl text-green-600">Appointment Confirmed!</AlertDialogTitle>
+            <AlertDialogDescription className="text-center">
+              Your appointment has been successfully booked
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          
+          <div className="flex flex-col items-center py-4">
+            <div className="bg-gray-50 p-4 rounded-lg w-full max-w-sm mx-auto">
+              <div className="flex justify-between mb-1">
+                <span className="text-sm text-muted-foreground">Appointment ID</span>
+                <span className="text-sm font-medium">APT123456</span>
+              </div>
+              <div className="flex justify-between mb-1">
+                <span className="text-sm text-muted-foreground">Doctor</span>
+                <span className="text-sm font-medium">{selectedDoctor}</span>
+              </div>
+              <div className="flex justify-between mb-1">
+                <span className="text-sm text-muted-foreground">Date & Time</span>
+                <span className="text-sm font-medium">{date?.toLocaleDateString()} {selectedSlot}</span>
+              </div>
+              <div className="flex justify-between mb-1">
+                <span className="text-sm text-muted-foreground">Clinic</span>
+                <span className="text-sm font-medium">
+                  {doctors.find(d => d.name === selectedDoctor)?.clinics.find(c => c.id === selectedClinic)?.name}
+                </span>
+              </div>
+            </div>
+            
+            <div className="my-4 bg-white p-2 border rounded-lg">
+              <img src="https://placehold.co/200/eaf7fc/33C3F0?text=QR+Code&font=montserrat" alt="Appointment QR Code" className="w-32 h-32 mx-auto" />
+            </div>
+            
+            <p className="text-sm text-center text-muted-foreground">
+              Show this QR code at the clinic reception
+            </p>
+          </div>
+          
+          <AlertDialogFooter className="flex flex-col sm:flex-row gap-2">
+            <AlertDialogCancel className="sm:mt-0">Close</AlertDialogCancel>
+            <AlertDialogAction className="sky-button">Download Receipt</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </AppLayout>
+  );
+};
+
+export default DoctorSearch;

@@ -1099,21 +1099,15 @@ const DoctorSearch = () => {
                       <DoctorCard 
                         id={doctorClinic.doctor.id.toString()}
                         name={doctorClinic.doctor.user.name}
-                        specialization={doctorClinic.doctor.specialization}
+                        specialty={doctorClinic.doctor.specialization}
                         experience={doctorClinic.doctor.expYear}
-                        location={doctorClinic.clinic.location}
-                        distance={doctorClinic.clinic.distance}
-                        rating={doctorClinic.doctor.rating}
-                        ratingCount={doctorClinic.doctor.reviewCount || 0}
-                        price={Math.min(...doctorClinic.doctor.serviceList.map(s => s.price))}
                         languages={doctorClinic.doctor.languageList.map(l => l.name).join(", ")}
-                        imageUrl={doctorClinic.doctor.image}
-                        availability={["Today", "Tomorrow"]}
-                        isAvailableOnline={true}
-                        designation={doctorClinic.doctor.designation}
-                        isCard={true}
-                        reviews={doctorClinic.doctor.reviewCount || 0}
-                        showPhone={false}
+                        rating={doctorClinic.doctor.rating}
+                        reviewCount={doctorClinic.doctor.reviewCount || 0}
+                        price={`₹${Math.min(...doctorClinic.doctor.serviceList.map(s => s.price))}`}
+                        imageSrc={doctorClinic.doctor.image}
+                        clinics={doctorClinic.doctor.branchList || []}
+                        isSimple={false}
                         id_doctor={doctorClinic.doctor.id.toString()}
                         id_clinic={Number(doctorClinic.clinic.id)}
                       />

@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 import { Branch } from "@/models/Branch"; 
 
 export interface DoctorCardProps {
-  id: number;
+  id: string;  // Changed from number to string to match usage in DoctorSearch.tsx
   name: string;
   specialty: string;
   rating: number;
@@ -20,6 +20,8 @@ export interface DoctorCardProps {
   clinics: Branch[];
   onBookNow?: (name: string) => void;
   isSimple?: boolean;
+  id_doctor: string;  // Explicitly defined as string
+  id_clinic: number;  // Explicitly defined as number
 }
 
 export function DoctorCard({ 
@@ -34,7 +36,9 @@ export function DoctorCard({
   languages,
   clinics,
   onBookNow,
-  isSimple
+  isSimple,
+  id_doctor,
+  id_clinic
 }: DoctorCardProps) {
   const handleBookNow = () => {
     if (onBookNow) {
@@ -100,7 +104,7 @@ export function DoctorCard({
             <div className="flex items-center justify-between mt-3">
               <span className="font-semibold">{price}</span>
               <div className="space-x-2">
-                <Link to={`/doctor/${id}`}>
+                <Link to={`/doctor/${id_doctor}`}>
                   <Button 
                     size="sm" 
                     variant="outline"

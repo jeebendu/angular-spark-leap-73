@@ -7,15 +7,18 @@ import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { LocationSelector } from "@/components/LocationSelector";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/components/ui/use-toast";
 
 export function SearchBar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [openSuggestions, setOpenSuggestions] = useState(false);
   const [openLocationSelector, setOpenLocationSelector] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   // Mock suggestions - in a real app, these would come from an API
   const suggestions = [
@@ -52,13 +55,70 @@ export function SearchBar() {
 
   const handleVoiceSearch = () => {
     // Check if browser supports the Web Speech API
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      // This would be implemented with the Web Speech API
-      alert("Voice search coming soon!");
-      // In a real implementation, we would use the SpeechRecognition API
-    } else {
-      alert("Voice search is not supported in your browser.");
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      toast({
+        title: "Voice Search Unavailable",
+        description: "Voice search is not supported in your browser.",
+        variant: "destructive",
+      });
+      return;
     }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+    if (!SpeechRecognition) {
+      toast({
+        title: "Voice Search Unavailable",
+        description: "Voice search is not supported in your browser.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    
+    setIsListening(true);
+    
+    recognition.start();
+    
+    // Show toast to indicate listening started
+    toast({
+      title: "Listening...",
+      description: "Speak now to search for doctors or specialities",
+    });
+    
+    recognition.onresult = (event) => {
+      const speechResult = event.results[0][0].transcript;
+      setSearchQuery(speechResult);
+      setIsListening(false);
+      
+      // Show toast with recognized text
+      toast({
+        title: "Voice Recognized",
+        description: `Searching for: "${speechResult}"`,
+      });
+      
+      // Automatically search after a short delay
+      setTimeout(() => {
+        handleDoctorSearch(speechResult);
+      }, 500);
+    };
+    
+    recognition.onerror = (event) => {
+      setIsListening(false);
+      toast({
+        title: "Voice Search Error",
+        description: `Error: ${event.error}`,
+        variant: "destructive",
+      });
+    };
+    
+    recognition.onend = () => {
+      setIsListening(false);
+    };
   };
 
   // Close suggestions on outside click
@@ -88,7 +148,7 @@ export function SearchBar() {
 
   // Mobile layout needs extra handling
   const searchBarClasses = cn(
-    "flex items-center w-full max-w-3xl mx-auto relative rounded-full shadow-lg",
+    "flex items-center w-full max-w-3xl mx-auto relative rounded-[34px] shadow-lg",
     openSuggestions ? "rounded-b-none shadow-lg" : "shadow-md",
     "bg-white border border-gray-200"
   );
@@ -143,8 +203,12 @@ export function SearchBar() {
               <button 
                 onClick={handleVoiceSearch}
                 className="p-1 mr-1"
+                disabled={isListening}
               >
-                <Mic className="h-4 w-4 text-gray-400 hover:text-primary transition-colors" />
+                <Mic className={cn(
+                  "h-4 w-4 transition-colors", 
+                  isListening ? "text-primary animate-pulse" : "text-gray-400 hover:text-primary"
+                )} />
               </button>
               <Button 
                 className="rounded-full h-8 w-8 p-0 flex items-center justify-center text-white bg-primary hover:bg-primary/90"
@@ -159,7 +223,7 @@ export function SearchBar() {
       
       {/* Suggestions dropdown (Google-style) */}
       {openSuggestions && filteredSuggestions.length > 0 && (
-        <div className="absolute top-full left-0 right-0 bg-white border-x border-b border-gray-200 rounded-b-xl shadow-lg z-50 max-h-[60vh] overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 bg-white border-x border-b border-gray-200 rounded-b-[34px] shadow-lg z-50 max-h-[60vh] overflow-y-auto">
           <div className="py-2">
             {filteredSuggestions.map((suggestion, index) => (
               <div 

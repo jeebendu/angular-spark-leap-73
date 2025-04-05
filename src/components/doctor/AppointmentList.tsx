@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Search, Calendar, Filter, Eye, Home, Phone } from "lucide-react";
+import { Search, Calendar, Filter, Eye, Home, Phone, FileText, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +13,7 @@ import {
 import { AppointmentDetails } from "@/models/Appointment";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface AppointmentListProps {
   appointments: AppointmentDetails[];
@@ -97,7 +98,7 @@ export function AppointmentList({ appointments, onStartAppointment }: Appointmen
         </TabsList>
         
         <TabsContent value="upcoming" className="mt-0">
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 gap-4">
             {filteredAppointments.map((appointment, index) => (
               <AppointmentCard 
                 key={appointment.id || index}
@@ -115,7 +116,7 @@ export function AppointmentList({ appointments, onStartAppointment }: Appointmen
         </TabsContent>
         
         <TabsContent value="cancelled" className="mt-0">
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 gap-4">
             {filteredAppointments.map((appointment, index) => (
               <AppointmentCard 
                 key={appointment.id || index}
@@ -133,7 +134,7 @@ export function AppointmentList({ appointments, onStartAppointment }: Appointmen
         </TabsContent>
         
         <TabsContent value="completed" className="mt-0">
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 gap-4">
             {filteredAppointments.map((appointment, index) => (
               <AppointmentCard 
                 key={appointment.id || index}
@@ -169,12 +170,27 @@ function AppointmentCard({ appointment, onStartAppointment }: AppointmentCardPro
     visitType,
     email,
     phone,
-    isNew
+    isNew,
+    status
   } = appointment;
   
-  const formattedDate = selectedDate && selectedTime ? 
-    `${format(new Date(selectedDate + 'T' + selectedTime), "dd MMM yyyy HH.mm aa")}` : 
+  const formattedDate = selectedDate ? 
+    format(new Date(selectedDate), "dd MMM yyyy") : 
     "Date not specified";
+    
+  const formattedTime = selectedTime || "Time not specified";
+
+  const statusColors = {
+    upcoming: "bg-blue-50 text-blue-600",
+    completed: "bg-green-50 text-green-600",
+    cancelled: "bg-red-50 text-red-600"
+  };
+  
+  const statusText = {
+    upcoming: "Upcoming",
+    completed: "Completed",
+    cancelled: "Cancelled"
+  };
 
   return (
     <motion.div
@@ -182,93 +198,75 @@ function AppointmentCard({ appointment, onStartAppointment }: AppointmentCardPro
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="border rounded-lg p-5 bg-white shadow-sm hover:shadow transition-shadow">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="h-16 w-16 rounded-md overflow-hidden bg-gray-100">
-              <img
-                src={`https://placehold.co/200/eaf7fc/33C3F0?text=${patientName?.substring(0, 2).toUpperCase()}&font=montserrat`}
-                alt={patientName}
-                className="h-full w-full object-cover"
-              />
+      <Card className="border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+        <CardContent className="p-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex gap-3 items-center">
+              <div className="p-2 bg-blue-50 rounded-lg">
+                <FileText className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-medium text-[#333]">{patientName}</h3>
+                  <span className="text-xs text-gray-500">{appointmentNumber}</span>
+                  {isNew && <span className="bg-purple-100 text-purple-600 text-xs px-2 py-0.5 rounded">New</span>}
+                </div>
+                <p className="text-sm text-gray-500">{formattedDate} • {formattedTime}</p>
+              </div>
             </div>
             
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-blue-600">{appointmentNumber}</span>
-                {isNew && <span className="bg-purple-600 text-white text-xs px-2 py-0.5 rounded">New</span>}
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-3">
+              <div className={`text-xs font-medium px-2 py-1 rounded ${status ? statusColors[status] : statusColors.upcoming}`}>
+                {status ? statusText[status] : statusText.upcoming}
               </div>
-              <h3 className="font-medium">{patientName}</h3>
+              
+              {visitType && (
+                <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">{visitType}</span>
+              )}
+              
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" className="h-8 px-2">
+                  <Eye className="h-4 w-4" />
+                </Button>
+                <Button variant="outline" size="sm" className="h-8 px-2">
+                  <Download className="h-4 w-4" />
+                </Button>
+                {status === "upcoming" && (
+                  <Button 
+                    onClick={() => id && onStartAppointment?.(id)} 
+                    className="bg-primary hover:bg-primary/90"
+                  >
+                    Start Now
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
           
-          <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-8">
-            <div className="flex items-center gap-1">
-              <Calendar className="h-4 w-4 text-gray-500" /> 
-              <span className="text-sm">{formattedDate}</span>
-            </div>
-            
-            <div className="flex flex-wrap gap-2">
-              {visitType?.includes("General Visit") && (
-                <span className="text-xs px-3 py-1 bg-gray-100 rounded-full">General Visit</span>
-              )}
-              {visitType?.includes("Video Call") && (
-                <span className="text-xs px-3 py-1 bg-blue-50 text-blue-700 rounded-full">Video Call</span>
-              )}
-              {visitType?.includes("Audio Call") && (
-                <span className="text-xs px-3 py-1 bg-green-50 text-green-700 rounded-full">Audio Call</span>
-              )}
-              {visitType?.includes("Direct Visit") && (
-                <span className="text-xs px-3 py-1 bg-purple-50 text-purple-700 rounded-full">Direct Visit</span>
-              )}
-            </div>
-          </div>
-        </div>
-        
-        <div className="mt-4 pt-4 border-t flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div className="flex flex-col sm:flex-row gap-4">
-            {email && (
-              <div className="flex items-center gap-2">
-                <div className="text-gray-500 text-sm">
-                  <span className="flex items-center gap-1">
+          {(email || phone) && (
+            <div className="mt-3 pt-3 border-t">
+              <div className="flex flex-wrap gap-4">
+                {email && (
+                  <div className="flex items-center gap-1 text-sm text-gray-500">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                       <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
                       <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                     </svg>
                     {email}
-                  </span>
-                </div>
-              </div>
-            )}
-            
-            {phone && (
-              <div className="flex items-center gap-2">
-                <div className="text-gray-500 text-sm">
-                  <span className="flex items-center gap-1">
+                  </div>
+                )}
+                
+                {phone && (
+                  <div className="flex items-center gap-1 text-sm text-gray-500">
                     <Phone className="h-4 w-4" />
                     {phone}
-                  </span>
-                </div>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-          
-          <div className="flex items-center gap-2 ml-auto">
-            <Button size="sm" variant="outline" className="rounded-full h-9 w-9 p-0">
-              <Eye className="h-4 w-4" />
-            </Button>
-            <Button size="sm" variant="outline" className="rounded-full h-9 w-9 p-0">
-              <Home className="h-4 w-4" />
-            </Button>
-            <Button size="sm" variant="outline" className="rounded-full h-9 w-9 p-0">
-              <Phone className="h-4 w-4" />
-            </Button>
-            <Button onClick={() => id && onStartAppointment?.(id)} className="bg-primary hover:bg-primary/90">
-              Start Now
-            </Button>
-          </div>
-        </div>
-      </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </motion.div>
   );
 }

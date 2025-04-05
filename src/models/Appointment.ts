@@ -18,4 +18,6 @@ export interface AppointmentDetails {
   appointmentNumber?: string;
   visitType?: "General Visit" | "Video Call" | "Audio Call" | "Direct Visit";
   isNew?: boolean;
+  lab?: string;
+  testType?: string;
 }

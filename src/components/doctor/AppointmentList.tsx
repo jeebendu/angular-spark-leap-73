@@ -105,13 +105,13 @@ export function AppointmentList({ appointments, onStartAppointment }: Appointmen
         title: "Starting appointment",
         description: "Navigating to appointment processing page..."
       });
-      navigate(`/doctor/process-appointment?id=${appointmentId}`);
+      navigate(`/doctor/appointments/${appointmentId}`);
     }
   };
 
   return (
     <div className="w-full">
-      <div className="bg-white z-20 pt-6 pb-4">
+      <div className="z-20 pt-6 pb-4">
         <h1 className="text-2xl font-bold mb-6">Appointments</h1>
       </div>
       
@@ -124,7 +124,7 @@ export function AppointmentList({ appointments, onStartAppointment }: Appointmen
       />
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="mt-2">
-        <TabsList className="mb-6 z-10 bg-white">
+        <TabsList className="mb-6 z-10">
           <TabsTrigger value="upcoming" className="relative">
             Upcoming
             <Badge className="ml-2 bg-primary text-white">{counts.upcoming}</Badge>

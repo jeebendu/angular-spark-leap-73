@@ -111,7 +111,7 @@ export function AppointmentList({ appointments, onStartAppointment }: Appointmen
 
   return (
     <div className="w-full">
-      <div className="sticky top-0 bg-white z-20 pt-6 pb-4">
+      <div className="bg-white z-20 pt-6 pb-4">
         <h1 className="text-2xl font-bold mb-6">Appointments</h1>
       </div>
       
@@ -124,7 +124,7 @@ export function AppointmentList({ appointments, onStartAppointment }: Appointmen
       />
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="mt-2">
-        <TabsList className="mb-6 sticky top-[138px] z-10 bg-white">
+        <TabsList className="mb-6 z-10 bg-white">
           <TabsTrigger value="upcoming" className="relative">
             Upcoming
             <Badge className="ml-2 bg-primary text-white">{counts.upcoming}</Badge>

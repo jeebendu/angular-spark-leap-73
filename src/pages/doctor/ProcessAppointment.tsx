@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { DoctorLayout } from "@/components/DoctorLayout";
 import { Button } from "@/components/ui/button";
@@ -33,8 +32,8 @@ const ProcessAppointment = () => {
   return (
     <DoctorLayout>
       <div className="container py-6">
-        {/* Patient header section */}
-        <Card className="mb-6 border-l-4 border-l-blue-500 shadow-md">
+        {/* Patient header section - now with sticky behavior */}
+        <Card className="mb-6 border-l-4 border-l-blue-500 shadow-md sticky top-0 z-10 bg-white">
           <CardContent className="p-0">
             <div className="flex flex-col md:flex-row">
               {/* Doctor/Patient Information */}

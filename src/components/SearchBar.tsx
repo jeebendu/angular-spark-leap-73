@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from "react";
-import { Search } from "lucide-react";
+import { Search, Clock, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -11,30 +11,30 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 export function SearchBar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [openSuggestions, setOpenSuggestions] = useState(false);
+  const [openLocationSelector, setOpenLocationSelector] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const navigate = useNavigate();
 
   // Mock suggestions - in a real app, these would come from an API
   const suggestions = [
-    "Cardiologist",
-    "Neurologist",
-    "Dermatologist",
-    "Pediatrician",
-    "Orthopedist",
-    "Gynecologist",
-    "Dr. Sarah Johnson - Cardiologist",
-    "Dr. Michael Chen - Dermatologist",
-    "Heart disease specialist",
-    "Skin problems"
+    { text: "Cardiologist", type: "specialty", icon: <Clock className="h-4 w-4 text-gray-400" /> },
+    { text: "Neurologist", type: "specialty", icon: <Clock className="h-4 w-4 text-gray-400" /> },
+    { text: "Dermatologist", type: "specialty", icon: <Clock className="h-4 w-4 text-gray-400" /> },
+    { text: "Pediatrician", type: "specialty", icon: <Clock className="h-4 w-4 text-gray-400" /> },
+    { text: "Dr. Sarah Johnson", type: "doctor", icon: <Search className="h-4 w-4 text-gray-400" /> },
+    { text: "Heart disease specialist", type: "keyword", icon: <Search className="h-4 w-4 text-gray-400" /> },
+    { text: "Skin problems", type: "keyword", icon: <Search className="h-4 w-4 text-gray-400" /> }
   ];
 
   const filteredSuggestions = suggestions.filter(
-    s => !searchQuery || s.toLowerCase().includes(searchQuery.toLowerCase())
+    s => !searchQuery || s.text.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleDoctorSearch = (term = "") => {
@@ -48,12 +48,19 @@ export function SearchBar() {
     handleDoctorSearch(suggestion);
   };
 
-  // Only close the suggestions on click outside
+  const clearSearch = () => {
+    setSearchQuery("");
+    if (searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  };
+
+  // Close suggestions on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        searchInputRef.current && 
-        !searchInputRef.current.contains(event.target as Node) &&
+        searchContainerRef.current && 
+        !searchContainerRef.current.contains(event.target as Node) &&
         !(event.target as Element).closest('[data-radix-popper-content-wrapper]')
       ) {
         setOpenSuggestions(false);
@@ -66,59 +73,94 @@ export function SearchBar() {
     };
   }, []);
 
+  // Mobile layout needs extra handling
+  const searchBarClasses = cn(
+    "flex items-center w-full max-w-3xl mx-auto relative rounded-full shadow-lg",
+    openSuggestions ? "rounded-b-none shadow-lg" : "shadow-md",
+    "bg-white border border-gray-200"
+  );
+
   return (
-    <div className="search-container flex items-center w-full max-w-3xl mx-auto relative rounded-full shadow-lg p-1 sm:p-2">
-      {/* Locality field (mobile: icon only, desktop: text) */}
-      <div className="relative w-[30%] sm:w-[35%]">
-        <LocationSelector />
+    <div ref={searchContainerRef} className="w-full max-w-3xl mx-auto relative">
+      <div className={searchBarClasses}>
+        {/* Location field */}
+        <div className="relative w-[30%] sm:w-[35%] p-2 sm:p-3">
+          <LocationSelector onOpenChange={(open) => setOpenLocationSelector(open)} />
+        </div>
+        
+        {/* Search doctors field */}
+        <div className="relative w-[70%] sm:w-[65%] pl-2 sm:pl-3 flex items-center h-12 sm:h-14">
+          <div className="relative w-full flex items-center">
+            <Search className="h-4 w-4 text-muted-foreground absolute left-2 top-1/2 transform -translate-y-1/2" />
+            <Input 
+              ref={searchInputRef}
+              type="text" 
+              placeholder="Search doctors, specialties..." 
+              className="border-0 px-0 py-0 h-10 focus-visible:ring-0 placeholder:text-muted-foreground pl-10 bg-transparent w-full"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setOpenSuggestions(true);
+              }}
+              onFocus={() => setOpenSuggestions(true)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleDoctorSearch();
+                }
+              }}
+            />
+            {searchQuery && (
+              <button 
+                onClick={clearSearch}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2"
+              >
+                <X className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+              </button>
+            )}
+          </div>
+          <Button 
+            className="rounded-full h-9 w-[100px] text-sm text-white bg-primary hover:bg-primary/90 ml-1"
+            onClick={() => handleDoctorSearch()}
+          >
+            Search
+          </Button>
+        </div>
       </div>
       
-      {/* Search doctors field */}
-      <div className="relative w-[70%] sm:w-[65%] pl-2 sm:pl-3 flex items-center">
-        <Popover open={openSuggestions && filteredSuggestions.length > 0} onOpenChange={setOpenSuggestions}>
-          <PopoverTrigger asChild>
-            <div className="relative w-full">
-              <div className="absolute left-2 top-1/2 transform -translate-y-1/2">
-                <Search className="h-4 w-4 text-muted-foreground" />
+      {/* Suggestions dropdown (Google-style) */}
+      {openSuggestions && filteredSuggestions.length > 0 && (
+        <div className="absolute top-full left-0 right-0 bg-white border-x border-b border-gray-200 rounded-b-xl shadow-lg z-50 max-h-[60vh] overflow-y-auto">
+          <div className="py-2">
+            {filteredSuggestions.map((suggestion, index) => (
+              <div 
+                key={index}
+                className="px-4 py-2.5 hover:bg-gray-50 cursor-pointer flex items-center"
+                onClick={() => handleSuggestionClick(suggestion.text)}
+              >
+                {suggestion.icon}
+                <span className="ml-3 text-sm text-gray-700">{suggestion.text}</span>
               </div>
-              <Input 
-                ref={searchInputRef}
-                type="text" 
-                placeholder="Search doctors, specialties..." 
-                className="border-0 px-0 py-0 h-10 focus-visible:ring-0 placeholder:text-muted-foreground pl-10 bg-transparent w-full"
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  setOpenSuggestions(true);
-                }}
-                onFocus={() => setOpenSuggestions(true)}
-              />
+            ))}
+            <div className="flex justify-center gap-2 p-3 border-t mt-1">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="text-xs h-8"
+                onClick={() => handleDoctorSearch()}
+              >
+                Search Doctors
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="text-xs h-8"
+              >
+                Book an Appointment
+              </Button>
             </div>
-          </PopoverTrigger>
-          <PopoverContent className="p-0 w-[65vw] max-w-[500px]" align="start" sideOffset={5}>
-            <div className="max-h-60 overflow-y-auto py-2">
-              {filteredSuggestions.map((suggestion, index) => (
-                <div 
-                  key={index}
-                  className="px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm"
-                  onClick={() => handleSuggestionClick(suggestion)}
-                >
-                  <div className="flex items-center">
-                    <Search className="h-3 w-3 text-gray-500 mr-2" />
-                    <span>{suggestion}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </PopoverContent>
-        </Popover>
-        <Button 
-          className="rounded-full h-9 w-[100px] text-sm text-white bg-primary hover:bg-primary/90 ml-1"
-          onClick={() => handleDoctorSearch()}
-        >
-          Search
-        </Button>
-      </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -68,22 +68,19 @@ const Index = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="rounded-xl bg-white p-4 sm:p-6 mb-6 md:p-8 overflow-hidden relative card-shadow">
-            <div className="w-full text-center">
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
-              >
-                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2">Find and Book the Best Doctors</h1>
-                <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6">
-                  Schedule appointments with top specialists in your area
-                </p>
-              </motion.div>
-              
-              <SearchBar />
-            </div>
-            <div className="absolute -right-16 -bottom-16 w-64 h-64 rounded-full opacity-10 sky-gradient"></div>
+          <div className="w-full text-center mb-4">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+            >
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2">Find and Book the Best Doctors</h1>
+              <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6">
+                Schedule appointments with top specialists in your area
+              </p>
+            </motion.div>
+            
+            <SearchBar />
           </div>
         </motion.section>
 

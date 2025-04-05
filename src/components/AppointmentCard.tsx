@@ -5,27 +5,31 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-interface AppointmentCardProps {
+interface Appointment {
+  id: string;
   doctorName: string;
   specialty: string;
   date: string;
   time: string;
+  clinicName?: string;
+  location?: string;
+  status: string;
   imageSrc: string;
-  status: "upcoming" | "completed" | "cancelled";
+}
+
+interface AppointmentCardProps {
+  appointment: Appointment;
   className?: string;
   forUser?: string;
 }
 
 export function AppointmentCard({ 
-  doctorName, 
-  specialty, 
-  date, 
-  time, 
-  imageSrc, 
-  status, 
+  appointment,
   className,
   forUser = "You"
 }: AppointmentCardProps) {
+  const { doctorName, specialty, date, time, imageSrc, status } = appointment;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -65,13 +69,14 @@ export function AppointmentCard({
               {status === "upcoming" && <span className="text-xs px-2 py-1 bg-blue-50 text-primary rounded-full">Upcoming</span>}
               {status === "completed" && <span className="text-xs px-2 py-1 bg-green-50 text-green-600 rounded-full">Completed</span>}
               {status === "cancelled" && <span className="text-xs px-2 py-1 bg-red-50 text-red-600 rounded-full">Cancelled</span>}
+              {status === "confirmed" && <span className="text-xs px-2 py-1 bg-blue-50 text-primary rounded-full">Confirmed</span>}
               
               {forUser !== "You" && (
                 <span className="text-xs text-gray-500">For: {forUser}</span>
               )}
             </div>
             
-            {status === "upcoming" && (
+            {(status === "upcoming" || status === "confirmed") && (
               <div className="flex gap-2">
                 <Button size="sm" variant="outline" className="text-xs h-8 rounded-full">Reschedule</Button>
                 <Button size="sm" className="text-xs h-8 sky-button rounded-full gap-1">

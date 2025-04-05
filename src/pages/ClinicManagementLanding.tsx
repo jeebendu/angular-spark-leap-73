@@ -1,4 +1,5 @@
-import React from "react";
+
+import React, { useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
@@ -12,14 +13,63 @@ import {
   Shield, 
   LineChart, 
   CheckCircle2,
-  ArrowRight
+  ArrowRight,
+  Mail
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 
 const ClinicManagementLanding = () => {
+  const [subdomain, setSubdomain] = useState("");
+  const [email, setEmail] = useState("");
+  const [clinicName, setClinicName] = useState("");
+  const [username, setUsername] = useState("");
+  const { toast } = useToast();
+  
+  const handleAccessPortal = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!subdomain.trim()) {
+      toast({
+        title: "Please enter a subdomain",
+        description: "Subdomain is required to access your clinic portal",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Redirect to the specified subdomain URL
+    window.location.href = `https://${subdomain}.clinichub.care`;
+  };
+  
+  const handleRegister = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validate form
+    if (!clinicName.trim() || !email.trim() || !subdomain.trim() || !username.trim()) {
+      toast({
+        title: "Missing information",
+        description: "Please fill in all required fields",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Show success message
+    toast({
+      title: "Registration successful",
+      description: "Please check your email to verify your account.",
+    });
+    
+    // Reset the form
+    setClinicName("");
+    setEmail("");
+    setSubdomain("");
+    setUsername("");
+  };
+
   return (
     <AppLayout>
       <div className="container mx-auto px-4 py-12">
@@ -54,71 +104,85 @@ const ClinicManagementLanding = () => {
               </TabsList>
               
               <TabsContent value="login" className="p-6 bg-white">
-                <div className="space-y-4">
+                <form onSubmit={handleAccessPortal} className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Clinic Subdomain
                     </label>
                     <div className="flex">
-                      <Input placeholder="your-clinic" className="rounded-r-none" />
+                      <Input 
+                        placeholder="your-clinic" 
+                        className="rounded-r-none" 
+                        value={subdomain}
+                        onChange={(e) => setSubdomain(e.target.value)}
+                      />
                       <div className="bg-gray-100 border border-l-0 border-gray-300 rounded-r-md px-3 flex items-center text-gray-500">
-                        .clinichub.com
+                        .clinichub.care
                       </div>
                     </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Password
-                    </label>
-                    <Input type="password" placeholder="Enter your password" />
-                  </div>
-                  <div className="flex justify-between items-center text-sm">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input type="checkbox" className="rounded text-primary focus:ring-primary" />
-                      Remember me
-                    </label>
-                    <a href="#" className="text-primary hover:underline">
-                      Forgot password?
-                    </a>
-                  </div>
-                  <Button className="w-full sky-button">
+                  <Button type="submit" className="w-full sky-button">
                     Access Portal <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
-                </div>
+                </form>
               </TabsContent>
               
               <TabsContent value="register" className="p-6 bg-white">
-                <div className="space-y-4">
+                <form onSubmit={handleRegister} className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Clinic Name
                     </label>
-                    <Input placeholder="Enter clinic name" />
+                    <Input 
+                      placeholder="Enter clinic name" 
+                      value={clinicName}
+                      onChange={(e) => setClinicName(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Username
+                    </label>
+                    <Input 
+                      placeholder="Choose a username" 
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                    />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Email Address
                     </label>
-                    <Input type="email" placeholder="email@example.com" />
+                    <Input 
+                      type="email" 
+                      placeholder="email@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)} 
+                    />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Choose Subdomain
                     </label>
                     <div className="flex">
-                      <Input placeholder="your-clinic" className="rounded-r-none" />
+                      <Input 
+                        placeholder="your-clinic" 
+                        className="rounded-r-none"
+                        value={subdomain}
+                        onChange={(e) => setSubdomain(e.target.value)} 
+                      />
                       <div className="bg-gray-100 border border-l-0 border-gray-300 rounded-r-md px-3 flex items-center text-gray-500">
-                        .clinichub.com
+                        .clinichub.care
                       </div>
                     </div>
                   </div>
-                  <Button className="w-full sky-button">
+                  <Button type="submit" className="w-full sky-button">
                     Get Started Free
                   </Button>
                   <p className="text-xs text-center text-gray-500">
                     By signing up, you agree to our Terms of Service and Privacy Policy
                   </p>
-                </div>
+                </form>
               </TabsContent>
             </Tabs>
           </div>
@@ -148,7 +212,7 @@ const ClinicManagementLanding = () => {
                   <Button size="lg" className="bg-white text-primary hover:bg-white/90">
                     Start Free Trial
                   </Button>
-                  <Button size="lg" variant="outline" className="border-white text-white bg-primary/30 hover:bg-white/20">
+                  <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/20">
                     Watch Demo
                   </Button>
                 </div>

@@ -23,7 +23,10 @@ export class Patient {
 }
 
 export interface FamilyMember {
-    id: string;
-    relationship: string;
-    name: string;
-  }
+  id: string;
+  relationship: string;
+  name: string;
+  age?: string | number;
+  phone?: string;
+  gender?: string;
+}

@@ -26,17 +26,27 @@ export const DoctorDetailsTabs = ({
   // Converting doctor to meet the model's structure
   const doctorModel: Doctor = {
     ...doctor,
-    consultationFee: doctor.consultationFee ? Number(doctor.consultationFee) : 0,
+    id: doctor.id,
+    firstname: doctor.firstname || '',
+    lastname: doctor.lastname || '',
+    consultationFee: typeof doctor.consultationFee === 'string' 
+      ? Number(doctor.consultationFee) 
+      : (doctor.consultationFee || 0),
     specializationList: doctor.specializationList || []
   };
   
   // Convert branchList to compatible format
   const enhancedBranches = branchList ? branchList.map((branch: any) => ({
     ...branch,
+    id: branch.id.toString(), // Ensure branch id is string
+    name: branch.name || '',
     code: branch.code || '',
     active: branch.active !== undefined ? branch.active : true,
+    location: branch.location || '',
     mapurl: branch.mapurl || '',
-    image: branch.image || ''
+    image: branch.image || '',
+    latitude: branch.latitude || 0,
+    longitude: branch.longitude || 0
   })) : [];
   
   return (

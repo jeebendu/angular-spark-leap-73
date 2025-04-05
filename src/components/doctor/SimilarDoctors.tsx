@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Doctor } from '@/models/Doctor';
+import { Doctor } from '@/types/auth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { DoctorCard } from '@/components/DoctorCard';
@@ -24,7 +24,13 @@ export function SimilarDoctors({ specialties, latitude, longitude, excludeDoctor
       try {
         // Only fetch if we have coordinates and specialties
         if (latitude && longitude && specialties?.length > 0) {
-          const response = await fetchSimilarDoctors(specialties, latitude, longitude);
+          const searchData = {
+            specializations: specialties,
+            latitude,
+            longitude
+          };
+          
+          const response = await fetchSimilarDoctors(searchData);
           
           if (response && response.data) {
             // Filter out the current doctor and limit to 4 doctors
@@ -74,7 +80,7 @@ export function SimilarDoctors({ specialties, latitude, longitude, excludeDoctor
               clinics={doctor.branchList || []}
               isSimple={true}
               id_doctor={doctor.id.toString()}
-              id_clinic={0} // Default value since we don't have a specific clinic ID here
+              id_clinic={0}
             />
           ))}
         </div>

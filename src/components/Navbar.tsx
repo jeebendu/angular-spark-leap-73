@@ -33,6 +33,7 @@ import {
 import authService from "@/services/authService";
 import { sendOtp } from "@/services/authHandler"; 
 import { verifyOTPAndLogin } from "@/services/authHandler";
+import { AuthUser } from "@/types/auth";
 
 import { toast } from "@/hooks/use-toast";
 import {
@@ -43,16 +44,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-export interface AuthUser {
-  email: string | null;
-  reason: "login";
-  tenant: "dev";
-  otp: string | null;
-  authToken: string | null;
-  phone: string | null;
-}
-
 
 export function Navbar({isRequiredLogin}) {
   const { t } = useTranslation();
@@ -72,7 +63,8 @@ export function Navbar({isRequiredLogin}) {
     tenant: "dev",
     phone: "",
     otp: "",
-    authToken: ""
+    authToken: "",
+    userType: "patient"
   });
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);

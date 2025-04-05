@@ -1,4 +1,3 @@
-
 import { Link, useParams, useLocation } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
 import { ArrowLeft } from "lucide-react";
@@ -8,9 +7,7 @@ import { SimilarDoctors } from "@/components/doctor/SimilarDoctors";
 import { useEffect, useState } from "react";
 import { Clinic } from "@/models/Clinic";
 import { fetchDoctorById } from "@/services/doctorService";
-import { Branch as ModelBranch } from "@/models/Branch";
 
-// Type for doctor
 export interface Doctor {
   id: number;
   firstname: string;
@@ -24,7 +21,7 @@ export interface Doctor {
   specializationList: Specialization[];
   clinics: Clinic[];
   languageList: LanguagesList[];
-  branchList: Branch[]; // Using local Branch definition to avoid conflicts
+  branchList: Branch[];
   serviceList: ServiceList[];
   patitientList: PatientList[];
   phone: string;
@@ -33,7 +30,7 @@ export interface Doctor {
   biography: string;
   rating: number;
   reviewCount: number;
-  consultationFee: number; // Changed to number type
+  consultationFee: number;
   bio: string;
   languages: string[];
   education: {
@@ -59,7 +56,6 @@ export interface LanguagesList {
   name: string;
 }
 
-// This Branch interface is made compatible with the one from models/Branch.ts
 export interface Branch {
   id: number;
   name: string;
@@ -89,7 +85,6 @@ const DoctorDetails = () => {
   const [doctor, setDoctorsDetails] = useState<Doctor>();
   const [loading, setLoading] = useState(false);
 
-  // Use an effect to load doctor data and only re-run when ID changes
   useEffect(() => {
     fetchDoctorDetails(Number(id));
   }, [id]);
@@ -99,7 +94,6 @@ const DoctorDetails = () => {
       setLoading(true);
       const data = await fetchDoctorById(id);
       
-      // Convert the doctor data to ensure branchList has the required properties
       if (data.data && data.data.branchList) {
         data.data.branchList = data.data.branchList.map((branch: any) => ({
           ...branch,
@@ -110,7 +104,6 @@ const DoctorDetails = () => {
         }));
       }
       
-      // Ensure consultation fee is a number
       if (data.data && typeof data.data.consultationFee === 'string') {
         data.data.consultationFee = Number(data.data.consultationFee);
       }
@@ -129,7 +122,6 @@ const DoctorDetails = () => {
     setIsRequiredLogin(Math.random());
   };
 
-  // Show loading state if doctor is null
   if (!doctor) {
     return (
       <AppLayout>
@@ -143,13 +135,11 @@ const DoctorDetails = () => {
   return (
     <AppLayout>
       <div className="container px-4 py-6 max-w-6xl mx-auto">
-        {/* Back button */}
         <Link to="/doctor/search" className="flex items-center text-primary mb-6 hover:underline">
           <ArrowLeft className="h-4 w-4 mr-1" />
           Back to search
         </Link>
 
-        {/* Doctor Header */}
         <DoctorHeader
           doctor={doctor}
           id={id || ""}
@@ -159,7 +149,6 @@ const DoctorDetails = () => {
           onButtonClick={handleButtonClick}
         />
 
-        {/* Doctor Details Tabs */}
         <DoctorDetailsTabs
           doctor={doctor}
           clinics={doctor.clinics}
@@ -169,11 +158,11 @@ const DoctorDetails = () => {
           serviceList={doctor.serviceList}
         />
 
-        {/* Similar Doctors */}
         <SimilarDoctors
-          specializationList={doctor.specializationList}
+          specialties={doctor.specializationList}
           latitude={doctor.branchList[0]?.latitude}
           longitude={doctor.branchList[0]?.longitude}
+          excludeDoctorId={parseInt(id || "0")}
         />
       </div>
     </AppLayout>

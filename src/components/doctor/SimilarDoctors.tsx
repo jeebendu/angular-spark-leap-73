@@ -62,8 +62,17 @@ export function SimilarDoctors({ specialties, latitude, longitude, excludeDoctor
           {doctors.map((doctor) => (
             <DoctorCard 
               key={doctor.id}
-              doctor={doctor}
-              isSimple
+              id={doctor.id}
+              name={`${doctor.firstname || ''} ${doctor.lastname || ''}`}
+              specialty={doctor.specializationList?.[0]?.name || "Specialist"}
+              rating={doctor.rating || 4.5}
+              reviewCount={doctor.reviewCount || 10}
+              price={`$${doctor.consultationFee || 0}`}
+              imageSrc={doctor.user?.profile || "/placeholder.svg"}
+              experience={`${doctor.expYear || 0} yrs`}
+              languages={doctor.languages?.join(", ") || ""}
+              clinics={doctor.branchList || []}
+              isSimple={true}
             />
           ))}
         </div>

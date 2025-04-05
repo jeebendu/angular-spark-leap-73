@@ -54,7 +54,7 @@ export function DoctorLayout({ children }: DoctorLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
       {/* Mobile sidebar toggle */}
       <Button
         variant="ghost"
@@ -77,7 +77,7 @@ export function DoctorLayout({ children }: DoctorLayoutProps) {
           {/* Logo area */}
           <div className="p-4 border-b border-gray-100">
             <div className="flex items-center">
-              <div className="h-8 w-8 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold">
+              <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white font-bold">
                 D
               </div>
               <div className="ml-3 text-xl font-semibold text-gray-800">
@@ -97,14 +97,14 @@ export function DoctorLayout({ children }: DoctorLayoutProps) {
                   className={cn(
                     "flex items-center px-4 py-3 text-sm rounded-lg group transition-colors",
                     isActive
-                      ? "bg-purple-100 text-purple-700"
-                      : "text-gray-600 hover:bg-purple-50 hover:text-purple-600"
+                      ? "bg-primary/10 text-primary"
+                      : "text-gray-600 hover:bg-primary/5 hover:text-primary"
                   )}
                 >
-                  <item.icon className={cn("mr-3 h-5 w-5", isActive ? "text-purple-700" : "text-gray-400 group-hover:text-purple-600")} />
+                  <item.icon className={cn("mr-3 h-5 w-5", isActive ? "text-primary" : "text-gray-400 group-hover:text-primary")} />
                   {item.name}
                   {isActive && (
-                    <ChevronRight className="ml-auto h-4 w-4 text-purple-700" />
+                    <ChevronRight className="ml-auto h-4 w-4 text-primary" />
                   )}
                 </Link>
               );
@@ -159,7 +159,7 @@ export function DoctorLayout({ children }: DoctorLayoutProps) {
         "transition-all duration-300 ease-in-out",
         sidebarOpen ? "md:ml-64" : "ml-0"
       )}>
-        <main className="container mx-auto px-4 py-8">
+        <main className="min-h-screen">
           {children}
         </main>
       </div>

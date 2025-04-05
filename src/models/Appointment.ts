@@ -12,4 +12,10 @@ export interface AppointmentDetails {
   reason?: string;
   patientName?: string;
   appointmentType?: string;
+  id?: string;
+  email?: string;
+  phone?: string;
+  appointmentNumber?: string;
+  visitType?: "General Visit" | "Video Call" | "Audio Call" | "Direct Visit";
+  isNew?: boolean;
 }

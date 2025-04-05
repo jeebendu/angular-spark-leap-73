@@ -157,7 +157,7 @@ export function SearchBar() {
 
   // Mobile layout needs extra handling
   const searchBarClasses = cn(
-    "flex items-center w-full max-w-3xl mx-auto relative rounded-[34px] shadow-lg",
+    "flex items-center w-full max-w-3xl mx-auto relative rounded-[30px] shadow-lg",
     openSuggestions ? "rounded-b-none shadow-lg" : "shadow-md",
     "bg-white border border-gray-200"
   );
@@ -215,7 +215,7 @@ export function SearchBar() {
                 disabled={isListening}
               >
                 <Mic className={cn(
-                  "h-4 w-4 transition-colors", 
+                  "h-5 w-5 transition-colors", 
                   isListening ? "text-primary animate-pulse" : "text-gray-400 hover:text-primary"
                 )} />
               </button>
@@ -232,7 +232,7 @@ export function SearchBar() {
       
       {/* Suggestions dropdown (Google-style) */}
       {openSuggestions && filteredSuggestions.length > 0 && (
-        <div className="absolute top-full left-0 right-0 bg-white border-x border-b border-gray-200 rounded-b-[34px] shadow-lg z-50 max-h-[60vh] overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 bg-white border-x border-b border-gray-200 rounded-b-[30px] shadow-lg z-50 max-h-[60vh] overflow-y-auto">
           <div className="py-2">
             {filteredSuggestions.map((suggestion, index) => (
               <div 

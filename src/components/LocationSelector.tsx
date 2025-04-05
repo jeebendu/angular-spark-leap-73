@@ -116,7 +116,7 @@ export function LocationSelector({ onOpenChange }: LocationSelectorProps) {
             variant="ghost" 
             className="h-9 w-full flex items-center justify-start gap-2 p-0 hover:bg-transparent"
           >
-            <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
+            <MapPin className="h-5 w-5 text-primary flex-shrink-0" />
             <span className={cn("truncate text-sm", isMobile ? "max-w-[80px]" : "")}>
               {location.locality || "Select location"}
             </span>

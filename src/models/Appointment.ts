@@ -1,3 +1,4 @@
+
 import { Branch } from "./Branch";
 
 export interface AppointmentDetails {
@@ -7,4 +8,8 @@ export interface AppointmentDetails {
   selectedMember: string;
   doctorName?: string;
   specialty?: string;
+  status?: "upcoming" | "completed" | "cancelled";
+  reason?: string;
+  patientName?: string;
+  appointmentType?: string;
 }

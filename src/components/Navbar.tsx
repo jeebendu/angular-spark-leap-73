@@ -1,85 +1,28 @@
+
 import { Link } from "react-router-dom";
-import { Bell, Calendar, MapPin, User, Menu, ChevronDown, LogOut, Building, Users } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogTrigger,
-  DialogClose
-} from "@/components/ui/dialog";
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { X } from "lucide-react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { CitySelector } from "@/components/navbar/CitySelector";
+import { NavbarUserMenu } from "@/components/navbar/NavbarUserMenu";
+import { LoginDialog } from "@/components/navbar/LoginDialog";
+import { MobileMenu } from "@/components/navbar/MobileMenu";
+import { DesktopNav } from "@/components/navbar/DesktopNav";
+import { NotificationBell } from "@/components/navbar/NotificationBell";
 import authService from "@/services/authService";
-import { toast } from "@/hooks/use-toast";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-  DropdownMenuGroup,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuPortal,
-} from "@/components/ui/dropdown-menu";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
-import { useNavigate } from "react-router-dom";
 
 export function Navbar() {
   const { t } = useTranslation();
   const [scrolled, setScrolled] = useState(false);
   const isMobile = useIsMobile();
-  const [otpValue, setOtpValue] = useState("");
-  const [mobileNumber, setMobileNumber] = useState("");
-  const [isOtpSent, setIsOtpSent] = useState(false);
   const [selectedCity, setSelectedCity] = useState("Bangalore");
-  const [cityDialogOpen, setCityDialogOpen] = useState(false);
-  const [loginDialogOpen, setLoginDialogOpen] = useState(false);
-  const [countryCode, setCountryCode] = useState("+91");
-  const navigate = useNavigate();
-  
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userInfo, setUserInfo] = useState<{name: string, mobile: string} | null>(null);
   
   useEffect(() => {
     const checkAuth = () => {
       const loggedIn = authService.isLoggedIn();
       setIsLoggedIn(loggedIn);
-      
-      if (loggedIn) {
-        setUserInfo(authService.getCurrentUser());
-      }
     };
     
     checkAuth();
@@ -100,87 +43,6 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [scrolled]);
 
-  const handleSendOtp = async () => {
-    if (mobileNumber.length !== 10) {
-      toast({
-        title: "Invalid mobile number",
-        description: "Please enter a valid 10 digit mobile number",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    const success = await authService.sendOtp(mobileNumber);
-    if (success) {
-      setIsOtpSent(true);
-      toast({
-        title: "OTP Sent",
-        description: `Please enter the last 5 digits of ${mobileNumber} as OTP`,
-      });
-    } else {
-      toast({
-        title: "Failed to send OTP",
-        description: "Please try again",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleVerifyOtp = async () => {
-    if (otpValue.length !== 5) {
-      toast({
-        title: "Invalid OTP",
-        description: "Please enter a valid 5 digit OTP",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    const success = await authService.verifyOtp(otpValue);
-    if (success) {
-      setLoginDialogOpen(false);
-      setIsLoggedIn(true);
-      setUserInfo(authService.getCurrentUser());
-      
-      toast({
-        title: "Login Successful",
-        description: "You are now logged in",
-      });
-    } else {
-      toast({
-        title: "Invalid OTP",
-        description: "Please check and try again",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleLogout = () => {
-    authService.logout();
-    setIsLoggedIn(false);
-    setUserInfo(null);
-    
-    toast({
-      title: "Logged Out",
-      description: "You have been logged out successfully",
-    });
-  };
-
-  const handleCitySelect = (city: string) => {
-    setSelectedCity(city);
-    setCityDialogOpen(false);
-  };
-  
-  const resetLoginForm = () => {
-    setMobileNumber("");
-    setOtpValue("");
-    setIsOtpSent(false);
-  };
-  
-  const handleDoctorNavigation = () => {
-    navigate("/doctor");
-  };
-
   return (
     <header className={`py-2 px-2 md:px-6 sticky top-0 z-30 ${scrolled ? 'glass-header' : 'bg-white border-b'}`}>
       <div className="container flex items-center justify-between">
@@ -193,366 +55,23 @@ export function Navbar() {
             />
           </Link>
           
-          <Dialog open={cityDialogOpen} onOpenChange={setCityDialogOpen}>
-            <DialogTrigger asChild>
-              <Button variant="ghost" className="gap-1 text-sm font-medium ml-1 p-1 md:p-2">
-                <MapPin className="text-primary h-4 w-4" />
-                {!isMobile && <span className="font-medium">{selectedCity}</span>}
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-4xl p-8 bg-white modal-background">
-              <div className="absolute right-4 top-4">
-                <DialogClose asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-                    <X className="h-4 w-4" />
-                  </Button>
-                </DialogClose>
-              </div>
-              <DialogHeader>
-                <DialogTitle className="text-center text-2xl font-semibold mb-8">Select your city</DialogTitle>
-              </DialogHeader>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <button 
-                  onClick={() => handleCitySelect("Bangalore")} 
-                  className={`city-selector-card ${selectedCity === "Bangalore" ? "border-primary" : "border-gray-100"}`}
-                >
-                  <div className="city-icon bg-sky-50 p-3 rounded-full">
-                    <span className="text-2xl">🏙️</span>
-                  </div>
-                  <span className="city-name">Bangalore</span>
-                </button>
-                <button 
-                  onClick={() => handleCitySelect("Mumbai")} 
-                  className={`city-selector-card ${selectedCity === "Mumbai" ? "border-primary" : "border-gray-100"}`}
-                >
-                  <div className="city-icon bg-sky-50 p-3 rounded-full">
-                    <span className="text-2xl">🌇</span>
-                  </div>
-                  <span className="city-name">Mumbai</span>
-                </button>
-                <button 
-                  onClick={() => handleCitySelect("Delhi")} 
-                  className={`city-selector-card ${selectedCity === "Delhi" ? "border-primary" : "border-gray-100"}`}
-                >
-                  <div className="city-icon bg-sky-50 p-3 rounded-full">
-                    <span className="text-2xl">🏛️</span>
-                  </div>
-                  <span className="city-name">Delhi</span>
-                </button>
-                <button 
-                  onClick={() => handleCitySelect("Hyderabad")} 
-                  className={`city-selector-card ${selectedCity === "Hyderabad" ? "border-primary" : "border-gray-100"}`}
-                >
-                  <div className="city-icon bg-sky-50 p-3 rounded-full">
-                    <span className="text-2xl">🏯</span>
-                  </div>
-                  <span className="city-name">Hyderabad</span>
-                </button>
-                <button 
-                  onClick={() => handleCitySelect("Chennai")} 
-                  className={`city-selector-card ${selectedCity === "Chennai" ? "border-primary" : "border-gray-100"}`}
-                >
-                  <div className="city-icon bg-sky-50 p-3 rounded-full">
-                    <span className="text-2xl">🌴</span>
-                  </div>
-                  <span className="city-name">Chennai</span>
-                </button>
-                <button 
-                  onClick={() => handleCitySelect("Kolkata")} 
-                  className={`city-selector-card ${selectedCity === "Kolkata" ? "border-primary" : "border-gray-100"}`}
-                >
-                  <div className="city-icon bg-sky-50 p-3 rounded-full">
-                    <span className="text-2xl">🌉</span>
-                  </div>
-                  <span className="city-name">Kolkata</span>
-                </button>
-              </div>
-            </DialogContent>
-          </Dialog>
+          <CitySelector selectedCity={selectedCity} setSelectedCity={setSelectedCity} />
         </div>
         
         <div className="flex items-center gap-1 md:gap-6">
-          <nav className="hidden md:flex items-center gap-6">
-            <NavigationMenu>
-              <NavigationMenuList>
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger className="text-sm font-medium hover:text-primary transition-colors">Providers</NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <ul className="grid gap-3 p-4 w-[200px]">
-                      <li>
-                        <NavigationMenuLink asChild>
-                          <Link
-                            to="/clinic-management"
-                            className="flex items-center p-2 hover:bg-slate-100 rounded-md"
-                          >
-                            <Building className="mr-2 h-4 w-4" />
-                            <span>Clinic</span>
-                          </Link>
-                        </NavigationMenuLink>
-                      </li>
-                      <li>
-                        <NavigationMenuLink asChild>
-                          <Link
-                            to="/doctor"
-                            className="flex items-center p-2 hover:bg-slate-100 rounded-md"
-                          >
-                            <User className="mr-2 h-4 w-4" />
-                            <span>Doctor Dashboard</span>
-                          </Link>
-                        </NavigationMenuLink>
-                      </li>
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
-          </nav>
+          <DesktopNav />
           
           <div className="flex items-center gap-1 md:gap-3">
-            <Button variant="ghost" size="icon" className="text-muted-foreground relative hidden md:flex">
-              <Bell className="h-5 w-5" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
-            </Button>
+            <NotificationBell />
             <LanguageSwitcher />
             
             {isLoggedIn ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Avatar className="h-8 w-8 cursor-pointer">
-                    <AvatarFallback className="bg-primary text-white">
-                      {userInfo?.name.charAt(0) || 'U'}
-                    </AvatarFallback>
-                  </Avatar>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>{userInfo?.name || 'User'}</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <Link to="/appointments" className="flex items-center w-full">
-                      <Calendar className="mr-2 h-4 w-4" />
-                      <span>My Appointments</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Link to="/account" className="flex items-center w-full">
-                      <User className="mr-2 h-4 w-4" />
-                      <span>My Profile</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="text-red-500">
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Logout</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <NavbarUserMenu />
             ) : (
-              <Dialog open={loginDialogOpen} onOpenChange={(open) => {
-                setLoginDialogOpen(open);
-                if (!open) resetLoginForm();
-              }}>
-                <DialogTrigger asChild>
-                  <Button variant="ghost" size="icon" className="rounded-full">
-                    <User className="h-5 w-5" />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-md premium-login-dialog bg-white modal-background">
-                  <DialogHeader>
-                    <DialogTitle className="text-center text-xl font-semibold">Login / Sign Up</DialogTitle>
-                  </DialogHeader>
-                  <Tabs defaultValue="login" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2 mb-4">
-                      <TabsTrigger value="login">Login</TabsTrigger>
-                      <TabsTrigger value="signup">Sign Up</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="login" className="space-y-4">
-                      {!isOtpSent ? (
-                        <>
-                          <div className="space-y-2">
-                            <label htmlFor="mobile" className="text-sm font-medium">
-                              Mobile Number
-                            </label>
-                            <div className="flex">
-                              <div className="w-[90px] mr-2">
-                                <Select value={countryCode} onValueChange={setCountryCode}>
-                                  <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="+91" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="+91">
-                                      <div className="flex items-center">
-                                        <img src="https://preview--appointify-platform-67.lovable.app/lovable-uploads/8ecf0148-aeef-4d33-acd7-b29efebedf9d.png" alt="India" className="h-4 w-6 mr-2" />
-                                        +91
-                                      </div>
-                                    </SelectItem>
-                                    <SelectItem value="+1">
-                                      <div className="flex items-center">
-                                        <span className="w-6 mr-2">🇺🇸</span>
-                                        +1
-                                      </div>
-                                    </SelectItem>
-                                    <SelectItem value="+44">
-                                      <div className="flex items-center">
-                                        <span className="w-6 mr-2">🇬🇧</span>
-                                        +44
-                                      </div>
-                                    </SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                              <Input
-                                id="mobile"
-                                type="tel"
-                                placeholder="Enter your mobile number"
-                                value={mobileNumber}
-                                onChange={(e) => setMobileNumber(e.target.value)}
-                                className="rounded-md border-gray-300 flex-1"
-                              />
-                            </div>
-                            <p className="text-xs text-gray-500 mt-1">
-                              For demo: OTP will be the last 5 digits of your mobile number
-                            </p>
-                          </div>
-                          <Button 
-                            className="w-full sky-button" 
-                            onClick={handleSendOtp}
-                            disabled={mobileNumber.length !== 10}
-                          >
-                            Send OTP
-                          </Button>
-                        </>
-                      ) : (
-                        <>
-                          <div className="space-y-4">
-                            <label className="text-sm font-medium block mb-2 text-center">
-                              Enter OTP sent to {mobileNumber}
-                            </label>
-                            <div className="flex justify-center">
-                              <InputOTP 
-                                maxLength={5}
-                                value={otpValue} 
-                                onChange={setOtpValue}
-                                className="otp-input-premium"
-                              >
-                                <InputOTPGroup className="gap-4">
-                                  <InputOTPSlot index={0} className="otp-slot" />
-                                  <InputOTPSlot index={1} className="otp-slot" />
-                                  <InputOTPSlot index={2} className="otp-slot" />
-                                  <InputOTPSlot index={3} className="otp-slot" />
-                                  <InputOTPSlot index={4} className="otp-slot" />
-                                </InputOTPGroup>
-                              </InputOTP>
-                            </div>
-                            <p className="text-xs text-center mt-2">
-                              Didn't receive the code? <button className="text-primary">Resend</button>
-                            </p>
-                            <p className="text-xs text-gray-500 text-center">
-                              For demo: Use the last 5 digits of your mobile number as OTP
-                            </p>
-                          </div>
-                          <Button 
-                            className="w-full sky-button" 
-                            onClick={handleVerifyOtp}
-                            disabled={otpValue.length !== 5}
-                          >
-                            Verify OTP
-                          </Button>
-                          <Button 
-                            variant="outline" 
-                            className="w-full" 
-                            onClick={() => setIsOtpSent(false)}
-                          >
-                            Go Back
-                          </Button>
-                        </>
-                      )}
-                    </TabsContent>
-                    <TabsContent value="signup" className="space-y-4">
-                      <div className="space-y-2">
-                        <label htmlFor="fullname" className="text-sm font-medium">
-                          Full Name
-                        </label>
-                        <Input
-                          id="fullname"
-                          type="text"
-                          placeholder="Enter your full name"
-                          className="rounded-md border-gray-300"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label htmlFor="signupMobile" className="text-sm font-medium">
-                          Mobile Number
-                        </label>
-                        <div className="flex">
-                          <div className="w-[90px] mr-2">
-                            <Select value={countryCode} onValueChange={setCountryCode}>
-                              <SelectTrigger className="w-full">
-                                <SelectValue placeholder="+91" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="+91">
-                                  <div className="flex items-center">
-                                    <img src="https://preview--appointify-platform-67.lovable.app/lovable-uploads/8ecf0148-aeef-4d33-acd7-b29efebedf9d.png" alt="India" className="h-4 w-6 mr-2" />
-                                    +91
-                                  </div>
-                                </SelectItem>
-                                <SelectItem value="+1">
-                                  <div className="flex items-center">
-                                    <span className="w-6 mr-2">🇺🇸</span>
-                                    +1
-                                  </div>
-                                </SelectItem>
-                                <SelectItem value="+44">
-                                  <div className="flex items-center">
-                                    <span className="w-6 mr-2">🇬🇧</span>
-                                    +44
-                                  </div>
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <Input
-                            id="signupMobile"
-                            type="tel"
-                            placeholder="Enter your mobile number"
-                            className="rounded-md border-gray-300 flex-1"
-                          />
-                        </div>
-                      </div>
-                      <Button className="w-full sky-button">
-                        Continue
-                      </Button>
-                    </TabsContent>
-                  </Tabs>
-                </DialogContent>
-              </Dialog>
+              <LoginDialog />
             )}
             
-            {isMobile && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="text-muted-foreground ml-1">
-                    <Menu className="h-5 w-5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel>Providers</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <Link to="/clinic-management" className="flex items-center w-full">
-                      <Building className="mr-2 h-4 w-4" />
-                      <span>Clinic</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Link to="/doctor" className="flex items-center w-full">
-                      <User className="mr-2 h-4 w-4" />
-                      <span>Doctor Dashboard</span>
-                    </Link>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
+            {isMobile && <MobileMenu />}
           </div>
         </div>
       </div>

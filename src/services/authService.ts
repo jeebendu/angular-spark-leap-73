@@ -1,4 +1,4 @@
-import { AuthUser } from '@/types/auth';
+import apiService from './apiService';
 
 // Types for authentication
 export interface LoginResponse {
@@ -36,15 +36,14 @@ class AuthService {
   }
 
   // Function to send OTP to mobile number
-  async sendOtp(authUser: AuthUser): Promise<boolean> {
+  async sendOtp(mobileNumber: string): Promise<boolean> {
     try {
-     
       // In a real app, this would call the API to send OTP
       // For demo, we'll simulate it
-      console.log(`OTP sent to ${authUser.phone}`);
+      console.log(`OTP sent to ${mobileNumber}`);
       
       // Store the mobile number to verify later
-      localStorage.setItem('pending_mobile', authUser.phone);
+      localStorage.setItem('pending_mobile', mobileNumber);
       
       return true;
     } catch (error) {

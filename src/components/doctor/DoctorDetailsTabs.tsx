@@ -4,51 +4,33 @@ import { ClinicsTab } from "./ClinicsTab";
 import { AboutTab } from "./AboutTab";
 import { ServicesTab } from "./ServicesTab";
 import { ReviewsTab } from "./ReviewsTab";
-import { Branch } from "@/models/Branch";
-import { Doctor } from "@/models/Doctor";
 
-interface DoctorDetailsTabsProps {
-  doctor: any; // Using any to accommodate both Doctor types
-  clinics?: any[]; // Using any here to accommodate various clinic structures
-  specializationList: any[];
-  branchList: any[]; // Changed to any[] to accept any branch format
-  languageList: any[];
-  serviceList: any[];
+interface Doctor {
+  name: string;
+  specialty: string;
+  rating: number;
+  reviewCount: number;
+  education: {
+    degree: string;
+    institute: string;
+    year: string;
+  }[];
+  languages: string[];
+  services: string[];
+  clinics: {
+    name: string;
+    address: string;
+    phone: string;
+    timings: string;
+    days: string;
+  }[];
 }
 
-export const DoctorDetailsTabs = ({ 
-  doctor, 
-  specializationList = [], 
-  branchList, 
-  languageList = [], 
-  serviceList = [] 
-}: DoctorDetailsTabsProps) => {
-  // Converting doctor to meet the model's structure
-  const doctorModel: Doctor = {
-    ...doctor,
-    id: doctor.id,
-    firstname: doctor.firstname || '',
-    lastname: doctor.lastname || '',
-    consultationFee: typeof doctor.consultationFee === 'string' 
-      ? Number(doctor.consultationFee) 
-      : (doctor.consultationFee || 0),
-    specializationList: doctor.specializationList || []
-  };
-  
-  // Convert branchList to compatible format
-  const enhancedBranches = branchList ? branchList.map((branch: any) => ({
-    ...branch,
-    id: branch.id.toString(), // Ensure branch id is string
-    name: branch.name || '',
-    code: branch.code || '',
-    active: branch.active !== undefined ? branch.active : true,
-    location: branch.location || '',
-    mapurl: branch.mapurl || '',
-    image: branch.image || '',
-    latitude: branch.latitude || 0,
-    longitude: branch.longitude || 0
-  })) : [];
-  
+interface DoctorDetailsTabsProps {
+  doctor: Doctor;
+}
+
+export const DoctorDetailsTabs = ({ doctor }: DoctorDetailsTabsProps) => {
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden mb-6">
       <Tabs defaultValue="clinics">
@@ -58,32 +40,30 @@ export const DoctorDetailsTabs = ({
           <TabsTrigger value="services" className="flex-1">Services</TabsTrigger>
           <TabsTrigger value="reviews" className="flex-1">Reviews</TabsTrigger>
         </TabsList>
-
+        
         <TabsContent value="clinics">
           <ClinicsTab 
-            branchList={enhancedBranches} 
-            doctor={doctorModel} 
+            clinics={doctor.clinics} 
+            doctor={{ name: doctor.name, specialty: doctor.specialty }} 
           />
         </TabsContent>
         
         <TabsContent value="about">
           <AboutTab 
-            doctor={doctor}
             education={doctor.education}
             languages={doctor.languages}
-            languageList={languageList}
           />
         </TabsContent>
         
         <TabsContent value="services">
-          <ServicesTab 
-            services={doctor.services}
-            serviceList={serviceList} 
-          />
+          <ServicesTab services={doctor.services} />
         </TabsContent>
         
         <TabsContent value="reviews">
-          <ReviewsTab />
+          <ReviewsTab 
+            rating={doctor.rating}
+            reviewCount={doctor.reviewCount}
+          />
         </TabsContent>
       </Tabs>
     </div>

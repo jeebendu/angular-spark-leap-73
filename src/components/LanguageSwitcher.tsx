@@ -22,7 +22,7 @@ export function LanguageSwitcher() {
     toast({
       title: t('languageSwitcher.language') + ' ' + t('common.changed'),
       description: getCurrentLanguageFullName(lng),
-      variant: "default" ,
+      variant: "default",
     });
   };
 

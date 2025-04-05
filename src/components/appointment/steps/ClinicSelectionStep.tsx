@@ -2,28 +2,24 @@
 import { Building } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Branch } from "@/models/Branch";
-import { Appointments } from "@/components/BookAppointmentModal";
+
+interface Clinic {
+  id: string;
+  name: string;
+  address: string;
+}
 
 interface ClinicSelectionStepProps {
-  appointmentObj: Appointments;
-  setSelectedClinic: (branch: Branch) => void;
-  branches: Branch[];
+  selectedClinic: string;
+  setSelectedClinic: (clinicId: string) => void;
+  clinics: Clinic[];
 }
 
 export function ClinicSelectionStep({ 
-  appointmentObj, 
+  selectedClinic, 
   setSelectedClinic, 
-  branches 
+  clinics 
 }: ClinicSelectionStepProps) {
-
-  const handleClinicSelection = (branchId: string) => {
-    const selectedBranch = branches.find(branch => branch.id === branchId);
-    if (selectedBranch) {
-      setSelectedClinic(selectedBranch);
-    }
-  };
-
   return (
     <div className="space-y-6">
       <div>
@@ -33,26 +29,22 @@ export function ClinicSelectionStep({
         </h3>
         
         <RadioGroup 
-          value={appointmentObj?.branch?.id?.toString()} 
-          onValueChange={handleClinicSelection}
+          value={selectedClinic} 
+          onValueChange={setSelectedClinic}
           className="space-y-3"
         >
-          {branches?.map((branch) => (
+          {clinics.map((clinic) => (
             <div 
-              key={branch.id} 
+              key={clinic.id} 
               className={`border rounded-lg p-4 transition-colors ${
-                appointmentObj?.branch?.id === branch.id ? "border-primary" : "border-gray-200"
+                selectedClinic === clinic.id ? "border-primary" : "border-gray-200"
               }`}
             >
               <div className="flex items-start">
-                <RadioGroupItem value={branch.id.toString()} id={`clinic-${branch.id}`} className="mt-1" />
-                <Label htmlFor={`clinic-${branch.id}`} className="cursor-pointer">
-                  <div className="font-medium">{branch.name}</div>
-                  <div className="text-sm text-gray-500">
-                    {branch.city && branch.district?.name && branch.state?.name ? 
-                      `${branch.city}, ${branch.district.name}, ${branch.state.name}` : 
-                      branch.location || "Location not available"}
-                  </div>
+                <RadioGroupItem value={clinic.id} id={`clinic-${clinic.id}`} className="mt-1" />
+                <Label htmlFor={`clinic-${clinic.id}`} className="ml-2 cursor-pointer">
+                  <div className="font-medium">{clinic.name}</div>
+                  <div className="text-sm text-gray-500">{clinic.address}</div>
                 </Label>
               </div>
             </div>

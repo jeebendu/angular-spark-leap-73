@@ -54,7 +54,7 @@ export default function Reports() {
                 />
                 
                 <ReportCard 
-                  title="Blood Glucose Fastingggggg"
+                  title="Blood Glucose Fasting"
                   date="15 May 2023"
                   status="attention"
                   patient="John Doe"
@@ -98,7 +98,7 @@ export default function Reports() {
                 />
                 
                 <ReportCard 
-                  title="Blood Glucose Fastingggggg"
+                  title="Blood Glucose Fasting"
                   date="15 May 2023"
                   status="attention"
                   patient="John Doe"

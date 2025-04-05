@@ -39,7 +39,7 @@ export function SearchBar() {
 
   const handleDoctorSearch = (term = "") => {
     const searchTerm = term || searchQuery;
-    navigate(`/doctor/search${searchTerm ? `?query=${encodeURIComponent(searchTerm)}` : ""}`);
+    navigate(`/doctor-search${searchTerm ? `?query=${encodeURIComponent(searchTerm)}` : ""}`);
     setOpenSuggestions(false);
   };
 

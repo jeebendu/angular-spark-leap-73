@@ -6,32 +6,17 @@ import { DoctorHeader } from "@/components/doctor/DoctorHeader";
 import { DoctorDetailsTabs } from "@/components/doctor/DoctorDetailsTabs";
 import { SimilarDoctors } from "@/components/doctor/SimilarDoctors";
 import { useEffect, useState } from "react";
-import { Clinic } from "@/models/Clinic";
-import { fetchDoctorById } from "@/services/doctorService";
 
-export interface Doctor {
-  id: number;
-  firstname: string;
+// Type for doctor
+interface Doctor {
+  id: string;
   name: string;
-  lastname: string;
-  about: string;
-  qualification: string;
-  desgination: string;
-  email: string;
-  expYear: number;
-  specializationList: Specialization[];
-  clinics: Clinic[];
-  languageList: LanguagesList[];
-  branchList: Branch[];
-  serviceList: ServiceList[];
-  patitientList: PatientList[];
-  phone: string;
-  pincode: string;
-  joiningDate: Date;
-  biography: string;
+  specialty: string;
+  qualifications: string;
+  experience: string;
   rating: number;
   reviewCount: number;
-  consultationFee: number;
+  consultationFee: string;
   bio: string;
   languages: string[];
   education: {
@@ -40,98 +25,74 @@ export interface Doctor {
     year: string;
   }[];
   services: string[];
-}
-
-export interface Specialization {
-  id: number; // Changed from string to number to match Doctor model
-  name: string;
-}
-
-export interface ServiceList {
-  id: string;
-  name: string;
-}
-
-export interface LanguagesList {
-  id: string;
-  name: string;
-}
-
-export interface Branch {
-  id: string; // Changed to string to be consistent
-  name: string;
-  location: string;
-  state: string;
-  city: string;
-  district: string;
-  pincode: string;
-  country: string;
-  latitude: number;
-  longitude: number;
-  code?: string;
-  active?: boolean;
-  mapurl?: string;
-  image?: string;
-}
-
-export interface PatientList {
-  id: number;
-  firstname: string;
-  lastname: string;
+  clinics: {
+    name: string;
+    address: string;
+    phone: string;
+    timings: string;
+    days: string;
+  }[];
 }
 
 const DoctorDetails = () => {
   const { id } = useParams();
   const location = useLocation();
-  const [doctor, setDoctorsDetails] = useState<Doctor>();
-  const [loading, setLoading] = useState(false);
-
+  const [doctor, setDoctor] = useState<Doctor | null>(null);
+  
+  // Use an effect to load doctor data and only re-run when ID changes
   useEffect(() => {
-    fetchDoctorDetails(Number(id));
-  }, [id]);
-
-  const fetchDoctorDetails = async (id: number) => {
-    try {
-      setLoading(true);
-      const data = await fetchDoctorById(id);
-      
-      if (data.data && data.data.branchList) {
-        data.data.branchList = data.data.branchList.map((branch: any) => ({
-          ...branch,
-          id: branch.id.toString(), // Ensure branch id is string
-          code: branch.code || '',
-          active: branch.active !== undefined ? branch.active : true,
-          mapurl: branch.mapurl || '',
-          image: branch.image || ''
-        }));
-      }
-      
-      if (data.data && typeof data.data.consultationFee === 'string') {
-        data.data.consultationFee = Number(data.data.consultationFee);
-      }
-
-      // Ensure all specialization IDs are numbers
-      if (data.data && data.data.specializationList) {
-        data.data.specializationList = data.data.specializationList.map((spec: any) => ({
-          ...spec,
-          id: typeof spec.id === 'string' ? Number(spec.id) : spec.id
-        }));
-      }
-      
-      setDoctorsDetails(data.data);
-    } catch (error) {
-      console.error("Error fetching doctors:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const [isRequiredLogin, setIsRequiredLogin] = useState<number>();
-
-  const handleButtonClick = () => {
-    setIsRequiredLogin(Math.random());
-  };
-
+    // In a real app, this would fetch from API
+    const mockDoctor: Doctor = {
+      id: id || "1",
+      name: "Dr. Emily Johnson",
+      specialty: "Cardiologist",
+      qualifications: "MBBS, MD (Cardiology), DNB",
+      experience: "12+ years",
+      rating: 4.8,
+      reviewCount: 235,
+      consultationFee: "₹1,200",
+      bio: "Dr. Emily Johnson is a highly skilled cardiologist with over 12 years of experience in diagnosing and treating heart diseases. She specializes in interventional cardiology and has performed more than 1,000 cardiac procedures.",
+      languages: ["English", "Hindi", "Tamil"],
+      education: [
+        { degree: "MBBS", institute: "AIIMS, New Delhi", year: "2008" },
+        { degree: "MD (Cardiology)", institute: "PGIMER, Chandigarh", year: "2012" },
+        { degree: "DNB (Cardiology)", institute: "National Board of Examinations", year: "2013" }
+      ],
+      services: [
+        "Comprehensive Cardiac Evaluation",
+        "Echocardiography",
+        "ECG",
+        "Stress Testing",
+        "Heart Disease Management",
+        "Heart Failure Treatment"
+      ],
+      clinics: [
+        {
+          name: "HeartCare Clinic",
+          address: "123 ABC Road, Koramangala, Bangalore",
+          phone: "+91 9876543210",
+          timings: "9:00 AM - 6:00 PM",
+          days: "Monday to Saturday"
+        },
+        {
+          name: "City Heart Center",
+          address: "456 XYZ Road, Indiranagar, Bangalore",
+          phone: "+91 9876543211",
+          timings: "10:00 AM - 4:00 PM",
+          days: "Monday, Wednesday, Friday"
+        }
+      ]
+    };
+    
+    // For demo, let's pretend we're fetching data
+    const timer = setTimeout(() => {
+      setDoctor(mockDoctor);
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, [id]); // Only re-run if the ID changes
+  
+  // Show loading state if doctor is null
   if (!doctor) {
     return (
       <AppLayout>
@@ -145,35 +106,20 @@ const DoctorDetails = () => {
   return (
     <AppLayout>
       <div className="container px-4 py-6 max-w-6xl mx-auto">
-        <Link to="/doctor/search" className="flex items-center text-primary mb-6 hover:underline">
+        {/* Back button */}
+        <Link to="/doctor-search" className="flex items-center text-primary mb-6 hover:underline">
           <ArrowLeft className="h-4 w-4 mr-1" />
           Back to search
         </Link>
-
-        <DoctorHeader
-          doctor={doctor}
-          id={id || ""}
-          specializationList={doctor.specializationList}
-          languageList={doctor.languageList}
-          clinics={doctor.clinics}
-          onButtonClick={handleButtonClick}
-        />
-
-        <DoctorDetailsTabs
-          doctor={doctor}
-          clinics={doctor.clinics}
-          specializationList={doctor.specializationList}
-          branchList={doctor.branchList}
-          languageList={doctor.languageList}
-          serviceList={doctor.serviceList}
-        />
-
-        <SimilarDoctors
-          specialties={doctor.specializationList}
-          latitude={doctor.branchList[0]?.latitude}
-          longitude={doctor.branchList[0]?.longitude}
-          excludeDoctorId={parseInt(id || "0")}
-        />
+        
+        {/* Doctor Header */}
+        <DoctorHeader doctor={doctor} />
+        
+        {/* Doctor Details Tabs */}
+        <DoctorDetailsTabs doctor={doctor} />
+        
+        {/* Similar Doctors */}
+        <SimilarDoctors />
       </div>
     </AppLayout>
   );

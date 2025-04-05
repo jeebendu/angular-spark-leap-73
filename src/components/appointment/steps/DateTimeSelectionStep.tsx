@@ -1,168 +1,97 @@
 
 import React, { useState } from "react";
-import { Calendar } from "@/components/ui/calendar";
-import { Button } from "@/components/ui/button";
+import { Calendar as CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
-import { Slot } from "@/components/BookAppointmentModal";
-import { useTranslation } from "react-i18next";
+import { cn } from "@/lib/utils";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface DateTimeSelectionStepProps {
-  slotList?: Slot[];
-  appointmentObj: any;
-  handleSlotClick: (slot: Slot) => void;
-  onDateSelectHandler: (date: Date) => void;
+  selectedDate: string;
+  setSelectedDate: (date: string) => void;
+  selectedTime: string;
+  setSelectedTime: (time: string) => void;
+  availableTimes: string[];
 }
 
-export function DateTimeSelectionStep({
-  slotList,
-  appointmentObj,
-  handleSlotClick,
-  onDateSelectHandler,
+export function DateTimeSelectionStep({ 
+  selectedDate, 
+  setSelectedDate, 
+  selectedTime, 
+  setSelectedTime, 
+  availableTimes 
 }: DateTimeSelectionStepProps) {
-  const { t } = useTranslation();
-  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [date, setDate] = useState<Date | undefined>(
+    selectedDate ? new Date(selectedDate) : undefined
+  );
 
-  // Function to handle date selection
   const handleDateSelect = (selectedDate: Date | undefined) => {
+    setDate(selectedDate);
     if (selectedDate) {
-      setDate(selectedDate);
-      onDateSelectHandler(selectedDate);
+      setSelectedDate(format(selectedDate, "yyyy-MM-dd"));
     }
-  };
-
-  // Group slots by hour
-  const groupSlotsByHour = (slots?: Slot[]) => {
-    const groupedSlots: { [key: string]: Slot[] } = {};
-
-    if (!slots || slots.length === 0) {
-      return groupedSlots;
-    }
-
-    slots.forEach((slot) => {
-      if (slot.startTime) {
-        const startTime = new Date(slot.startTime).getHours();
-        const hourKey = `${startTime}`;
-
-        if (!groupedSlots[hourKey]) {
-          groupedSlots[hourKey] = [];
-        }
-
-        groupedSlots[hourKey].push(slot);
-      }
-    });
-
-    return groupedSlots;
-  };
-
-  // Get morning, afternoon, and evening slots
-  const getTimeSlots = (slots?: Slot[]) => {
-    if (!slots || !slots.length) return { morningSlots: {}, afternoonSlots: {}, eveningSlots: {} };
-
-    const groupedSlots = groupSlotsByHour(slots);
-    const morningSlots: { [key: string]: Slot[] } = {};
-    const afternoonSlots: { [key: string]: Slot[] } = {};
-    const eveningSlots: { [key: string]: Slot[] } = {};
-
-    Object.keys(groupedSlots).forEach((hour) => {
-      const hourNum = parseInt(hour);
-      if (hourNum >= 0 && hourNum < 12) {
-        morningSlots[hour] = groupedSlots[hour];
-      } else if (hourNum >= 12 && hourNum < 17) {
-        afternoonSlots[hour] = groupedSlots[hour];
-      } else {
-        eveningSlots[hour] = groupedSlots[hour];
-      }
-    });
-
-    return { morningSlots, afternoonSlots, eveningSlots };
-  };
-
-  const formatSlotTime = (slot: Slot) => {
-    if (!slot.startTime) return "";
-    const startTime = new Date(slot.startTime);
-    return format(startTime, "h:mm a");
-  };
-
-  const { morningSlots, afternoonSlots, eveningSlots } = getTimeSlots(slotList);
-
-  const renderSlotButtons = (slotsGroup: { [key: string]: Slot[] }) => {
-    return Object.values(slotsGroup).map((slots, idx) => (
-      <div key={idx} className="grid grid-cols-4 gap-2 mb-2">
-        {slots.map((slot) => {
-          const isSelected = appointmentObj?.slot?.id === slot.id;
-          return (
-            <Button
-              key={slot.id}
-              variant={isSelected ? "default" : "outline"}
-              className={isSelected ? "bg-primary text-white" : ""}
-              onClick={() => handleSlotClick(slot)}
-              disabled={slot.availableSlots <= 0}
-            >
-              {formatSlotTime(slot)}
-            </Button>
-          );
-        })}
-      </div>
-    ));
-  };
-
-  const hasSlots = (slotsGroup: { [key: string]: Slot[] }) => {
-    return Object.keys(slotsGroup).length > 0;
   };
 
   return (
-    <div className="space-y-6 py-2">
-      <h3 className="text-lg font-semibold">{t('Select Date & Time')}</h3>
-      
-      <div className="grid md:grid-cols-2 gap-6">
-        <div>
-          <p className="mb-2 text-sm text-gray-500">{t('Choose a date')}</p>
-          <div className="border rounded-md p-2">
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={handleDateSelect}
-              className="pointer-events-auto"
-              disabled={(date) => {
-                // Disable past dates
-                return date < new Date(new Date().setHours(0, 0, 0, 0));
-              }}
-            />
-          </div>
-          <p className="mt-2 text-xs text-gray-500">
-            {date ? `${t('Selected Date')}: ${format(date, 'PPP')}` : t('Please select a date')}
-          </p>
-        </div>
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium mb-4 flex items-center">
+          <CalendarIcon className="mr-2 h-5 w-5" />
+          Select Date and Time
+        </h3>
         
-        <div>
-          <p className="mb-2 text-sm text-gray-500">{t('Choose a time slot')}</p>
-          <div className="space-y-4">
-            {hasSlots(morningSlots) && (
-              <div>
-                <p className="text-sm font-medium mb-1">{t('Morning')}</p>
-                {renderSlotButtons(morningSlots)}
-              </div>
-            )}
-            
-            {hasSlots(afternoonSlots) && (
-              <div>
-                <p className="text-sm font-medium mb-1">{t('Afternoon')}</p>
-                {renderSlotButtons(afternoonSlots)}
-              </div>
-            )}
-            
-            {hasSlots(eveningSlots) && (
-              <div>
-                <p className="text-sm font-medium mb-1">{t('Evening')}</p>
-                {renderSlotButtons(eveningSlots)}
-              </div>
-            )}
-            
-            {!hasSlots(morningSlots) && !hasSlots(afternoonSlots) && !hasSlots(eveningSlots) && (
-              <div className="text-center p-4 border rounded-md">
-                <p className="text-gray-500">{t('No slots available for the selected date')}</p>
-              </div>
-            )}
+        <div className="grid grid-cols-1 gap-6">
+          <div>
+            <Label>Date</Label>
+            <div className="mt-1">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !date && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {date ? format(date, "PPP") : <span>Pick a date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 z-50 pointer-events-auto" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={handleDateSelect}
+                    initialFocus
+                    className="p-3 pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+          </div>
+          
+          <div>
+            <Label>Available Time Slots</Label>
+            <div className="grid grid-cols-3 gap-2 mt-1">
+              {availableTimes.map((time) => (
+                <Button
+                  key={time}
+                  variant={selectedTime === time ? "default" : "outline"}
+                  className={`text-xs h-8 ${
+                    selectedTime === time ? "sky-button" : ""
+                  }`}
+                  onClick={() => setSelectedTime(time)}
+                >
+                  {time}
+                </Button>
+              ))}
+            </div>
           </div>
         </div>
       </div>

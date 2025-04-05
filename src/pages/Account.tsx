@@ -10,74 +10,10 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
-import { toast } from "@/hooks/use-toast";
-import { fetchMyProfilePatient, updatePatientInfo } from "@/services/UserSevice";
-import { Patient } from "@/models/Patient";
 
 export default function Account() {
   const { t } = useTranslation();
-
-  const [patient, setPatient] = useState<any>(null);
-
-  useEffect(() => {
-    getMyProfile();
-  }, []);
-
-  const getMyProfile = async () => {
-    try {
-      const response = await fetchMyProfilePatient();
-      console.log(response.data);
-      if (response) {
-        setPatient(response.data);
-      }
-    } catch (error) {
-      console.log("Error fetching profile", error);
-    }
-  }
-
-  const hanleUserInputChange = (e: any) => {
-    const { name, value } = e.target;
-
-    setPatient((prev: any) => {
-      if (name.startsWith("user.")) {
-        const userKey = name.split(".")[1]; // Extract the nested key (e.g., "phone")
-        return {
-          ...prev,
-          user: {
-            ...prev.user,
-            [userKey]: value,
-          },
-        };
-      }
-      return {
-        ...prev,
-        [name]: value,
-      };
-    });
-  };
-
-  const updateChange = async () => {
-    try {
-      const response = await updatePatientInfo(patient);
-      if (response.data.status) {
-        console.log("Profile updated successfully", response);
-        toast({
-          title: "Profile Updated",
-          description: "Your profile has been updated successfully."
-        });
-        getMyProfile(); 
-      } else {
-        toast({
-          title: "Profile Updated",
-          description: "Something went wrong while updating your profile.",
-        });
-      }
-    } catch (error) {
-      console.log("Error updating profile", error);
-    }
-  }
-
+  
   return (
     <AppLayout>
       <div className="container px-4 mx-auto py-6">
@@ -89,7 +25,7 @@ export default function Account() {
               {t('account.signOut')}
             </Button>
           </div>
-
+          
           <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-6">
             {/* Profile Summary Card */}
             <Card className="h-fit md:sticky top-6">
@@ -99,17 +35,13 @@ export default function Account() {
                     <AvatarImage src="https://randomuser.me/api/portraits/men/42.jpg" />
                     <AvatarFallback>JD</AvatarFallback>
                   </Avatar>
-                  {
-                    patient?.firstname ? (
-                      <h2 className="text-xl font-semibold">{`${patient.firstname} ${patient.lastname}`}</h2>
-                    ) : null
-                  }
-                  <p className="text-sm text-gray-500 mb-4">{patient?.user?.email}</p>
+                  <h2 className="text-xl font-semibold">John Doe</h2>
+                  <p className="text-sm text-gray-500 mb-4">john.doe@example.com</p>
                   <Button variant="outline" size="sm" className="gap-2 mb-6">
                     <Edit2 className="h-3 w-3" />
                     {t('account.edit')}
                   </Button>
-
+                  
                   <div className="w-full space-y-2">
                     <AccountNavItem icon={<User />} label={t('account.personalInfo')} active />
                     <AccountNavItem icon={<Shield />} label={t('account.security')} />
@@ -121,7 +53,7 @@ export default function Account() {
                 </div>
               </CardContent>
             </Card>
-
+            
             {/* Main Content Area */}
             <div className="space-y-6">
               <Card>
@@ -131,46 +63,39 @@ export default function Account() {
                       <CardTitle>{t('account.personalInfo')}</CardTitle>
                       <CardDescription>{t('account.manageDetails')}</CardDescription>
                     </div>
-                    <Button size="sm" onClick={updateChange}>{t('account.saveChanges')}</Button>
+                    <Button size="sm">{t('account.saveChanges')}</Button>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="firstName">{t('account.firstName')}</Label>
-                      <Input id="firstName" value={patient?.firstname} name="firstname" onChange={(e) => hanleUserInputChange(e)} />
+                      <Input id="firstName" defaultValue="John" />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="lastName">{t('account.lastName')}</Label>
-                      <Input id="lastName" value={patient?.lastname} name="lastname" onChange={(e) => hanleUserInputChange(e)} />
+                      <Input id="lastName" defaultValue="Doe" />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="email">{t('account.email')}</Label>
-                      <Input id="email" type="email" value={patient?.user?.email} name="user.email" onChange={(e) => hanleUserInputChange(e)} readOnly />
+                      <Input id="email" type="email" defaultValue="john.doe@example.com" />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="phone">{t('account.phone')}</Label>
-                      <Input id="phone" value={patient?.user?.phone} readOnly />
+                      <Input id="phone" defaultValue="+91 98765 43210" />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="dob">{t('account.dob')}</Label>
-                      <Input id="dob" type="date" value={patient?.dob ? new Date(patient.dob).toISOString().split('T')[0] : ''} name="dob" onChange={(e) => hanleUserInputChange(e)} />
+                      <Input id="dob" defaultValue="15/04/1985" />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="gender">{t('account.gender')}</Label>
-                      <div className="flex items-center gap-4">
-
-                        <Label htmlFor="male">Male</Label>
-                        <Input id="male" type="radio" style={{ height: "20px" }} value="Male" checked={patient?.gender === "Male"} name="gender" onChange={(e) => hanleUserInputChange(e)} />
-                        <Label htmlFor="female">Female</Label>
-                        <Input id="female" style={{ height: "20px" }} type="radio" value="Female" checked={patient?.gender === "Female"} name="gender" onChange={(e) => hanleUserInputChange(e)} />
-
-                      </div>
+                      <Input id="gender" defaultValue="Male" />
                     </div>
                   </div>
                 </CardContent>
               </Card>
-
+              
               <Card>
                 <CardHeader>
                   <CardTitle>{t('account.addressInfo')}</CardTitle>
@@ -185,9 +110,9 @@ export default function Account() {
                           <span className="bg-green-100 text-green-600 text-xs px-2 py-0.5 rounded-full">Default</span>
                         </div>
                         <p className="text-sm text-gray-500 mt-1">
-                          {patient?.city},<br />
-                          {patient?.district?.name},<br />
-                          {patient?.state?.name}, {patient?.country?.name}
+                          123 Main Street, Apartment 4B<br />
+                          Andheri East, Mumbai, 400069<br />
+                          Maharashtra, India
                         </p>
                       </div>
                       <div className="flex gap-2">
@@ -195,14 +120,29 @@ export default function Account() {
                         <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">{t('account.delete')}</Button>
                       </div>
                     </div>
-
+                    
+                    <div className="flex justify-between items-start p-4 border rounded-lg">
+                      <div>
+                        <h3 className="font-medium">Office</h3>
+                        <p className="text-sm text-gray-500 mt-1">
+                          456 Business Park, Building C, Floor 5<br />
+                          Powai, Mumbai, 400076<br />
+                          Maharashtra, India
+                        </p>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button variant="outline" size="sm">{t('account.edit')}</Button>
+                        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">{t('account.delete')}</Button>
+                      </div>
+                    </div>
+                    
                     <Button variant="outline" className="w-full">
                       + {t('account.addAddress')}
                     </Button>
                   </div>
                 </CardContent>
               </Card>
-
+              
               <Card>
                 <CardHeader>
                   <CardTitle>{t('account.healthInfo')}</CardTitle>
@@ -227,7 +167,7 @@ export default function Account() {
                       <Input id="allergies" defaultValue="None" />
                     </div>
                   </div>
-
+                  
                   <div className="mt-6 space-y-4">
                     <h3 className="font-medium">{t('account.currentMedication')}</h3>
                     <div className="p-4 border rounded-lg">

@@ -1,6 +1,6 @@
 
-import React, { useEffect, useState } from "react";
-import { Users, Plus} from "lucide-react";
+import React, { useState } from "react";
+import { Users, Plus, X } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -13,66 +13,48 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
-import { Appointments } from "@/components/BookAppointmentModal";
-import { createNewPatientRelation } from "@/services/UserSevice";
-import { FamilyMember } from "@/models/Patient";
 
-interface PatientSelectionStepProps {
-  appointmentObj: Appointments;
-  familyMembers: FamilyMember[];
-  reloadFamilyMember(): void;
-  handleMemberSelection(member: FamilyMember): void;
+interface FamilyMember {
+  id: string;
+  name: string;
+  relationship: string;
 }
 
-export function PatientSelectionStep({
-  appointmentObj,
-  familyMembers,
-  reloadFamilyMember,
-  handleMemberSelection
+interface PatientSelectionStepProps {
+  selectedMember: string;
+  setSelectedMember: (memberId: string) => void;
+  familyMembers: FamilyMember[];
+}
+
+export function PatientSelectionStep({ 
+  selectedMember, 
+  setSelectedMember, 
+  familyMembers 
 }: PatientSelectionStepProps) {
   const [isAddingMember, setIsAddingMember] = useState(false);
-  const [familymember, setFamilymember] = useState({
-    name: "",
-    relationship: "",
-    age: "",
-    phone: "",
-    gender: "",
-    patient: null
-  });
-
-  useEffect(() => {
-    setFamilymember((prev) => ({...prev, patient: appointmentObj?.patient}));
-  }, []);
-  
+  const [newMemberName, setNewMemberName] = useState("");
+  const [newMemberRelationship, setNewMemberRelationship] = useState("");
   const { toast } = useToast();
 
-  const handleAddFamilyMember = async () => {
-    const data = await createNewPatientRelation(familymember);
-    if (data.status) {
+  const handleAddFamilyMember = () => {
+    // In a real app, this would make an API call to save the new family member
+    // For now, just show a toast that we'd add the member
+    if (newMemberName && newMemberRelationship) {
       toast({
         title: "Family member added",
-        description: `${familymember.name} (${familymember.relationship}) has been added to your family members.`
+        description: `${newMemberName} (${newMemberRelationship}) has been added to your family members.`
       });
-      reloadFamilyMember();
+      
       setIsAddingMember(false);
-      setFamilymember({ name: "", relationship: "", age: "", phone: "", gender: "", patient: null });
+      setNewMemberName("");
+      setNewMemberRelationship("");
     } else {
       toast({
-        title: "Something went wrog",
-        description: `Some error during add family member`
+        title: "Please fill all fields",
+        description: "Both name and relationship are required.",
+        variant: "destructive"
       });
     }
- 
-    setIsAddingMember(false);
-    setFamilymember({ name: "", relationship: "", age: "", phone: "", gender: "", patient: null });
-  };
-
-  const familyMemberInputChange = (e: any) => {
-    setFamilymember({ ...familymember, [e.target.name]: e.target.value });
-  };
-
-  const familyMemberHandler = (member: FamilyMember) => {
-    handleMemberSelection(member);
   };
 
   return (
@@ -82,20 +64,21 @@ export function PatientSelectionStep({
           <Users className="mr-2 h-5 w-5" />
           Patient Details
         </h3>
-
+        
         <Label className="block mb-4">Who is this appointment for?</Label>
-
-        <RadioGroup
-          value={appointmentObj?.familyMember?.id || "self"} 
+        
+        <RadioGroup 
+          value={selectedMember} 
+          onValueChange={setSelectedMember}
           className="space-y-3"
         >
-          <div className="border rounded-lg p-4 transition-colors flex items-center space-x-2 p-2 rounded-md hover:bg-gray-50" onClick={() => familyMemberHandler({ id: "self", name: "Myself", relationship: "Self" })}>
+          <div className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-50">
             <RadioGroupItem value="self" id="self" />
             <Label htmlFor="self" className="cursor-pointer">Myself</Label>
           </div>
-           
+          
           {familyMembers.map((member) => (
-            <div key={member.id} className=" border rounded-lg p-4 transition-colors flex items-center space-x-2 p-2 rounded-md hover:bg-gray-50" onClick={() => familyMemberHandler(member)} >
+            <div key={member.id} className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-50">
               <RadioGroupItem value={member.id} id={`member-${member.id}`} />
               <Label htmlFor={`member-${member.id}`} className="cursor-pointer">
                 {member.name} ({member.relationship})
@@ -103,7 +86,7 @@ export function PatientSelectionStep({
             </div>
           ))}
         </RadioGroup>
-
+        
         <div className="mt-6">
           <Button
             variant="outline"
@@ -121,62 +104,26 @@ export function PatientSelectionStep({
           <DialogHeader>
             <DialogTitle>Add Family Member</DialogTitle>
           </DialogHeader>
-          <div className="grid  gap-4 py-6">
+          <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">
                 Name
               </Label>
               <Input
                 id="name"
-                name="name"
-                value={familymember.name}
-                onChange={(e) => familyMemberInputChange(e)}
+                value={newMemberName}
+                onChange={(e) => setNewMemberName(e.target.value)}
                 className="col-span-3"
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="age" className="text-right">
-                Age
-              </Label>
-              <Input
-                id="age"
-                name="age"
-                value={familymember.age}
-                onChange={(e) => familyMemberInputChange(e)}
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="phone" className="text-right">
-                Phone
-              </Label>
-              <Input
-                id="phone"
-                name="phone"
-                value={familymember.phone}
-                onChange={(e) => familyMemberInputChange(e)}
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="gender" className="text-right">Gender</Label>
-              <div className="flex items-center gap-4">
-                <Label htmlFor="male">Male</Label>
-                <Input id="male" type="radio" style={{ height: "20px" }} value="Male" checked={familymember?.gender == "Male"} name="gender" onChange={(e) => familyMemberInputChange(e)} />
-                <Label htmlFor="female">Female</Label>
-                <Input id="female" style={{ height: "20px" }} type="radio" value="Female" checked={familymember?.gender == "Female"} name="gender" onChange={(e) => familyMemberInputChange(e)} />
-              </div>
-            </div>
-
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="relationship" className="text-right">
                 Relationship
               </Label>
               <Input
                 id="relationship"
-                name="relationship"
-                value={familymember.relationship}
-                onChange={(e) => familyMemberInputChange(e)}
+                value={newMemberRelationship}
+                onChange={(e) => setNewMemberRelationship(e.target.value)}
                 className="col-span-3"
                 placeholder="e.g. Spouse, Child, Parent"
               />

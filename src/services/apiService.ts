@@ -1,12 +1,12 @@
-import http from "@/lib/JwtInterceptor";
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 // Base API configuration
 const API_BASE_URL = 'https://api.example.com'; // Replace with your actual API base URL
 
 // Create a class to manage API requests with interceptors
 class ApiService {
-  private client: axios;
+  private client: AxiosInstance;
 
   constructor() {
     this.client = axios.create({

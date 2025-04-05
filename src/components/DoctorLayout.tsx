@@ -98,12 +98,15 @@ export function DoctorLayout({ children }: DoctorLayoutProps) {
           {/* Logo area */}
           <div className="p-4 border-b border-gray-100 flex justify-between items-center">
             <div className="flex items-center">
-              <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white font-bold">
-                D
-              </div>
-              {!iconOnly && (
-                <div className="ml-3 text-xl font-semibold text-gray-800 transition-opacity duration-200">
-                  Doctor Hub
+              {!iconOnly ? (
+                <img 
+                  src="https://res.cloudinary.com/dzxuxfagt/image/upload/h_100/assets/logo.png" 
+                  alt="Logo" 
+                  className="h-8"
+                />
+              ) : (
+                <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white font-bold">
+                  D
                 </div>
               )}
             </div>

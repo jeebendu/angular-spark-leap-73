@@ -1,6 +1,5 @@
-
 import { Link } from "react-router-dom";
-import { Bell, Calendar, MapPin, User, Menu, ChevronDown, LogOut } from "lucide-react";
+import { Bell, Calendar, MapPin, User, Menu, ChevronDown, LogOut, Building, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
@@ -40,7 +39,21 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuGroup,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuPortal,
 } from "@/components/ui/dropdown-menu";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
 
 export function Navbar() {
   const { t } = useTranslation();
@@ -265,15 +278,40 @@ export function Navbar() {
             <Link to="/" className="text-sm font-medium hover:text-primary transition-colors">
               {t('common.home')}
             </Link>
-            <Link to="/tests" className="text-sm font-medium hover:text-primary transition-colors">
-              {t('common.tests')}
-            </Link>
-            <Link to="/" className="text-sm font-medium hover:text-primary transition-colors">
-              {t('header.healthPackages')}
-            </Link>
-            <Link to="/reports" className="text-sm font-medium hover:text-primary transition-colors">
-              {t('common.reports')}
-            </Link>
+            
+            <NavigationMenu>
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className="text-sm font-medium hover:text-primary transition-colors">Providers</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid gap-3 p-4 w-[200px]">
+                      <li>
+                        <NavigationMenuLink asChild>
+                          <Link
+                            to="/doctor-search"
+                            className="flex items-center p-2 hover:bg-slate-100 rounded-md"
+                          >
+                            <Users className="mr-2 h-4 w-4" />
+                            <span>Doctors</span>
+                          </Link>
+                        </NavigationMenuLink>
+                      </li>
+                      <li>
+                        <NavigationMenuLink asChild>
+                          <Link
+                            to="/clinic-registration"
+                            className="flex items-center p-2 hover:bg-slate-100 rounded-md"
+                          >
+                            <Building className="mr-2 h-4 w-4" />
+                            <span>Clinics</span>
+                          </Link>
+                        </NavigationMenuLink>
+                      </li>
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
           </nav>
           
           <div className="flex items-center gap-3">

@@ -34,7 +34,7 @@ const ProcessAppointment = () => {
     <DoctorLayout>
       <div className="container py-6">
         {/* Patient header section */}
-        <Card className="mb-6 border-l-4 border-l-blue-500 sticky top-0 z-20 shadow-md">
+        <Card className="mb-6 border-l-4 border-l-blue-500 shadow-md">
           <CardContent className="p-0">
             <div className="flex flex-col md:flex-row">
               {/* Doctor/Patient Information */}
@@ -86,7 +86,7 @@ const ProcessAppointment = () => {
         </Card>
         
         {/* Session timer */}
-        <div className="flex justify-between items-center bg-gray-50 p-3 rounded-lg mb-6 sticky top-[105px] z-10 shadow-sm">
+        <div className="flex justify-between items-center bg-gray-50 p-3 rounded-lg mb-6">
           <div className="font-medium">Session Ends in</div>
           <div className="flex items-center gap-2 font-bold text-lg">
             <Clock className="h-5 w-5 text-primary" />

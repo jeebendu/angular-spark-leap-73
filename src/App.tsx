@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -19,6 +20,7 @@ import DoctorAppointmentsPage from "./pages/doctor/Appointments";
 import ProcessAppointment from "./pages/doctor/ProcessAppointment";
 import DoctorOnboardingPage from "./pages/doctor/Onboarding";
 import { DoctorSchedulePage } from "./pages/doctor/Schedule";
+import ClinicRegistration from "./pages/ClinicRegistration";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -57,6 +59,7 @@ function App() {
               <Route path="/tests" element={<Tests />} />
               <Route path="/account" element={<Account />} />
               <Route path="/chat" element={<Chat />} />
+              <Route path="/clinic-registration" element={<ClinicRegistration />} />
               <Route path="*" element={<NotFound />} />
               
               {/* Doctor Routes */}

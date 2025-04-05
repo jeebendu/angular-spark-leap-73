@@ -62,7 +62,7 @@ export function SimilarDoctors({ specialties, latitude, longitude, excludeDoctor
           {doctors.map((doctor) => (
             <DoctorCard 
               key={doctor.id}
-              id={doctor.id}
+              id={doctor.id.toString()}
               name={`${doctor.firstname || ''} ${doctor.lastname || ''}`}
               specialty={doctor.specializationList?.[0]?.name || "Specialist"}
               rating={doctor.rating || 4.5}
@@ -73,6 +73,8 @@ export function SimilarDoctors({ specialties, latitude, longitude, excludeDoctor
               languages={doctor.languages?.join(", ") || ""}
               clinics={doctor.branchList || []}
               isSimple={true}
+              id_doctor={doctor.id.toString()}
+              id_clinic={0} // Default value since we don't have a specific clinic ID here
             />
           ))}
         </div>

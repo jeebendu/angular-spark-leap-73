@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
 import { AppointmentCard } from "@/components/AppointmentCard";
+import { PromotionalBanner } from "@/components/PromotionalBanner";
 import authService from "@/services/authService";
 
 // Mock upcoming appointments data
@@ -84,28 +85,12 @@ const Index = () => {
           </div>
         </motion.section>
 
-        {/* Promotional Banner */}
-        <motion.section
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
-          className="mb-10"
-        >
-          <div className="promo-banner">
-            <img 
-              src="https://preview--appointify-platform-67.lovable.app/lovable-uploads/8ecf0148-aeef-4d33-acd7-b29efebedf9d.png" 
-              alt="Health Promotion" 
-              className="w-full h-auto rounded-xl"
-            />
-          </div>
-        </motion.section>
-
         {/* Upcoming Appointments (only shown if logged in) */}
         {isLoggedIn && upcomingAppointments.length > 0 && (
           <motion.section
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.5 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
             className="mb-10"
           >
             <div className="flex justify-between items-center mb-4">
@@ -129,6 +114,23 @@ const Index = () => {
             </div>
           </motion.section>
         )}
+
+        {/* NEW Promotional Banner */}
+        <motion.section
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.5 }}
+          className="mb-10"
+        >
+          <PromotionalBanner 
+            title="Consult with specialist doctors online"
+            subtitle="Get medical advice from the comfort of your home"
+            buttonText="Start for free"
+            buttonLink="/doctor-search"
+            imageSrc="/lovable-uploads/b86e5ee4-5597-4429-82f6-92402144207e.png"
+            bgColor="bg-[#0ABAB5]"
+          />
+        </motion.section>
 
         {/* Specializations Section */}
         <motion.section

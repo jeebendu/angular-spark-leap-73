@@ -176,7 +176,7 @@ export const OnboardingWizard = () => {
           </DialogHeader>
           <DialogFooter className="sm:justify-center">
             <Button 
-              className="bg-orange-500 hover:bg-orange-600"
+              className="bg-primary hover:bg-primary/90"
               onClick={handleSuccessClose}
             >
               Go to Dashboard

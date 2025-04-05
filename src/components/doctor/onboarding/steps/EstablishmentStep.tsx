@@ -106,7 +106,7 @@ export const EstablishmentStep: React.FC<EstablishmentStepProps> = ({
           <ChevronLeft className="h-4 w-4" /> Previous
         </Button>
         <Button 
-          className="bg-orange-500 hover:bg-orange-600 flex items-center gap-2"
+          className="bg-primary hover:bg-primary/90 flex items-center gap-2"
           onClick={handleSubmit}
         >
           Next <ChevronRight className="h-4 w-4" />

@@ -97,7 +97,7 @@ export const MatchingProfilesStep: React.FC<MatchingProfilesStepProps> = ({
                     <p className="text-sm mt-1">
                       {profile.doctorName}
                       {profile.additionalDoctors && (
-                        <span className="text-blue-500"> & {profile.additionalDoctors} more doctors</span>
+                        <span className="text-primary"> & {profile.additionalDoctors} more doctors</span>
                       )}
                     </p>
                   </div>
@@ -106,7 +106,7 @@ export const MatchingProfilesStep: React.FC<MatchingProfilesStepProps> = ({
                 <Button
                   type="button" 
                   variant="link" 
-                  className="text-blue-500 hover:text-blue-700"
+                  className="text-primary hover:text-primary/90"
                   onClick={() => handleCheckProfile(profile.id)}
                 >
                   CHECK PROFILE
@@ -131,7 +131,7 @@ export const MatchingProfilesStep: React.FC<MatchingProfilesStepProps> = ({
           <ChevronLeft className="h-4 w-4 mr-1" /> Back
         </Button>
         <Button
-          className="bg-green-500 hover:bg-green-600 px-8 flex items-center"
+          className="bg-primary hover:bg-primary/90 px-8 flex items-center"
           onClick={handleConfirm}
           disabled={!selectedProfile}
         >

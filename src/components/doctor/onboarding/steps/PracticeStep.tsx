@@ -51,14 +51,14 @@ export const PracticeStep: React.FC<PracticeStepProps> = ({
           value={data.type} 
           onValueChange={(value) => onUpdate({ type: value })}
         >
-          <div className="border rounded-lg p-4 hover:border-orange-500 transition-colors">
+          <div className="border rounded-lg p-4 hover:border-primary transition-colors">
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="own" id="own" />
               <Label htmlFor="own" className="font-medium cursor-pointer">I own a establishment</Label>
             </div>
           </div>
           
-          <div className="border rounded-lg p-4 hover:border-orange-500 transition-colors">
+          <div className="border rounded-lg p-4 hover:border-primary transition-colors">
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="visit" id="visit" />
               <Label htmlFor="visit" className="font-medium cursor-pointer">I visit a establishment</Label>
@@ -77,7 +77,7 @@ export const PracticeStep: React.FC<PracticeStepProps> = ({
           <ChevronLeft className="h-4 w-4" /> Previous
         </Button>
         <Button 
-          className="bg-orange-500 hover:bg-orange-600 flex items-center gap-2"
+          className="bg-primary hover:bg-primary/90 flex items-center gap-2"
           onClick={handleSubmit}
         >
           Next <ChevronRight className="h-4 w-4" />

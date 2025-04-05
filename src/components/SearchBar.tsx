@@ -1,16 +1,11 @@
 
 import React, { useState, useRef, useEffect } from "react";
-import { Search, Clock, X } from "lucide-react";
+import { Search, Clock, X, Mic } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { LocationSelector } from "@/components/LocationSelector";
-import { 
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
 export function SearchBar() {
@@ -55,6 +50,17 @@ export function SearchBar() {
     }
   };
 
+  const handleVoiceSearch = () => {
+    // Check if browser supports the Web Speech API
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      // This would be implemented with the Web Speech API
+      alert("Voice search coming soon!");
+      // In a real implementation, we would use the SpeechRecognition API
+    } else {
+      alert("Voice search is not supported in your browser.");
+    }
+  };
+
   // Close suggestions on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -73,6 +79,13 @@ export function SearchBar() {
     };
   }, []);
 
+  // Ensure only one type of suggestion is shown at a time
+  useEffect(() => {
+    if (openLocationSelector) {
+      setOpenSuggestions(false);
+    }
+  }, [openLocationSelector]);
+
   // Mobile layout needs extra handling
   const searchBarClasses = cn(
     "flex items-center w-full max-w-3xl mx-auto relative rounded-full shadow-lg",
@@ -84,46 +97,63 @@ export function SearchBar() {
     <div ref={searchContainerRef} className="w-full max-w-3xl mx-auto relative">
       <div className={searchBarClasses}>
         {/* Location field */}
-        <div className="relative w-[30%] sm:w-[35%] p-2 sm:p-3">
-          <LocationSelector onOpenChange={(open) => setOpenLocationSelector(open)} />
+        <div className="relative w-[30%] sm:w-[35%] p-2 sm:p-3 border-r border-gray-200">
+          <LocationSelector 
+            onOpenChange={(open) => {
+              setOpenLocationSelector(open);
+              if (open) setOpenSuggestions(false);
+            }} 
+          />
         </div>
         
         {/* Search doctors field */}
-        <div className="relative w-[70%] sm:w-[65%] pl-2 sm:pl-3 flex items-center h-12 sm:h-14">
+        <div className="relative w-[70%] sm:w-[65%] pl-2 sm:pl-3 pr-2 flex items-center h-12 sm:h-14">
           <div className="relative w-full flex items-center">
             <Search className="h-4 w-4 text-muted-foreground absolute left-2 top-1/2 transform -translate-y-1/2" />
             <Input 
               ref={searchInputRef}
               type="text" 
               placeholder="Search doctors, specialties..." 
-              className="border-0 px-0 py-0 h-10 focus-visible:ring-0 placeholder:text-muted-foreground pl-10 bg-transparent w-full"
+              className="border-0 px-0 py-0 h-10 focus-visible:ring-0 placeholder:text-muted-foreground pl-10 pr-16 bg-transparent w-full"
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
                 setOpenSuggestions(true);
+                setOpenLocationSelector(false);
               }}
-              onFocus={() => setOpenSuggestions(true)}
+              onFocus={() => {
+                setOpenSuggestions(true);
+                setOpenLocationSelector(false);
+              }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   handleDoctorSearch();
                 }
               }}
             />
-            {searchQuery && (
+            <div className="absolute right-1 top-1/2 transform -translate-y-1/2 flex items-center">
+              {searchQuery && (
+                <button 
+                  onClick={clearSearch}
+                  className="p-1 mr-1"
+                >
+                  <X className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                </button>
+              )}
               <button 
-                onClick={clearSearch}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                onClick={handleVoiceSearch}
+                className="p-1 mr-1"
               >
-                <X className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                <Mic className="h-4 w-4 text-gray-400 hover:text-primary transition-colors" />
               </button>
-            )}
+              <Button 
+                className="rounded-full h-8 w-8 p-0 flex items-center justify-center text-white bg-primary hover:bg-primary/90"
+                onClick={() => handleDoctorSearch()}
+              >
+                <Search className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
-          <Button 
-            className="rounded-full h-9 w-[100px] text-sm text-white bg-primary hover:bg-primary/90 ml-1"
-            onClick={() => handleDoctorSearch()}
-          >
-            Search
-          </Button>
         </div>
       </div>
       

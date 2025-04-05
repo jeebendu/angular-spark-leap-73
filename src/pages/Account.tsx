@@ -11,20 +11,18 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
-import { Patient } from "@/services/appointmentService";
 import { toast } from "@/hooks/use-toast";
 import { fetchMyProfilePatient, updatePatientInfo } from "@/services/UserSevice";
+import { Patient } from "@/models/Patient";
 
 export default function Account() {
   const { t } = useTranslation();
 
-  const [patient, setPatient] = useState<Patient>(null);
+  const [patient, setPatient] = useState<any>(null);
 
   useEffect(() => {
-
     getMyProfile();
   }, []);
-
 
   const getMyProfile = async () => {
     try {
@@ -33,17 +31,15 @@ export default function Account() {
       if (response) {
         setPatient(response.data);
       }
-
     } catch (error) {
       console.log("Error fetching profile", error);
     }
-
   }
 
   const hanleUserInputChange = (e: any) => {
     const { name, value } = e.target;
 
-    setPatient((prev) => {
+    setPatient((prev: any) => {
       if (name.startsWith("user.")) {
         const userKey = name.split(".")[1]; // Extract the nested key (e.g., "phone")
         return {
@@ -61,30 +57,26 @@ export default function Account() {
     });
   };
 
-
   const updateChange = async () => {
     try {
-
       const response = await updatePatientInfo(patient);
       if (response.data.status) {
         console.log("Profile updated successfully", response);
-              toast({
-                title: "Profile Updated",
-                description: "Your profile has been updated successfully."
-              });
+        toast({
+          title: "Profile Updated",
+          description: "Your profile has been updated successfully."
+        });
         getMyProfile(); 
-      }else{
+      } else {
         toast({
           title: "Profile Updated",
           description: "Something went wrong while updating your profile.",
         });
       }
-
     } catch (error) {
       console.log("Error updating profile", error);
     }
   }
-
 
   return (
     <AppLayout>
@@ -112,8 +104,7 @@ export default function Account() {
                       <h2 className="text-xl font-semibold">{`${patient.firstname} ${patient.lastname}`}</h2>
                     ) : null
                   }
-                  {/* <h2 className="text-xl font-semibold" >{`${patient?.firstname} ${patient?.lastname}`}</h2> */}
-                  <p className="text-sm text-gray-500 mb-4">{patient?.user.email}</p>
+                  <p className="text-sm text-gray-500 mb-4">{patient?.user?.email}</p>
                   <Button variant="outline" size="sm" className="gap-2 mb-6">
                     <Edit2 className="h-3 w-3" />
                     {t('account.edit')}
@@ -155,11 +146,11 @@ export default function Account() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="email">{t('account.email')}</Label>
-                      <Input id="email" type="email" value={patient?.user.email} name="user.email" onChange={(e) => hanleUserInputChange(e)} readOnly />
+                      <Input id="email" type="email" value={patient?.user?.email} name="user.email" onChange={(e) => hanleUserInputChange(e)} readOnly />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="phone">{t('account.phone')}</Label>
-                      <Input id="phone" value={patient?.user.phone} readOnly />
+                      <Input id="phone" value={patient?.user?.phone} readOnly />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="dob">{t('account.dob')}</Label>
@@ -170,9 +161,9 @@ export default function Account() {
                       <div className="flex items-center gap-4">
 
                         <Label htmlFor="male">Male</Label>
-                        <Input id="male" type="radio" style={{ height: "20px" }} value="Male" checked={patient?.gender == "Male"} name="gender" onChange={(e) => hanleUserInputChange(e)} />
+                        <Input id="male" type="radio" style={{ height: "20px" }} value="Male" checked={patient?.gender === "Male"} name="gender" onChange={(e) => hanleUserInputChange(e)} />
                         <Label htmlFor="female">Female</Label>
-                        <Input id="female" style={{ height: "20px" }} type="radio" value="Female" checked={patient?.gender == "Female"} name="gender" onChange={(e) => hanleUserInputChange(e)} />
+                        <Input id="female" style={{ height: "20px" }} type="radio" value="Female" checked={patient?.gender === "Female"} name="gender" onChange={(e) => hanleUserInputChange(e)} />
 
                       </div>
                     </div>
@@ -204,21 +195,6 @@ export default function Account() {
                         <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">{t('account.delete')}</Button>
                       </div>
                     </div>
-
-                    {/* <div className="flex justify-between items-start p-4 border rounded-lg">
-                      <div>
-                        <h3 className="font-medium">Office</h3>
-                        <p className="text-sm text-gray-500 mt-1">
-                          456 Business Park, Building C, Floor 5<br />
-                          Powai, Mumbai, 400076<br />
-                          Maharashtra, India
-                        </p>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="sm">{t('account.edit')}</Button>
-                        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">{t('account.delete')}</Button>
-                      </div>
-                    </div> */}
 
                     <Button variant="outline" className="w-full">
                       + {t('account.addAddress')}

@@ -3,8 +3,17 @@ import { MapPin, Phone, Clock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BookAppointmentModal } from "@/components/BookAppointmentModal";
-import { Branch, Doctor } from "@/pages/DoctorDetails";
+import { Branch } from "@/models/Branch";
+import { Doctor } from "@/models/Doctor";
 import { useState } from "react";
+
+export interface EnhancedBranch extends Branch {
+  clinic?: {
+    name: string;
+    address: string;
+    phone: string;
+  };
+}
 
 interface ClinicsTabProps {
   branchList?: Branch[];
@@ -14,26 +23,42 @@ interface ClinicsTabProps {
 export const ClinicsTab = ({ branchList = [], doctor }: ClinicsTabProps) => {
   const [selectedClinic, setSelectedClinic] = useState<number | null>(null);
   
+  // Convert Branch[] to EnhancedBranch[]
+  const enhancedBranches: EnhancedBranch[] = branchList.map(branch => ({
+    ...branch,
+    clinic: {
+      name: branch.name || '',
+      address: branch.location || '',
+      phone: ''
+    }
+  }));
+  
   return (
     <div className="p-6">
       <h3 className="text-lg font-semibold mb-4">Available at {branchList.length} Locations</h3>
       <div className="space-y-4">
-        {branchList.map((clinic, index) => (
+        {enhancedBranches.map((clinic, index) => (
           <Card key={index} className="shadow-md">
             <CardContent className="p-0">
               <div className="md:flex">
                 <div className="p-6 md:w-3/4">
-                  <h4 className="text-lg font-medium">{clinic?.clinic?.name}</h4>
+                  <h4 className="text-lg font-medium">
+                    {clinic?.clinic?.name || clinic.name || 'Unnamed Clinic'}
+                  </h4>
                   
                   <div className="mt-3 space-y-2">
                     <div className="flex items-start">
                       <MapPin className="h-5 w-5 mr-2 mt-0.5 text-gray-500 flex-shrink-0" />
-                      <p className="text-sm text-gray-600">{clinic?.clinic?.address}</p>
+                      <p className="text-sm text-gray-600">
+                        {clinic?.clinic?.address || clinic.location || 'Address unavailable'}
+                      </p>
                     </div>
                     
                     <div className="flex items-start">
                       <Phone className="h-5 w-5 mr-2 mt-0.5 text-gray-500 flex-shrink-0" />
-                      <p className="text-sm text-gray-600">{clinic?.clinic?.phone}</p>
+                      <p className="text-sm text-gray-600">
+                        {clinic?.clinic?.phone || 'Phone number unavailable'}
+                      </p>
                     </div>
                     
                     <div className="flex items-start">
@@ -52,7 +77,7 @@ export const ClinicsTab = ({ branchList = [], doctor }: ClinicsTabProps) => {
                   
                   <BookAppointmentModal 
                     doctorName={doctor.firstname + " " + doctor.lastname}
-                    specialty={doctor.specializationList[0]?.name}
+                    specialty={doctor.specializationList?.[0]?.name}
                     trigger={
                       <Button 
                         className="sky-button rounded-full" 

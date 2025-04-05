@@ -31,10 +31,14 @@ export function DateTimeSelectionStep({
   };
 
   // Group slots by hour
-  const groupSlotsByHour = (slots: Slot[]) => {
+  const groupSlotsByHour = (slots?: Slot[]) => {
     const groupedSlots: { [key: string]: Slot[] } = {};
 
-    slots?.forEach((slot) => {
+    if (!slots || slots.length === 0) {
+      return groupedSlots;
+    }
+
+    slots.forEach((slot) => {
       if (slot.startTime) {
         const startTime = new Date(slot.startTime).getHours();
         const hourKey = `${startTime}`;
@@ -51,8 +55,8 @@ export function DateTimeSelectionStep({
   };
 
   // Get morning, afternoon, and evening slots
-  const getTimeSlots = (slots: Slot[]) => {
-    if (!slots?.length) return { morningSlots: [], afternoonSlots: [], eveningSlots: [] };
+  const getTimeSlots = (slots?: Slot[]) => {
+    if (!slots || !slots.length) return { morningSlots: {}, afternoonSlots: {}, eveningSlots: {} };
 
     const groupedSlots = groupSlotsByHour(slots);
     const morningSlots: { [key: string]: Slot[] } = {};

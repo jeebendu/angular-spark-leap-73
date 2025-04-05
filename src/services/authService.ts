@@ -1,5 +1,4 @@
-import { AuthUser } from '@/components/Navbar';
-
+import { AuthUser } from '@/types/auth';
 
 // Types for authentication
 export interface LoginResponse {
@@ -53,13 +52,6 @@ class AuthService {
       return false;
     }
   }
-
-
-
-
-
-
-
 
   // Function to verify OTP
   async verifyOtp(otp: string): Promise<boolean> {

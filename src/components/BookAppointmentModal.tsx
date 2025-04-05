@@ -9,11 +9,8 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 
 import { fetchSlotsByDoctorAndBranch, saveOrUpdateAppointment } from "@/services/AppointmentServiceHandler";
-
-import { fetchMyProfilePatient } from "@/services/UserSevice";
-
-import { fetchDoctorById, fetchDoctorClinicByDoctorAndBranch } from "@/services/DoctorService";
-// Import the refactored components
+import { fetchMyProfilePatient, getPatietRelationList } from "@/services/UserSevice";
+import { fetchDoctorById, fetchDoctorClinicByDoctorAndBranch } from "@/services/doctorService";
 import { StepIndicator } from "@/components/appointment/StepIndicator";
 import { StepLabels } from "@/components/appointment/StepLabels";
 import { ClinicSelectionStep } from "@/components/appointment/steps/ClinicSelectionStep";
@@ -22,8 +19,10 @@ import { PatientSelectionStep } from "@/components/appointment/steps/PatientSele
 import { ReviewStep } from "@/components/appointment/steps/ReviewStep";
 import { PaymentStep } from "@/components/appointment/steps/PaymentStep";
 import { NavigationButtons } from "@/components/appointment/NavigationButtons";
+import { Doctor } from "@/models/Doctor";
+import { Branch } from "@/models/Branch";
+import { FamilyMember, Patient } from "@/models/Patient";
 
-// Import the appointment service
 import {
   validateCurrentStep,
   validateCurrentAppointmentStep,
@@ -31,9 +30,7 @@ import {
   getAvailableTimes,
   getFamilyMembers,
   getFamilyMemberById,
-  Branch,
-  Patient,
-  User,
+  Clinic
 } from "@/services/appointmentService";
 import { Country, DoctorClinic, State } from "@/pages/DoctorSearch";
 import { Specialization } from "./Specializations";
@@ -136,7 +133,7 @@ export function BookAppointmentModal({
 
   const resetForm = () => {
     setStep(1);
-    setSelectedClinic(null);
+    setSelectedClinic(undefined);
     setSelectedDate("");
     setSelectedTime("");
     setSelectedMember("self");
@@ -144,29 +141,51 @@ export function BookAppointmentModal({
   };
 
   useEffect(() => {
-    fetchDoctorById(Number(id));
-    fetchPatientProfile();
+    if (id) {
+      fetchDoctorData(Number(id));
+      fetchPatientProfile();
+    }
   }, [id]);
 
   async function fetchPatientProfile() {
-    const response = await fetchPatientProfile();
-    setAppointment((prev) => ({ ...prev, patient: response.data }));
-    fetchFamilyMembers(response.data.id);
+    try {
+      const response = await fetchMyProfilePatient();
+      if (response && response.data) {
+        setAppointment((prev) => ({ ...prev, patient: response.data }));
+        fetchFamilyMembers(response.data.id);
+      }
+    } catch (error) {
+      console.error("Error fetching patient profile:", error);
+    }
   }
 
   const reloadFamilyMember = async () => {
-    fetchFamilyMembers(appointment.patient.id);
+    if (appointment.patient && appointment.patient.id) {
+      fetchFamilyMembers(appointment.patient.id);
+    }
   };
 
   const fetchFamilyMembers = async (id: number) => {
-    const response = await fetchPatientRelations(id);
-    setFamilyMembersList(response.data);
+    try {
+      const response = await getPatietRelationList(id);
+      if (response && response.data) {
+        setFamilyMembersList(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching family members:", error);
+    }
   };
 
-  const fetchDoctorById = async (doctorId: number) => {
-    const response = await fetchDoctorById(doctorId);
-    setAppointment((prev) => ({ ...prev, doctor: response.data }));
-    setClinics(response.data.branchList);
+  const fetchDoctorData = async (doctorId: number) => {
+    try {
+      const response = await fetchDoctorById(doctorId);
+      if (response && response.data) {
+        setAppointment((prev) => ({ ...prev, doctor: response.data }));
+        setClinics(response.data.branchList);
+      }
+    } catch (error) {
+      console.error("Error fetching doctor data:", error);
+    }
   };
 
   const handleSetBranch = (selectedBranch: Branch) => {
@@ -177,8 +196,10 @@ export function BookAppointmentModal({
 
   const fetchDoctorClinic = async (branch: Branch) => {
     try {
-      const data = await fetchDoctorClinicByDoctorAndBranch(appointment?.doctor.id, branch?.id);
-      setAppointment((prev) => ({ ...prev, doctorClinic: data }));
+      if (appointment?.doctor?.id && branch?.id) {
+        const data = await fetchDoctorClinicByDoctorAndBranch(appointment.doctor.id, branch.id);
+        setAppointment((prev) => ({ ...prev, doctorClinic: data }));
+      }
     } catch (error) {
       console.error("Something went wrong");
     }
@@ -193,13 +214,19 @@ export function BookAppointmentModal({
   };
 
   const fetchSlots = async (branch: Branch, date: Date) => {
-    const filterData = {
-      doctor: appointment.doctor,
-      branch,
-      date,
-    };
-    const response = await fetchSlotsByDoctorAndBranch(filterData);
-    setSlotList(response.data);
+    try {
+      const filterData = {
+        doctor: appointment.doctor,
+        branch,
+        date,
+      };
+      const response = await fetchSlotsByDoctorAndBranch(filterData);
+      if (response && response.data) {
+        setSlotList(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching slots:", error);
+    }
   };
 
   const handleMemberSelection = (member: FamilyMember) => {
@@ -207,32 +234,41 @@ export function BookAppointmentModal({
   };
 
   const createAppointment = async () => {
-    const data = await saveOrUpdateAppointment(appointment);
-    if (data?.status) {
-      toastObject.toast({
-        title: "Appointment Booked",
-        description: "Your appointment has been booked successfully.",
-        variant: "default",
-      });
+    try {
+      const response = await saveOrUpdateAppointment(appointment);
+      if (response?.status) {
+        toastObject.toast({
+          title: "Appointment Booked",
+          description: "Your appointment has been booked successfully.",
+          variant: "default",
+        });
 
-      bookAppointment(
-        {
-          selectedClinic,
-          selectedDate,
-          selectedTime,
-          selectedMember,
-          doctorName,
-          specialty,
-        },
-        toastObject
-      );
-      setOpen(false);
-      onClose();
-      resetForm();
-    } else {
+        bookAppointment(
+          {
+            selectedClinic,
+            selectedDate,
+            selectedTime,
+            selectedMember,
+            doctorName,
+            specialty,
+          },
+          toastObject
+        );
+        setOpen(false);
+        onClose();
+        resetForm();
+      } else {
+        toastObject.toast({
+          title: "Failed to create appointment",
+          description: "Please try again later.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error creating appointment:", error);
       toastObject.toast({
-        title: "Failed to create appointment",
-        description: "Please try again later.",
+        title: "Error",
+        description: "An unexpected error occurred",
         variant: "destructive",
       });
     }
@@ -269,7 +305,7 @@ export function BookAppointmentModal({
             <ClinicSelectionStep
               appointmentObj={appointment}
               setSelectedClinic={handleSetBranch}
-              branches={clinics}
+              branches={clinics || []}
             />
           )}
 

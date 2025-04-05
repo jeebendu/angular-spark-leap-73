@@ -4,21 +4,41 @@ import { ClinicsTab } from "./ClinicsTab";
 import { AboutTab } from "./AboutTab";
 import { ServicesTab } from "./ServicesTab";
 import { ReviewsTab } from "./ReviewsTab";
-import { Branch, Doctor, LanguagesList, PatientList, ServiceList, Specialization } from "@/pages/DoctorDetails";
-import { Clinic } from "@/services/appointmentService";
-
-
+import { Branch } from "@/models/Branch";
+import { Doctor } from "@/models/Doctor";
 
 interface DoctorDetailsTabsProps {
-  doctor: Doctor;
-  clinics: Clinic[];
-  specializationList: Specialization[];
-  branchList:Branch[];
-  languageList:LanguagesList[];
-  serviceList:ServiceList[];
+  doctor: any; // Using any to accommodate both Doctor types
+  clinics?: any[]; // Using any here to accommodate various clinic structures
+  specializationList: any[];
+  branchList: any[]; // Changed to any[] to accept any branch format
+  languageList: any[];
+  serviceList: any[];
 }
 
-export const DoctorDetailsTabs = ({ doctor,specializationList=[],branchList,languageList =[],serviceList=[]}: DoctorDetailsTabsProps) => {
+export const DoctorDetailsTabs = ({ 
+  doctor, 
+  specializationList = [], 
+  branchList, 
+  languageList = [], 
+  serviceList = [] 
+}: DoctorDetailsTabsProps) => {
+  // Converting doctor to meet the model's structure
+  const doctorModel: Doctor = {
+    ...doctor,
+    consultationFee: doctor.consultationFee ? Number(doctor.consultationFee) : 0,
+    specializationList: doctor.specializationList || []
+  };
+  
+  // Convert branchList to compatible format
+  const enhancedBranches = branchList ? branchList.map((branch: any) => ({
+    ...branch,
+    code: branch.code || '',
+    active: branch.active !== undefined ? branch.active : true,
+    mapurl: branch.mapurl || '',
+    image: branch.image || ''
+  })) : [];
+  
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden mb-6">
       <Tabs defaultValue="clinics">
@@ -31,33 +51,29 @@ export const DoctorDetailsTabs = ({ doctor,specializationList=[],branchList,lang
 
         <TabsContent value="clinics">
           <ClinicsTab 
-            branchList={branchList} 
-            doctor={doctor} 
-          
+            branchList={enhancedBranches} 
+            doctor={doctorModel} 
           />
         </TabsContent>
         
         <TabsContent value="about">
           <AboutTab 
-           doctor={doctor}
+            doctor={doctor}
             education={doctor.education}
             languages={doctor.languages}
             languageList={languageList}
-           
           />
         </TabsContent>
         
         <TabsContent value="services">
-          <ServicesTab services={doctor.services}
-           serviceList={serviceList} />
+          <ServicesTab 
+            services={doctor.services}
+            serviceList={serviceList} 
+          />
         </TabsContent>
         
         <TabsContent value="reviews">
-          <ReviewsTab 
-            // rating={doctor.rating}
-            // reviewCount={doctor.reviewCount}
-            
-          />
+          <ReviewsTab />
         </TabsContent>
       </Tabs>
     </div>

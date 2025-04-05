@@ -1,3 +1,4 @@
+
 import { Branch } from "./Branch";
 import { User } from "./User";
 import { Country, District, State } from "@/pages/DoctorSearch";
@@ -21,7 +22,7 @@ export class Patient {
   district?: District;
 }
 
-export class FamilyMember {
+export interface FamilyMember {
     id: string;
     relationship: string;
     name: string;

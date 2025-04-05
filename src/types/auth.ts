@@ -3,6 +3,8 @@ export interface UserInfo {
   name: string;
   mobile: string;
   userType?: 'patient' | 'doctor';
+  email?: string;
+  phone?: string;
   // Add other user properties as needed
 }
 

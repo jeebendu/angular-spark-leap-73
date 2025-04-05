@@ -6,39 +6,28 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useEffect, useState } from "react";
 import { Specialization } from "@/pages/DoctorDetails";
 import { DoctorClinic } from "@/pages/DoctorSearch";
-import { fetchSimilarDoctors } from "@/services/DoctorService";
+import { fetchSimilarDoctors } from "@/services/doctorService";
 
 interface SimilarDoctorsProps {
- 
- 
   specializationList: Specialization[];
   latitude?: number | null;
   longitude?: number | null;
 }
 
- interface SearchRelatedDoctor {
+interface SearchRelatedDoctor {
   specialisations: Specialization[];
   latitude: number | null;
   longitude: number | null;
   radius: number | null;
 }
 
-export const SimilarDoctors = ({specializationList=[],latitude,longitude}:SimilarDoctorsProps) => {
-  console.log("specializationListtttttttttttttttt",specializationList);
-
-
-
-
+export const SimilarDoctors = ({specializationList=[], latitude, longitude}: SimilarDoctorsProps) => {
   const [searchDoctorClinic, setSearchDoctorClinic] = useState<SearchRelatedDoctor>({
     specialisations: [],
     latitude: latitude ? parseFloat(latitude.toString()) : null,
     longitude: longitude ? parseFloat(longitude.toString()) : null,
     radius: 10,
   });
-
-
-
-  
 
   useEffect(() => {
     setSearchDoctorClinic((data) => ({
@@ -49,31 +38,20 @@ export const SimilarDoctors = ({specializationList=[],latitude,longitude}:Simila
       radius: 10,
     }));
     getSimilarDoctorList(searchDoctorClinic);
+  }, [specializationList]);
 
-    
-  },[specializationList]);
-
-  const getSimilarDoctorList = async (searchDoctorClinic:SearchRelatedDoctor) => {
- 
-      try {
-          const response = await fetchSimilarDoctors(searchDoctorClinic);
-       
-          setSimilarDoctorList(response.data);
-
-          console.log("Similar doctors data:", response.data);
-         
-  
-      }catch (error) {
-        console.error("Error in getAllSpecialization:", error);
-      }
-    
-    console.log("Fetching similar doctors based on specialization list:", specializationList);
+  const getSimilarDoctorList = async (searchDoctorClinic: SearchRelatedDoctor) => {
+    try {
+      const response = await fetchSimilarDoctors(searchDoctorClinic);
+      setSimilarDoctorList(response.data);
+      console.log("Similar doctors data:", response.data);
+    } catch (error) {
+      console.error("Error in getAllSpecialization:", error);
+    }
   };
 
-
-
-
   const [similarlist, setSimilarDoctorList] = useState<DoctorClinic[]>([]);
+  
   return (
     <div className="mb-8">
       <h3 className="text-xl font-bold mb-4">Similar Specialists</h3>

@@ -53,8 +53,8 @@ const ProcessAppointment = () => {
                   <div className="flex flex-wrap gap-2 items-center mb-1">
                     <span className="text-xs font-medium text-blue-500">#app0001</span>
                     <h2 className="text-lg font-semibold">Kelly Joseph</h2>
+                    <div className="text-xs text-gray-600">28 Years • Female • O+ve</div>
                   </div>
-                  <div className="text-xs text-gray-600 mb-1">28 Years • Female • O+ve</div>
                   <div className="text-xs text-gray-600 mb-1">Kelly@Example.Com</div>
                   <div className="text-xs text-gray-600">+1 504 368 6874</div>
                 </div>
@@ -93,25 +93,6 @@ const ProcessAppointment = () => {
             {timeLeft}
           </div>
         </div>
-        
-        <h2 className="text-xl font-bold mb-6 sticky top-[165px] bg-white py-2 z-10">Create Appointment Details</h2>
-        
-        {/* Patient information */}
-        <Card className="mb-6">
-          <CardContent className="p-6">
-            <h3 className="text-lg font-medium mb-4">Patient Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <div className="text-sm text-gray-500 mb-2">Address</div>
-                <div>Newyork, United States</div>
-              </div>
-              <div>
-                <div className="text-sm text-gray-500 mb-2">No of Visit</div>
-                <div>0</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
         
         {/* Vitals */}
         <Card className="mb-6">

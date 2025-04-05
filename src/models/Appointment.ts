@@ -20,4 +20,28 @@ export interface AppointmentDetails {
   isNew?: boolean;
   lab?: string;
   testType?: string;
+  age?: number;
+  gender?: "Male" | "Female" | "Other";
+  lastVisitDate?: string;
+  nextVisitDate?: string;
 }
+
+export interface FilterOption {
+  label: string;
+  value: string;
+}
+
+export const visitTypeOptions: FilterOption[] = [
+  { label: "All", value: "all" },
+  { label: "General Visit", value: "General Visit" },
+  { label: "Video Call", value: "Video Call" },
+  { label: "Audio Call", value: "Audio Call" },
+  { label: "Direct Visit", value: "Direct Visit" },
+];
+
+export const statusOptions: FilterOption[] = [
+  { label: "All", value: "all" },
+  { label: "Upcoming", value: "upcoming" },
+  { label: "Completed", value: "completed" },
+  { label: "Cancelled", value: "cancelled" },
+];

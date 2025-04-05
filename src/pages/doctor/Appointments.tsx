@@ -19,7 +19,11 @@ const sampleAppointments: AppointmentDetails[] = [
     email: "adrian@example.com",
     phone: "+1 504 368 6874",
     selectedClinic: { id: "1", name: "Main Clinic", address: "123 Main St" },
-    selectedMember: "self"
+    selectedMember: "self",
+    age: 34,
+    gender: "Male",
+    lastVisitDate: "15 Oct 2024",
+    nextVisitDate: "15 Dec 2024"
   },
   {
     id: "apt0002",
@@ -33,7 +37,9 @@ const sampleAppointments: AppointmentDetails[] = [
     phone: "+1 832 891 8403",
     selectedClinic: { id: "1", name: "Main Clinic", address: "123 Main St" },
     selectedMember: "self",
-    isNew: true
+    isNew: true,
+    age: 28,
+    gender: "Female"
   },
   {
     id: "apt0003",
@@ -46,7 +52,10 @@ const sampleAppointments: AppointmentDetails[] = [
     email: "samuel@example.com",
     phone: "+1 749 104 6291",
     selectedClinic: { id: "2", name: "Downtown Clinic", address: "456 Central Ave" },
-    selectedMember: "self"
+    selectedMember: "self",
+    age: 42,
+    gender: "Male",
+    lastVisitDate: "22 Sep 2024"
   },
   {
     id: "apt0004",
@@ -59,7 +68,11 @@ const sampleAppointments: AppointmentDetails[] = [
     email: "catherine@example.com",
     phone: "+1 584 920 7183",
     selectedClinic: { id: "3", name: "East Side Clinic", address: "789 East Blvd" },
-    selectedMember: "self"
+    selectedMember: "self",
+    age: 37,
+    gender: "Female",
+    lastVisitDate: "05 Aug 2024",
+    nextVisitDate: "10 Dec 2024"
   },
   {
     id: "apt0005",
@@ -72,7 +85,11 @@ const sampleAppointments: AppointmentDetails[] = [
     email: "mark@example.com",
     phone: "+1 555 123 4567",
     selectedClinic: { id: "1", name: "Main Clinic", address: "123 Main St" },
-    selectedMember: "self"
+    selectedMember: "self",
+    age: 45,
+    gender: "Male",
+    lastVisitDate: "03 Mar 2024",
+    nextVisitDate: "03 Jun 2024"
   },
   {
     id: "apt0006",
@@ -85,7 +102,10 @@ const sampleAppointments: AppointmentDetails[] = [
     email: "linda@example.com",
     phone: "+1 555 987 6543",
     selectedClinic: { id: "2", name: "Downtown Clinic", address: "456 Central Ave" },
-    selectedMember: "self"
+    selectedMember: "self",
+    age: 31,
+    gender: "Female",
+    lastVisitDate: "15 Feb 2024"
   }
 ];
 

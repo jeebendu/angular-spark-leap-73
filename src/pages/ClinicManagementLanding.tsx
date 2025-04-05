@@ -148,11 +148,50 @@ const ClinicManagementLanding = () => {
                   <Button size="lg" className="bg-white text-primary hover:bg-white/90">
                     Start Free Trial
                   </Button>
-                  <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/20">
+                  <Button size="lg" variant="outline" className="border-white text-white bg-primary/30 hover:bg-white/20">
                     Watch Demo
                   </Button>
                 </div>
               </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Additional Banner Before Features */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.6 }}
+          className="mb-16"
+        >
+          <div className="rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 p-8 border border-blue-100">
+            <div className="flex flex-col md:flex-row items-center justify-between">
+              <div className="mb-6 md:mb-0 md:mr-8">
+                <h3 className="text-2xl font-bold mb-4 text-gray-800">Experience Healthcare Management Reimagined</h3>
+                <p className="text-gray-600 max-w-xl">
+                  Our intuitive platform streamlines administrative tasks, enhances patient communication,
+                  and optimizes your practice workflow with AI-powered insights.
+                </p>
+                <div className="mt-6 flex flex-wrap gap-4">
+                  <div className="flex items-center">
+                    <CheckCircle2 className="h-5 w-5 text-primary mr-2" />
+                    <span className="text-sm font-medium">HIPAA Compliant</span>
+                  </div>
+                  <div className="flex items-center">
+                    <CheckCircle2 className="h-5 w-5 text-primary mr-2" />
+                    <span className="text-sm font-medium">24/7 Support</span>
+                  </div>
+                  <div className="flex items-center">
+                    <CheckCircle2 className="h-5 w-5 text-primary mr-2" />
+                    <span className="text-sm font-medium">99.9% Uptime</span>
+                  </div>
+                </div>
+              </div>
+              <img 
+                src="https://images.unsplash.com/photo-1584982751601-97dcc096659c?auto=format&fit=crop&q=80&w=600" 
+                alt="Digital healthcare" 
+                className="rounded-lg shadow-lg w-full md:w-80 h-60 object-cover"
+              />
             </div>
           </div>
         </motion.div>
@@ -310,12 +349,10 @@ const ClinicManagementLanding = () => {
             Join thousands of healthcare providers who are streamlining their operations with our platform.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="sky-button" asChild>
-              <Link to="/clinic-registration">
-                Start Free Trial
-              </Link>
+            <Button size="lg" className="sky-button">
+              Start Free Trial
             </Button>
-            <Button size="lg" variant="outline">
+            <Button size="lg" variant="outline" className="bg-white/80 hover:bg-white">
               Schedule a Demo
             </Button>
           </div>

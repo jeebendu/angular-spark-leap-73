@@ -69,11 +69,9 @@ export function Navbar() {
   const [countryCode, setCountryCode] = useState("+91");
   const navigate = useNavigate();
   
-  // Get user info from auth service
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userInfo, setUserInfo] = useState<{name: string, mobile: string} | null>(null);
   
-  // Check authentication status when component mounts
   useEffect(() => {
     const checkAuth = () => {
       const loggedIn = authService.isLoggedIn();
@@ -86,12 +84,10 @@ export function Navbar() {
     
     checkAuth();
     
-    // Listen for storage events (in case login/logout happens in another tab)
     window.addEventListener('storage', checkAuth);
     return () => window.removeEventListener('storage', checkAuth);
   }, []);
   
-  // Add scroll effect
   useEffect(() => {
     const handleScroll = () => {
       const isScrolled = window.scrollY > 10;
@@ -105,7 +101,6 @@ export function Navbar() {
   }, [scrolled]);
 
   const handleSendOtp = async () => {
-    // Validate mobile number
     if (mobileNumber.length !== 10) {
       toast({
         title: "Invalid mobile number",
@@ -115,7 +110,6 @@ export function Navbar() {
       return;
     }
     
-    // Send OTP
     const success = await authService.sendOtp(mobileNumber);
     if (success) {
       setIsOtpSent(true);
@@ -144,7 +138,6 @@ export function Navbar() {
     
     const success = await authService.verifyOtp(otpValue);
     if (success) {
-      // Close dialog and update state
       setLoginDialogOpen(false);
       setIsLoggedIn(true);
       setUserInfo(authService.getCurrentUser());
@@ -200,7 +193,6 @@ export function Navbar() {
             />
           </Link>
           
-          {/* Location selection moved next to logo */}
           <Dialog open={cityDialogOpen} onOpenChange={setCityDialogOpen}>
             <DialogTrigger asChild>
               <Button variant="ghost" className="gap-2 text-sm font-medium ml-2">
@@ -290,23 +282,23 @@ export function Navbar() {
                       <li>
                         <NavigationMenuLink asChild>
                           <Link
-                            to="/doctor-search"
+                            to="/clinic-management"
                             className="flex items-center p-2 hover:bg-slate-100 rounded-md"
                           >
-                            <Users className="mr-2 h-4 w-4" />
-                            <span>Doctors</span>
+                            <Building className="mr-2 h-4 w-4" />
+                            <span>Clinic</span>
                           </Link>
                         </NavigationMenuLink>
                       </li>
                       <li>
                         <NavigationMenuLink asChild>
-                          <button
-                            onClick={handleDoctorNavigation} 
-                            className="w-full flex items-center p-2 hover:bg-slate-100 rounded-md text-left"
+                          <Link
+                            to="/doctor"
+                            className="flex items-center p-2 hover:bg-slate-100 rounded-md"
                           >
                             <User className="mr-2 h-4 w-4" />
                             <span>Doctor Dashboard</span>
-                          </button>
+                          </Link>
                         </NavigationMenuLink>
                       </li>
                     </ul>
@@ -314,10 +306,6 @@ export function Navbar() {
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
-            
-            <Link to="/clinic-management" className="text-sm font-medium hover:text-primary transition-colors">
-              Clinic
-            </Link>
           </nav>
           
           <div className="flex items-center gap-3">
@@ -327,7 +315,6 @@ export function Navbar() {
             </Button>
             <LanguageSwitcher />
             
-            {/* Login Dialog with updated User icon */}
             {isLoggedIn ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

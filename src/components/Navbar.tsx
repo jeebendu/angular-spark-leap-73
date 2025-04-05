@@ -1,576 +1,378 @@
 
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Bell, Calendar, MapPin, User, Menu, ChevronDown, LogOut } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogClose
-} from "@/components/ui/dialog";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger
-} from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { X } from "lucide-react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import authService from "@/services/authService";
-import { sendOtp } from "@/services/authHandler"; // Import the sendOtp function
-import { verifyOTPAndLogin } from "@/services/authHandler";
-
-import { toast } from "@/hooks/use-toast";
+import { LocationSelector } from "@/components/LocationSelector";
+import { Menu, X, User, ChevronDown, LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { sendOtp, verifyOTPAndLogin } from "@/services/authHandler";
+import { AuthUser } from "@/types/auth";
+import { useToast } from "@/hooks/use-toast";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export interface AuthUser {
-  email: string | null;
-  reason: "login";
-  tenant: "dev";
-  otp: string | null;
-  authToken: string | null;
-  phone: string | null;
+  phone: string;
+  otp?: string;
+  reason: string;
+  email?: string;
+  tenant?: string;
+  authToken?: string;
 }
 
+export const Navbar = () => {
+  const { auth, logout, isDoctor } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [otp, setOtp] = useState("");
+  const [showOtpInput, setShowOtpInput] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
 
-export function Navbar({isRequiredLogins}) {
-  const { t } = useTranslation();
-  const [scrolled, setScrolled] = useState(false);
-  const isMobile = useIsMobile();
-  const [otpValue, setOtpValue] = useState("");
-  const [mobileNumber, setMobileNumber] = useState("");
-  const [isOtpSent, setIsOtpSent] = useState(false);
-  const [selectedCity, setSelectedCity] = useState("Bangalore");
-  const [cityDialogOpen, setCityDialogOpen] = useState(false);
-  const [loginDialogOpen, setLoginDialogOpen] = useState(false);
-  const [countryCode, setCountryCode] = useState("+91");
-
-
-  // Example of assigning mobileNumber to AuthUser
-  const [authUser, setAuthUser] = useState<AuthUser>({
-    email: "",
-    reason: "login",
-    tenant: "dev",
-    phone: "",
-    otp: "",
-    authToken: ""
-  });
-
-  // Get user info from auth service
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userInfo, setUserInfo] = useState<{ name: string, mobile: string } | null>(null);
-
-  // Check authentication status when component mounts
-  useEffect(() => {
-    const checkAuth = () => {
-      const loggedIn = authService.isLoggedIn();
-      setIsLoggedIn(loggedIn);
-
-      if (loggedIn) {
-        setUserInfo(authService.getCurrentUser());
+  const handleLogin = async () => {
+    setIsLoading(true);
+    try {
+      const authUser = {
+        phone: phone,
+        reason: "login",
+        userType: "patient" as const
+      };
+      
+      const result = await sendOtp(authUser);
+      
+      if (result.success) {
+        setShowOtpInput(true);
+        toast({
+          title: "OTP sent",
+          description: "OTP has been sent to your phone number",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: result.error || "Failed to send OTP",
+          variant: "destructive",
+        });
       }
-    };
-
-    checkAuth();
-
-    // Listen for storage events (in case login/logout happens in another tab)
-    window.addEventListener('storage', checkAuth);
-    return () => window.removeEventListener('storage', checkAuth);
-  }, []);
-
-  // Add scroll effect
-  useEffect(() => {
-    const handleScroll = () => {
-      const isScrolled = window.scrollY > 10;
-      if (isScrolled !== scrolled) {
-        setScrolled(isScrolled);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [scrolled]);
-
-  const handleSendOtp = async () => {
-
-    if (authUser.phone.length !== 10) {
+    } catch (error) {
       toast({
-        title: "Invalid mobile number",
-        description: "Please enter a valid 10 digit mobile number",
-        variant: "destructive"
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
       });
-      return;
-    }
-
-    // Send OTP
-    const success = await sendOtp(authUser);
-    console.log("success");
-    if (success.status) {
-      setIsOtpSent(true);
-      toast({
-        title: "OTP Sent",
-        description: `Please enter the last 5 digits of ${authUser.phone} as OTP`,
-      });
-      const token = success.message.split("::")[0];
-      setAuthUser((prev) => ({ ...prev, authToken: token }));
-
-    } else {
-      toast({
-        title: "Failed to send OTP",
-        description: "Please try again",
-        variant: "destructive"
-      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleVerifyOtp = async () => {
-   
-    if (authUser.otp.length !== 6) {
+    setIsLoading(true);
+    try {
+      const authUser = {
+        phone: phone,
+        otp: otp,
+        reason: "login",
+        userType: "patient" as const
+      };
+      
+      const result = await verifyOTPAndLogin(authUser);
+      
+      if (result.status) {
+        toast({
+          title: "Success",
+          description: "You have been logged in successfully",
+        });
+        setLoginOpen(false);
+        window.location.reload();
+      } else {
+        toast({
+          title: "Error",
+          description: "Invalid OTP. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
       toast({
-        title: "Invalid OTP",
-        description: "Please enter a valid 6 digit OTP",
-        variant: "destructive"
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
       });
-      return;
-    }
-
-    const success = await verifyOTPAndLogin(authUser);
-    if (success.status) {
-      // Close dialog and update state
-      setLoginDialogOpen(false);
-      setIsLoggedIn(true);
-      setUserInfo(authService.getCurrentUser());
-
-      toast({
-        title: "Login Successful",
-        description: "You are now logged in",
-      });
-    } else {
-      toast({
-        title: "Invalid OTP",
-        description: "Please check and try again",
-        variant: "destructive"
-      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleLogout = () => {
-    authService.logout();
-    setIsLoggedIn(false);
-    setUserInfo(null);
-
-    toast({
-      title: "Logged Out",
-      description: "You have been logged out successfully",
-    });
+    logout();
+    navigate("/");
   };
-
-  const handleCitySelect = (city: string) => {
-    setSelectedCity(city);
-    setCityDialogOpen(false);
-  };
-
-  const resetLoginForm = () => {
-    setMobileNumber("");
-    setOtpValue("");
-    setIsOtpSent(false);
-  };
-
-  // ************************
-
-  const handleMobileEmailChange = (e: any) => {
-    setAuthUser((prev) => ({ ...prev, [e.target.name]: e.target.value })); // Assign to AuthUser
-
-  }
-const otpHandler=(val:string)=>{
-console.log(val)
-  setOtpValue(val)
-  setAuthUser((prev)=>({ ...prev, otp:val}));
-
-}
-
-useEffect(() => {
-  if (isRequiredLogins) {
-    setLoginDialogOpen(true);
-    console.log("Login required:", isRequiredLogins);
-  }
-}, [isRequiredLogins]);
 
   return (
-    <header className={`py-3 px-4 md:px-6 sticky top-0 z-30 ${scrolled ? 'glass-header' : 'bg-white border-b'}`}>
-      <div className="container flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Link to="/" className="flex items-center gap-2">
-            <img
-              src="https://res.cloudinary.com/dzxuxfagt/image/upload/h_100/assets/logo.png"
-              alt="ClinicHub Logo"
-              className="h-8"
-            />
+    <header className="sticky top-0 z-50 w-full border-b bg-white">
+      <div className="container flex h-16 items-center justify-between px-4">
+        <div className="flex items-center gap-4">
+          <Link to={isDoctor ? "/doctor/dashboard" : "/dashboard"} className="flex items-center gap-2">
+            <img src="/placeholder.svg" alt="Logo" className="h-8 w-8" />
+            <span className="text-lg font-bold text-primary">ClinicHub</span>
           </Link>
-
-          {/* Location selection moved next to logo */}
-          <Dialog open={cityDialogOpen} onOpenChange={setCityDialogOpen}>
-            <DialogTrigger asChild>
-              <Button variant="ghost" className="gap-2 text-sm font-medium ml-2">
-                <MapPin className="text-primary h-4 w-4" />
-                <span className="font-medium">{selectedCity}</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-4xl p-8 bg-white modal-background">
-              <div className="absolute right-4 top-4">
-                <DialogClose asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-                    <X className="h-4 w-4" />
-                  </Button>
-                </DialogClose>
-              </div>
-              <DialogHeader>
-                <DialogTitle className="text-center text-2xl font-semibold mb-8">Select your city</DialogTitle>
-              </DialogHeader>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <button
-                  onClick={() => handleCitySelect("Bangalore")}
-                  className={`city-selector-card ${selectedCity === "Bangalore" ? "border-primary" : "border-gray-100"}`}
-                >
-                  <div className="city-icon bg-sky-50 p-3 rounded-full">
-                    <span className="text-2xl">🏙️</span>
-                  </div>
-                  <span className="city-name">Bangalore</span>
-                </button>
-                <button
-                  onClick={() => handleCitySelect("Mumbai")}
-                  className={`city-selector-card ${selectedCity === "Mumbai" ? "border-primary" : "border-gray-100"}`}
-                >
-                  <div className="city-icon bg-sky-50 p-3 rounded-full">
-                    <span className="text-2xl">🌇</span>
-                  </div>
-                  <span className="city-name">Mumbai</span>
-                </button>
-                <button
-                  onClick={() => handleCitySelect("Delhi")}
-                  className={`city-selector-card ${selectedCity === "Delhi" ? "border-primary" : "border-gray-100"}`}
-                >
-                  <div className="city-icon bg-sky-50 p-3 rounded-full">
-                    <span className="text-2xl">🏛️</span>
-                  </div>
-                  <span className="city-name">Delhi</span>
-                </button>
-                <button
-                  onClick={() => handleCitySelect("Hyderabad")}
-                  className={`city-selector-card ${selectedCity === "Hyderabad" ? "border-primary" : "border-gray-100"}`}
-                >
-                  <div className="city-icon bg-sky-50 p-3 rounded-full">
-                    <span className="text-2xl">🏯</span>
-                  </div>
-                  <span className="city-name">Hyderabad</span>
-                </button>
-                <button
-                  onClick={() => handleCitySelect("Chennai")}
-                  className={`city-selector-card ${selectedCity === "Chennai" ? "border-primary" : "border-gray-100"}`}
-                >
-                  <div className="city-icon bg-sky-50 p-3 rounded-full">
-                    <span className="text-2xl">🌴</span>
-                  </div>
-                  <span className="city-name">Chennai</span>
-                </button>
-                <button
-                  onClick={() => handleCitySelect("Kolkata")}
-                  className={`city-selector-card ${selectedCity === "Kolkata" ? "border-primary" : "border-gray-100"}`}
-                >
-                  <div className="city-icon bg-sky-50 p-3 rounded-full">
-                    <span className="text-2xl">🌉</span>
-                  </div>
-                  <span className="city-name">Kolkata</span>
-                </button>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </div>
-
-        <div className="flex items-center gap-3 md:gap-6">
-          <nav className="hidden md:flex items-center gap-6">
-            <Link to="/" className="text-sm font-medium hover:text-primary transition-colors">
-              {t('common.home')}
+          
+          <nav className="hidden md:flex items-center gap-4 ml-4">
+            <Link to={isDoctor ? "/doctor/dashboard" : "/dashboard"} className="text-sm font-medium hover:text-primary">
+              Dashboard
             </Link>
-            <Link to="/tests" className="text-sm font-medium hover:text-primary transition-colors">
-              {t('common.tests')}
-            </Link>
-            <Link to="/" className="text-sm font-medium hover:text-primary transition-colors">
-              {t('header.healthPackages')}
-            </Link>
-            <Link to="/reports" className="text-sm font-medium hover:text-primary transition-colors">
-              {t('common.reports')}
-            </Link>
+            {!isDoctor && (
+              <>
+                <Link to="/doctor/search" className="text-sm font-medium hover:text-primary">
+                  Find Doctor
+                </Link>
+                <Link to="/appointments" className="text-sm font-medium hover:text-primary">
+                  Appointments
+                </Link>
+              </>
+            )}
+            {isDoctor && (
+              <>
+                <Link to="/doctor/appointments" className="text-sm font-medium hover:text-primary">
+                  My Appointments
+                </Link>
+                <Link to="/doctor/patients" className="text-sm font-medium hover:text-primary">
+                  My Patients
+                </Link>
+              </>
+            )}
           </nav>
-
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" className="text-muted-foreground relative hidden md:flex">
-              <Bell className="h-5 w-5" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
-            </Button>
-            <LanguageSwitcher />
-
-            {/* Login Dialog with updated User icon */}
-            {isLoggedIn ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Avatar className="h-8 w-8 cursor-pointer">
-                    <AvatarFallback className="bg-primary text-white">
-                      {userInfo?.name.charAt(0) || 'U'}
-                    </AvatarFallback>
-                  </Avatar>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>{userInfo?.name || 'User'}</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <Link to="/appointments" className="flex items-center w-full">
-                      <Calendar className="mr-2 h-4 w-4" />
-                      <span>My Appointments</span>
-                    </Link>
+        </div>
+        
+        <div className="hidden md:flex items-center gap-4">
+          <LocationSelector />
+          <LanguageSwitcher />
+          
+          {auth.isAuthenticated ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="flex items-center gap-2 group">
+                  <User size={18} className="group-hover:text-primary transition-colors" />
+                  <span className="text-sm font-medium">{auth.user?.name}</span>
+                  <ChevronDown size={16} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild>
+                  <Link to="/account">My Account</Link>
+                </DropdownMenuItem>
+                {!isDoctor && (
+                  <DropdownMenuItem asChild>
+                    <Link to="/appointments">My Appointments</Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Link to="/account" className="flex items-center w-full">
-                      <User className="mr-2 h-4 w-4" />
-                      <span>My Profile</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="text-red-500">
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Logout</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <Dialog open={loginDialogOpen} onOpenChange={(open) => {
-                setLoginDialogOpen(open);
-                if (!open) resetLoginForm();
-              }}>
+                )}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Logout</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <>
+              <Dialog open={loginOpen} onOpenChange={setLoginOpen}>
                 <DialogTrigger asChild>
-                  <Button variant="ghost" size="icon" className="rounded-full">
-                    <User className="h-5 w-5" />
-                  </Button>
+                  <Button>Login</Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-md premium-login-dialog bg-white modal-background">
+                <DialogContent className="sm:max-w-[425px]">
                   <DialogHeader>
-                    <DialogTitle className="text-center text-xl font-semibold">Login / Sign Up</DialogTitle>
+                    <DialogTitle>{showOtpInput ? 'Enter OTP' : 'Login'}</DialogTitle>
+                    <DialogDescription>
+                      {showOtpInput 
+                        ? 'Enter the OTP sent to your phone' 
+                        : 'Sign in to your account using your phone number'}
+                    </DialogDescription>
                   </DialogHeader>
-                  <Tabs defaultValue="login" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2 mb-4">
-                      <TabsTrigger value="login">Login</TabsTrigger>
-                      <TabsTrigger value="signup">Sign Up</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="login" className="space-y-4">
-                      {!isOtpSent ? (
-                        <>
-                          <div className="space-y-2">
-                            <label htmlFor="mobile" className="text-sm font-medium">
-                              Mobile Number
-                            </label>
-                            <div className="flex">
-                              <div className="w-[90px] mr-2">
-                                <Select value={countryCode} onValueChange={setCountryCode}>
-                                  <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="+91" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="+91">
-                                      <div className="flex items-center">
-                                        <img src="https://preview--appointify-platform-67.lovable.app/lovable-uploads/8ecf0148-aeef-4d33-acd7-b29efebedf9d.png" alt="India" className="h-4 w-6 mr-2" />
-                                        +91
-                                      </div>
-                                    </SelectItem>
-                                    <SelectItem value="+1">
-                                      <div className="flex items-center">
-                                        <span className="w-6 mr-2">🇺🇸</span>
-                                        +1
-                                      </div>
-                                    </SelectItem>
-                                    <SelectItem value="+44">
-                                      <div className="flex items-center">
-                                        <span className="w-6 mr-2">🇬🇧</span>
-                                        +44
-                                      </div>
-                                    </SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                              <Input
-                                id="mobile"
-                                type="tel"
-                                placeholder="Enter your mobile number"
-                                value={authUser.phone}
-                                name="phone"
-                                onChange={(e) => handleMobileEmailChange(e)}
-                                className="rounded-md border-gray-300 flex-1"
-                              />
-                            </div>
-
-                            <label htmlFor="email" className="text-sm font-medium">
-                             Email Id
-                            </label>
-                            <Input
-                              id="email"
-                              type="email"
-                              placeholder="Enter your Email id "
-                              value={authUser.email}
-                              name="email"
-                              onChange={(e) => handleMobileEmailChange(e)}
-                              className="rounded-md border-gray-300 flex-1"
-                            />
-
-
-                            {/* <p className="text-xs text-gray-500 mt-1">
-                              For demo: OTP will be the last 5 digits of your mobile number
-                            </p> */}
-                          </div>
-                          <Button
-                            className="w-full sky-button"
-                            onClick={handleSendOtp}
-                            disabled={authUser.phone.length !== 10}
-                          >
-                            Send OTP
-                          </Button>
-                        </>
-                      ) : (
-                        <>
-                          <div className="space-y-4">
-                            <label className="text-sm font-medium block mb-2 text-center">
-                              Enter OTP sent to {mobileNumber}
-                            </label>
-                            <div className="flex justify-center">
-                              <InputOTP
-                                maxLength={6}
-                                value={otpValue}
-                                onChange={(e) =>otpHandler(e)}
-                                className="otp-input-premium"
-                              >
-                                <InputOTPGroup className="gap-4">
-                                  <InputOTPSlot index={0} className="otp-slot" />
-                                  <InputOTPSlot index={1} className="otp-slot" />
-                                  <InputOTPSlot index={2} className="otp-slot" />
-                                  <InputOTPSlot index={3} className="otp-slot" />
-                                  <InputOTPSlot index={4} className="otp-slot" />
-                                  <InputOTPSlot index={5} className="otp-slot" />
-                                </InputOTPGroup>
-                              </InputOTP>
-                            </div>
-                            <p className="text-xs text-center mt-2">
-                              Didn't receive the code? <button className="text-primary">Resend</button>
-                            </p>
-                            <p className="text-xs text-gray-500 text-center">
-                              For demo: Use the last 5 digits of your mobile number as OTP
-                            </p>
-                          </div>
-                          <Button
-                            className="w-full sky-button"
-                            onClick={handleVerifyOtp}
-                            disabled={otpValue.length !== 6}
-                          >
-                            Verify OTP
-                          </Button>
-                          <Button
-                            variant="outline"
-                            className="w-full"
-                            onClick={() => setIsOtpSent(false)}
-                          >
-                            Go Back
-                          </Button>
-                        </>
-                      )}
-                    </TabsContent>
-                    <TabsContent value="signup" className="space-y-4">
-                      <div className="space-y-2">
-                        <label htmlFor="fullname" className="text-sm font-medium">
-                          Full Name
-                        </label>
-                        <Input
-                          id="fullname"
-                          type="text"
-                          placeholder="Enter your full name"
-                          className="rounded-md border-gray-300"
+                  
+                  {!showOtpInput ? (
+                    <div className="grid gap-4 py-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="phone">Phone number</Label>
+                        <Input 
+                          id="phone" 
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          placeholder="+91 xxxxxxxxxx" 
                         />
                       </div>
-                      <div className="space-y-2">
-                        <label htmlFor="signupMobile" className="text-sm font-medium">
-                          Mobile Number
-                        </label>
-                        <div className="flex">
-                          <div className="w-[90px] mr-2">
-                            <Select value={countryCode} onValueChange={setCountryCode}>
-                              <SelectTrigger className="w-full">
-                                <SelectValue placeholder="+91" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="+91">
-                                  <div className="flex items-center">
-                                    <img src="https://preview--appointify-platform-67.lovable.app/lovable-uploads/8ecf0148-aeef-4d33-acd7-b29efebedf9d.png" alt="India" className="h-4 w-6 mr-2" />
-                                    +91
-                                  </div>
-                                </SelectItem>
-                                <SelectItem value="+1">
-                                  <div className="flex items-center">
-                                    <span className="w-6 mr-2">🇺🇸</span>
-                                    +1
-                                  </div>
-                                </SelectItem>
-                                <SelectItem value="+44">
-                                  <div className="flex items-center">
-                                    <span className="w-6 mr-2">🇬🇧</span>
-                                    +44
-                                  </div>
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <Input
-                            id="signupMobile"
-                            type="tel"
-                            placeholder="Enter your mobile number"
-                            className="rounded-md border-gray-300 flex-1"
-                          />
-                        </div>
+                    </div>
+                  ) : (
+                    <div className="grid gap-4 py-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="otp">One-Time Password</Label>
+                        <Input 
+                          id="otp" 
+                          value={otp}
+                          onChange={(e) => setOtp(e.target.value)}
+                          placeholder="Enter OTP" 
+                        />
                       </div>
-                      <Button className="w-full sky-button">
-                        Continue
+                    </div>
+                  )}
+                  
+                  <DialogFooter>
+                    {showOtpInput ? (
+                      <div className="flex w-full justify-between">
+                        <Button 
+                          variant="outline" 
+                          onClick={() => setShowOtpInput(false)}
+                          disabled={isLoading}
+                        >
+                          Back
+                        </Button>
+                        <Button 
+                          onClick={handleVerifyOtp}
+                          disabled={isLoading || !otp}
+                        >
+                          {isLoading ? 'Verifying...' : 'Verify OTP'}
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button 
+                        onClick={handleLogin}
+                        disabled={isLoading || !phone}
+                      >
+                        {isLoading ? 'Sending OTP...' : 'Send OTP'}
                       </Button>
-                    </TabsContent>
-                  </Tabs>
+                    )}
+                  </DialogFooter>
                 </DialogContent>
               </Dialog>
-            )}
-
-            {isMobile && (
-              <Button variant="ghost" size="icon" className="text-muted-foreground ml-1">
-                <Menu className="h-5 w-5" />
+              
+              <Button variant="outline" asChild>
+                <Link to="/doctor/login">For Doctors</Link>
               </Button>
+            </>
+          )}
+        </div>
+        
+        <button onClick={toggleMobileMenu} className="md:hidden">
+          {mobileMenuOpen ? <X /> : <Menu />}
+        </button>
+      </div>
+      
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t">
+          <div className="container py-4 space-y-4">
+            <div className="space-y-2">
+              <LocationSelector />
+              <LanguageSwitcher />
+            </div>
+            
+            <nav className="space-y-2">
+              <Link 
+                to={isDoctor ? "/doctor/dashboard" : "/dashboard"} 
+                className="block py-2 text-sm font-medium hover:text-primary"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Dashboard
+              </Link>
+              {!isDoctor && (
+                <>
+                  <Link 
+                    to="/doctor/search" 
+                    className="block py-2 text-sm font-medium hover:text-primary"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Find Doctor
+                  </Link>
+                  <Link 
+                    to="/appointments" 
+                    className="block py-2 text-sm font-medium hover:text-primary"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Appointments
+                  </Link>
+                </>
+              )}
+              {isDoctor && (
+                <>
+                  <Link 
+                    to="/doctor/appointments" 
+                    className="block py-2 text-sm font-medium hover:text-primary"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    My Appointments
+                  </Link>
+                  <Link 
+                    to="/doctor/patients" 
+                    className="block py-2 text-sm font-medium hover:text-primary"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    My Patients
+                  </Link>
+                </>
+              )}
+            </nav>
+            
+            {auth.isAuthenticated ? (
+              <div className="pt-2 border-t">
+                <Button 
+                  variant="ghost"
+                  onClick={() => {
+                    handleLogout();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="flex items-center gap-2 w-full justify-start"
+                >
+                  <LogOut size={16} />
+                  <span>Logout</span>
+                </Button>
+              </div>
+            ) : (
+              <div className="pt-2 border-t space-y-2">
+                <Button 
+                  className="w-full"
+                  onClick={() => {
+                    setLoginOpen(true);
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  Login
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => {
+                    navigate("/doctor/login");
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  For Doctors
+                </Button>
+              </div>
             )}
           </div>
         </div>
-      </div>
+      )}
     </header>
   );
-}
+};

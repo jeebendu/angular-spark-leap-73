@@ -1,4 +1,5 @@
-import { AuthUser } from "@/components/Navbar";
+
+import { AuthUser } from "@/types/auth";
 import { sendOtpApi, verifyLoginApi, verifyOtpAndLoginApi } from "./UserSevice";
 
 export const sendOtp = async (authUser: AuthUser) => {
@@ -19,6 +20,7 @@ export const verifyOTPAndLogin = async (authUser: AuthUser) => {
     const authResponse = response.data;
     if (authResponse.token) {
       localStorage.setItem("auth_token", authResponse.token);
+      localStorage.setItem("user_type", authUser.userType);
       localStorage.setItem(
         "user_info",
         JSON.stringify({

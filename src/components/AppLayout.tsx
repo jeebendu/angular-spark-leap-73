@@ -1,29 +1,21 @@
 
 import { ReactNode } from "react";
-import { Navbar } from "@/components/Navbar";
-import { MobileNavigation } from "@/components/MobileNavigation";
-import { Footer } from "@/components/Footer";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { Footer } from "./Footer";
+import { MobileNavigation } from "./MobileNavigation";
+import { Navbar } from "./Navbar";
 
-interface AppLayoutProps {
+export interface AppLayoutProps {
   children: ReactNode;
-  isRequiredLogin?: any;
   hideNav?: boolean;
 }
 
-export function AppLayout({ children, isRequiredLogin, hideNav = false }: AppLayoutProps) {
-  const isMobile = useIsMobile();
-
+export const AppLayout = ({ children, hideNav = false }: AppLayoutProps) => {
   return (
-    <div className="min-h-screen bg-[#F8F9FC] flex flex-col">
-      {!hideNav && <Navbar isRequiredLogins={isRequiredLogin} />}
-      <main className={`pb-${isMobile ? '20' : '6'} flex-grow`}>
-        <div className="container px-4 py-6 max-w-[1120px] mx-auto">
-          {children}
-        </div>
-      </main>
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      {!hideNav && <Navbar />}
+      <main className="flex-grow">{children}</main>
       <Footer />
       {!hideNav && <MobileNavigation />}
     </div>
   );
-}
+};

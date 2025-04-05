@@ -3,13 +3,13 @@ import { useEffect, useState } from "react";
 import { Star, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PatientList } from "@/pages/DoctorDetails";
-import { fetchDoctorReviewsById } from "@/services/DoctorService";
+import { fetchDoctorReviewsById } from "@/services/doctorService";
 
 interface ReviewsTabProps {
-  rating: number;
-  reviewCount: number;
-
+  rating?: number;
+  reviewCount?: number;
 }
+
 export interface Reviews{
   id: number;
   like: number;
@@ -17,40 +17,36 @@ export interface Reviews{
   message: string;
   rating: number;
   isrecommended: boolean;
-  patient:PatientList;
-  createdTime:Date;
+  patient: PatientList;
+  createdTime: Date;
   // doctor:Doctor;
 }
 
-
-export const ReviewsTab = () => {
-
+export const ReviewsTab = ({ rating, reviewCount }: ReviewsTabProps) => {
   const [reviews, setReview] = useState<Reviews[]>([]);
-  
   const [loading, setLoading] = useState(false);
 
-   useEffect(() => {
-      fetchReviewsByDoctorIdx();
-        
-    },[] ); 
+  useEffect(() => {
+    fetchReviewsByDoctorIdx();
+  },[]); 
 
-      const fetchReviewsByDoctorIdx = async () => {
-        try{
-          const response = await fetchDoctorReviewsById();
-          const parsedData = response.data.map((review: any) => ({
-            ...review,
-            createdTime: new Date(review.createdTime), // Parse the date string
-          }));
-          setReview(parsedData);
-        }
-        catch(error){
-          console.error("Error fetching doctors:", error);
-        }finally{
-          setLoading(false);
-        }
-      };
+  const fetchReviewsByDoctorIdx = async () => {
+    try {
+      setLoading(true);
+      const response = await fetchDoctorReviewsById(1); // Passing a default ID
+      const parsedData = response.data.map((review: any) => ({
+        ...review,
+        createdTime: new Date(review.createdTime), // Parse the date string
+      }));
+      setReview(parsedData);
+    }
+    catch(error){
+      console.error("Error fetching doctors:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
- 
   return (
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
@@ -61,11 +57,11 @@ export const ReviewsTab = () => {
               {[1, 2, 3, 4, 5].map((star) => (
                 <Star 
                   key={star} 
-                  className={`h-5 w-5 ${star <= Math.floor(0) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} 
+                  className={`h-5 w-5 ${star <= Math.floor(rating || 0) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} 
                 />
               ))}
             </div>
-            <span className="ml-2 text-sm font-medium">rating out of 5</span>
+            <span className="ml-2 text-sm font-medium">{rating || 0} out of 5</span>
           </div>
         </div>
         
@@ -75,7 +71,7 @@ export const ReviewsTab = () => {
       <div className="space-y-4">
       {reviews.length > 0 ? (
           reviews.map((review) => (
-          <div   key={review.id} className="border rounded-lg p-4">
+          <div key={review.id} className="border rounded-lg p-4">
             <div className="flex items-start justify-between">
               <div className="flex items-start">
                 <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center mr-3">
@@ -84,7 +80,6 @@ export const ReviewsTab = () => {
                 <div>
                   <h4 className="font-medium">
                     {review.patient?.firstname} {review.patient?.lastname}
-                 {/* <pre>{JSON.stringify(reviews, null, 2)}</pre>    */}
                   </h4>
                   <div className="flex items-center mt-1">
                     <div className="flex">
@@ -96,7 +91,7 @@ export const ReviewsTab = () => {
                       ))}
                     </div>
                     <span className="ml-2 text-xs text-gray-500">
-                     {review.createdTime.toLocaleDateString()}
+                      {review.createdTime.toLocaleDateString()}
                     </span>
                   </div>
                 </div>
@@ -106,15 +101,14 @@ export const ReviewsTab = () => {
               {review.message}
             </p>
           </div>
-          ))
-           ) : (
-            <p className="text-sm text-gray-500">No reviews available.</p>
-          )}
-    
+        ))
+        ) : (
+          <p className="text-sm text-gray-500">No reviews available.</p>
+        )}
       </div>
       
       <Button variant="outline" className="w-full mt-4" disabled={loading}>
-      {loading ? "Loading..." : "Load More Reviews"}
+        {loading ? "Loading..." : "Load More Reviews"}
       </Button>
     </div>
   );

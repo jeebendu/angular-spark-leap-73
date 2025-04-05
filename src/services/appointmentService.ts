@@ -28,9 +28,9 @@ export interface User {
 
 // Mock data for family members
 export const getFamilyMembers = (): FamilyMember[] => [
-  { id: "1", name: "Sarah Smith", relationship: "Spouse" },
-  { id: "2", name: "Alex Smith", relationship: "Child" },
-  { id: "3", name: "Jane Smith", relationship: "Parent" }
+  { id: 1, name: "Sarah Smith", relationship: "Spouse" },
+  { id: 2, name: "Alex Smith", relationship: "Child" },
+  { id: 3, name: "Jane Smith", relationship: "Parent" }
 ];
 
 // Available times
@@ -148,9 +148,9 @@ export const bookAppointment = (
 // Get family member by ID
 export const getFamilyMemberById = (memberId: string): FamilyMember | undefined => {
   if (memberId === "self") {
-    return { id: "self", name: "Yourself", relationship: "Self" };
+    return { id: 0, name: "Yourself", relationship: "Self" };
   }
-  return getFamilyMembers().find(member => member.id === memberId);
+  return getFamilyMembers().find(member => member.id === Number(memberId));
 };
 
 // Calculate appointment cost

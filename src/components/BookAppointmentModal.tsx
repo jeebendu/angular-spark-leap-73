@@ -10,7 +10,7 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 
 import { fetchSlotsByDoctorAndBranch, saveOrUpdateAppointment } from "@/services/AppointmentServiceHandler";
-import { fetchMyProfilePatient } from "@/services/UserSevice";
+import { fetchMyProfilePatient, getPatietRelationList } from "@/services/UserSevice";
 import { fetchDoctorById, fetchDoctorClinicByDoctorAndBranch } from "@/services/doctorService";
 // Import the refactored components
 import { StepIndicator } from "@/components/appointment/StepIndicator";
@@ -170,13 +170,9 @@ export function BookAppointmentModal({
 
   const fetchFamilyMembers = async (id: number) => {
     try {
-      // Import the function dynamically to avoid circular dependencies
-      const UserService = await import('@/services/UserSevice');
-      if (UserService.fetchPatientRelations) {
-        const response = await UserService.fetchPatientRelations(id);
-        if (response && response.data) {
-          setFamilyMembersList(response.data);
-        }
+      const response = await getPatietRelationList(id);
+      if (response && response.data) {
+        setFamilyMembersList(response.data);
       }
     } catch (error) {
       console.error("Error fetching family members:", error);

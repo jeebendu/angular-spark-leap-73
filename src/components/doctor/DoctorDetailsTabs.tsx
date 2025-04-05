@@ -4,18 +4,32 @@ import { ClinicsTab } from "./ClinicsTab";
 import { AboutTab } from "./AboutTab";
 import { ServicesTab } from "./ServicesTab";
 import { ReviewsTab } from "./ReviewsTab";
-import { Branch, Doctor, LanguagesList, PatientList, ServiceList, Specialization } from "@/pages/DoctorDetails";
+import { Branch } from "@/models/Branch";
+import { Doctor } from "@/models/Doctor";
 
 interface DoctorDetailsTabsProps {
-  doctor: Doctor;
+  doctor: any; // Using any to accommodate both Doctor types
   clinics?: any[]; // Using any here to accommodate various clinic structures
-  specializationList: Specialization[];
+  specializationList: any[];
   branchList: Branch[];
-  languageList: LanguagesList[];
-  serviceList: ServiceList[];
+  languageList: any[];
+  serviceList: any[];
 }
 
-export const DoctorDetailsTabs = ({ doctor, specializationList = [], branchList, languageList = [], serviceList = [] }: DoctorDetailsTabsProps) => {
+export const DoctorDetailsTabs = ({ 
+  doctor, 
+  specializationList = [], 
+  branchList, 
+  languageList = [], 
+  serviceList = [] 
+}: DoctorDetailsTabsProps) => {
+  // Converting doctor to meet the model's structure
+  const doctorModel: Doctor = {
+    ...doctor,
+    consultationFee: doctor.consultationFee ? Number(doctor.consultationFee) : 0,
+    specializationList: doctor.specializationList || []
+  };
+  
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden mb-6">
       <Tabs defaultValue="clinics">
@@ -29,7 +43,7 @@ export const DoctorDetailsTabs = ({ doctor, specializationList = [], branchList,
         <TabsContent value="clinics">
           <ClinicsTab 
             branchList={branchList} 
-            doctor={doctor} 
+            doctor={doctorModel} 
           />
         </TabsContent>
         

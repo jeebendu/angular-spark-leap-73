@@ -7,27 +7,45 @@ import { Branch } from "@/models/Branch";
 import { Doctor } from "@/models/Doctor";
 import { useState } from "react";
 
-interface EnhancedBranch extends Branch {
+export interface EnhancedBranch extends Branch {
   clinic?: {
     name: string;
     address: string;
     phone: string;
   };
+  code: string;
+  active: boolean;
+  mapurl: string;
+  image: string;
 }
 
 interface ClinicsTabProps {
-  branchList?: EnhancedBranch[];
+  branchList?: Branch[];
   doctor: Doctor;
 }
 
 export const ClinicsTab = ({ branchList = [], doctor }: ClinicsTabProps) => {
   const [selectedClinic, setSelectedClinic] = useState<number | null>(null);
   
+  // Convert Branch[] to EnhancedBranch[]
+  const enhancedBranches: EnhancedBranch[] = branchList.map(branch => ({
+    ...branch,
+    clinic: {
+      name: branch.name || '',
+      address: branch.location || '',
+      phone: ''
+    },
+    code: '',
+    active: true,
+    mapurl: '',
+    image: ''
+  }));
+  
   return (
     <div className="p-6">
       <h3 className="text-lg font-semibold mb-4">Available at {branchList.length} Locations</h3>
       <div className="space-y-4">
-        {branchList.map((clinic, index) => (
+        {enhancedBranches.map((clinic, index) => (
           <Card key={index} className="shadow-md">
             <CardContent className="p-0">
               <div className="md:flex">
@@ -67,7 +85,7 @@ export const ClinicsTab = ({ branchList = [], doctor }: ClinicsTabProps) => {
                   
                   <BookAppointmentModal 
                     doctorName={doctor.firstname + " " + doctor.lastname}
-                    specialty={doctor.specializationList[0]?.name}
+                    specialty={doctor.specializationList?.[0]?.name}
                     trigger={
                       <Button 
                         className="sky-button rounded-full" 

@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Bell, Calendar, MapPin, User, Menu, ChevronDown, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -32,7 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import authService from "@/services/authService";
-import { sendOtp } from "@/services/authHandler"; // Import the sendOtp function
+import { sendOtp } from "@/services/authHandler"; 
 import { verifyOTPAndLogin } from "@/services/authHandler";
 
 import { toast } from "@/hooks/use-toast";
@@ -55,7 +54,7 @@ export interface AuthUser {
 }
 
 
-export function Navbar({isRequiredLogins}) {
+export function Navbar({isRequiredLogin}) {
   const { t } = useTranslation();
   const [scrolled, setScrolled] = useState(false);
   const isMobile = useIsMobile();
@@ -67,8 +66,6 @@ export function Navbar({isRequiredLogins}) {
   const [loginDialogOpen, setLoginDialogOpen] = useState(false);
   const [countryCode, setCountryCode] = useState("+91");
 
-
-  // Example of assigning mobileNumber to AuthUser
   const [authUser, setAuthUser] = useState<AuthUser>({
     email: "",
     reason: "login",
@@ -78,11 +75,9 @@ export function Navbar({isRequiredLogins}) {
     authToken: ""
   });
 
-  // Get user info from auth service
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userInfo, setUserInfo] = useState<{ name: string, mobile: string } | null>(null);
 
-  // Check authentication status when component mounts
   useEffect(() => {
     const checkAuth = () => {
       const loggedIn = authService.isLoggedIn();
@@ -95,12 +90,10 @@ export function Navbar({isRequiredLogins}) {
 
     checkAuth();
 
-    // Listen for storage events (in case login/logout happens in another tab)
     window.addEventListener('storage', checkAuth);
     return () => window.removeEventListener('storage', checkAuth);
   }, []);
 
-  // Add scroll effect
   useEffect(() => {
     const handleScroll = () => {
       const isScrolled = window.scrollY > 10;
@@ -114,7 +107,6 @@ export function Navbar({isRequiredLogins}) {
   }, [scrolled]);
 
   const handleSendOtp = async () => {
-
     if (authUser.phone.length !== 10) {
       toast({
         title: "Invalid mobile number",
@@ -124,7 +116,6 @@ export function Navbar({isRequiredLogins}) {
       return;
     }
 
-    // Send OTP
     const success = await sendOtp(authUser);
     console.log("success");
     if (success.status) {
@@ -135,7 +126,6 @@ export function Navbar({isRequiredLogins}) {
       });
       const token = success.message.split("::")[0];
       setAuthUser((prev) => ({ ...prev, authToken: token }));
-
     } else {
       toast({
         title: "Failed to send OTP",
@@ -146,7 +136,6 @@ export function Navbar({isRequiredLogins}) {
   };
 
   const handleVerifyOtp = async () => {
-   
     if (authUser.otp.length !== 6) {
       toast({
         title: "Invalid OTP",
@@ -158,7 +147,6 @@ export function Navbar({isRequiredLogins}) {
 
     const success = await verifyOTPAndLogin(authUser);
     if (success.status) {
-      // Close dialog and update state
       setLoginDialogOpen(false);
       setIsLoggedIn(true);
       setUserInfo(authService.getCurrentUser());
@@ -198,25 +186,22 @@ export function Navbar({isRequiredLogins}) {
     setIsOtpSent(false);
   };
 
-  // ************************
-
   const handleMobileEmailChange = (e: any) => {
-    setAuthUser((prev) => ({ ...prev, [e.target.name]: e.target.value })); // Assign to AuthUser
-
+    setAuthUser((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
-const otpHandler=(val:string)=>{
-console.log(val)
-  setOtpValue(val)
-  setAuthUser((prev)=>({ ...prev, otp:val}));
 
-}
-
-useEffect(() => {
-  if (isRequiredLogins) {
-    setLoginDialogOpen(true);
-    console.log("Login required:", isRequiredLogins);
+  const otpHandler = (val: string) => {
+    console.log(val)
+    setOtpValue(val)
+    setAuthUser((prev) => ({ ...prev, otp: val}));
   }
-}, [isRequiredLogins]);
+
+  useEffect(() => {
+    if (isRequiredLogin) {
+      setLoginDialogOpen(true);
+      console.log("Login required:", isRequiredLogin);
+    }
+  }, [isRequiredLogin]);
 
   return (
     <header className={`py-3 px-4 md:px-6 sticky top-0 z-30 ${scrolled ? 'glass-header' : 'bg-white border-b'}`}>
@@ -224,13 +209,12 @@ useEffect(() => {
         <div className="flex items-center gap-2">
           <Link to="/" className="flex items-center gap-2">
             <img
-              src="https://res.cloudinary.com/dzxuxfagt/image/upload/h_100/assets/logo.png"
+              src="https://res.cloudinary.com/dzxfagt/image/upload/h_100/assets/logo.png"
               alt="ClinicHub Logo"
               className="h-8"
             />
           </Link>
 
-          {/* Location selection moved next to logo */}
           <Dialog open={cityDialogOpen} onOpenChange={setCityDialogOpen}>
             <DialogTrigger asChild>
               <Button variant="ghost" className="gap-2 text-sm font-medium ml-2">
@@ -332,7 +316,6 @@ useEffect(() => {
             </Button>
             <LanguageSwitcher />
 
-            {/* Login Dialog with updated User icon */}
             {isLoggedIn ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -441,11 +424,6 @@ useEffect(() => {
                               onChange={(e) => handleMobileEmailChange(e)}
                               className="rounded-md border-gray-300 flex-1"
                             />
-
-
-                            {/* <p className="text-xs text-gray-500 mt-1">
-                              For demo: OTP will be the last 5 digits of your mobile number
-                            </p> */}
                           </div>
                           <Button
                             className="w-full sky-button"
@@ -465,7 +443,7 @@ useEffect(() => {
                               <InputOTP
                                 maxLength={6}
                                 value={otpValue}
-                                onChange={(e) =>otpHandler(e)}
+                                onChange={(e) => otpHandler(e)}
                                 className="otp-input-premium"
                               >
                                 <InputOTPGroup className="gap-4">

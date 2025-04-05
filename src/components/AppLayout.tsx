@@ -13,7 +13,7 @@ export interface AppLayoutProps {
 export const AppLayout = ({ children, hideNav = false, isRequiredLogin }: AppLayoutProps) => {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      {!hideNav && <Navbar />}
+      {!hideNav && <Navbar isRequiredLogin={isRequiredLogin} />}
       <main className="flex-grow">{children}</main>
       <Footer />
       {!hideNav && <MobileNavigation />}

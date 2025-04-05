@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { 
   Tabs, 
@@ -13,6 +12,8 @@ import { AppointmentFilters } from "./AppointmentFilters";
 import { AppointmentRenderer } from "./AppointmentRenderer";
 import { AppointmentDetailsDialog } from "./AppointmentDetailsDialog";
 import { AppointmentFilterState, defaultFilters } from "@/models/AppointmentFilters";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/components/ui/use-toast";
 
 interface AppointmentListProps {
   appointments: AppointmentDetails[];
@@ -20,6 +21,9 @@ interface AppointmentListProps {
 }
 
 export function AppointmentList({ appointments, onStartAppointment }: AppointmentListProps) {
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  
   const [activeTab, setActiveTab] = useState<"upcoming" | "completed" | "cancelled">("upcoming");
   const [filters, setFilters] = useState<AppointmentFilterState>({
     ...defaultFilters,
@@ -92,6 +96,18 @@ export function AppointmentList({ appointments, onStartAppointment }: Appointmen
     });
   };
 
+  const handleStartAppointment = (appointmentId: string) => {
+    if (onStartAppointment) {
+      onStartAppointment(appointmentId);
+    } else {
+      toast({
+        title: "Starting appointment",
+        description: "Navigating to appointment processing page..."
+      });
+      navigate(`/doctor/process-appointment?id=${appointmentId}`);
+    }
+  };
+
   return (
     <div className="w-full">
       <h1 className="text-2xl font-bold mb-6">Appointments</h1>
@@ -123,8 +139,8 @@ export function AppointmentList({ appointments, onStartAppointment }: Appointmen
         <TabsContent value="upcoming" className="mt-0">
           <AppointmentRenderer 
             appointments={sortedAppointments} 
-            viewMode={filters.viewMode} 
-            onStartAppointment={onStartAppointment}
+            viewMode={filters.viewMode}
+            onStartAppointment={handleStartAppointment}
             onViewAppointment={handleViewAppointment}
           />
         </TabsContent>
@@ -132,8 +148,8 @@ export function AppointmentList({ appointments, onStartAppointment }: Appointmen
         <TabsContent value="cancelled" className="mt-0">
           <AppointmentRenderer 
             appointments={sortedAppointments} 
-            viewMode={filters.viewMode} 
-            onStartAppointment={onStartAppointment}
+            viewMode={filters.viewMode}
+            onStartAppointment={handleStartAppointment}
             onViewAppointment={handleViewAppointment}
           />
         </TabsContent>
@@ -141,8 +157,8 @@ export function AppointmentList({ appointments, onStartAppointment }: Appointmen
         <TabsContent value="completed" className="mt-0">
           <AppointmentRenderer 
             appointments={sortedAppointments} 
-            viewMode={filters.viewMode} 
-            onStartAppointment={onStartAppointment}
+            viewMode={filters.viewMode}
+            onStartAppointment={handleStartAppointment}
             onViewAppointment={handleViewAppointment}
           />
         </TabsContent>
@@ -152,7 +168,7 @@ export function AppointmentList({ appointments, onStartAppointment }: Appointmen
         open={isDetailsDialogOpen}
         onOpenChange={setIsDetailsDialogOpen}
         appointment={selectedAppointment}
-        onStartAppointment={onStartAppointment}
+        onStartAppointment={handleStartAppointment}
       />
     </div>
   );

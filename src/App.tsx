@@ -17,6 +17,7 @@ import DoctorSearch from "./pages/DoctorSearch";
 import DoctorDetails from "./pages/DoctorDetails";
 import DoctorDashboard from "./pages/doctor/Dashboard";
 import DoctorAppointments from "./pages/doctor/Appointments";
+import ProcessAppointment from "./pages/doctor/ProcessAppointment";
 
 // Custom component to prevent re-renders
 const ScrollToTop = () => {
@@ -59,6 +60,7 @@ const App = () => (
             {/* Doctor Dashboard Routes */}
             <Route path="/doctor" element={<DoctorDashboard />} />
             <Route path="/doctor/appointments" element={<DoctorAppointments />} />
+            <Route path="/doctor/process-appointment" element={<ProcessAppointment />} />
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

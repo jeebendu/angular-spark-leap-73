@@ -1,10 +1,7 @@
-
 import { useState } from "react";
 import { DoctorLayout } from "@/components/DoctorLayout";
 import { AppointmentList } from "@/components/doctor/AppointmentList";
 import { AppointmentDetails } from "@/models/Appointment";
-import { useToast } from "@/components/ui/use-toast";
-import { format } from "date-fns";
 
 // Sample appointment data
 const sampleAppointments: AppointmentDetails[] = [
@@ -116,23 +113,13 @@ const sampleAppointments: AppointmentDetails[] = [
 ];
 
 const Appointments = () => {
-  const { toast } = useToast();
   const [appointments] = useState<AppointmentDetails[]>(sampleAppointments);
   
-  const handleStartAppointment = (appointmentId: string) => {
-    toast({
-      title: "Starting appointment",
-      description: `Starting appointment ${appointmentId}`,
-    });
-    // In a real application, this would navigate to the appointment interface
-  };
-
   return (
     <DoctorLayout>
       <div className="p-6">
         <AppointmentList 
           appointments={appointments}
-          onStartAppointment={handleStartAppointment}
         />
       </div>
     </DoctorLayout>

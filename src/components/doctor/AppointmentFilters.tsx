@@ -91,25 +91,45 @@ export function AppointmentFilters({
   };
 
   return (
-    <div className="flex flex-col gap-4 mb-6">
-      <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
-        <div className="relative w-full lg:w-auto lg:flex-grow">
+    <div className="filter-section">
+      <div className="flex flex-wrap gap-2 items-center bg-white rounded-lg border border-gray-200 shadow-sm">
+        {/* Search input */}
+        <div className="relative flex-grow px-2">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input
             type="search"
-            placeholder="Search by patient name, mobile number..."
-            className="pl-9 pr-4 h-10 rounded-lg"
+            placeholder="Filter by keyword"
+            className="border-0 focus-visible:ring-0 pl-9 h-10 bg-transparent"
             value={searchQuery}
             onChange={(e) => onFilterChange('searchQuery', e.target.value)}
           />
         </div>
         
-        <div className="flex gap-2 w-full lg:w-auto justify-end">
+        {/* Filter options */}
+        <div className="flex items-center gap-1 px-1 border-l border-gray-200">
+          <Select 
+            value={visitTypeFilter} 
+            onValueChange={(value) => onFilterChange('visitTypeFilter', value)}
+          >
+            <SelectTrigger className="border-0 focus:ring-0 bg-transparent h-10 px-3 font-normal">
+              <span className="flex items-center gap-2 text-sm">
+                <span className="text-gray-600">Visit Type</span>
+              </span>
+            </SelectTrigger>
+            <SelectContent>
+              {visitTypeOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          
           <DateRangePopover>
             <DateRangePopoverTrigger asChild>
-              <Button variant="outline" className="gap-2 h-10">
-                <Calendar className="h-4 w-4" />
-                {dateRange && date && (endDateValue || date) ? getDisplayDateRange() : "Select date range"}
+              <Button variant="ghost" className="h-10 px-3 font-normal">
+                <Calendar className="h-4 w-4 mr-2 text-gray-600" />
+                <span className="text-gray-600 text-sm">Date</span>
               </Button>
             </DateRangePopoverTrigger>
             <DateRangePopoverContent className="w-auto p-0" align="end">
@@ -140,35 +160,12 @@ export function AppointmentFilters({
           </DateRangePopover>
           
           <Select 
-            value={visitTypeFilter} 
-            onValueChange={(value) => onFilterChange('visitTypeFilter', value)}
-          >
-            <SelectTrigger className="h-10 min-w-40">
-              <span className="flex items-center gap-2">
-                <Filter className="h-4 w-4" />
-                <span className="truncate">
-                  {visitTypeFilter === 'all' 
-                    ? 'All Visit Types' 
-                    : visitTypeOptions.find(option => option.value === visitTypeFilter)?.label || 'Visit Type'}
-                </span>
-              </span>
-            </SelectTrigger>
-            <SelectContent>
-              {visitTypeOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          
-          <Select 
             value={sortField} 
             onValueChange={(value) => onFilterChange('sortField', value as "date" | "name")}
           >
-            <SelectTrigger className="h-10 min-w-32">
-              <span className="flex items-center gap-2">
-                <span className="truncate">Sort by: {sortField === 'date' ? 'Date' : 'Name'}</span>
+            <SelectTrigger className="border-0 focus:ring-0 bg-transparent h-10 px-3 font-normal">
+              <span className="flex items-center gap-2 text-sm">
+                <span className="text-gray-600">Sort: {sortField === 'date' ? 'Date' : 'Name'}</span>
               </span>
             </SelectTrigger>
             <SelectContent>
@@ -178,38 +175,56 @@ export function AppointmentFilters({
           </Select>
           
           <Button 
-            variant="outline" 
-            size="icon" 
-            className="h-10 w-10"
+            variant="ghost" 
+            size="sm" 
+            className="h-10 w-10 p-0"
             onClick={onToggleSortDirection}
           >
             {sortDirection === "asc" ? 
-              <ArrowUp className="h-4 w-4" /> : 
-              <ArrowDown className="h-4 w-4" />
+              <ArrowUp className="h-4 w-4 text-gray-600" /> : 
+              <ArrowDown className="h-4 w-4 text-gray-600" />
             }
           </Button>
-          
-          <div className="flex border rounded-md h-10">
+        </div>
+        
+        {/* View toggle and clear filters */}
+        <div className="flex items-center gap-1 px-1 border-l border-gray-200">
+          <div className="flex border rounded-md h-8 overflow-hidden">
             <Button 
               variant={viewMode === "list" ? "default" : "ghost"}
-              className="rounded-r-none px-3"
+              size="sm"
+              className={`${viewMode === "list" ? "bg-primary text-white" : "bg-transparent text-gray-600"} rounded-r-none px-3 h-8`}
               onClick={() => onFilterChange('viewMode', 'list')}
             >
               <List className="h-4 w-4" />
             </Button>
             <Button 
               variant={viewMode === "grid" ? "default" : "ghost"}
-              className="rounded-l-none px-3"
+              size="sm"
+              className={`${viewMode === "grid" ? "bg-primary text-white" : "bg-transparent text-gray-600"} rounded-l-none px-3 h-8`}
               onClick={() => onFilterChange('viewMode', 'grid')}
             >
               <Grid className="h-4 w-4" />
             </Button>
           </div>
+          
+          {(visitTypeFilter !== "all" || dateRange) && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onClearFilters}
+              className="text-primary hover:text-primary/80 h-8"
+            >
+              <X className="h-3.5 w-3.5 mr-1" />
+              Clear
+            </Button>
+          )}
         </div>
       </div>
       
+      {/* Active filters display */}
       {(visitTypeFilter !== "all" || dateRange) && (
-        <div className="flex items-center gap-2 text-sm">
+        <div className="flex items-center gap-2 mt-2 text-sm">
           <span className="text-gray-500">Active filters:</span>
           
           {visitTypeFilter !== "all" && (
@@ -239,13 +254,6 @@ export function AppointmentFilters({
               </button>
             </div>
           )}
-          
-          <button
-            onClick={onClearFilters}
-            className="ml-auto text-primary hover:text-primary/80 text-sm"
-          >
-            Clear all filters
-          </button>
         </div>
       )}
     </div>

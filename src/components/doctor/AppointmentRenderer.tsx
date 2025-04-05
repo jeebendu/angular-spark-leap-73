@@ -32,7 +32,7 @@ export function AppointmentRenderer({
   }
   
   return (
-    <>
+    <div className="py-4">
       {viewMode === "list" ? (
         <div className="grid grid-cols-1 gap-4">
           {appointments.map((appointment, index) => (
@@ -56,6 +56,6 @@ export function AppointmentRenderer({
           ))}
         </div>
       )}
-    </>
+    </div>
   );
 }

@@ -8,13 +8,12 @@ import {
 } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { AppointmentDetails } from "@/models/Appointment";
-import { format } from "date-fns";
 import { AppointmentFilters } from "./AppointmentFilters";
 import { AppointmentRenderer } from "./AppointmentRenderer";
 import { AppointmentDetailsDialog } from "./AppointmentDetailsDialog";
 import { AppointmentFilterState, defaultFilters } from "@/models/AppointmentFilters";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 interface AppointmentListProps {
   appointments: AppointmentDetails[];
@@ -137,36 +136,34 @@ export function AppointmentList({ appointments, onStartAppointment }: Appointmen
               <Badge className="ml-2 bg-gray-200 text-gray-700">{counts.completed}</Badge>
             </TabsTrigger>
           </TabsList>
-        </Tabs>
-      </div>
       
-      <div className="px-6">
-        <TabsContent value="upcoming" className="mt-0">
-          <AppointmentRenderer 
-            appointments={sortedAppointments} 
-            viewMode={filters.viewMode}
-            onStartAppointment={handleStartAppointment}
-            onViewAppointment={handleViewAppointment}
-          />
-        </TabsContent>
-        
-        <TabsContent value="cancelled" className="mt-0">
-          <AppointmentRenderer 
-            appointments={sortedAppointments} 
-            viewMode={filters.viewMode}
-            onStartAppointment={handleStartAppointment}
-            onViewAppointment={handleViewAppointment}
-          />
-        </TabsContent>
-        
-        <TabsContent value="completed" className="mt-0">
-          <AppointmentRenderer 
-            appointments={sortedAppointments} 
-            viewMode={filters.viewMode}
-            onStartAppointment={handleStartAppointment}
-            onViewAppointment={handleViewAppointment}
-          />
-        </TabsContent>
+          <TabsContent value="upcoming" className="mt-0">
+            <AppointmentRenderer 
+              appointments={sortedAppointments} 
+              viewMode={filters.viewMode}
+              onStartAppointment={handleStartAppointment}
+              onViewAppointment={handleViewAppointment}
+            />
+          </TabsContent>
+          
+          <TabsContent value="cancelled" className="mt-0">
+            <AppointmentRenderer 
+              appointments={sortedAppointments} 
+              viewMode={filters.viewMode}
+              onStartAppointment={handleStartAppointment}
+              onViewAppointment={handleViewAppointment}
+            />
+          </TabsContent>
+          
+          <TabsContent value="completed" className="mt-0">
+            <AppointmentRenderer 
+              appointments={sortedAppointments} 
+              viewMode={filters.viewMode}
+              onStartAppointment={handleStartAppointment}
+              onViewAppointment={handleViewAppointment}
+            />
+          </TabsContent>
+        </Tabs>
       </div>
 
       <AppointmentDetailsDialog 

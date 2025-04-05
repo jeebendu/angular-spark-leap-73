@@ -38,7 +38,7 @@ export const DoctorDetailsTabs = ({
   // Convert branchList to compatible format
   const enhancedBranches = branchList ? branchList.map((branch: any) => ({
     ...branch,
-    id: branch.id,
+    id: branch.id.toString(), // Ensure branch id is string
     name: branch.name || '',
     code: branch.code || '',
     active: branch.active !== undefined ? branch.active : true,

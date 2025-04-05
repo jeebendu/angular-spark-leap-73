@@ -2,7 +2,7 @@
 import { Country, District, State } from "@/pages/DoctorSearch";
 
 export class Branch {
-  id: number | string; // Modified to accept both number and string id types
+  id: string; // Changed to be consistently string (not a union type)
   name: string;
   code: string;
   location: string;
@@ -12,7 +12,7 @@ export class Branch {
   country: Country; // Assuming Country is another model class
   city: string;
   mapurl: string;
-  pincode: number | string; // Modified to accept both number and string
+  pincode: string; // Changed to be consistently string
   image: string;
   latitude: number;
   longitude: number;

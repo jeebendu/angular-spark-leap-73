@@ -197,8 +197,8 @@ export function BookAppointmentModal({
   const fetchDoctorClinic = async (branch: Branch) => {
     try {
       if (appointment?.doctor?.id && branch?.id) {
-        // Fix: Convert branch.id to number if it's a string
-        const branchId = typeof branch.id === 'string' ? parseInt(branch.id) : branch.id;
+        // Convert branch.id to number only if needed for API
+        const branchId = Number(branch.id);
         const data = await fetchDoctorClinicByDoctorAndBranch(appointment.doctor.id, branchId);
         setAppointment((prev) => ({ ...prev, doctorClinic: data }));
       }

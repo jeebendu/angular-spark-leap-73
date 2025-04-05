@@ -1,3 +1,4 @@
+
 import { Link, useParams, useLocation } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
 import { ArrowLeft } from "lucide-react";
@@ -42,7 +43,7 @@ export interface Doctor {
 }
 
 export interface Specialization {
-  id: string;
+  id: number; // Changed from string to number to match Doctor model
   name: string;
 }
 
@@ -57,7 +58,7 @@ export interface LanguagesList {
 }
 
 export interface Branch {
-  id: number;
+  id: string; // Changed to string to be consistent
   name: string;
   location: string;
   state: string;
@@ -97,6 +98,7 @@ const DoctorDetails = () => {
       if (data.data && data.data.branchList) {
         data.data.branchList = data.data.branchList.map((branch: any) => ({
           ...branch,
+          id: branch.id.toString(), // Ensure branch id is string
           code: branch.code || '',
           active: branch.active !== undefined ? branch.active : true,
           mapurl: branch.mapurl || '',
@@ -106,6 +108,14 @@ const DoctorDetails = () => {
       
       if (data.data && typeof data.data.consultationFee === 'string') {
         data.data.consultationFee = Number(data.data.consultationFee);
+      }
+
+      // Ensure all specialization IDs are numbers
+      if (data.data && data.data.specializationList) {
+        data.data.specializationList = data.data.specializationList.map((spec: any) => ({
+          ...spec,
+          id: typeof spec.id === 'string' ? Number(spec.id) : spec.id
+        }));
       }
       
       setDoctorsDetails(data.data);

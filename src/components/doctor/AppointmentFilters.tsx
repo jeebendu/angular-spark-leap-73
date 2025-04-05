@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Search, Calendar, Filter, X, Grid, List, ArrowUp, ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,7 +23,7 @@ import {
   PopoverTrigger as DateRangePopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
-import { format, isAfter, isBefore, isValid, parse, startOfDay, endOfDay } from "date-fns";
+import { format, isAfter, isBefore, isValid, parse } from "date-fns";
 
 interface AppointmentFiltersProps {
   filters: AppointmentFilterState;
@@ -40,15 +41,26 @@ export function AppointmentFilters({
   onToggleViewMode
 }: AppointmentFiltersProps) {
   const { searchQuery, dateRange, visitTypeFilter, sortField, sortDirection, viewMode } = filters;
-  const [startDate, endDate] = dateRange ? dateRange.split(' - ') : ['', ''];
   
-  const [date, setDate] = React.useState<Date | undefined>(
-    startDate ? parse(startDate, 'yyyy-MM-dd', new Date()) : undefined
-  );
+  // Parse the date range safely
+  const dateRangeParts = dateRange ? dateRange.split(' - ') : ['', ''];
+  const startDateStr = dateRangeParts[0] || '';
+  const endDateStr = dateRangeParts.length > 1 ? dateRangeParts[1] : '';
   
-  const [endDateValue, setEndDateValue] = React.useState<Date | undefined>(
-    endDate ? parse(endDate, 'yyyy-MM-dd', new Date()) : undefined
-  );
+  // Safely parse dates, ensuring they're valid
+  const parseDate = (dateStr: string) => {
+    if (!dateStr) return undefined;
+    try {
+      const parsedDate = parse(dateStr, 'yyyy-MM-dd', new Date());
+      return isValid(parsedDate) ? parsedDate : undefined;
+    } catch (e) {
+      console.error("Invalid date format:", dateStr);
+      return undefined;
+    }
+  };
+
+  const [date, setDate] = React.useState<Date | undefined>(parseDate(startDateStr));
+  const [endDateValue, setEndDateValue] = React.useState<Date | undefined>(parseDate(endDateStr));
 
   const handleDateSelect = (selectedDate: Date | undefined) => {
     if (!selectedDate) return;
@@ -97,7 +109,7 @@ export function AppointmentFilters({
             <DateRangePopoverTrigger asChild>
               <Button variant="outline" className="gap-2 h-10">
                 <Calendar className="h-4 w-4" />
-                {dateRange ? getDisplayDateRange() : "Select date range"}
+                {dateRange && date && (endDateValue || date) ? getDisplayDateRange() : "Select date range"}
               </Button>
             </DateRangePopoverTrigger>
             <DateRangePopoverContent className="w-auto p-0" align="end">
@@ -212,9 +224,9 @@ export function AppointmentFilters({
             </div>
           )}
           
-          {dateRange && (
+          {dateRange && date && (
             <div className="flex items-center gap-1 bg-gray-100 text-gray-800 px-2 py-1 rounded">
-              {getDisplayDateRange()}
+              {endDateValue ? `${format(date, 'MMM dd, yyyy')} - ${format(endDateValue, 'MMM dd, yyyy')}` : `From ${format(date, 'MMM dd, yyyy')}`}
               <button
                 onClick={() => {
                   onFilterChange('dateRange', '');

@@ -23,7 +23,8 @@ export function AppointmentList({ appointments, onStartAppointment }: Appointmen
   const [activeTab, setActiveTab] = useState<"upcoming" | "completed" | "cancelled">("upcoming");
   const [filters, setFilters] = useState<AppointmentFilterState>({
     ...defaultFilters,
-    dateRange: `${format(new Date(), "MM/dd/yyyy")} - ${format(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), "MM/dd/yyyy")}`
+    // Using empty string as default to avoid date parsing issues
+    dateRange: ""
   });
   const [selectedAppointment, setSelectedAppointment] = useState<AppointmentDetails | null>(null);
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
@@ -87,8 +88,7 @@ export function AppointmentList({ appointments, onStartAppointment }: Appointmen
 
   const handleClearFilters = () => {
     setFilters({
-      ...defaultFilters,
-      dateRange: filters.dateRange
+      ...defaultFilters
     });
   };
 

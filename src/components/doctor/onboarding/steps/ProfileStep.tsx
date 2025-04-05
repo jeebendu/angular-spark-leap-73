@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { UserRound } from "lucide-react";
 
 interface ProfileData {
   name: string;
@@ -45,17 +46,22 @@ export const ProfileStep: React.FC<ProfileStepProps> = ({
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Hello Dr.! Let's build your dedicated profile.</h1>
-        <h2 className="text-lg font-medium mt-4 mb-2">Section A: Profile details</h2>
+    <div className="space-y-6 animate-fade-in">
+      <div className="text-center mb-8">
+        <div className="flex justify-center mb-4">
+          <div className="bg-primary/10 p-3 rounded-full">
+            <UserRound size={28} className="text-primary" />
+          </div>
+        </div>
+        <h1 className="text-2xl font-bold">Hello Doctor! Let's build your profile</h1>
+        <p className="text-gray-600 mt-2">Enter your basic information to get started</p>
       </div>
 
       <div className="space-y-4">
         <div>
           <Label htmlFor="name">Name</Label>
-          <div className="flex border rounded-md overflow-hidden">
-            <div className="bg-gray-50 p-2 border-r text-gray-500 flex items-center">
+          <div className="flex border rounded-md overflow-hidden shadow-sm focus-within:ring-1 focus-within:ring-primary/30 focus-within:border-primary transition-all">
+            <div className="bg-gray-50 p-2 border-r text-gray-500 flex items-center text-sm">
               Dr./Mr./Ms.
             </div>
             <Input
@@ -75,7 +81,7 @@ export const ProfileStep: React.FC<ProfileStepProps> = ({
             value={data.specialization} 
             onValueChange={(value) => onUpdate({ specialization: value })}
           >
-            <SelectTrigger>
+            <SelectTrigger className="focus:ring-primary/30">
               <SelectValue placeholder="Select Specialization" />
             </SelectTrigger>
             <SelectContent>
@@ -119,7 +125,7 @@ export const ProfileStep: React.FC<ProfileStepProps> = ({
             value={data.city} 
             onValueChange={(value) => onUpdate({ city: value })}
           >
-            <SelectTrigger>
+            <SelectTrigger className="focus:ring-primary/30">
               <SelectValue placeholder="Select City" />
             </SelectTrigger>
             <SelectContent>
@@ -135,17 +141,17 @@ export const ProfileStep: React.FC<ProfileStepProps> = ({
         </div>
       </div>
       
-      <div className="pt-4">
+      <div className="pt-6">
         <Button 
-          className="w-full bg-orange-500 hover:bg-orange-600 font-medium"
+          className="w-full bg-primary hover:bg-primary/90 font-medium py-6"
           onClick={handleSubmit}
         >
           Continue
         </Button>
       </div>
       
-      <div className="text-center text-sm text-blue-500">
-        <p>If you are not a doctor and owns an establishment <a href="#" className="underline">Click here</a></p>
+      <div className="text-center text-sm text-primary">
+        <p>If you are not a doctor and own an establishment <a href="#" className="underline">Click here</a></p>
       </div>
     </div>
   );

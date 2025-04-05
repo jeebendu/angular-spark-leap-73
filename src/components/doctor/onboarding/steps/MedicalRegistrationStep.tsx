@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, ClipboardCheck } from "lucide-react";
 
 interface MedicalRegistrationData {
   registrationNumber: string;
@@ -48,8 +48,16 @@ export const MedicalRegistrationStep: React.FC<MedicalRegistrationStepProps> = (
   const years = Array.from({ length: 50 }, (_, i) => currentYear - i);
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Medical Registration</h1>
+    <div className="space-y-6 animate-fade-in">
+      <div className="text-center mb-8">
+        <div className="flex justify-center mb-4">
+          <div className="bg-primary/10 p-3 rounded-full">
+            <ClipboardCheck size={28} className="text-primary" />
+          </div>
+        </div>
+        <h1 className="text-2xl font-bold">Medical Registration</h1>
+        <p className="text-gray-600 mt-2">Please provide your medical registration details</p>
+      </div>
 
       <div className="space-y-4">
         <div>
@@ -59,6 +67,7 @@ export const MedicalRegistrationStep: React.FC<MedicalRegistrationStepProps> = (
             value={data.registrationNumber}
             onChange={(e) => onUpdate({ registrationNumber: e.target.value })}
             placeholder="Type registration number"
+            className="focus:ring-primary/30"
           />
           {errors.registrationNumber && <p className="text-red-500 text-sm mt-1">{errors.registrationNumber}</p>}
         </div>
@@ -69,7 +78,7 @@ export const MedicalRegistrationStep: React.FC<MedicalRegistrationStepProps> = (
             value={data.registrationCouncil} 
             onValueChange={(value) => onUpdate({ registrationCouncil: value })}
           >
-            <SelectTrigger>
+            <SelectTrigger className="focus:ring-primary/30">
               <SelectValue placeholder="Type & select registration council" />
             </SelectTrigger>
             <SelectContent>
@@ -89,7 +98,7 @@ export const MedicalRegistrationStep: React.FC<MedicalRegistrationStepProps> = (
             value={data.registrationYear} 
             onValueChange={(value) => onUpdate({ registrationYear: value })}
           >
-            <SelectTrigger>
+            <SelectTrigger className="focus:ring-primary/30">
               <SelectValue placeholder="Type registration year" />
             </SelectTrigger>
             <SelectContent>
@@ -102,12 +111,16 @@ export const MedicalRegistrationStep: React.FC<MedicalRegistrationStepProps> = (
         </div>
       </div>
 
-      <div className="border-t pt-4 mt-8 flex justify-between">
-        <Button variant="outline" onClick={onBack} className="flex items-center">
+      <div className="border-t pt-6 mt-8 flex justify-between">
+        <Button 
+          variant="outline" 
+          onClick={onBack} 
+          className="flex items-center"
+        >
           <ChevronLeft className="h-4 w-4 mr-1" /> Back
         </Button>
         <Button 
-          className="bg-orange-500 hover:bg-orange-600 px-8"
+          className="bg-primary hover:bg-primary/90 px-8"
           onClick={handleSubmit}
         >
           Next

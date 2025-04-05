@@ -7,6 +7,7 @@ import { PracticeStep } from "./steps/PracticeStep";
 import { EstablishmentStep } from "./steps/EstablishmentStep";
 import { MatchingProfilesStep } from "./steps/MatchingProfilesStep";
 import { OnboardingProgress } from "./OnboardingProgress";
+import { motion } from "framer-motion";
 
 export const OnboardingWizard = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -120,9 +121,17 @@ export const OnboardingWizard = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
+    <div className="bg-white rounded-lg shadow-md p-6 border border-gray-100">
       <OnboardingProgress currentStep={currentStep} totalSteps={totalSteps} />
-      {renderStep()}
+      <motion.div
+        key={currentStep}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        transition={{ duration: 0.3 }}
+      >
+        {renderStep()}
+      </motion.div>
     </div>
   );
 };

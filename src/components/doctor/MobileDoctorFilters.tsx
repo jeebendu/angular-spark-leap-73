@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Star, X } from "lucide-react";
+import { Dispatch, SetStateAction } from "react";
 
 interface MobileDoctorFiltersProps {
   open: boolean;
@@ -18,12 +19,12 @@ interface MobileDoctorFiltersProps {
   selectedGenders: string[];
   selectedLanguages: string[];
   selectedExperience: string[];
-  priceRange: number[];
+  priceRange: [number, number];
   toggleSpecialty: (specialty: string) => void;
   toggleGender: (gender: string) => void;
   toggleLanguage: (language: string) => void;
   toggleExperience: (experience: string) => void;
-  setPriceRange: (range: number[]) => void;
+  setPriceRange: Dispatch<SetStateAction<[number, number]>>;
   applyFilters: () => void;
 }
 
@@ -162,7 +163,7 @@ export const MobileDoctorFilters = ({
                 max={5000}
                 step={100}
                 value={priceRange}
-                onValueChange={(value) => setPriceRange(value)}
+                onValueChange={(value) => setPriceRange(value as [number, number])}
               />
               <div className="flex justify-between mt-2 text-sm">
                 <span>₹{priceRange[0]}</span>

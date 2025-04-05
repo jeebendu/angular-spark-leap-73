@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { MobileDoctorFilters } from "@/components/doctor/MobileDoctorFilters";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { AppointmentFilterState } from "@/models/AppointmentFilters";
+import { Dispatch, SetStateAction } from "react";
 
 interface DoctorSearchBarProps {
   searchTerm: string;
@@ -27,7 +27,7 @@ interface DoctorSearchBarProps {
   toggleGender: (gender: string) => void;
   toggleLanguage: (language: string) => void;
   toggleExperience: (experience: string) => void;
-  setPriceRange: (range: [number, number]) => void;
+  setPriceRange: Dispatch<SetStateAction<[number, number]>>;
   applyFilters: () => void;
 }
 

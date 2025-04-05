@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,9 +15,18 @@ export default function PatientLogin() {
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [redirectPath, setRedirectPath] = useState("/dashboard");
   const { toast } = useToast();
   const navigate = useNavigate();
   const { login } = useAuth();
+
+  useEffect(() => {
+    // Check for redirect path stored in localStorage
+    const storedPath = localStorage.getItem('redirect_after_login');
+    if (storedPath) {
+      setRedirectPath(storedPath);
+    }
+  }, []);
 
   const handleSendOTP = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -102,7 +111,11 @@ export default function PatientLogin() {
           { name: "Patient User", mobile: phoneNumber, userType: "patient" },
           "patient"
         );
-        navigate("/dashboard");
+        
+        // Clear the redirect path from localStorage
+        const redirectTo = redirectPath;
+        localStorage.removeItem('redirect_after_login');
+        navigate(redirectTo);
       } else {
         toast({
           title: "Error",

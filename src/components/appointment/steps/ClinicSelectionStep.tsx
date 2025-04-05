@@ -46,7 +46,7 @@ export function ClinicSelectionStep({
             >
               <div className="flex items-start">
                 <RadioGroupItem value={branch.id.toString()} id={`clinic-${branch.id}`} className="mt-1" />
-                <Label htmlFor={`clinic-${branch.id}`} className="ml-2 cursor-pointer">
+                <Label htmlFor={`clinic-${branch.id}`} className="cursor-pointer">
                   <div className="font-medium">{branch.name}</div>
                   <div className="text-sm text-gray-500">
                     {branch.city && branch.district?.name && branch.state?.name ? 

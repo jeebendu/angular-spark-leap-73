@@ -8,6 +8,7 @@ import { Doctor, LanguagesList, Specialization } from "@/pages/DoctorDetails";
 import { verifyLogin } from "@/services/authHandler";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 interface DoctorHeaderProps {
   doctor: Doctor;
@@ -26,20 +27,28 @@ export const DoctorHeader = ({
   onButtonClick
 }: DoctorHeaderProps) => {
   const [isModalOpen, setModalOpen] = useState(false);
+  const navigate = useNavigate();
 
-  const verifyLoginAndBook = async (setModalOpen: (open: boolean) => void) => {
+  const verifyLoginAndBook = async () => {
     try {
       const isLoggedIn = await verifyLogin();
       if (isLoggedIn) {
-        console.log("verifying login");
+        console.log("User is logged in, opening modal");
         setModalOpen(true);
       } else {
-        setModalOpen(false);
-        onButtonClick();
+        // Store the current location to return after login
+        localStorage.setItem('redirect_after_login', window.location.pathname);
+        toast({
+          title: "Login Required",
+          description: "Please log in to book an appointment",
+          variant: "default",
+        });
+        navigate('/login');
       }
     } catch (error) {
-      onButtonClick();
-      setModalOpen(false);
+      console.error("Error verifying login:", error);
+      localStorage.setItem('redirect_after_login', window.location.pathname);
+      navigate('/login');
     }
   };
 
@@ -130,14 +139,14 @@ export const DoctorHeader = ({
               <p className="text-xl font-bold text-primary">₹{doctor.consultationFee || 1200}</p>
             </div>
             
+            <Button className="sky-button rounded-full" onClick={verifyLoginAndBook}>
+              Book Appointment
+            </Button>
+            
             <BookAppointmentModal 
               doctorName={doctor.firstname + " " + doctor.lastname}
               specialty={doctor.specializationList?.[0]?.name}
-              trigger={
-                <Button className="sky-button rounded-full" onClick={() => verifyLoginAndBook(setModalOpen)}>
-                  Book Appointment
-                </Button>
-              }
+              trigger={<div className="hidden" />} // Hidden trigger as we're using the button above
               id={id}
               opening={isModalOpen}
               onClose={() => setModalOpen(false)}

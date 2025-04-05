@@ -18,12 +18,25 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Clinic } from "@/models/Clinic";
 import { Building, Mail, Phone, MapPin } from "lucide-react";
 
+// Define types for our forms
+interface ClinicRegistrationForm extends Partial<Clinic> {
+  subdomain: string;
+}
+
+interface ClinicAccessForm {
+  clinicCode: string;
+  subdomain: string;
+}
+
 const ClinicRegistration = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<"register" | "access">("register");
-  const form = useForm<Partial<Clinic & { subdomain: string }>>();
   
-  const onSubmitRegistration = (data: Partial<Clinic & { subdomain: string }>) => {
+  // Create separate form instances for registration and access
+  const registrationForm = useForm<ClinicRegistrationForm>();
+  const accessForm = useForm<ClinicAccessForm>();
+  
+  const onSubmitRegistration = (data: ClinicRegistrationForm) => {
     console.log("Registration data:", data);
     toast({
       title: "Registration submitted",
@@ -31,7 +44,7 @@ const ClinicRegistration = () => {
     });
   };
   
-  const onSubmitAccess = (data: { clinicCode: string; subdomain: string }) => {
+  const onSubmitAccess = (data: ClinicAccessForm) => {
     console.log("Access data:", data);
     toast({
       title: "Redirecting to your clinic",
@@ -63,8 +76,8 @@ const ClinicRegistration = () => {
                 </TabsList>
                 
                 <TabsContent value="register">
-                  <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmitRegistration)} className="space-y-6">
+                  <Form {...registrationForm}>
+                    <form onSubmit={registrationForm.handleSubmit(onSubmitRegistration)} className="space-y-6">
                       <div className="space-y-4">
                         <h2 className="text-xl font-semibold flex items-center">
                           <Building className="mr-2 h-5 w-5 text-primary" />
@@ -73,7 +86,7 @@ const ClinicRegistration = () => {
                         
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                           <FormField
-                            control={form.control}
+                            control={registrationForm.control}
                             name="name"
                             render={({ field }) => (
                               <FormItem>
@@ -87,7 +100,7 @@ const ClinicRegistration = () => {
                           />
                           
                           <FormField
-                            control={form.control}
+                            control={registrationForm.control}
                             name="subdomain"
                             render={({ field }) => (
                               <FormItem>
@@ -117,7 +130,7 @@ const ClinicRegistration = () => {
                         
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                           <FormField
-                            control={form.control}
+                            control={registrationForm.control}
                             name="email"
                             render={({ field }) => (
                               <FormItem>
@@ -131,7 +144,7 @@ const ClinicRegistration = () => {
                           />
                           
                           <FormField
-                            control={form.control}
+                            control={registrationForm.control}
                             name="contact"
                             render={({ field }) => (
                               <FormItem>
@@ -155,7 +168,7 @@ const ClinicRegistration = () => {
                         </h2>
                         
                         <FormField
-                          control={form.control}
+                          control={registrationForm.control}
                           name="address"
                           render={({ field }) => (
                             <FormItem>
@@ -177,8 +190,8 @@ const ClinicRegistration = () => {
                 </TabsContent>
                 
                 <TabsContent value="access">
-                  <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmitAccess)} className="space-y-6">
+                  <Form {...accessForm}>
+                    <form onSubmit={accessForm.handleSubmit(onSubmitAccess)} className="space-y-6">
                       <div className="space-y-4">
                         <h2 className="text-xl font-semibold">Access Your Clinic Portal</h2>
                         <p className="text-gray-600">
@@ -186,7 +199,7 @@ const ClinicRegistration = () => {
                         </p>
                         
                         <FormField
-                          control={form.control}
+                          control={accessForm.control}
                           name="clinicCode"
                           render={({ field }) => (
                             <FormItem>
@@ -200,7 +213,7 @@ const ClinicRegistration = () => {
                         />
                         
                         <FormField
-                          control={form.control}
+                          control={accessForm.control}
                           name="subdomain"
                           render={({ field }) => (
                             <FormItem>

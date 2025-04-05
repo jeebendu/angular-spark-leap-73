@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { 
   Tabs, 
@@ -110,7 +111,9 @@ export function AppointmentList({ appointments, onStartAppointment }: Appointmen
 
   return (
     <div className="w-full">
-      <h1 className="text-2xl font-bold mb-6">Appointments</h1>
+      <div className="sticky top-0 bg-white z-20 pt-6 pb-4">
+        <h1 className="text-2xl font-bold mb-6">Appointments</h1>
+      </div>
       
       <AppointmentFilters 
         filters={filters}
@@ -120,8 +123,8 @@ export function AppointmentList({ appointments, onStartAppointment }: Appointmen
         onToggleViewMode={() => handleFilterChange('viewMode', filters.viewMode === 'list' ? 'grid' : 'list')}
       />
 
-      <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <TabsList className="mb-6">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="mt-2">
+        <TabsList className="mb-6 sticky top-[138px] z-10 bg-white">
           <TabsTrigger value="upcoming" className="relative">
             Upcoming
             <Badge className="ml-2 bg-primary text-white">{counts.upcoming}</Badge>

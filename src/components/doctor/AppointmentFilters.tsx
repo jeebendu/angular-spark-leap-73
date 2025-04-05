@@ -17,7 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { 
+import {
   Popover as DateRangePopover,
   PopoverContent as DateRangePopoverContent,
   PopoverTrigger as DateRangePopoverTrigger,
@@ -91,7 +91,7 @@ export function AppointmentFilters({
   };
 
   return (
-    <div className="flex flex-col gap-4 mb-6">
+    <div className="flex flex-col gap-4 mb-6 sticky top-0 pt-6 pb-4 bg-white z-10">
       <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
         <div className="relative w-full lg:w-auto lg:flex-grow">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -114,10 +114,33 @@ export function AppointmentFilters({
             </DateRangePopoverTrigger>
             <DateRangePopoverContent className="w-auto p-0" align="end">
               <CalendarComponent
-                mode="single"
-                selected={date}
-                onSelect={handleDateSelect}
+                mode="range"
+                selected={{
+                  from: date,
+                  to: endDateValue
+                }}
+                onSelect={(range) => {
+                  if (range?.from) {
+                    setDate(range.from);
+                    setEndDateValue(range.to);
+                    
+                    const formattedStartDate = format(range.from, 'yyyy-MM-dd');
+                    if (range.to) {
+                      const formattedEndDate = format(range.to, 'yyyy-MM-dd');
+                      onFilterChange('dateRange', `${formattedStartDate} - ${formattedEndDate}`);
+                    } else {
+                      onFilterChange('dateRange', formattedStartDate);
+                    }
+                  }
+                }}
                 initialFocus
+                className="p-3 pointer-events-auto bg-white"
+                classNames={{
+                  day_selected: "bg-primary text-primary-foreground",
+                  day_range_start: "bg-primary text-primary-foreground",
+                  day_range_end: "bg-primary text-primary-foreground",
+                  day_range_middle: "bg-primary/20 text-primary-foreground"
+                }}
                 footer={
                   <div className="px-4 pb-3 pt-1 flex justify-between items-center">
                     <div className="text-sm">
@@ -154,6 +177,7 @@ export function AppointmentFilters({
               </span>
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="all">All Visit Types</SelectItem>
               {visitTypeOptions.map((option) => (
                 <SelectItem key={option.value} value={option.value}>
                   {option.label}

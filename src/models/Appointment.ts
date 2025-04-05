@@ -43,7 +43,6 @@ export interface FilterOption {
 }
 
 export const visitTypeOptions: FilterOption[] = [
-  { label: "All", value: "all" },
   { label: "General Visit", value: "General Visit" },
   { label: "Video Call", value: "Video Call" },
   { label: "Audio Call", value: "Audio Call" },

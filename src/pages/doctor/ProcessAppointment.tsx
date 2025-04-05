@@ -34,7 +34,7 @@ const ProcessAppointment = () => {
     <DoctorLayout>
       <div className="container py-6">
         {/* Patient header section */}
-        <Card className="mb-6 border-l-4 border-l-blue-500">
+        <Card className="mb-6 border-l-4 border-l-blue-500 sticky top-0 z-20 shadow-md">
           <CardContent className="p-0">
             <div className="flex flex-col md:flex-row">
               {/* Doctor/Patient Information */}
@@ -54,28 +54,21 @@ const ProcessAppointment = () => {
                     <span className="text-xs font-medium text-blue-500">#app0001</span>
                     <h2 className="text-lg font-semibold">Kelly Joseph</h2>
                   </div>
-                  <div className="text-sm text-gray-600 mb-1">Kelly@Example.Com</div>
-                  <div className="text-sm text-gray-600">+1 504 368 6874</div>
+                  <div className="text-xs text-gray-600 mb-1">28 Years • Female • O+ve</div>
+                  <div className="text-xs text-gray-600 mb-1">Kelly@Example.Com</div>
+                  <div className="text-xs text-gray-600">+1 504 368 6874</div>
                 </div>
               </div>
               
               {/* Appointment Details */}
-              <div className="grid grid-cols-2 md:grid-cols-4 border-t md:border-t-0 md:border-l border-gray-200">
+              <div className="grid grid-cols-2 md:grid-cols-2 border-t md:border-t-0 md:border-l border-gray-200">
                 <div className="p-4 border-r border-b md:border-b-0">
                   <div className="text-xs text-gray-500">Appointment Date & Time</div>
                   <div className="font-medium">22 Jul 2023 - 12:00 pm</div>
                 </div>
-                <div className="p-4 border-b md:border-b-0 md:border-r">
-                  <div className="text-xs text-gray-500">Clinic Location</div>
+                <div className="p-4 border-b md:border-b-0">
+                  <div className="text-xs text-gray-500">Clinic</div>
                   <div className="font-medium">Adrian's Dentistry</div>
-                </div>
-                <div className="p-4 border-r">
-                  <div className="text-xs text-gray-500">Location</div>
-                  <div className="font-medium">Newyork, United States</div>
-                </div>
-                <div className="p-4">
-                  <div className="text-xs text-gray-500">Visit Type</div>
-                  <div className="font-medium">General</div>
                 </div>
               </div>
               
@@ -93,7 +86,7 @@ const ProcessAppointment = () => {
         </Card>
         
         {/* Session timer */}
-        <div className="flex justify-between items-center bg-gray-50 p-3 rounded-lg mb-6">
+        <div className="flex justify-between items-center bg-gray-50 p-3 rounded-lg mb-6 sticky top-[105px] z-10 shadow-sm">
           <div className="font-medium">Session Ends in</div>
           <div className="flex items-center gap-2 font-bold text-lg">
             <Clock className="h-5 w-5 text-primary" />
@@ -101,7 +94,7 @@ const ProcessAppointment = () => {
           </div>
         </div>
         
-        <h2 className="text-xl font-bold mb-6">Create Appointment Details</h2>
+        <h2 className="text-xl font-bold mb-6 sticky top-[165px] bg-white py-2 z-10">Create Appointment Details</h2>
         
         {/* Patient information */}
         <Card className="mb-6">
@@ -109,16 +102,8 @@ const ProcessAppointment = () => {
             <h3 className="text-lg font-medium mb-4">Patient Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
-                <div className="text-sm text-gray-500 mb-2">Age / Gender</div>
-                <div>28 Years / Female</div>
-              </div>
-              <div>
                 <div className="text-sm text-gray-500 mb-2">Address</div>
                 <div>Newyork, United States</div>
-              </div>
-              <div>
-                <div className="text-sm text-gray-500 mb-2">Blood Group</div>
-                <div>O+ve</div>
               </div>
               <div>
                 <div className="text-sm text-gray-500 mb-2">No of Visit</div>
@@ -199,7 +184,7 @@ const ProcessAppointment = () => {
             </div>
           </CardContent>
         </Card>
-        
+
         {/* Previous Medical History */}
         <Card className="mb-6">
           <CardContent className="p-6">

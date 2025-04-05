@@ -12,6 +12,8 @@ import {
   ChevronRight,
   Bell,
   LogOut,
+  PanelLeftClose,
+  PanelLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,7 +26,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface DoctorLayoutProps {
   children: ReactNode;
@@ -33,9 +41,11 @@ interface DoctorLayoutProps {
 export function DoctorLayout({ children }: DoctorLayoutProps) {
   const { pathname } = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [iconOnly, setIconOnly] = useState(false);
   const { toast } = useToast();
   
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+  const toggleIconOnly = () => setIconOnly(!iconOnly);
   
   const navigation = [
     { name: "Dashboard", href: "/doctor", icon: Home },
@@ -53,6 +63,16 @@ export function DoctorLayout({ children }: DoctorLayoutProps) {
     // In a real app, this would handle actual logout functionality
   };
 
+  // Don't show the sidebar on the onboarding route
+  const isOnboardingRoute = pathname.includes("/doctor/onboarding");
+  if (isOnboardingRoute) {
+    return (
+      <div className="min-h-screen bg-background">
+        <main>{children}</main>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
       {/* Mobile sidebar toggle */}
@@ -68,63 +88,96 @@ export function DoctorLayout({ children }: DoctorLayoutProps) {
       {/* Sidebar */}
       <div
         className={cn(
-          "fixed inset-y-0 left-0 z-40 w-64 transform transition-transform duration-300 ease-in-out bg-white border-r border-gray-100 shadow-lg",
+          "fixed inset-y-0 left-0 z-40 transform transition-all duration-300 ease-in-out bg-white border-r border-gray-100 shadow-lg",
           sidebarOpen ? "translate-x-0" : "-translate-x-full",
-          "md:translate-x-0"
+          "md:translate-x-0",
+          iconOnly ? "w-16" : "w-64"
         )}
       >
         <div className="flex flex-col h-full">
           {/* Logo area */}
-          <div className="p-4 border-b border-gray-100">
+          <div className="p-4 border-b border-gray-100 flex justify-between items-center">
             <div className="flex items-center">
-              <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white font-bold">
+              <div className="h-8 w-8 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold">
                 D
               </div>
-              <div className="ml-3 text-xl font-semibold text-gray-800">
-                Doctor Hub
-              </div>
+              {!iconOnly && (
+                <div className="ml-3 text-xl font-semibold text-gray-800 transition-opacity duration-200">
+                  Doctor Hub
+                </div>
+              )}
             </div>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="hidden md:flex"
+              onClick={toggleIconOnly}
+            >
+              {iconOnly ? <PanelLeft size={18} /> : <PanelLeftClose size={18} />}
+            </Button>
           </div>
 
           {/* Navigation */}
           <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-            {navigation.map((item) => {
-              const isActive = pathname === item.href;
-              return (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={cn(
-                    "flex items-center px-4 py-3 text-sm rounded-lg group transition-colors",
-                    isActive
-                      ? "bg-primary/10 text-primary"
-                      : "text-gray-600 hover:bg-primary/5 hover:text-primary"
-                  )}
-                >
-                  <item.icon className={cn("mr-3 h-5 w-5", isActive ? "text-primary" : "text-gray-400 group-hover:text-primary")} />
-                  {item.name}
-                  {isActive && (
-                    <ChevronRight className="ml-auto h-4 w-4 text-primary" />
-                  )}
-                </Link>
-              );
-            })}
+            <TooltipProvider delayDuration={200}>
+              {navigation.map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <Tooltip key={item.name}>
+                    <TooltipTrigger asChild>
+                      <Link
+                        to={item.href}
+                        className={cn(
+                          "flex items-center px-4 py-3 text-sm rounded-lg group transition-colors",
+                          isActive
+                            ? "bg-orange-500/10 text-orange-600"
+                            : "text-gray-600 hover:bg-orange-500/5 hover:text-orange-600"
+                        )}
+                      >
+                        <item.icon className={cn("mr-3 h-5 w-5", isActive ? "text-orange-500" : "text-gray-400 group-hover:text-orange-500")} />
+                        {!iconOnly && (
+                          <>
+                            {item.name}
+                            {isActive && (
+                              <ChevronRight className="ml-auto h-4 w-4 text-orange-500" />
+                            )}
+                          </>
+                        )}
+                      </Link>
+                    </TooltipTrigger>
+                    {iconOnly && (
+                      <TooltipContent side="right">
+                        {item.name}
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
+                );
+              })}
+            </TooltipProvider>
           </nav>
 
           {/* User profile */}
-          <div className="p-4 border-t border-gray-100">
+          <div className={cn("p-4 border-t border-gray-100", iconOnly && "px-2")}>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="w-full flex items-center justify-between text-left px-3 py-2 hover:bg-gray-100 rounded-lg">
+                <Button 
+                  variant="ghost" 
+                  className={cn(
+                    "w-full flex items-center justify-between text-left hover:bg-gray-100 rounded-lg",
+                    iconOnly ? "px-2 py-2" : "px-3 py-2"
+                  )}
+                >
                   <div className="flex items-center">
                     <Avatar className="h-8 w-8">
                       <AvatarImage src="https://placehold.co/200/eaf7fc/33C3F0?text=DR&font=montserrat" />
                       <AvatarFallback>DR</AvatarFallback>
                     </Avatar>
-                    <div className="ml-3">
-                      <p className="text-sm font-medium text-gray-800">Dr. Emily Johnson</p>
-                      <p className="text-xs text-gray-500">Cardiologist</p>
-                    </div>
+                    {!iconOnly && (
+                      <div className="ml-3">
+                        <p className="text-sm font-medium text-gray-800">Dr. Emily Johnson</p>
+                        <p className="text-xs text-gray-500">Cardiologist</p>
+                      </div>
+                    )}
                   </div>
                 </Button>
               </DropdownMenuTrigger>
@@ -157,7 +210,7 @@ export function DoctorLayout({ children }: DoctorLayoutProps) {
       {/* Main content */}
       <div className={cn(
         "transition-all duration-300 ease-in-out",
-        sidebarOpen ? "md:ml-64" : "ml-0"
+        sidebarOpen ? (iconOnly ? "md:ml-16" : "md:ml-64") : "ml-0"
       )}>
         <main className="min-h-screen">
           {children}

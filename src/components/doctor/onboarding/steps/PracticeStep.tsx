@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface PracticeData {
   type: string;
@@ -51,14 +51,14 @@ export const PracticeStep: React.FC<PracticeStepProps> = ({
           value={data.type} 
           onValueChange={(value) => onUpdate({ type: value })}
         >
-          <div className="border rounded-lg p-4 hover:border-primary transition-colors">
+          <div className="border rounded-lg p-4 hover:border-orange-500 transition-colors">
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="own" id="own" />
               <Label htmlFor="own" className="font-medium cursor-pointer">I own a establishment</Label>
             </div>
           </div>
           
-          <div className="border rounded-lg p-4 hover:border-primary transition-colors">
+          <div className="border rounded-lg p-4 hover:border-orange-500 transition-colors">
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="visit" id="visit" />
               <Label htmlFor="visit" className="font-medium cursor-pointer">I visit a establishment</Label>
@@ -73,14 +73,14 @@ export const PracticeStep: React.FC<PracticeStepProps> = ({
       </div>
 
       <div className="border-t pt-4 mt-4 flex justify-between">
-        <Button variant="outline" onClick={onBack} className="flex items-center">
-          <ChevronLeft className="h-4 w-4 mr-1" /> Back
+        <Button variant="outline" onClick={onBack} className="flex items-center gap-2">
+          <ChevronLeft className="h-4 w-4" /> Previous
         </Button>
         <Button 
-          className="bg-orange-500 hover:bg-orange-600 px-8"
+          className="bg-orange-500 hover:bg-orange-600 flex items-center gap-2"
           onClick={handleSubmit}
         >
-          Next
+          Next <ChevronRight className="h-4 w-4" />
         </Button>
       </div>
     </div>

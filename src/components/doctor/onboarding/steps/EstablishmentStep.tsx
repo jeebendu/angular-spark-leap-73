@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface EstablishmentData {
   name: string;
@@ -102,14 +102,14 @@ export const EstablishmentStep: React.FC<EstablishmentStepProps> = ({
       </div>
 
       <div className="border-t pt-4 mt-8 flex justify-between">
-        <Button variant="outline" onClick={onBack} className="flex items-center">
-          <ChevronLeft className="h-4 w-4 mr-1" /> Back
+        <Button variant="outline" onClick={onBack} className="flex items-center gap-2">
+          <ChevronLeft className="h-4 w-4" /> Previous
         </Button>
         <Button 
-          className="bg-orange-500 hover:bg-orange-600 px-8"
+          className="bg-orange-500 hover:bg-orange-600 flex items-center gap-2"
           onClick={handleSubmit}
         >
-          Next
+          Next <ChevronRight className="h-4 w-4" />
         </Button>
       </div>
     </div>

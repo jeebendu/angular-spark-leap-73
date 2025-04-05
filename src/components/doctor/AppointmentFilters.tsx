@@ -17,18 +17,24 @@ import {
 } from "@/components/ui/popover";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { format } from "date-fns";
-import { AppointmentFilters as FiltersType } from "@/models/AppointmentFilters";
+import { AppointmentFilterState } from "@/models/AppointmentFilters";
 
 interface AppointmentFiltersProps {
-  filters: FiltersType;
-  onFilterChange: (filters: FiltersType) => void;
+  filters: AppointmentFilterState;
+  onFilterChange: (filters: AppointmentFilterState) => void;
+  onToggleSortDirection?: () => void;
+  onClearFilters?: () => void;
+  onToggleViewMode?: () => void;
 }
 
 export const AppointmentFilters = ({
   filters,
   onFilterChange,
+  onToggleSortDirection,
+  onClearFilters,
+  onToggleViewMode
 }: AppointmentFiltersProps) => {
-  const handleFilterChange = (key: keyof FiltersType, value: any) => {
+  const handleFilterChange = (key: keyof AppointmentFilterState, value: any) => {
     onFilterChange({ ...filters, [key]: value });
   };
 
@@ -38,36 +44,37 @@ export const AppointmentFilters = ({
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input
-            className="pl-9 bg-white"
+            className="pl-9 bg-white bg-opacity-80"
             placeholder="Search by patient name"
-            value={filters.search}
-            onChange={(e) => handleFilterChange("search", e.target.value)}
+            value={filters.searchQuery}
+            onChange={(e) => handleFilterChange("searchQuery", e.target.value)}
           />
         </div>
       </div>
       
       <div className="flex gap-2">
         <Select
-          value={filters.status}
-          onValueChange={(value) => handleFilterChange("status", value)}
+          value={filters.visitTypeFilter}
+          onValueChange={(value) => handleFilterChange("visitTypeFilter", value)}
         >
-          <SelectTrigger className="w-[180px] bg-white">
-            <SelectValue placeholder="Status" />
+          <SelectTrigger className="w-[180px] bg-white bg-opacity-80">
+            <SelectValue placeholder="Visit Type" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All</SelectItem>
-            <SelectItem value="upcoming">Upcoming</SelectItem>
-            <SelectItem value="completed">Completed</SelectItem>
-            <SelectItem value="cancelled">Cancelled</SelectItem>
+            <SelectItem value="General Visit">General Visit</SelectItem>
+            <SelectItem value="Video Call">Video Call</SelectItem>
+            <SelectItem value="Audio Call">Audio Call</SelectItem>
+            <SelectItem value="Direct Visit">Direct Visit</SelectItem>
           </SelectContent>
         </Select>
 
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="outline" className="w-[180px] justify-start text-left font-normal bg-white">
+            <Button variant="outline" className="w-[180px] justify-start text-left font-normal bg-white bg-opacity-80">
               <Calendar className="mr-2 h-4 w-4" />
-              {filters.date ? (
-                format(filters.date, "PPP")
+              {filters.dateRange ? (
+                filters.dateRange
               ) : (
                 <span>Pick a date</span>
               )}
@@ -76,8 +83,8 @@ export const AppointmentFilters = ({
           <PopoverContent className="w-auto p-0" align="start">
             <CalendarComponent
               mode="single"
-              selected={filters.date || undefined}
-              onSelect={(date) => handleFilterChange("date", date)}
+              selected={filters.dateRange ? new Date(filters.dateRange) : undefined}
+              onSelect={(date) => handleFilterChange("dateRange", date ? format(date, "yyyy-MM-dd") : "")}
               initialFocus
             />
           </PopoverContent>

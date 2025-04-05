@@ -75,8 +75,8 @@ export function AppointmentList({ appointments, onStartAppointment }: Appointmen
     setActiveTab(value as "upcoming" | "completed" | "cancelled");
   };
   
-  const handleFilterChange = (key: keyof AppointmentFilterState, value: string) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
+  const handleFilterChange = (newFilters: AppointmentFilterState) => {
+    setFilters(newFilters);
   };
 
   const handleToggleSortDirection = () => {
@@ -120,7 +120,7 @@ export function AppointmentList({ appointments, onStartAppointment }: Appointmen
         onFilterChange={handleFilterChange}
         onToggleSortDirection={handleToggleSortDirection}
         onClearFilters={handleClearFilters}
-        onToggleViewMode={() => handleFilterChange('viewMode', filters.viewMode === 'list' ? 'grid' : 'list')}
+        onToggleViewMode={() => handleFilterChange({ ...filters, viewMode: filters.viewMode === 'list' ? 'grid' : 'list' })}
       />
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="mt-2">

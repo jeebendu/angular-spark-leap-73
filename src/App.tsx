@@ -5,7 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { LocationProvider } from "./contexts/LocationContext";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Tests from "./pages/Tests";
@@ -15,6 +15,9 @@ import Account from "./pages/Account";
 import Appointments from "./pages/Appointments";
 import DoctorSearch from "./pages/DoctorSearch";
 import DoctorDetails from "./pages/DoctorDetails";
+import PatientLogin from "./pages/PatientLogin";
+import DoctorLogin from "./pages/DoctorLogin";
+import DoctorDashboard from "./pages/DoctorDashboard";
 
 // Custom component to prevent re-renders
 const ScrollToTop = () => {
@@ -45,7 +48,9 @@ const App = () => (
         <BrowserRouter>
           <ScrollToTop />
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<PatientLogin />} />
+            <Route path="/login" element={<PatientLogin />} />
+            <Route path="/dashboard" element={<Index />} />
             <Route path="/tests" element={<Tests />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/chat" element={<Chat />} />
@@ -53,6 +58,11 @@ const App = () => (
             <Route path="/appointments" element={<Appointments />} />
             <Route path="/doctor/search" element={<DoctorSearch />} />
             <Route path="/doctor/:id" element={<DoctorDetails />} />
+            
+            {/* Doctor routes */}
+            <Route path="/doctor/login" element={<DoctorLogin />} />
+            <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
+            
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -3,7 +3,7 @@ import { FilterOption } from "./Appointment";
 
 export interface AppointmentFilterState {
   searchQuery: string;
-  dateRange: string;
+  dateRange: string;  // Format: "YYYY-MM-DD - YYYY-MM-DD"
   visitTypeFilter: string;
   sortField: "date" | "name";
   sortDirection: "asc" | "desc";

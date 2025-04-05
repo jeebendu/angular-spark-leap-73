@@ -3,9 +3,11 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Eye, Phone, User, Calendar, Clock, CalendarClock } from "lucide-react";
+import { Eye, Phone, User, Calendar, Clock, CalendarClock, ChevronRight } from "lucide-react";
 import { AppointmentDetails } from "@/models/Appointment";
 import { format } from "date-fns";
+import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 
 interface AppointmentGridCardProps {
   appointment: AppointmentDetails;
@@ -18,6 +20,9 @@ export function AppointmentGridCard({
   onStartAppointment,
   onViewAppointment
 }: AppointmentGridCardProps) {
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  
   const {
     id,
     patientName,
@@ -41,6 +46,19 @@ export function AppointmentGridCard({
     "Date not specified";
     
   const formattedTime = selectedTime || "Time not specified";
+  
+  const handleStartAppointment = () => {
+    if (id && onStartAppointment) {
+      onStartAppointment(id);
+    } else {
+      // Navigate to the process appointment page
+      toast({
+        title: "Starting appointment",
+        description: "Navigating to appointment processing page"
+      });
+      navigate("/doctor/process-appointment");
+    }
+  };
 
   const statusColors = {
     upcoming: "bg-blue-50 text-blue-600",
@@ -174,10 +192,11 @@ export function AppointmentGridCard({
               {status === "upcoming" && (
                 <Button 
                   size="sm"
-                  onClick={() => id && onStartAppointment?.(id)} 
-                  className="bg-primary hover:bg-primary/90 h-8"
+                  onClick={handleStartAppointment} 
+                  className="bg-primary hover:bg-primary/90 h-8 gap-1"
                 >
                   Start
+                  <ChevronRight className="h-4 w-4" />
                 </Button>
               )}
             </div>

@@ -3,6 +3,7 @@ import React from "react";
 import { AppointmentDetails } from "@/models/Appointment";
 import { AppointmentListCard } from "./AppointmentListCard";
 import { AppointmentGridCard } from "./AppointmentGridCard";
+import { motion } from "framer-motion";
 
 interface AppointmentRendererProps {
   appointments: AppointmentDetails[];
@@ -19,9 +20,14 @@ export function AppointmentRenderer({
 }: AppointmentRendererProps) {
   if (appointments.length === 0) {
     return (
-      <div className="text-center py-12 bg-gray-50 rounded-lg">
+      <motion.div 
+        initial={{ opacity: 0 }} 
+        animate={{ opacity: 1 }}
+        className="text-center py-12 bg-gray-50 rounded-lg"
+      >
         <p className="text-gray-500">No appointments found.</p>
-      </div>
+        <p className="text-sm text-gray-400 mt-2">Try adjusting your filters or search query.</p>
+      </motion.div>
     );
   }
   

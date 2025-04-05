@@ -100,7 +100,7 @@ const DashboardPage = () => {
                   </div>
                   <span className="text-sm font-medium">42</span>
                 </div>
-                <Progress value={85} className="h-1.5 bg-amber-100" indicatorClassName="bg-amber-500" />
+                <Progress value={85} className="h-1.5 bg-amber-100" />
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
@@ -110,7 +110,7 @@ const DashboardPage = () => {
                   </div>
                   <span className="text-sm font-medium">18</span>
                 </div>
-                <Progress value={35} className="h-1.5 bg-green-100" indicatorClassName="bg-green-500" />
+                <Progress value={35} className="h-1.5 bg-green-100" />
               </div>
             </CardContent>
           </Card>

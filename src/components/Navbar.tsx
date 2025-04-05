@@ -54,6 +54,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import { useNavigate } from "react-router-dom";
 
 export function Navbar() {
   const { t } = useTranslation();
@@ -66,6 +67,7 @@ export function Navbar() {
   const [cityDialogOpen, setCityDialogOpen] = useState(false);
   const [loginDialogOpen, setLoginDialogOpen] = useState(false);
   const [countryCode, setCountryCode] = useState("+91");
+  const navigate = useNavigate();
   
   // Get user info from auth service
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -182,6 +184,10 @@ export function Navbar() {
     setIsOtpSent(false);
   };
   
+  const handleDoctorNavigation = () => {
+    navigate("/doctor");
+  };
+
   return (
     <header className={`py-3 px-4 md:px-6 sticky top-0 z-30 ${scrolled ? 'glass-header' : 'bg-white border-b'}`}>
       <div className="container flex items-center justify-between">
@@ -275,10 +281,6 @@ export function Navbar() {
         
         <div className="flex items-center gap-3 md:gap-6">
           <nav className="hidden md:flex items-center gap-6">
-            <Link to="/" className="text-sm font-medium hover:text-primary transition-colors">
-              {t('common.home')}
-            </Link>
-            
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
@@ -298,13 +300,13 @@ export function Navbar() {
                       </li>
                       <li>
                         <NavigationMenuLink asChild>
-                          <Link
-                            to="/clinic-registration"
-                            className="flex items-center p-2 hover:bg-slate-100 rounded-md"
+                          <button
+                            onClick={handleDoctorNavigation} 
+                            className="w-full flex items-center p-2 hover:bg-slate-100 rounded-md text-left"
                           >
-                            <Building className="mr-2 h-4 w-4" />
-                            <span>Clinics</span>
-                          </Link>
+                            <User className="mr-2 h-4 w-4" />
+                            <span>Doctor Dashboard</span>
+                          </button>
                         </NavigationMenuLink>
                       </li>
                     </ul>
@@ -312,6 +314,10 @@ export function Navbar() {
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
+            
+            <Link to="/clinic-management" className="text-sm font-medium hover:text-primary transition-colors">
+              Clinic
+            </Link>
           </nav>
           
           <div className="flex items-center gap-3">

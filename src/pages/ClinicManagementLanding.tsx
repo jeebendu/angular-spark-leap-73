@@ -1,4 +1,3 @@
-
 import React from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -18,13 +17,13 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { ProvidersMenu } from "@/components/ProvidersMenu";
+import { Label } from "@/components/ui/label";
 
 const ClinicManagementLanding = () => {
   return (
     <AppLayout>
       <div className="container mx-auto px-4 py-12">
-        {/* Hero Section */}
+        {/* Hero Section with Login/Registration Form */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -38,21 +37,123 @@ const ClinicManagementLanding = () => {
             <p className="text-lg text-gray-600 mb-6">
               A comprehensive SaaS solution designed specifically for healthcare providers to optimize operations, improve patient care, and boost revenue.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button className="sky-button" asChild>
-                <Link to="/clinic-registration">Get Started Free</Link>
+            <div className="hidden sm:flex flex-col sm:flex-row gap-4">
+              <Button className="sky-button">
+                Schedule Demo
               </Button>
               <Button variant="outline">
-                Schedule Demo
+                Learn More
               </Button>
             </div>
           </div>
-          <div className="lg:w-1/2">
-            <img
-              src="https://preview--appointify-platform-67.lovable.app/lovable-uploads/8ecf0148-aeef-4d33-acd7-b29efebedf9d.png"
-              alt="Clinic Management Dashboard"
-              className="rounded-lg shadow-lg w-full"
+          <div className="lg:w-1/2 rounded-lg shadow-lg overflow-hidden">
+            <Tabs defaultValue="login" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="login">Access Portal</TabsTrigger>
+                <TabsTrigger value="register">Register</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="login" className="p-6 bg-white">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Clinic Subdomain
+                    </label>
+                    <div className="flex">
+                      <Input placeholder="your-clinic" className="rounded-r-none" />
+                      <div className="bg-gray-100 border border-l-0 border-gray-300 rounded-r-md px-3 flex items-center text-gray-500">
+                        .clinichub.com
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Password
+                    </label>
+                    <Input type="password" placeholder="Enter your password" />
+                  </div>
+                  <div className="flex justify-between items-center text-sm">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="checkbox" className="rounded text-primary focus:ring-primary" />
+                      Remember me
+                    </label>
+                    <a href="#" className="text-primary hover:underline">
+                      Forgot password?
+                    </a>
+                  </div>
+                  <Button className="w-full sky-button">
+                    Access Portal <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="register" className="p-6 bg-white">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Clinic Name
+                    </label>
+                    <Input placeholder="Enter clinic name" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Email Address
+                    </label>
+                    <Input type="email" placeholder="email@example.com" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Choose Subdomain
+                    </label>
+                    <div className="flex">
+                      <Input placeholder="your-clinic" className="rounded-r-none" />
+                      <div className="bg-gray-100 border border-l-0 border-gray-300 rounded-r-md px-3 flex items-center text-gray-500">
+                        .clinichub.com
+                      </div>
+                    </div>
+                  </div>
+                  <Button className="w-full sky-button">
+                    Get Started Free
+                  </Button>
+                  <p className="text-xs text-center text-gray-500">
+                    By signing up, you agree to our Terms of Service and Privacy Policy
+                  </p>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
+        </motion.div>
+        
+        {/* Banner Section */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+          className="mb-16"
+        >
+          <div className="rounded-xl overflow-hidden relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-primary/40 z-10"></div>
+            <img 
+              src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=1470"
+              alt="Healthcare professionals" 
+              className="w-full h-80 object-cover"
             />
+            <div className="absolute inset-0 z-20 flex items-center justify-center">
+              <div className="text-center text-white px-4">
+                <h2 className="text-3xl md:text-4xl font-bold mb-4">Transform Your Healthcare Practice</h2>
+                <p className="text-lg md:text-xl max-w-2xl mx-auto mb-8">
+                  Join thousands of clinics using our platform to deliver better patient care
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Button size="lg" className="bg-white text-primary hover:bg-white/90">
+                    Start Free Trial
+                  </Button>
+                  <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/20">
+                    Watch Demo
+                  </Button>
+                </div>
+              </div>
+            </div>
           </div>
         </motion.div>
 
@@ -142,101 +243,6 @@ const ClinicManagementLanding = () => {
                   </p>
                 </CardContent>
               </Card>
-            </div>
-          </motion.div>
-        </section>
-
-        {/* Registration/Login Section */}
-        <section className="mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-            className="bg-white rounded-xl p-8 shadow-md"
-          >
-            <div className="flex flex-col lg:flex-row">
-              <div className="lg:w-1/2 lg:pr-8 mb-8 lg:mb-0">
-                <h2 className="text-2xl font-bold mb-4">Join Our Clinic Management Platform</h2>
-                <p className="text-gray-600 mb-6">
-                  Transform your healthcare practice with our comprehensive clinic management solution designed for modern healthcare providers.
-                </p>
-                
-                <ul className="space-y-3">
-                  {[
-                    "Streamline administrative tasks and reduce overhead",
-                    "Enhance patient experience with online booking and reminders",
-                    "Access critical data anytime, anywhere with cloud-based solution",
-                    "Scale your practice with flexible subscription options"
-                  ].map((item, index) => (
-                    <li key={index} className="flex items-start">
-                      <CheckCircle2 className="h-5 w-5 text-primary mt-0.5 mr-2 flex-shrink-0" />
-                      <span className="text-gray-600">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              
-              <div className="lg:w-1/2 lg:pl-8 border-t lg:border-t-0 lg:border-l border-gray-200 pt-8 lg:pt-0 lg:pl-12">
-                <Tabs defaultValue="login" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2 mb-6">
-                    <TabsTrigger value="login">Access Portal</TabsTrigger>
-                    <TabsTrigger value="register">Register</TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="login">
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Clinic Subdomain
-                        </label>
-                        <div className="flex">
-                          <Input placeholder="your-clinic" className="rounded-r-none" />
-                          <div className="bg-gray-100 border border-l-0 border-gray-300 rounded-r-md px-3 flex items-center text-gray-500">
-                            .clinichub.com
-                          </div>
-                        </div>
-                      </div>
-                      <Button className="w-full sky-button">
-                        Access Portal <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TabsContent>
-                  
-                  <TabsContent value="register">
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Clinic Name
-                        </label>
-                        <Input placeholder="Enter clinic name" />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Email Address
-                        </label>
-                        <Input type="email" placeholder="email@example.com" />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Choose Subdomain
-                        </label>
-                        <div className="flex">
-                          <Input placeholder="your-clinic" className="rounded-r-none" />
-                          <div className="bg-gray-100 border border-l-0 border-gray-300 rounded-r-md px-3 flex items-center text-gray-500">
-                            .clinichub.com
-                          </div>
-                        </div>
-                      </div>
-                      <Button className="w-full sky-button">
-                        Get Started Free
-                      </Button>
-                      <p className="text-xs text-center text-gray-500">
-                        By signing up, you agree to our Terms of Service and Privacy Policy
-                      </p>
-                    </div>
-                  </TabsContent>
-                </Tabs>
-              </div>
             </div>
           </motion.div>
         </section>

@@ -91,7 +91,7 @@ export function AppointmentFilters({
   };
 
   return (
-    <div className="flex flex-col gap-4 mb-6 sticky top-0 pt-6 pb-4 bg-white z-10">
+    <div className="flex flex-col gap-4 mb-6 sticky top-0 pt-6 pb-4 bg-transparent z-10">
       <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
         <div className="relative w-full lg:w-auto lg:flex-grow">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />

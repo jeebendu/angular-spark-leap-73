@@ -20,7 +20,6 @@ import DoctorAppointmentsPage from "./pages/doctor/Appointments";
 import ProcessAppointment from "./pages/doctor/ProcessAppointment";
 import DoctorOnboardingPage from "./pages/doctor/Onboarding";
 import { DoctorSchedulePage } from "./pages/doctor/Schedule";
-import ClinicRegistration from "./pages/ClinicRegistration";
 import ClinicManagementLanding from "./pages/ClinicManagementLanding";
 
 const ScrollToTop = () => {
@@ -61,7 +60,6 @@ function App() {
               <Route path="/account" element={<Account />} />
               <Route path="/chat" element={<Chat />} />
               <Route path="/clinic-management" element={<ClinicManagementLanding />} />
-              <Route path="/clinic-registration" element={<ClinicRegistration />} />
               <Route path="*" element={<NotFound />} />
               
               {/* Doctor Routes */}

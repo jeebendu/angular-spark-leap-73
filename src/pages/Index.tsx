@@ -5,13 +5,58 @@ import { SearchBar } from "@/components/SearchBar";
 import { Button } from "@/components/ui/button";
 import { Specializations } from "@/components/Specializations";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
+import { AppointmentCard } from "@/components/AppointmentCard";
+import authService from "@/services/authService";
+
+// Mock upcoming appointments data
+const upcomingAppointments = [
+  {
+    id: "1",
+    doctorName: "Dr. Sarah Johnson",
+    specialty: "Cardiologist",
+    date: "2025-04-15",
+    time: "10:30 AM",
+    clinicName: "Wellness Heart Clinic",
+    location: "Bhubaneswar",
+    status: "confirmed",
+    imageSrc: "https://preview--appointify-platform-67.lovable.app/lovable-uploads/d82a74cb-0b37-4b2c-8189-2b22f05c214a.png",
+  },
+  {
+    id: "2",
+    doctorName: "Dr. Michael Chen",
+    specialty: "Dermatologist",
+    date: "2025-04-18",
+    time: "3:15 PM",
+    clinicName: "Skin Health Center",
+    location: "Bhubaneswar",
+    status: "confirmed",
+    imageSrc: "https://preview--appointify-platform-67.lovable.app/lovable-uploads/0f62ca83-c439-4dfa-8703-5891d34eb742.png",
+  }
+];
 
 const Index = () => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const checkLoginStatus = () => {
+      setIsLoggedIn(authService.isLoggedIn());
+    };
+    
+    checkLoginStatus();
+    
+    // Listen for changes to auth state (like login/logout)
+    window.addEventListener('storage', checkLoginStatus);
+    return () => window.removeEventListener('storage', checkLoginStatus);
+  }, []);
+
+  const handleViewAllAppointments = () => {
+    navigate('/appointments');
+  };
 
   return (
     <AppLayout>
@@ -57,6 +102,36 @@ const Index = () => {
             />
           </div>
         </motion.section>
+
+        {/* Upcoming Appointments (only shown if logged in) */}
+        {isLoggedIn && upcomingAppointments.length > 0 && (
+          <motion.section
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.5 }}
+            className="mb-10"
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">Your Upcoming Appointments</h2>
+              <Button 
+                variant="ghost" 
+                className="text-primary flex items-center"
+                onClick={handleViewAllAppointments}
+              >
+                View all
+                <ChevronRight className="h-4 w-4 ml-1" />
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {upcomingAppointments.map((appointment) => (
+                <AppointmentCard 
+                  key={appointment.id}
+                  appointment={appointment}
+                />
+              ))}
+            </div>
+          </motion.section>
+        )}
 
         {/* Specializations Section */}
         <motion.section

@@ -1,5 +1,5 @@
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -48,6 +48,24 @@ export function SearchBar() {
     handleDoctorSearch(suggestion);
   };
 
+  // Only close the suggestions on click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        searchInputRef.current && 
+        !searchInputRef.current.contains(event.target as Node) &&
+        !(event.target as Element).closest('[data-radix-popper-content-wrapper]')
+      ) {
+        setOpenSuggestions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
     <div className="search-container flex items-center w-full max-w-3xl mx-auto relative rounded-full shadow-lg p-1 sm:p-2">
       {/* Locality field (mobile: icon only, desktop: text) */}
@@ -77,7 +95,7 @@ export function SearchBar() {
               />
             </div>
           </PopoverTrigger>
-          <PopoverContent className="p-0 w-[65vw] max-w-[500px]" align="start">
+          <PopoverContent className="p-0 w-[65vw] max-w-[500px]" align="start" sideOffset={5}>
             <div className="max-h-60 overflow-y-auto py-2">
               {filteredSuggestions.map((suggestion, index) => (
                 <div 

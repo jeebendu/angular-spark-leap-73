@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -161,6 +162,13 @@
   /* Banner styling */
   .promo-banner {
     @apply w-full rounded-xl overflow-hidden my-6 relative;
+  }
+
+  /* Mobile-specific adjustments */
+  @media (max-width: 767px) {
+    .container {
+      @apply px-2;
+    }
   }
 }
 

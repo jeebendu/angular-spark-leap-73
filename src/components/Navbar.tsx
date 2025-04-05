@@ -182,22 +182,22 @@ export function Navbar() {
   };
 
   return (
-    <header className={`py-3 px-4 md:px-6 sticky top-0 z-30 ${scrolled ? 'glass-header' : 'bg-white border-b'}`}>
+    <header className={`py-2 px-2 md:px-6 sticky top-0 z-30 ${scrolled ? 'glass-header' : 'bg-white border-b'}`}>
       <div className="container flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Link to="/" className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
+          <Link to="/" className="flex items-center">
             <img 
               src="https://res.cloudinary.com/dzxuxfagt/image/upload/h_100/assets/logo.png" 
               alt="ClinicHub Logo" 
-              className="h-8"
+              className="h-8 w-auto object-contain"
             />
           </Link>
           
           <Dialog open={cityDialogOpen} onOpenChange={setCityDialogOpen}>
             <DialogTrigger asChild>
-              <Button variant="ghost" className="gap-2 text-sm font-medium ml-2">
+              <Button variant="ghost" className="gap-1 text-sm font-medium ml-1 p-1 md:p-2">
                 <MapPin className="text-primary h-4 w-4" />
-                <span className="font-medium">{selectedCity}</span>
+                {!isMobile && <span className="font-medium">{selectedCity}</span>}
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-4xl p-8 bg-white modal-background">
@@ -271,7 +271,7 @@ export function Navbar() {
           </Dialog>
         </div>
         
-        <div className="flex items-center gap-3 md:gap-6">
+        <div className="flex items-center gap-1 md:gap-6">
           <nav className="hidden md:flex items-center gap-6">
             <NavigationMenu>
               <NavigationMenuList>
@@ -308,7 +308,7 @@ export function Navbar() {
             </NavigationMenu>
           </nav>
           
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1 md:gap-3">
             <Button variant="ghost" size="icon" className="text-muted-foreground relative hidden md:flex">
               <Bell className="h-5 w-5" />
               <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
@@ -529,9 +529,29 @@ export function Navbar() {
             )}
             
             {isMobile && (
-              <Button variant="ghost" size="icon" className="text-muted-foreground ml-1">
-                <Menu className="h-5 w-5" />
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="text-muted-foreground ml-1">
+                    <Menu className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>Providers</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <Link to="/clinic-management" className="flex items-center w-full">
+                      <Building className="mr-2 h-4 w-4" />
+                      <span>Clinic</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Link to="/doctor" className="flex items-center w-full">
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Doctor Dashboard</span>
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
           </div>
         </div>

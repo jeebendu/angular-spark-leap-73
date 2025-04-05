@@ -17,10 +17,12 @@ interface MatchingProfile {
 
 interface MatchingProfilesStepProps {
   onBack: () => void;
+  onComplete?: () => void;
 }
 
 export const MatchingProfilesStep: React.FC<MatchingProfilesStepProps> = ({ 
-  onBack
+  onBack,
+  onComplete
 }) => {
   const [selectedProfile, setSelectedProfile] = useState<string | null>(null);
   
@@ -53,6 +55,9 @@ export const MatchingProfilesStep: React.FC<MatchingProfilesStepProps> = ({
     if (selectedProfile) {
       console.log("Profile confirmed:", selectedProfile);
       // In a real application, this would submit the selection and complete onboarding
+      if (onComplete) {
+        onComplete();
+      }
     }
   };
 

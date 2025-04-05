@@ -2,6 +2,7 @@
 export interface UserInfo {
   name: string;
   mobile: string;
+  userType?: string;
   // Add other user properties as needed
 }
 

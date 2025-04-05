@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { 
   Tabs, 
@@ -8,12 +7,13 @@ import {
 } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { AppointmentDetails } from "@/models/Appointment";
+import { format } from "date-fns";
 import { AppointmentFilters } from "./AppointmentFilters";
 import { AppointmentRenderer } from "./AppointmentRenderer";
 import { AppointmentDetailsDialog } from "./AppointmentDetailsDialog";
 import { AppointmentFilterState, defaultFilters } from "@/models/AppointmentFilters";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 
 interface AppointmentListProps {
   appointments: AppointmentDetails[];
@@ -104,67 +104,65 @@ export function AppointmentList({ appointments, onStartAppointment }: Appointmen
         title: "Starting appointment",
         description: "Navigating to appointment processing page..."
       });
-      navigate(`/doctor/appointments/${appointmentId}`);
+      navigate(`/doctor/process-appointment?id=${appointmentId}`);
     }
   };
 
   return (
     <div className="w-full">
-      <div className="sticky top-0 z-30 bg-white pb-4 pt-6 px-6">
-        <h1 className="text-2xl font-bold mb-6">Appointments</h1>
-        
-        <AppointmentFilters 
-          filters={filters}
-          onFilterChange={handleFilterChange}
-          onToggleSortDirection={handleToggleSortDirection}
-          onClearFilters={handleClearFilters}
-          onToggleViewMode={() => handleFilterChange('viewMode', filters.viewMode === 'list' ? 'grid' : 'list')}
-        />
-
-        <Tabs value={activeTab} onValueChange={handleTabChange} className="mt-4">
-          <TabsList className="mb-4">
-            <TabsTrigger value="upcoming" className="relative">
-              Upcoming
-              <Badge className="ml-2 bg-primary text-white">{counts.upcoming}</Badge>
-            </TabsTrigger>
-            <TabsTrigger value="cancelled">
-              Cancelled
-              <Badge className="ml-2 bg-gray-200 text-gray-700">{counts.cancelled}</Badge>
-            </TabsTrigger>
-            <TabsTrigger value="completed">
-              Completed
-              <Badge className="ml-2 bg-gray-200 text-gray-700">{counts.completed}</Badge>
-            </TabsTrigger>
-          </TabsList>
+      <h1 className="text-2xl font-bold mb-6">Appointments</h1>
       
-          <TabsContent value="upcoming" className="mt-0">
-            <AppointmentRenderer 
-              appointments={sortedAppointments} 
-              viewMode={filters.viewMode}
-              onStartAppointment={handleStartAppointment}
-              onViewAppointment={handleViewAppointment}
-            />
-          </TabsContent>
-          
-          <TabsContent value="cancelled" className="mt-0">
-            <AppointmentRenderer 
-              appointments={sortedAppointments} 
-              viewMode={filters.viewMode}
-              onStartAppointment={handleStartAppointment}
-              onViewAppointment={handleViewAppointment}
-            />
-          </TabsContent>
-          
-          <TabsContent value="completed" className="mt-0">
-            <AppointmentRenderer 
-              appointments={sortedAppointments} 
-              viewMode={filters.viewMode}
-              onStartAppointment={handleStartAppointment}
-              onViewAppointment={handleViewAppointment}
-            />
-          </TabsContent>
-        </Tabs>
-      </div>
+      <AppointmentFilters 
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        onToggleSortDirection={handleToggleSortDirection}
+        onClearFilters={handleClearFilters}
+        onToggleViewMode={() => handleFilterChange('viewMode', filters.viewMode === 'list' ? 'grid' : 'list')}
+      />
+
+      <Tabs value={activeTab} onValueChange={handleTabChange}>
+        <TabsList className="mb-6">
+          <TabsTrigger value="upcoming" className="relative">
+            Upcoming
+            <Badge className="ml-2 bg-primary text-white">{counts.upcoming}</Badge>
+          </TabsTrigger>
+          <TabsTrigger value="cancelled">
+            Cancelled
+            <Badge className="ml-2 bg-gray-200 text-gray-700">{counts.cancelled}</Badge>
+          </TabsTrigger>
+          <TabsTrigger value="completed">
+            Completed
+            <Badge className="ml-2 bg-gray-200 text-gray-700">{counts.completed}</Badge>
+          </TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="upcoming" className="mt-0">
+          <AppointmentRenderer 
+            appointments={sortedAppointments} 
+            viewMode={filters.viewMode}
+            onStartAppointment={handleStartAppointment}
+            onViewAppointment={handleViewAppointment}
+          />
+        </TabsContent>
+        
+        <TabsContent value="cancelled" className="mt-0">
+          <AppointmentRenderer 
+            appointments={sortedAppointments} 
+            viewMode={filters.viewMode}
+            onStartAppointment={handleStartAppointment}
+            onViewAppointment={handleViewAppointment}
+          />
+        </TabsContent>
+        
+        <TabsContent value="completed" className="mt-0">
+          <AppointmentRenderer 
+            appointments={sortedAppointments} 
+            viewMode={filters.viewMode}
+            onStartAppointment={handleStartAppointment}
+            onViewAppointment={handleViewAppointment}
+          />
+        </TabsContent>
+      </Tabs>
 
       <AppointmentDetailsDialog 
         open={isDetailsDialogOpen}

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { DoctorLayout } from "@/components/DoctorLayout";
 import { AppointmentList } from "@/components/doctor/AppointmentList";
@@ -118,7 +117,7 @@ const Appointments = () => {
   
   return (
     <DoctorLayout>
-      <div className="pb-6">
+      <div className="p-6">
         <AppointmentList 
           appointments={appointments}
         />

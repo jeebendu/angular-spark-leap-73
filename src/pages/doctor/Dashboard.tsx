@@ -110,7 +110,7 @@ const Dashboard = () => {
 
   return (
     <DoctorLayout>
-      <div className="space-y-6">
+      <div className="container mx-auto p-6 space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
@@ -118,10 +118,10 @@ const Dashboard = () => {
             <p className="text-gray-600">Welcome back, Dr. Emily Johnson</p>
           </div>
           <div className="flex space-x-3">
-            <Button className="bg-purple-600 hover:bg-purple-700 text-white">
+            <Button className="bg-primary hover:bg-primary/90 text-white">
               <Bell className="h-4 w-4 mr-2" />
               <span>Notifications</span>
-              <span className="ml-2 bg-white text-purple-600 rounded-full h-5 w-5 flex items-center justify-center text-xs font-semibold">
+              <span className="ml-2 bg-white text-primary rounded-full h-5 w-5 flex items-center justify-center text-xs font-semibold">
                 3
               </span>
             </Button>
@@ -141,8 +141,8 @@ const Dashboard = () => {
                     <span>12% from yesterday</span>
                   </p>
                 </div>
-                <div className="h-12 w-12 bg-purple-100 rounded-full flex items-center justify-center">
-                  <CalendarRange className="h-6 w-6 text-purple-600" />
+                <div className="h-12 w-12 bg-primary/20 rounded-full flex items-center justify-center">
+                  <CalendarRange className="h-6 w-6 text-primary" />
                 </div>
               </div>
             </CardContent>

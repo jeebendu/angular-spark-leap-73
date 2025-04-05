@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Search, Calendar, Filter, Eye, X, Download, Grid, List, ArrowUp, ArrowDown } from "lucide-react";
+import { Search, Calendar, Filter, Eye, X, Download, Grid, List, ArrowUp, ArrowDown, Clock, Phone, Mail, MapPin, ChevronRight, User, CalendarClock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -303,60 +303,155 @@ export function AppointmentList({ appointments, onStartAppointment }: Appointmen
 
       {/* Appointment Details Dialog */}
       <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="sm:max-w-[700px]">
           <DialogHeader>
             <DialogTitle>Appointment Details</DialogTitle>
           </DialogHeader>
           {selectedAppointment && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">Patient</h3>
-                  <p className="text-base font-medium">{selectedAppointment.patientName}</p>
+            <div className="space-y-6">
+              {/* Patient Header Section */}
+              <div className="flex items-start gap-4 p-4 bg-blue-50 rounded-lg">
+                <div className="w-16 h-16 rounded-full overflow-hidden bg-blue-100 flex items-center justify-center">
+                  {selectedAppointment.patientName?.charAt(0) || "P"}
                 </div>
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">Appointment Number</h3>
-                  <p className="text-base">{selectedAppointment.appointmentNumber}</p>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-xl font-semibold">{selectedAppointment.patientName}</h2>
+                    <span className="text-sm text-blue-600 bg-blue-100 px-2 py-0.5 rounded">
+                      {selectedAppointment.appointmentNumber}
+                    </span>
+                    {selectedAppointment.isNew && (
+                      <span className="text-xs text-purple-600 bg-purple-100 px-2 py-0.5 rounded">New</span>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap gap-4 mt-1">
+                    {selectedAppointment.age && selectedAppointment.gender && (
+                      <div className="flex items-center gap-1 text-sm text-gray-600">
+                        <User className="h-4 w-4 text-gray-500" />
+                        <span>{selectedAppointment.age} Years • {selectedAppointment.gender}</span>
+                      </div>
+                    )}
+                    {selectedAppointment.phone && (
+                      <div className="flex items-center gap-1 text-sm text-gray-600">
+                        <Phone className="h-4 w-4 text-gray-500" />
+                        <span>{selectedAppointment.phone}</span>
+                      </div>
+                    )}
+                    {selectedAppointment.email && (
+                      <div className="flex items-center gap-1 text-sm text-gray-600">
+                        <Mail className="h-4 w-4 text-gray-500" />
+                        <span>{selectedAppointment.email}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">Date & Time</h3>
-                  <p className="text-base">
-                    {selectedAppointment.selectedDate && format(new Date(selectedAppointment.selectedDate), "dd MMM yyyy")} • {selectedAppointment.selectedTime}
-                  </p>
+              </div>
+              
+              {/* Appointment Info Section */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <h3 className="text-sm font-medium text-gray-500 mb-2">Appointment Details</h3>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Date & Time</span>
+                        <span className="text-sm font-medium">
+                          {selectedAppointment.selectedDate && format(new Date(selectedAppointment.selectedDate), "dd MMM yyyy")} • {selectedAppointment.selectedTime}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Visit Type</span>
+                        <span className="text-sm font-medium">{selectedAppointment.visitType}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Status</span>
+                        <span className={`text-sm font-medium ${
+                          selectedAppointment.status === "upcoming" ? "text-blue-600" :
+                          selectedAppointment.status === "completed" ? "text-green-600" :
+                          "text-red-600"
+                        }`}>
+                          {selectedAppointment.status && selectedAppointment.status.charAt(0).toUpperCase() + selectedAppointment.status.slice(1)}
+                        </span>
+                      </div>
+                      {selectedAppointment.consultationFee && (
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-600">Consultation Fee</span>
+                          <span className="text-sm font-medium">${selectedAppointment.consultationFee}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <h3 className="text-sm font-medium text-gray-500 mb-2">Clinic Information</h3>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Clinic Name</span>
+                        <span className="text-sm font-medium">{selectedAppointment.selectedClinic.name}</span>
+                      </div>
+                      {selectedAppointment.selectedClinic.address && (
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-600">Address</span>
+                          <span className="text-sm font-medium">{selectedAppointment.selectedClinic.address}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">Visit Type</h3>
-                  <p className="text-base">{selectedAppointment.visitType}</p>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">Status</h3>
-                  <p className="text-base capitalize">{selectedAppointment.status}</p>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">Age & Gender</h3>
-                  <p className="text-base">
-                    {selectedAppointment.age || "N/A"} • {selectedAppointment.gender || "N/A"}
-                  </p>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">Clinic</h3>
-                  <p className="text-base">{selectedAppointment.selectedClinic.name}</p>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">Contact</h3>
-                  <p className="text-base">{selectedAppointment.phone}</p>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">Email</h3>
-                  <p className="text-base">{selectedAppointment.email}</p>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">Last Visit</h3>
-                  <p className="text-base">{selectedAppointment.lastVisitDate || "First Visit"}</p>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">Next Visit</h3>
-                  <p className="text-base">{selectedAppointment.nextVisitDate || "Not Scheduled"}</p>
+                
+                <div className="space-y-4">
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <h3 className="text-sm font-medium text-gray-500 mb-2">Visit History</h3>
+                    <div className="space-y-2">
+                      {selectedAppointment.lastVisitDate && (
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-600">Last Visit</span>
+                          <span className="text-sm font-medium">{selectedAppointment.lastVisitDate}</span>
+                        </div>
+                      )}
+                      {selectedAppointment.nextVisitDate && (
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-600">Next Visit</span>
+                          <span className="text-sm font-medium">{selectedAppointment.nextVisitDate}</span>
+                        </div>
+                      )}
+                      {!selectedAppointment.lastVisitDate && (
+                        <div className="text-sm font-medium text-purple-600">First Visit</div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {selectedAppointment.vitalSigns && (
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <h3 className="text-sm font-medium text-gray-500 mb-2">Patient Vitals</h3>
+                      <div className="grid grid-cols-2 gap-2">
+                        {selectedAppointment.vitalSigns.temperature && (
+                          <div>
+                            <span className="text-xs text-gray-500 block">Temperature</span>
+                            <span className="text-sm font-medium">{selectedAppointment.vitalSigns.temperature}</span>
+                          </div>
+                        )}
+                        {selectedAppointment.vitalSigns.pulse && (
+                          <div>
+                            <span className="text-xs text-gray-500 block">Pulse</span>
+                            <span className="text-sm font-medium">{selectedAppointment.vitalSigns.pulse}</span>
+                          </div>
+                        )}
+                        {selectedAppointment.vitalSigns.respiratoryRate && (
+                          <div>
+                            <span className="text-xs text-gray-500 block">Respiratory Rate</span>
+                            <span className="text-sm font-medium">{selectedAppointment.vitalSigns.respiratoryRate}</span>
+                          </div>
+                        )}
+                        {selectedAppointment.vitalSigns.spo2 && (
+                          <div>
+                            <span className="text-xs text-gray-500 block">SPO2</span>
+                            <span className="text-sm font-medium">{selectedAppointment.vitalSigns.spo2}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
               
@@ -373,8 +468,10 @@ export function AppointmentList({ appointments, onStartAppointment }: Appointmen
                       setIsDetailsDialogOpen(false);
                       selectedAppointment.id && handleStartAppointment(selectedAppointment.id);
                     }}
+                    className="bg-primary hover:bg-primary/90 gap-2"
                   >
                     Start Appointment
+                    <ChevronRight className="h-4 w-4" />
                   </Button>
                 </div>
               )}
@@ -461,7 +558,8 @@ function AppointmentCard({
     age,
     gender,
     lastVisitDate,
-    nextVisitDate
+    nextVisitDate,
+    consultationFee
   } = appointment;
   
   const formattedDate = selectedDate ? 
@@ -471,9 +569,9 @@ function AppointmentCard({
   const formattedTime = selectedTime || "Time not specified";
 
   const statusColors = {
-    upcoming: "bg-blue-50 text-blue-600",
-    completed: "bg-green-50 text-green-600",
-    cancelled: "bg-red-50 text-red-600"
+    upcoming: "bg-blue-50 text-blue-600 border-blue-200",
+    completed: "bg-green-50 text-green-600 border-green-200",
+    cancelled: "bg-red-50 text-red-600 border-red-200"
   };
   
   const statusText = {
@@ -482,71 +580,130 @@ function AppointmentCard({
     cancelled: "Cancelled"
   };
 
+  // Get colored indicator based on visit type
+  const getVisitTypeIndicator = () => {
+    switch(visitType) {
+      case "Video Call":
+        return (
+          <div className="p-2 bg-blue-50 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-blue-600">
+              <path d="M15 10l5 5V9l-5 5" /><path d="M20 4H9.5A2.5 2.5 0 0 0 7 6.5v11A2.5 2.5 0 0 0 9.5 20H20a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2" />
+            </svg>
+          </div>
+        );
+      case "Audio Call": 
+        return (
+          <div className="p-2 bg-purple-50 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-purple-600">
+              <path d="M3 5v14c0 2 1.5 3 3 3h12c1.5 0 3-1 3-3V5c0-2-1.5-3-3-3H6C4.5 2 3 3 3 5z"></path>
+              <circle cx="12" cy="14" r="4"></circle>
+              <line x1="12" y1="6" x2="12.01" y2="6"></line>
+            </svg>
+          </div>
+        );
+      case "Direct Visit":
+        return (
+          <div className="p-2 bg-green-50 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-green-600">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+              <path d="M9 14h6"></path>
+              <path d="M9 18h6"></path>
+              <path d="M12 10h.01"></path>
+            </svg>
+          </div>
+        );
+      default:
+        return (
+          <div className="p-2 bg-gray-50 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-gray-600">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+            </svg>
+          </div>
+        );
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <Card className="border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+      <Card className={`border ${status === "cancelled" ? "border-l-4 border-l-red-500" : "border-gray-100"} shadow-sm hover:shadow-md transition-shadow`}>
         <CardContent className="p-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex gap-3 items-center">
-              <div className="p-2 bg-blue-50 rounded-lg">
-                {visitType === "Video Call" ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-primary">
-                    <path d="M15 10l5 5V9l-5 5" /><path d="M20 4H9.5A2.5 2.5 0 0 0 7 6.5v11A2.5 2.5 0 0 0 9.5 20H20a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2" />
-                  </svg>
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-primary">
-                    <path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34" /><polygon points="18 2 22 6 12 16 8 16 8 12 18 2" />
-                  </svg>
-                )}
-              </div>
+              {getVisitTypeIndicator()}
               <div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <h3 className="font-medium text-[#333]">{patientName}</h3>
                   <span className="text-xs text-gray-500">{appointmentNumber}</span>
                   {isNew && <span className="bg-purple-100 text-purple-600 text-xs px-2 py-0.5 rounded">New</span>}
                   {age && gender && (
-                    <span className="text-xs text-gray-500">{age} • {gender}</span>
+                    <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full">
+                      {age} yrs • {gender}
+                    </span>
+                  )}
+                  {consultationFee && (
+                    <span className="text-xs px-2 py-0.5 bg-yellow-50 text-yellow-700 rounded-full">
+                      ${consultationFee}
+                    </span>
                   )}
                 </div>
-                <p className="text-sm text-gray-500">{formattedDate} • {formattedTime}</p>
-                {lastVisitDate && (
-                  <p className="text-xs text-gray-500">Last visit: {lastVisitDate}</p>
-                )}
-                {nextVisitDate && (
-                  <p className="text-xs text-gray-500">Next visit: {nextVisitDate}</p>
+                <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1">
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-3.5 w-3.5 text-gray-500" />
+                    <span className="text-xs text-gray-600">{formattedDate}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Clock className="h-3.5 w-3.5 text-gray-500" />
+                    <span className="text-xs text-gray-600">{formattedTime}</span>
+                  </div>
+                </div>
+                {(lastVisitDate || nextVisitDate) && (
+                  <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1">
+                    {lastVisitDate && (
+                      <div className="flex items-center gap-1">
+                        <CalendarClock className="h-3.5 w-3.5 text-gray-500" />
+                        <span className="text-xs text-gray-600">Last: {lastVisitDate}</span>
+                      </div>
+                    )}
+                    {nextVisitDate && (
+                      <div className="flex items-center gap-1">
+                        <CalendarClock className="h-3.5 w-3.5 text-gray-500" />
+                        <span className="text-xs text-gray-600">Next: {nextVisitDate}</span>
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
             </div>
             
             <div className="flex flex-col md:flex-row items-start md:items-center gap-3">
-              <div className={`text-xs font-medium px-2 py-1 rounded ${status ? statusColors[status] : statusColors.upcoming}`}>
+              <div className={`text-xs font-medium px-3 py-1 rounded-full border ${status ? statusColors[status] : statusColors.upcoming}`}>
                 {status ? statusText[status] : statusText.upcoming}
               </div>
               
               {visitType && (
-                <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">{visitType}</span>
+                <span className="text-xs bg-gray-100 text-gray-800 px-3 py-1 rounded-full">{visitType}</span>
               )}
               
-              <div className="flex gap-2">
+              <div className="flex gap-2 ml-auto md:ml-0">
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="h-8 px-2"
+                  className="h-8 px-3 rounded-full"
                   onClick={() => onViewAppointment(appointment)}
                 >
-                  <Eye className="h-4 w-4" />
-                </Button>
-                <Button variant="outline" size="sm" className="h-8 px-2">
-                  <Download className="h-4 w-4" />
+                  <Eye className="h-4 w-4 mr-1" />
+                  View
                 </Button>
                 {status === "upcoming" && (
                   <Button 
                     onClick={() => id && onStartAppointment?.(id)} 
-                    className="bg-primary hover:bg-primary/90"
+                    className="h-8 px-3 rounded-full gap-1 bg-primary hover:bg-primary/90"
+                    size="sm"
                   >
                     Start Now
                   </Button>
@@ -560,20 +717,22 @@ function AppointmentCard({
               <div className="flex flex-wrap gap-4">
                 {email && (
                   <div className="flex items-center gap-1 text-sm text-gray-500">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                      <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                      <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-                    </svg>
+                    <Mail className="h-3.5 w-3.5" />
                     {email}
                   </div>
                 )}
                 
                 {phone && (
                   <div className="flex items-center gap-1 text-sm text-gray-500">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
-                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                    </svg>
+                    <Phone className="h-3.5 w-3.5" />
                     {phone}
+                  </div>
+                )}
+                
+                {appointment.selectedClinic?.address && (
+                  <div className="flex items-center gap-1 text-sm text-gray-500">
+                    <MapPin className="h-3.5 w-3.5" />
+                    {appointment.selectedClinic.address}
                   </div>
                 )}
               </div>
@@ -604,7 +763,8 @@ function AppointmentGridCard({
     age,
     gender,
     lastVisitDate,
-    nextVisitDate
+    nextVisitDate,
+    consultationFee
   } = appointment;
   
   const formattedDate = selectedDate ? 
@@ -625,69 +785,103 @@ function AppointmentGridCard({
     cancelled: "Cancelled"
   };
 
+  // Get icon based on visit type
+  const getVisitTypeIcon = () => {
+    switch(visitType) {
+      case "Video Call":
+        return <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600">
+          <path d="M15 10l5 5V9l-5 5" /><path d="M20 4H9.5A2.5 2.5 0 0 0 7 6.5v11A2.5 2.5 0 0 0 9.5 20H20a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2" />
+        </svg>;
+      case "Audio Call": 
+        return <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-600">
+          <path d="M3 5v14c0 2 1.5 3 3 3h12c1.5 0 3-1 3-3V5c0-2-1.5-3-3-3H6C4.5 2 3 3 3 5z"></path>
+          <circle cx="12" cy="14" r="4"></circle>
+          <line x1="12" y1="6" x2="12.01" y2="6"></line>
+        </svg>;
+      case "Direct Visit":
+        return <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-600">
+          <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+          <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+          <path d="M9 14h6"></path>
+          <path d="M9 18h6"></path>
+          <path d="M12 10h.01"></path>
+        </svg>;
+      default:
+        return <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-600">
+          <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+        </svg>;
+    }
+  };
+
+  // Get background color based on visit type
+  const getVisitTypeBgColor = () => {
+    switch(visitType) {
+      case "Video Call": return "bg-blue-50";
+      case "Audio Call": return "bg-purple-50";
+      case "Direct Visit": return "bg-green-50";
+      default: return "bg-gray-50";
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <Card className="border border-gray-100 shadow-sm hover:shadow-md transition-shadow h-full flex flex-col">
+      <Card className={`border border-gray-100 shadow-sm hover:shadow-md transition-shadow h-full flex flex-col ${status === "cancelled" ? "border-l-4 border-l-red-500" : ""}`}>
         <CardContent className="p-4 flex flex-col h-full">
           <div className="flex justify-between items-start mb-3">
-            <div className="p-2 bg-blue-50 rounded-lg">
-              {visitType === "Video Call" ? (
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
-                  <path d="M15 10l5 5V9l-5 5" /><path d="M20 4H9.5A2.5 2.5 0 0 0 7 6.5v11A2.5 2.5 0 0 0 9.5 20H20a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2" />
-                </svg>
-              ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
-                  <path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34" /><polygon points="18 2 22 6 12 16 8 16 8 12 18 2" />
-                </svg>
-              )}
+            <div className={`p-2 ${getVisitTypeBgColor()} rounded-lg`}>
+              {getVisitTypeIcon()}
             </div>
-            <div className={`text-xs font-medium px-2 py-1 rounded ${status ? statusColors[status] : statusColors.upcoming}`}>
+            <div className={`text-xs font-medium px-2 py-1 rounded-full ${status ? statusColors[status] : statusColors.upcoming}`}>
               {status ? statusText[status] : statusText.upcoming}
             </div>
           </div>
           
           <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
               <h3 className="font-medium text-[#333] truncate">{patientName}</h3>
               {isNew && <span className="bg-purple-100 text-purple-600 text-xs px-2 py-0.5 rounded">New</span>}
+              {consultationFee && (
+                <span className="text-xs px-2 py-0.5 bg-yellow-50 text-yellow-700 rounded-full">
+                  ${consultationFee}
+                </span>
+              )}
             </div>
             <p className="text-xs text-gray-500 mb-1">{appointmentNumber}</p>
-            <div className="mt-2 space-y-1">
+            <div className="mt-2 space-y-2">
               <div className="flex items-center gap-1">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
-                  <rect width="18" height="18" x="3" y="4" rx="2" ry="2" /><line x1="16" x2="16" y1="2" y2="6" /><line x1="8" x2="8" y1="2" y2="6" /><line x1="3" x2="21" y1="10" y2="10" />
-                </svg>
+                <Calendar className="h-4 w-4 text-gray-400" />
                 <span className="text-xs">{formattedDate} • {formattedTime}</span>
               </div>
               
               {(age || gender) && (
                 <div className="flex items-center gap-1">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                  </svg>
-                  <span className="text-xs">{age || "N/A"} • {gender || "N/A"}</span>
+                  <User className="h-4 w-4 text-gray-400" />
+                  <span className="text-xs">{age || "N/A"} yrs • {gender || "N/A"}</span>
                 </div>
               )}
               
               {lastVisitDate && (
                 <div className="flex items-center gap-1">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
-                    <path d="m4 12 8-8 8 8" /><path d="M12 4v16" />
-                  </svg>
+                  <CalendarClock className="h-4 w-4 text-gray-400" />
                   <span className="text-xs">Last: {lastVisitDate}</span>
                 </div>
               )}
               
               {nextVisitDate && (
                 <div className="flex items-center gap-1">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
-                    <path d="m4 12 8 8 8-8" /><path d="M12 4v16" />
-                  </svg>
+                  <CalendarClock className="h-4 w-4 text-gray-400" />
                   <span className="text-xs">Next: {nextVisitDate}</span>
+                </div>
+              )}
+              
+              {phone && (
+                <div className="flex items-center gap-1">
+                  <Phone className="h-4 w-4 text-gray-400" />
+                  <span className="text-xs">{phone}</span>
                 </div>
               )}
             </div>

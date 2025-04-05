@@ -23,7 +23,8 @@ const sampleAppointments: AppointmentDetails[] = [
     age: 34,
     gender: "Male",
     lastVisitDate: "15 Oct 2024",
-    nextVisitDate: "15 Dec 2024"
+    nextVisitDate: "15 Dec 2024",
+    consultationFee: 180
   },
   {
     id: "apt0002",
@@ -39,7 +40,8 @@ const sampleAppointments: AppointmentDetails[] = [
     selectedMember: "self",
     isNew: true,
     age: 28,
-    gender: "Female"
+    gender: "Female",
+    consultationFee: 120
   },
   {
     id: "apt0003",
@@ -55,7 +57,8 @@ const sampleAppointments: AppointmentDetails[] = [
     selectedMember: "self",
     age: 42,
     gender: "Male",
-    lastVisitDate: "22 Sep 2024"
+    lastVisitDate: "22 Sep 2024",
+    consultationFee: 150
   },
   {
     id: "apt0004",
@@ -72,7 +75,8 @@ const sampleAppointments: AppointmentDetails[] = [
     age: 37,
     gender: "Female",
     lastVisitDate: "05 Aug 2024",
-    nextVisitDate: "10 Dec 2024"
+    nextVisitDate: "10 Dec 2024",
+    consultationFee: 200
   },
   {
     id: "apt0005",
@@ -89,7 +93,8 @@ const sampleAppointments: AppointmentDetails[] = [
     age: 45,
     gender: "Male",
     lastVisitDate: "03 Mar 2024",
-    nextVisitDate: "03 Jun 2024"
+    nextVisitDate: "03 Jun 2024",
+    consultationFee: 160
   },
   {
     id: "apt0006",
@@ -105,7 +110,8 @@ const sampleAppointments: AppointmentDetails[] = [
     selectedMember: "self",
     age: 31,
     gender: "Female",
-    lastVisitDate: "15 Feb 2024"
+    lastVisitDate: "15 Feb 2024",
+    consultationFee: 150
   }
 ];
 

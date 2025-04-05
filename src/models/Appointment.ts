@@ -24,6 +24,17 @@ export interface AppointmentDetails {
   gender?: "Male" | "Female" | "Other";
   lastVisitDate?: string;
   nextVisitDate?: string;
+  consultationFee?: number;
+  patientId?: string;
+  vitalSigns?: {
+    temperature?: string;
+    pulse?: string;
+    respiratoryRate?: string;
+    spo2?: string;
+    height?: string;
+    weight?: string;
+    bmi?: string;
+  };
 }
 
 export interface FilterOption {

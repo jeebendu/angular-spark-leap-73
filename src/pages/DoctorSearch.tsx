@@ -8,8 +8,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { DoctorCard } from "@/components/DoctorCard";
 
-import { getAllDoctorClinic } from "@/services/alldoctorclinicService";
-import { getSpecialisation } from "@/services/specilisationservice";
 
 
 
@@ -56,11 +54,10 @@ import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { useLocation } from "@/contexts/LocationContext";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/components/ui/use-toast";
-import { Specialization, Specializations } from "@/components/Specializations";
-import { getSpecialisationAll } from "@/services/specilisationservice";
-import { getLanguageList } from "@/services/specilisationservice";
-import { Clinic} from "@/services/appointmentService";
-import { LanguagesList } from "./DoctorDetails";
+import { Specialization } from "./DoctorDetails";
+import { Clinic } from "@/models/Clinic";
+import { fetchAllDoctorClinics } from "@/services/DoctorService";
+import { fetchAllSpecializations, fetchLanguageList, fetchSpecializationById } from "@/services/SpecializationService";
 
 
 
@@ -297,9 +294,9 @@ const DoctorSearch = () => {
 
   const AllNullSearchValue = async () => {
 
-    const data = await getAllDoctorClinic(searchdoctorclinic);
-    console.log("data", data);
-    setAllDoctorClinic(data);
+    const response = await fetchAllDoctorClinics(searchdoctorclinic);
+    console.log("data", response.data);
+    setAllDoctorClinic(response.data);
 
 
   }
@@ -314,7 +311,7 @@ const DoctorSearch = () => {
 
   const initializeData = async () => {
     try {
-      const data = await getSpecializationById(initialSpecialty);
+      const data = (await getSpecializationById(initialSpecialty)).data;
 
       setSearchDoctorClinic((prev) => {
         if (prev.specialisations.some((spec) => spec.id === data.id)) {
@@ -339,9 +336,9 @@ const DoctorSearch = () => {
   const getAllDoctorClinicList = async (updatedSearchDoctorClinic) => {
     try {
       console.log("Fetching Doctor Clinic List for:", updatedSearchDoctorClinic);
-      const data = await getAllDoctorClinic(updatedSearchDoctorClinic);
+      const data = await fetchAllDoctorClinics(updatedSearchDoctorClinic);
       console.log("Fetched Data:", data);
-      setAllDoctorClinic(data);
+      setAllDoctorClinic(data.data);
     } catch (error) {
       console.error("Error in getAllDoctorClinicList:", error);
     }
@@ -349,7 +346,7 @@ const DoctorSearch = () => {
 
   const getSpecializationById = async (id: string) => {
     try {
-      return await getSpecialisation(id);
+      return await fetchSpecializationById(id);
     } catch (error) {
       console.error("Error in getSpecializationById:", error);
     }
@@ -357,9 +354,9 @@ const DoctorSearch = () => {
 
   const getAllSpecialization = async () => {
     try {
-      const data = await getSpecialisationAll();
-      console.log("Fetched Specializations:", data);
-      setSpecializationList(data);
+      const response = await fetchAllSpecializations();
+      console.log("Fetched Specializations:", response.data);
+      setSpecializationList(response.data);
     } catch (error) {
       console.error("Error in getAllSpecialization:", error);
     }
@@ -367,9 +364,9 @@ const DoctorSearch = () => {
 
   const getAllLanguageList = async () => {
     try {
-      const data = await getLanguageList();
-      console.log("Fetched Languages:", data);
-      setAllLanguage(data);
+      const response = await fetchLanguageList();
+      console.log("Fetched Languages:", response.data);
+      setAllLanguage(response.data);
     } catch (error) {
       console.error("Error in getAllLanguageList:", error);
     }
@@ -1159,7 +1156,7 @@ const DoctorSearch = () => {
             </div>
           ) : (
             <div className="flex flex-col gap-4">
-              {allDoctorClinic.map((doctor, index) => {
+              { Array.isArray(allDoctorClinic) &&  allDoctorClinic.map((doctor, index) => {
                 // Determine if this is the last element for infinite scroll
                 const isLastItem = index === allDoctorClinic.length - 1;
 

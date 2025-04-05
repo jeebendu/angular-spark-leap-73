@@ -5,8 +5,7 @@ import { Heart, Activity, Brain, Bone, Stethoscope, Syringe, Microscope, Plus, T
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { AllSpecializationsModal } from "./AllSpecializationsModal";
-import {getSpecialisationAll} from "@/services/specilisationservice";
-import { setSeconds } from "date-fns";
+import { fetchAllSpecializations } from "@/services/SpecializationService";
 
 export interface Specialization {
   name: string;
@@ -133,9 +132,8 @@ getAllSpecialization();
 
 const getAllSpecialization=async()=>{
   try {
-    const data= await getSpecialisationAll();
-    console.log(data);
-    setSpecializationList(data);
+    const response= await fetchAllSpecializations();
+    setSpecializationList(response.data);
 
   } catch (error) {
     console.log(error);
@@ -149,7 +147,7 @@ const handleSpecializationClick = (id: number) => {
   const radius = 5000.0;
 
   navigate(
-    `/doctor-search?specialty=${encodeURIComponent(id)}&latitude=${latitude}&longitude=${longitude}&radius=${radius}`
+    `/doctor/search?specialty=${encodeURIComponent(id)}&latitude=${latitude}&longitude=${longitude}&radius=${radius}`
   );
 };
 

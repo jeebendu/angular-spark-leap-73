@@ -32,7 +32,7 @@ export const DoctorDetailsTabs = ({ doctor,specializationList=[],branchList,lang
         <TabsContent value="clinics">
           <ClinicsTab 
             branchList={branchList} 
-            doctor={{ name: doctor.name, specialty: doctor.specializationList[0]?.name }} 
+            doctor={doctor} 
           
           />
         </TabsContent>

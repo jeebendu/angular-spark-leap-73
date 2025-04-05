@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 import { MapPin, CalendarDays, Clock, CheckCircle2 } from "lucide-react";
-import { BookAppointmentModal, Doctor } from "@/components/BookAppointmentModal";
-import { Branch } from "@/pages/DoctorDetails";
+import { BookAppointmentModal } from "@/components/BookAppointmentModal";
+import { Branch, Doctor } from "@/pages/DoctorDetails";
 
 
 // interface Doctor {

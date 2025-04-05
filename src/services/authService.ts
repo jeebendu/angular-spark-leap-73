@@ -1,6 +1,4 @@
 import { AuthUser } from '@/components/Navbar';
-import apiService from './apiService';
-import axios from 'axios';
 
 
 // Types for authentication

@@ -11,9 +11,9 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
-import { fetchMyProfilePatient ,updatePatientInfo} from "@/services/UserSeviceHandler";
 import { Patient } from "@/services/appointmentService";
 import { toast } from "@/hooks/use-toast";
+import { fetchMyProfilePatient, updatePatientInfo } from "@/services/UserSevice";
 
 export default function Account() {
   const { t } = useTranslation();
@@ -29,9 +29,9 @@ export default function Account() {
   const getMyProfile = async () => {
     try {
       const response = await fetchMyProfilePatient();
-      console.log(response);
+      console.log(response.data);
       if (response) {
-        setPatient(response);
+        setPatient(response.data);
       }
 
     } catch (error) {
@@ -66,7 +66,7 @@ export default function Account() {
     try {
 
       const response = await updatePatientInfo(patient);
-      if (response.status) {
+      if (response.data.status) {
         console.log("Profile updated successfully", response);
               toast({
                 title: "Profile Updated",

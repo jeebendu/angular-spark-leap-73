@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
 import { Appointments as AppointmentObject } from "@/components/BookAppointmentModal";
-import { getAllAppointmentList } from "@/services/PatientappointmentService";
+import { getAllAppointmentList } from "@/services/AppointmentServiceHandler";
 
 const Appointments = () => {
   const [searchTerm, setSearchTerm] = useState("upcoming");
@@ -20,7 +20,7 @@ const Appointments = () => {
     try {
         const data = await getAllAppointmentList(id);
         setSearchTerm(id);
-        setAppointmentList(data);
+        setAppointmentList(data.data);
         console.log("type", id);
         console.log("data", data);
 

@@ -6,9 +6,8 @@ import { DoctorHeader } from "@/components/doctor/DoctorHeader";
 import { DoctorDetailsTabs } from "@/components/doctor/DoctorDetailsTabs";
 import { SimilarDoctors } from "@/components/doctor/SimilarDoctors";
 import { useEffect, useState } from "react";
-import { getDoctorDetails } from "@/services/doctorDetailsService";
-import { Clinic } from "@/services/appointmentService";
-import { boolean } from "zod";
+import { Clinic } from "@/models/Clinic";
+import { fetchDoctorDetailsById } from "@/services/DoctorService";
 
 // Type for doctor
 export interface Doctor {
@@ -101,8 +100,8 @@ const DoctorDetails = () => {
 
   const fetchDoctorDetails = async (id:number) => {
     try{
-      const data = await getDoctorDetails(id);
-      setDoctorsDetails(data);
+      const data = await fetchDoctorDetailsById(id);
+      setDoctorsDetails(data.data);
     }
     catch(error){
       console.error("Error fetching doctors:", error);
@@ -133,7 +132,7 @@ const DoctorDetails = () => {
 <AppLayout isRequiredLogin={isRequiredLogin}>
       <div className="container px-4 py-6 max-w-6xl mx-auto">
         {/* Back button */}
-        <Link to="/doctor-search" className="flex items-center text-primary mb-6 hover:underline">
+        <Link to="/doctor/search" className="flex items-center text-primary mb-6 hover:underline">
           <ArrowLeft className="h-4 w-4 mr-1" />
           Back to search
         </Link>

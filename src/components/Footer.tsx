@@ -46,7 +46,7 @@ export function Footer() {
                 <Link to="/" className="text-gray-600 hover:text-primary transition-colors">Home</Link>
               </li>
               <li>
-                <Link to="/doctor-search" className="text-gray-600 hover:text-primary transition-colors">Find Doctors</Link>
+                <Link to="/doctor/search" className="text-gray-600 hover:text-primary transition-colors">Find Doctors</Link>
               </li>
               <li>
                 <Link to="/appointments" className="text-gray-600 hover:text-primary transition-colors">My Appointments</Link>

@@ -24,7 +24,7 @@ export function AllSpecializationsModal({ isOpen, onClose, specializations }: Al
   const navigate = useNavigate();
 
   const handleSpecializationClick = (id:number) => {
-    navigate(`/doctor-search?specialty=${encodeURIComponent(id)}`);
+    navigate(`/doctor/search?specialty=${encodeURIComponent(id)}`);
     onClose();
   };
 

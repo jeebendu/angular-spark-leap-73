@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 import { Star, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { getReviewsBYDoctorId } from "@/services/doctorDetailsService";
 import { PatientList } from "@/pages/DoctorDetails";
+import { fetchDoctorReviewsById } from "@/services/DoctorService";
 
 interface ReviewsTabProps {
   rating: number;
@@ -30,14 +30,14 @@ export const ReviewsTab = () => {
   const [loading, setLoading] = useState(false);
 
    useEffect(() => {
-      fetchReviewsByDoctorId();
+      fetchReviewsByDoctorIdx();
         
     },[] ); 
 
-      const fetchReviewsByDoctorId = async () => {
+      const fetchReviewsByDoctorIdx = async () => {
         try{
-          const data = await getReviewsBYDoctorId();
-          const parsedData = data.map((review: any) => ({
+          const response = await fetchDoctorReviewsById();
+          const parsedData = response.data.map((review: any) => ({
             ...review,
             createdTime: new Date(review.createdTime), // Parse the date string
           }));

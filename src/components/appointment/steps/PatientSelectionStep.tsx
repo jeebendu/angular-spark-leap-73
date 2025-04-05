@@ -5,7 +5,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { createNewPatientRelation } from "@/services/UserSeviceHandler";
 import {
   Dialog,
   DialogContent,
@@ -14,7 +13,9 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
-import { Appointments, FamilyMember } from "@/components/BookAppointmentModal";
+import { Appointments } from "@/components/BookAppointmentModal";
+import { createNewPatientRelation } from "@/services/UserSevice";
+import { FamilyMember } from "@/models/Patient";
 
 
 

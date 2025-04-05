@@ -55,7 +55,7 @@ interface DoctorHeaderProps {
 
 
 
-export const DoctorHeader = ({specializationList = [] ,doctor,id,languageList =[] ,onButtonClick}: DoctorHeaderProps) => {
+export const DoctorHeader = ({doctor,id,specializationList = [] ,languageList =[] ,onButtonClick}: DoctorHeaderProps) => {
   const [isModalOpen, setModalOpen] = useState(false);
 
 

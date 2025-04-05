@@ -1,25 +1,25 @@
-import axiosInstance from "./axiosInterceptor";
+import http from "@/lib/JwtInterceptor";
 
-
-export const getDoctorById = async (id:any) => {
-    const BASE_URL = import.meta.env.VITE_BASE_URL
-    try {
-        const response = await axiosInstance.get(`${BASE_URL}/v1/doctor/id/${id}`);
-       
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching doctorById:', error.response?.data || error.message);
-        return { success: false, error: error.response?.data || error.message };
-    }
+export const fetchDoctorDetailsById = async (id: any) => {
+  return await http.get(`/v1/doctor/id/${id}`);
 };
 
+export const fetchDoctorReviewsById = async () => {
+  return await http.get(`/v1/doctor-review/doctor/id/{id}`);
+};
 
-export const getDoctorClinicDRAndBranchId=async(doctorId:any,branchId:any)=>{
-    try {
-        const BASE_URL = import.meta.env.VITE_BASE_URL; // Replace with your actual environment variable
-        const response = await axiosInstance.get(`${BASE_URL}/v1/doctor-clinic/doctor/${doctorId}/branch/${branchId}`);  
-        return response.data;
-    } catch (error) {
-        console.log("Something went wrong")
-    }
-}
+export const fetchDoctorById = async (id: any) => {
+  return await http.get(`/v1/doctor/id/${id}`);
+};
+
+export const fetchDoctorClinicByDoctorAndBranch = async (doctorId: any, branchId: any) => {
+  return await http.get(`/v1/doctor-clinic/doctor/${doctorId}/branch/${branchId}`);
+};
+
+export const fetchAllDoctorClinics = async (params: any) => {
+  return await http.post(`/v1/public/doctor-clinic/search`, params);
+};
+
+export const fetchSimilarDoctors = async (params: any) => {
+  return await http.post(`/v1/public/doctor-clinic/search`, params);
+};

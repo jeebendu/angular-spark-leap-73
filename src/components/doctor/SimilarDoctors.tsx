@@ -3,13 +3,10 @@ import { Link } from "react-router-dom";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { use } from "i18next";
 import { useEffect, useState } from "react";
-// const [appointmentList, setSimilarList] = useState<Specialization[]>([]);
-
-import { getSimilarDoctorLists } from "@/services/alldoctorclinicService";
 import { Specialization } from "@/pages/DoctorDetails";
 import { DoctorClinic } from "@/pages/DoctorSearch";
+import { fetchSimilarDoctors } from "@/services/DoctorService";
 
 interface SimilarDoctorsProps {
  
@@ -59,11 +56,11 @@ export const SimilarDoctors = ({specializationList=[],latitude,longitude}:Simila
   const getSimilarDoctorList = async (searchDoctorClinic:SearchRelatedDoctor) => {
  
       try {
-          const data = await getSimilarDoctorLists(searchDoctorClinic);
+          const response = await fetchSimilarDoctors(searchDoctorClinic);
        
-          setSimilarDoctorList(data);
+          setSimilarDoctorList(response.data);
 
-          console.log("Similar doctors data:", data);
+          console.log("Similar doctors data:", response.data);
          
   
       }catch (error) {

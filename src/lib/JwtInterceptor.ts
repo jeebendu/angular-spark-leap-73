@@ -1,16 +1,16 @@
 import axios from 'axios';
-// import { BASE_URL, DEV, X_APP_TOKEN } from '@env'; // Import environment variables
 const BASE_URL=import.meta.env.VITE_BASE_URL
 const DEV=import.meta.env.VITE_DEV
 const X_APP_TOKEN=import.meta.env.VITE_X_APP_TOKEN
+
 const token=localStorage.getItem('auth_token') || null;
 // Create an Axios instance
-const axiosInstance = axios.create({
+const http = axios.create({
   baseURL: BASE_URL, // Set the base URL
 });
 
 // Add a request interceptor
-axiosInstance.interceptors.request.use(
+http.interceptors.request.use(
   (config) => {
     // Add headers to every request
     config.headers['Dev'] = DEV;
@@ -27,5 +27,5 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-export default axiosInstance;
+export default http;
 

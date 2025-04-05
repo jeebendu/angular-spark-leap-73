@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/popover";
 import { useLocation } from "@/contexts/LocationContext";
 import { useToast } from "@/components/ui/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function LocationSelector() {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,6 +19,7 @@ export function LocationSelector() {
   const [locationSuggestions, setLocationSuggestions] = useState<string[]>([]);
   const { location, setLocation } = useLocation();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   // Simulate Google Maps API location suggestions
   useEffect(() => {
@@ -99,14 +101,18 @@ export function LocationSelector() {
     <div className="relative w-full pr-2 border-r border-gray-200">
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
-          <Input 
-            type="text" 
-            placeholder="Select your city..." 
-            className="border-0 px-3 py-0 h-10 focus-visible:ring-0 placeholder:text-muted-foreground cursor-pointer text-sm bg-transparent"
+          <Button
+            variant="ghost" 
+            className="h-10 w-full flex items-center justify-start gap-2 p-0 hover:bg-transparent"
             onClick={() => setIsOpen(true)}
-            value={location.locality || ""}
-            readOnly
-          />
+          >
+            <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
+            {!isMobile && (
+              <span className="truncate text-sm">
+                {location.locality || "Select location"}
+              </span>
+            )}
+          </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[320px] p-4 bg-white modal-background" align="start">
           <div className="space-y-4">

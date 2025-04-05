@@ -49,14 +49,14 @@ export function SearchBar() {
   };
 
   return (
-    <div className="search-container flex items-center w-full max-w-3xl mx-auto relative">
-      {/* Locality field (35%) */}
-      <div className="relative w-[35%]">
+    <div className="search-container flex items-center w-full max-w-3xl mx-auto relative rounded-full shadow-lg p-1 sm:p-2">
+      {/* Locality field (mobile: icon only, desktop: text) */}
+      <div className="relative w-[30%] sm:w-[35%]">
         <LocationSelector />
       </div>
       
-      {/* Search doctors field (65%) */}
-      <div className="relative w-[65%] pl-3 flex items-center">
+      {/* Search doctors field */}
+      <div className="relative w-[70%] sm:w-[65%] pl-2 sm:pl-3 flex items-center">
         <Popover open={openSuggestions && filteredSuggestions.length > 0} onOpenChange={setOpenSuggestions}>
           <PopoverTrigger asChild>
             <div className="relative w-full">
@@ -95,11 +95,10 @@ export function SearchBar() {
           </PopoverContent>
         </Popover>
         <Button 
-          className="rounded-full sky-button h-9 w-9 p-0 absolute right-0 top-0.5 md:flex hidden"
+          className="rounded-full h-9 w-[100px] text-sm text-white bg-primary hover:bg-primary/90 ml-1"
           onClick={() => handleDoctorSearch()}
         >
-          <Search className="h-4 w-4 text-white" />
-          <span className="sr-only">Search</span>
+          Search
         </Button>
       </div>
     </div>

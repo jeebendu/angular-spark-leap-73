@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Branch } from "@/models/Branch"; 
+import { Branch, languageList } from "@/pages/DoctorSearch";
 
-export interface DoctorCardProps {
-  id: string;  // Changed from number to string to match usage in DoctorSearch.tsx
+interface DoctorCardProps {
+  id: number;
   name: string;
   specialty: string;
   rating: number;
@@ -16,12 +16,9 @@ export interface DoctorCardProps {
   price: string;
   imageSrc: string;
   experience?: string;
-  languages?: string;
+  languages?:string;
   clinics: Branch[];
   onBookNow?: (name: string) => void;
-  isSimple?: boolean;
-  id_doctor: string;  // Explicitly defined as string
-  id_clinic: number;  // Explicitly defined as number
 }
 
 export function DoctorCard({ 
@@ -32,13 +29,10 @@ export function DoctorCard({
   reviewCount, 
   price, 
   imageSrc, 
-  experience,
+  experience ,
   languages,
-  clinics,
-  onBookNow,
-  isSimple,
-  id_doctor,
-  id_clinic
+  clinics ,
+  onBookNow 
 }: DoctorCardProps) {
   const handleBookNow = () => {
     if (onBookNow) {
@@ -104,7 +98,7 @@ export function DoctorCard({
             <div className="flex items-center justify-between mt-3">
               <span className="font-semibold">{price}</span>
               <div className="space-x-2">
-                <Link to={`/doctor/${id_doctor}`}>
+                <Link to={`/doctor/${id}`}>
                   <Button 
                     size="sm" 
                     variant="outline"

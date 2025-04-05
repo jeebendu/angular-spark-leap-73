@@ -56,8 +56,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { useToast } from "@/components/ui/use-toast";
 import { Specialization } from "./DoctorDetails";
 import { Clinic } from "@/models/Clinic";
-import { fetchAllDoctorClinics } from "@/services/DoctorService";
 import { fetchAllSpecializations, fetchLanguageList, fetchSpecializationById } from "@/services/SpecializationService";
+import { fetchAllDoctorClinics } from "@/services/doctorService";
 
 
 

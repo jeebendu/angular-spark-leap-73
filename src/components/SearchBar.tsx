@@ -170,7 +170,10 @@ export function SearchBar() {
           <LocationSelector 
             onOpenChange={(open) => {
               setOpenLocationSelector(open);
-              if (open) setOpenSuggestions(false);
+              // Show search suggestions if search field has focus and location selector is closed
+              if (!open && document.activeElement === searchInputRef.current) {
+                setOpenSuggestions(true);
+              }
             }} 
           />
         </div>
@@ -183,7 +186,7 @@ export function SearchBar() {
               ref={searchInputRef}
               type="text" 
               placeholder="Search doctors, specialties..." 
-              className="border-0 px-0 py-0 h-10 focus-visible:ring-0 placeholder:text-muted-foreground pl-10 pr-16 bg-transparent w-full"
+              className="border-0 px-0 py-0 h-10 focus-visible:ring-0 focus-visible:outline-none placeholder:text-muted-foreground pl-10 pr-16 bg-transparent w-full"
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
@@ -215,7 +218,7 @@ export function SearchBar() {
                 disabled={isListening}
               >
                 <Mic className={cn(
-                  "h-4 w-4 transition-colors", 
+                  "h-5 w-5 transition-colors", 
                   isListening ? "text-primary animate-pulse" : "text-gray-400 hover:text-primary"
                 )} />
               </button>

@@ -114,7 +114,7 @@ export function LocationSelector({ onOpenChange }: LocationSelectorProps) {
         <PopoverTrigger asChild>
           <Button
             variant="ghost" 
-            className="h-9 w-full flex items-center justify-start gap-2 p-0 hover:bg-transparent"
+            className="h-9 w-full flex items-center justify-start gap-2 p-0 hover:bg-transparent rounded-[34px]"
           >
             <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
             <span className={cn("truncate text-sm", isMobile ? "max-w-[80px]" : "")}>
@@ -122,7 +122,7 @@ export function LocationSelector({ onOpenChange }: LocationSelectorProps) {
             </span>
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[320px] p-3 bg-white shadow-lg border border-gray-200" align="start">
+        <PopoverContent className="w-[320px] p-3 bg-white shadow-lg border border-gray-200 rounded-[34px] rounded-t-none" align="start">
           <div className="space-y-3">
             <h3 className="font-medium flex items-center text-sm">
               <MapPin className="h-3.5 w-3.5 mr-1.5 text-primary" />
@@ -133,9 +133,10 @@ export function LocationSelector({ onOpenChange }: LocationSelectorProps) {
               <Input 
                 type="text" 
                 placeholder="Enter locality or PIN code" 
-                className="border border-gray-300 pl-8 pr-2 py-2 w-full bg-transparent h-9 text-sm"
+                className="border border-gray-300 pl-8 pr-2 py-2 w-full bg-transparent h-9 text-sm focus-visible:ring-0 focus-visible:outline-none rounded-[34px]"
                 value={locationInput}
                 onChange={(e) => setLocationInput(e.target.value)}
+                autoFocus
               />
               <MapPin className="h-3.5 w-3.5 text-gray-400 absolute left-2.5 top-1/2 transform -translate-y-1/2" />
               
@@ -157,7 +158,7 @@ export function LocationSelector({ onOpenChange }: LocationSelectorProps) {
             
             <Button 
               variant="outline" 
-              className="w-full flex items-center justify-center gap-1.5 h-9 text-sm"
+              className="w-full flex items-center justify-center gap-1.5 h-9 text-sm rounded-[34px]"
               onClick={detectCurrentLocation}
               disabled={isLoadingLocation}
             >

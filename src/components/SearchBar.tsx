@@ -9,6 +9,14 @@ import { LocationSelector } from "@/components/LocationSelector";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
 
+// Add TypeScript declarations for Web Speech API
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
+}
+
 export function SearchBar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [openSuggestions, setOpenSuggestions] = useState(false);
@@ -64,9 +72,10 @@ export function SearchBar() {
       return;
     }
 
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    // Use the appropriate constructor based on browser support
+    const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
     
-    if (!SpeechRecognition) {
+    if (!SpeechRecognitionAPI) {
       toast({
         title: "Voice Search Unavailable",
         description: "Voice search is not supported in your browser.",
@@ -75,7 +84,7 @@ export function SearchBar() {
       return;
     }
     
-    const recognition = new SpeechRecognition();
+    const recognition = new SpeechRecognitionAPI();
     recognition.lang = 'en-US';
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
@@ -90,7 +99,7 @@ export function SearchBar() {
       description: "Speak now to search for doctors or specialities",
     });
     
-    recognition.onresult = (event) => {
+    recognition.onresult = (event: any) => {
       const speechResult = event.results[0][0].transcript;
       setSearchQuery(speechResult);
       setIsListening(false);
@@ -107,7 +116,7 @@ export function SearchBar() {
       }, 500);
     };
     
-    recognition.onerror = (event) => {
+    recognition.onerror = (event: any) => {
       setIsListening(false);
       toast({
         title: "Voice Search Error",

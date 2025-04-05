@@ -47,44 +47,59 @@ const Appointments = () => {
               <TabsContent value="upcoming" className="mt-0">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <AppointmentCard
-                    doctorName="Dr. Sarah Johnson"
-                    specialty="Cardiologist"
-                    date="Today, 15 May"
-                    time="10:00 AM"
-                    imageSrc="https://placehold.co/200/eaf7fc/33C3F0?text=SJ&font=montserrat"
-                    status="upcoming"
+                    appointment={{
+                      id: "apt1",
+                      doctorName: "Dr. Sarah Johnson",
+                      specialty: "Cardiologist",
+                      date: "Today, 15 May",
+                      time: "10:00 AM",
+                      imageSrc: "https://placehold.co/200/eaf7fc/33C3F0?text=SJ&font=montserrat",
+                      status: "upcoming"
+                    }}
                   />
                   <AppointmentCard
-                    doctorName="Dr. Michael Chen"
-                    specialty="Dermatologist"
-                    date="Tomorrow, 16 May"
-                    time="02:30 PM"
-                    imageSrc="https://placehold.co/200/eaf7fc/33C3F0?text=MC&font=montserrat"
-                    status="upcoming"
+                    appointment={{
+                      id: "apt2",
+                      doctorName: "Dr. Michael Chen",
+                      specialty: "Dermatologist",
+                      date: "Tomorrow, 16 May",
+                      time: "02:30 PM",
+                      imageSrc: "https://placehold.co/200/eaf7fc/33C3F0?text=MC&font=montserrat",
+                      status: "upcoming"
+                    }}
                   />
                   <AppointmentCard
-                    doctorName="Dr. Emma Wilson"
-                    specialty="Pediatrician"
-                    date="18 May"
-                    time="11:15 AM"
-                    imageSrc="https://placehold.co/200/eaf7fc/33C3F0?text=EW&font=montserrat"
-                    status="upcoming"
+                    appointment={{
+                      id: "apt3",
+                      doctorName: "Dr. Emma Wilson",
+                      specialty: "Pediatrician",
+                      date: "18 May",
+                      time: "11:15 AM",
+                      imageSrc: "https://placehold.co/200/eaf7fc/33C3F0?text=EW&font=montserrat",
+                      status: "upcoming"
+                    }}
                   />
                   <AppointmentCard
-                    doctorName="Dr. David Patel"
-                    specialty="Orthopedic"
-                    date="20 May"
-                    time="09:30 AM"
-                    imageSrc="https://placehold.co/200/eaf7fc/33C3F0?text=DP&font=montserrat"
-                    status="upcoming"
+                    appointment={{
+                      id: "apt4",
+                      doctorName: "Dr. David Patel",
+                      specialty: "Orthopedic",
+                      date: "20 May",
+                      time: "09:30 AM",
+                      imageSrc: "https://placehold.co/200/eaf7fc/33C3F0?text=DP&font=montserrat",
+                      status: "upcoming"
+                    }}
                   />
                   <AppointmentCard
-                    doctorName="Dr. Lisa Wang"
-                    specialty="Neurologist"
-                    date="22 May"
-                    time="03:45 PM"
-                    imageSrc="https://placehold.co/200/eaf7fc/33C3F0?text=LW&font=montserrat"
-                    status="upcoming"
+                    appointment={{
+                      id: "apt5",
+                      doctorName: "Dr. Lisa Wang",
+                      specialty: "Neurologist",
+                      date: "22 May",
+                      time: "03:45 PM",
+                      imageSrc: "https://placehold.co/200/eaf7fc/33C3F0?text=LW&font=montserrat",
+                      status: "upcoming"
+                    }}
                   />
                 </div>
               </TabsContent>
@@ -92,30 +107,39 @@ const Appointments = () => {
               <TabsContent value="past" className="mt-0">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <AppointmentCard
-                    doctorName="Dr. James Wilson"
-                    specialty="Cardiologist"
-                    date="10 May"
-                    time="11:30 AM"
-                    imageSrc="https://placehold.co/200/eaf7fc/33C3F0?text=JW&font=montserrat"
-                    status="completed"
+                    appointment={{
+                      id: "apt6",
+                      doctorName: "Dr. James Wilson",
+                      specialty: "Cardiologist",
+                      date: "10 May",
+                      time: "11:30 AM",
+                      imageSrc: "https://placehold.co/200/eaf7fc/33C3F0?text=JW&font=montserrat",
+                      status: "completed"
+                    }}
                     className="opacity-70"
                   />
                   <AppointmentCard
-                    doctorName="Dr. Emily Parker"
-                    specialty="Dermatologist"
-                    date="05 May"
-                    time="09:15 AM"
-                    imageSrc="https://placehold.co/200/eaf7fc/33C3F0?text=EP&font=montserrat"
-                    status="completed"
+                    appointment={{
+                      id: "apt7",
+                      doctorName: "Dr. Emily Parker",
+                      specialty: "Dermatologist",
+                      date: "05 May",
+                      time: "09:15 AM",
+                      imageSrc: "https://placehold.co/200/eaf7fc/33C3F0?text=EP&font=montserrat",
+                      status: "completed"
+                    }}
                     className="opacity-70"
                   />
                   <AppointmentCard
-                    doctorName="Dr. Robert Kim"
-                    specialty="Pediatrician"
-                    date="28 Apr"
-                    time="02:00 PM"
-                    imageSrc="https://placehold.co/200/eaf7fc/33C3F0?text=RK&font=montserrat"
-                    status="completed"
+                    appointment={{
+                      id: "apt8",
+                      doctorName: "Dr. Robert Kim",
+                      specialty: "Pediatrician",
+                      date: "28 Apr",
+                      time: "02:00 PM",
+                      imageSrc: "https://placehold.co/200/eaf7fc/33C3F0?text=RK&font=montserrat",
+                      status: "completed"
+                    }}
                     className="opacity-70"
                   />
                 </div>
@@ -124,12 +148,15 @@ const Appointments = () => {
               <TabsContent value="cancelled" className="mt-0">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <AppointmentCard
-                    doctorName="Dr. Melissa Thompson"
-                    specialty="Neurologist"
-                    date="12 May"
-                    time="04:30 PM"
-                    imageSrc="https://placehold.co/200/eaf7fc/33C3F0?text=MT&font=montserrat"
-                    status="cancelled"
+                    appointment={{
+                      id: "apt9",
+                      doctorName: "Dr. Melissa Thompson",
+                      specialty: "Neurologist",
+                      date: "12 May",
+                      time: "04:30 PM",
+                      imageSrc: "https://placehold.co/200/eaf7fc/33C3F0?text=MT&font=montserrat",
+                      status: "cancelled"
+                    }}
                   />
                 </div>
               </TabsContent>

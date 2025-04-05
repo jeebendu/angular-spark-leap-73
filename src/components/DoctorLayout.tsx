@@ -98,7 +98,7 @@ export function DoctorLayout({ children }: DoctorLayoutProps) {
           {/* Logo area */}
           <div className="p-4 border-b border-gray-100 flex justify-between items-center">
             <div className="flex items-center">
-              <div className="h-8 w-8 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold">
+              <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white font-bold">
                 D
               </div>
               {!iconOnly && (
@@ -130,16 +130,16 @@ export function DoctorLayout({ children }: DoctorLayoutProps) {
                         className={cn(
                           "flex items-center px-4 py-3 text-sm rounded-lg group transition-colors",
                           isActive
-                            ? "bg-orange-500/10 text-orange-600"
-                            : "text-gray-600 hover:bg-orange-500/5 hover:text-orange-600"
+                            ? "bg-primary/10 text-primary"
+                            : "text-gray-600 hover:bg-primary/5 hover:text-primary"
                         )}
                       >
-                        <item.icon className={cn("mr-3 h-5 w-5", isActive ? "text-orange-500" : "text-gray-400 group-hover:text-orange-500")} />
+                        <item.icon className={cn("mr-3 h-5 w-5", isActive ? "text-primary" : "text-gray-400 group-hover:text-primary")} />
                         {!iconOnly && (
                           <>
                             {item.name}
                             {isActive && (
-                              <ChevronRight className="ml-auto h-4 w-4 text-orange-500" />
+                              <ChevronRight className="ml-auto h-4 w-4 text-primary" />
                             )}
                           </>
                         )}

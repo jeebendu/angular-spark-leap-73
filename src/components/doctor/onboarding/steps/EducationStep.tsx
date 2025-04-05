@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface EducationData {
   degree: string;
@@ -138,10 +138,10 @@ export const EducationStep: React.FC<EducationStepProps> = ({
           <ChevronLeft className="h-4 w-4 mr-1" /> Back
         </Button>
         <Button 
-          className="bg-orange-500 hover:bg-orange-600 px-8"
+          className="bg-primary hover:bg-primary/90 flex items-center gap-2"
           onClick={handleSubmit}
         >
-          Next
+          Next <ChevronRight className="h-4 w-4" />
         </Button>
       </div>
     </div>

@@ -1,4 +1,3 @@
-
 import { Calendar, Star, Award, ThumbsUp, Clock, ChevronRight } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import { SearchBar } from "@/components/SearchBar";
@@ -115,7 +114,7 @@ const Index = () => {
           </motion.section>
         )}
 
-        {/* NEW Promotional Banner */}
+        {/* Promotional Banner */}
         <motion.section
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -127,7 +126,6 @@ const Index = () => {
             subtitle="Get medical advice from the comfort of your home"
             buttonText="Start for free"
             buttonLink="/doctor-search"
-            imageSrc="/lovable-uploads/b86e5ee4-5597-4429-82f6-92402144207e.png"
             bgColor="bg-[#0ABAB5]"
           />
         </motion.section>

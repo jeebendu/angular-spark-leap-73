@@ -165,7 +165,7 @@ const DoctorSearch = () => {
   const [ratingFilter, setRatingFilter] = useState(0);
   const [selectedLocationRadius, setSelectedLocationRadius] = useState<number>(5);
   
-  const { currentLocation } = useLocation();
+  const { location } = useLocation();
   const { toast } = useToast();
   const isMobile = useIsMobile();
 
@@ -1114,8 +1114,8 @@ const DoctorSearch = () => {
                         isCard={true}
                         reviews={doctorClinic.doctor.reviewCount || 0}
                         showPhone={false}
-                        id_doctor={doctorClinic.doctor.id}
-                        id_clinic={doctorClinic.clinic.id}
+                        id_doctor={doctorClinic.doctor.id.toString()}
+                        id_clinic={Number(doctorClinic.clinic.id)}
                       />
                     </CardContent>
                   </Card>

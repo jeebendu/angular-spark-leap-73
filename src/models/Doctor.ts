@@ -9,7 +9,7 @@ export interface Doctor {
   biography?: string;
   rating?: number;
   reviewCount?: number;
-  consultationFee?: number;
+  consultationFee?: number; // Changed from string to number
   expYear?: number;
   specializationList: Array<{id?: number; name: string}>;
   languageList: Array<{id?: number; name: string}>;

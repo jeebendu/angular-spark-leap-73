@@ -8,6 +8,7 @@ import { SimilarDoctors } from "@/components/doctor/SimilarDoctors";
 import { useEffect, useState } from "react";
 import { Clinic } from "@/models/Clinic";
 import { fetchDoctorById } from "@/services/doctorService";
+import { Branch as ModelBranch } from "@/models/Branch";
 
 // Type for doctor
 export interface Doctor {
@@ -23,7 +24,7 @@ export interface Doctor {
   specializationList: Specialization[];
   clinics: Clinic[];
   languageList: LanguagesList[];
-  branchList: Branch[];
+  branchList: Branch[]; // Using local Branch definition to avoid conflicts
   serviceList: ServiceList[];
   patitientList: PatientList[];
   phone: string;
@@ -32,7 +33,7 @@ export interface Doctor {
   biography: string;
   rating: number;
   reviewCount: number;
-  consultationFee: string;
+  consultationFee: number; // Changed to number type
   bio: string;
   languages: string[];
   education: {
@@ -58,6 +59,7 @@ export interface LanguagesList {
   name: string;
 }
 
+// This Branch interface is made compatible with the one from models/Branch.ts
 export interface Branch {
   id: number;
   name: string;
@@ -69,6 +71,10 @@ export interface Branch {
   country: string;
   latitude: number;
   longitude: number;
+  code?: string;
+  active?: boolean;
+  mapurl?: string;
+  image?: string;
 }
 
 export interface PatientList {
@@ -92,6 +98,23 @@ const DoctorDetails = () => {
     try {
       setLoading(true);
       const data = await fetchDoctorById(id);
+      
+      // Convert the doctor data to ensure branchList has the required properties
+      if (data.data && data.data.branchList) {
+        data.data.branchList = data.data.branchList.map((branch: any) => ({
+          ...branch,
+          code: branch.code || '',
+          active: branch.active !== undefined ? branch.active : true,
+          mapurl: branch.mapurl || '',
+          image: branch.image || ''
+        }));
+      }
+      
+      // Ensure consultation fee is a number
+      if (data.data && typeof data.data.consultationFee === 'string') {
+        data.data.consultationFee = Number(data.data.consultationFee);
+      }
+      
       setDoctorsDetails(data.data);
     } catch (error) {
       console.error("Error fetching doctors:", error);
@@ -118,7 +141,7 @@ const DoctorDetails = () => {
   }
 
   return (
-    <AppLayout isRequiredLogin={isRequiredLogin}>
+    <AppLayout>
       <div className="container px-4 py-6 max-w-6xl mx-auto">
         {/* Back button */}
         <Link to="/doctor/search" className="flex items-center text-primary mb-6 hover:underline">

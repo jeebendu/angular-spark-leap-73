@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
@@ -51,7 +52,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { useToast } from "@/components/ui/use-toast";
 import { Specialization } from "./DoctorDetails";
 import { Clinic } from "@/models/Clinic";
-import { fetchAllDoctorClinics } from "@/services/doctorService";
 import { fetchAllSpecializations, fetchLanguageList, fetchSpecializationById } from "@/services/SpecializationService";
 
 export interface SearchDoctorClinic {
@@ -145,8 +145,15 @@ export interface ServiceList {
 }
 
 const DoctorSearch = () => {
-  // Rest of the file remains the same
-  // ... keep existing code
+  // This function needs to return a React element to be a valid JSX component
+  return (
+    <AppLayout>
+      <div className="container px-4 py-6">
+        <h1>Doctor Search</h1>
+        {/* Rest of your component implementation */}
+      </div>
+    </AppLayout>
+  );
 };
 
 export default DoctorSearch;

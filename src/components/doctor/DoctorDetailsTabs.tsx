@@ -11,7 +11,7 @@ interface DoctorDetailsTabsProps {
   doctor: any; // Using any to accommodate both Doctor types
   clinics?: any[]; // Using any here to accommodate various clinic structures
   specializationList: any[];
-  branchList: Branch[];
+  branchList: any[]; // Changed to any[] to accept any branch format
   languageList: any[];
   serviceList: any[];
 }
@@ -30,6 +30,15 @@ export const DoctorDetailsTabs = ({
     specializationList: doctor.specializationList || []
   };
   
+  // Convert branchList to compatible format
+  const enhancedBranches = branchList ? branchList.map((branch: any) => ({
+    ...branch,
+    code: branch.code || '',
+    active: branch.active !== undefined ? branch.active : true,
+    mapurl: branch.mapurl || '',
+    image: branch.image || ''
+  })) : [];
+  
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden mb-6">
       <Tabs defaultValue="clinics">
@@ -42,7 +51,7 @@ export const DoctorDetailsTabs = ({
 
         <TabsContent value="clinics">
           <ClinicsTab 
-            branchList={branchList} 
+            branchList={enhancedBranches} 
             doctor={doctorModel} 
           />
         </TabsContent>

@@ -13,10 +13,6 @@ export interface EnhancedBranch extends Branch {
     address: string;
     phone: string;
   };
-  code: string;
-  active: boolean;
-  mapurl: string;
-  image: string;
 }
 
 interface ClinicsTabProps {
@@ -34,11 +30,7 @@ export const ClinicsTab = ({ branchList = [], doctor }: ClinicsTabProps) => {
       name: branch.name || '',
       address: branch.location || '',
       phone: ''
-    },
-    code: '',
-    active: true,
-    mapurl: '',
-    image: ''
+    }
   }));
   
   return (

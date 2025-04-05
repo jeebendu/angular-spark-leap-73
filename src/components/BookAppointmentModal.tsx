@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import {
   Dialog,
@@ -12,7 +11,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { fetchSlotsByDoctorAndBranch, saveOrUpdateAppointment } from "@/services/AppointmentServiceHandler";
 import { fetchMyProfilePatient, getPatietRelationList } from "@/services/UserSevice";
 import { fetchDoctorById, fetchDoctorClinicByDoctorAndBranch } from "@/services/doctorService";
-// Import the refactored components
 import { StepIndicator } from "@/components/appointment/StepIndicator";
 import { StepLabels } from "@/components/appointment/StepLabels";
 import { ClinicSelectionStep } from "@/components/appointment/steps/ClinicSelectionStep";
@@ -25,7 +23,6 @@ import { Doctor } from "@/models/Doctor";
 import { Branch } from "@/models/Branch";
 import { FamilyMember, Patient } from "@/models/Patient";
 
-// Import the appointment service
 import {
   validateCurrentStep,
   validateCurrentAppointmentStep,

@@ -1,92 +1,80 @@
 
-import { Link } from "react-router-dom";
-import { Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { useEffect, useState } from "react";
-import { Specialization } from "@/pages/DoctorDetails";
-import { DoctorClinic } from "@/pages/DoctorSearch";
-import { fetchSimilarDoctors } from "@/services/doctorService";
+import { useState, useEffect } from 'react';
+import { Doctor } from '@/models/Doctor';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { DoctorCard } from '@/components/DoctorCard';
+import { ArrowRight, Clock } from 'lucide-react';
+import { fetchSimilarDoctors } from '@/services/doctorService';
 
 interface SimilarDoctorsProps {
-  specializationList: Specialization[];
-  latitude?: number | null;
-  longitude?: number | null;
+  specialties: Array<{id?: number; name: string}>;
+  latitude: number;
+  longitude: number;
+  excludeDoctorId: number;
 }
 
-interface SearchRelatedDoctor {
-  specialisations: Specialization[];
-  latitude: number | null;
-  longitude: number | null;
-  radius: number | null;
-}
-
-export const SimilarDoctors = ({specializationList=[], latitude, longitude}: SimilarDoctorsProps) => {
-  const [searchDoctorClinic, setSearchDoctorClinic] = useState<SearchRelatedDoctor>({
-    specialisations: [],
-    latitude: latitude ? parseFloat(latitude.toString()) : null,
-    longitude: longitude ? parseFloat(longitude.toString()) : null,
-    radius: 10,
-  });
-
+export function SimilarDoctors({ specialties, latitude, longitude, excludeDoctorId }: SimilarDoctorsProps) {
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  
   useEffect(() => {
-    setSearchDoctorClinic((data) => ({
-      ...data,
-      specialisations: specializationList,
-      latitude: latitude ? parseFloat(latitude.toString()) : null,
-      longitude: longitude ? parseFloat(longitude.toString()) : null,
-      radius: 10,
-    }));
-    getSimilarDoctorList(searchDoctorClinic);
-  }, [specializationList]);
-
-  const getSimilarDoctorList = async (searchDoctorClinic: SearchRelatedDoctor) => {
-    try {
-      const response = await fetchSimilarDoctors(searchDoctorClinic);
-      setSimilarDoctorList(response.data);
-      console.log("Similar doctors data:", response.data);
-    } catch (error) {
-      console.error("Error in getAllSpecialization:", error);
-    }
-  };
-
-  const [similarlist, setSimilarDoctorList] = useState<DoctorClinic[]>([]);
+    const loadSimilarDoctors = async () => {
+      setIsLoading(true);
+      try {
+        // Only fetch if we have coordinates and specialties
+        if (latitude && longitude && specialties?.length > 0) {
+          const response = await fetchSimilarDoctors(specialties, latitude, longitude);
+          
+          if (response && response.data) {
+            // Filter out the current doctor and limit to 4 doctors
+            const filteredDoctors = response.data
+              .filter((doc: Doctor) => doc.id !== excludeDoctorId)
+              .slice(0, 4);
+              
+            setDoctors(filteredDoctors);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching similar doctors:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadSimilarDoctors();
+  }, [specialties, latitude, longitude, excludeDoctorId]);
+  
+  if (doctors.length === 0) {
+    return null;
+  }
   
   return (
-    <div className="mb-8">
-      <h3 className="text-xl font-bold mb-4">Similar Specialists</h3>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {similarlist.map((doctor, index) => (
-          <Card key={index} className="overflow-hidden border-none card-shadow">
-            <CardContent className="p-0">
-              <div className="flex items-center p-4">
-                <div className="w-16 h-16 rounded-full overflow-hidden mr-3">
-                  <img 
-                    src={`https://placehold.co/200/eaf7fc/33C3F0?text=Dr.+${index+1}&font=montserrat`}
-                    alt={`Dr. ${index+1}`}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div>
-                  <h4 className="font-medium text-base">{`Dr. ${doctor.doctor.user.name}`}</h4>
-                  <p className="text-sm text-gray-500">{doctor.doctor.specialization}</p>
-                  <div className="flex items-center mt-1">
-                    <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                    <span className="ml-1 text-xs">{4.5 + (index * 0.1)}</span>
-                    <span className="ml-1 text-xs text-gray-500">({150 + (index * 25)})</span>
-                  </div>
-                </div>
-              </div>
-              <p>{doctor.doctor.id}</p>
-              <Link to={`/doctor/${doctor.doctor.id}`}>
-                <Button variant="outline" className="m-4 w-[calc(100%-32px)] border-primary text-primary hover:bg-primary hover:text-white">
-                  View Profile
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    </div>
+    <Card className="border-none card-shadow my-6">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-lg flex items-center">
+          <Clock className="mr-2 h-5 w-5" />
+          Similar Doctors Nearby
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {doctors.map((doctor) => (
+            <DoctorCard 
+              key={doctor.id}
+              doctor={doctor}
+              isSimple
+            />
+          ))}
+        </div>
+        
+        <div className="mt-4 flex justify-center">
+          <Button variant="outline" className="flex items-center">
+            See more similar doctors
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
-};
+}

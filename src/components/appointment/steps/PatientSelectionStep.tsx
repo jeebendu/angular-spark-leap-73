@@ -17,16 +17,10 @@ import { Appointments } from "@/components/BookAppointmentModal";
 import { createNewPatientRelation } from "@/services/UserSevice";
 import { FamilyMember } from "@/models/Patient";
 
-
-
-
-
-
 interface PatientSelectionStepProps {
   appointmentObj: Appointments;
-  // setSelectedMember: (memberId: string) => void;
   familyMembers: FamilyMember[];
-  reloadFamilyMember();
+  reloadFamilyMember(): void;
   handleMemberSelection(member: FamilyMember): void;
 }
 
@@ -43,34 +37,25 @@ export function PatientSelectionStep({
     age: "",
     phone: "",
     gender: "",
-    patient:null
+    patient: null
   });
 
   useEffect(() => {
-    setFamilymember((prev)=>({...prev,patient:appointmentObj?.patient}));
-  },[]);
+    setFamilymember((prev) => ({...prev, patient: appointmentObj?.patient}));
+  }, []);
+  
   const { toast } = useToast();
 
-
-
-
-
-
-
   const handleAddFamilyMember = async () => {
-
-    const data = await createNewPatientRelation(familymember)
+    const data = await createNewPatientRelation(familymember);
     if (data.status) {
-
       toast({
         title: "Family member added",
         description: `${familymember.name} (${familymember.relationship}) has been added to your family members.`
       });
       reloadFamilyMember();
       setIsAddingMember(false);
-      setFamilymember({ name: "", relationship: "", age: "", phone: "", gender: "",patient:null });
-
-
+      setFamilymember({ name: "", relationship: "", age: "", phone: "", gender: "", patient: null });
     } else {
       toast({
         title: "Something went wrog",
@@ -79,18 +64,16 @@ export function PatientSelectionStep({
     }
  
     setIsAddingMember(false);
-    setFamilymember({ name: "", relationship: "", age: "", phone: "", gender: "",patient:null });
-
+    setFamilymember({ name: "", relationship: "", age: "", phone: "", gender: "", patient: null });
   };
 
   const familyMemberInputChange = (e: any) => {
-    setFamilymember({ ...familymember, [e.target.name]: e.target.value })
-  }
+    setFamilymember({ ...familymember, [e.target.name]: e.target.value });
+  };
 
-
-const familyMemberHandler = (member: FamilyMember) => {
-handleMemberSelection(member);
-}
+  const familyMemberHandler = (member: FamilyMember) => {
+    handleMemberSelection(member);
+  };
 
   return (
     <div className="space-y-6">
@@ -106,7 +89,7 @@ handleMemberSelection(member);
           value={appointmentObj?.familyMember?.id || "self"} 
           className="space-y-3"
         >
-          <div className="border rounded-lg p-4 transition-colors flex items-center space-x-2 p-2 rounded-md hover:bg-gray-50" onClick={() => familyMemberHandler(new FamilyMember())}>
+          <div className="border rounded-lg p-4 transition-colors flex items-center space-x-2 p-2 rounded-md hover:bg-gray-50" onClick={() => familyMemberHandler({ id: "self", name: "Myself", relationship: "Self" })}>
             <RadioGroupItem value="self" id="self" />
             <Label htmlFor="self" className="cursor-pointer">Myself</Label>
           </div>

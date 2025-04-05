@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import {
   Dialog,
@@ -33,7 +34,6 @@ import {
   Clinic
 } from "@/services/appointmentService";
 import { Country, DoctorClinic, State } from "@/pages/DoctorSearch";
-import { Specialization } from "./Specializations";
 
 export interface Appointments {
   id: number;

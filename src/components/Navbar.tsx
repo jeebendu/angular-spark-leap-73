@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -29,15 +28,6 @@ import { AuthUser } from "@/types/auth";
 import { useToast } from "@/hooks/use-toast";
 import { Navigate, useNavigate } from "react-router-dom";
 
-export interface AuthUser {
-  phone: string;
-  otp?: string;
-  reason: string;
-  email?: string;
-  tenant?: string;
-  authToken?: string;
-}
-
 export const Navbar = () => {
   const { auth, logout, isDoctor } = useAuth();
   const { toast } = useToast();
@@ -56,10 +46,10 @@ export const Navbar = () => {
   const handleLogin = async () => {
     setIsLoading(true);
     try {
-      const authUser = {
+      const authUser: AuthUser = {
         phone: phone,
         reason: "login",
-        userType: "patient" as const
+        userType: "patient"
       };
       
       const result = await sendOtp(authUser);
@@ -91,11 +81,11 @@ export const Navbar = () => {
   const handleVerifyOtp = async () => {
     setIsLoading(true);
     try {
-      const authUser = {
+      const authUser: AuthUser = {
         phone: phone,
         otp: otp,
         reason: "login",
-        userType: "patient" as const
+        userType: "patient"
       };
       
       const result = await verifyOTPAndLogin(authUser);

@@ -1,7 +1,30 @@
+
 import { Appointments, Slot } from "@/components/BookAppointmentModal";
 import { Branch } from "@/models/Branch";
 import { FamilyMember } from "@/models/Patient";
 import { ToastHelpers } from "@/models/ToastHelpers";
+import { Doctor } from "@/models/Doctor";
+
+export interface Clinic {
+  id: string;
+  name: string;
+  phone: string;
+  email: string;
+  address: string;
+  branchList: Branch[];
+}
+
+export interface Patient {
+  id: string;
+  name: string;
+  relationship: string;
+}
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+}
 
 // Mock data for family members
 export const getFamilyMembers = (): FamilyMember[] => [
@@ -64,14 +87,14 @@ export const validateReviewStep = (): boolean => true;
 // Validate current step based on step number
 export const validateCurrentStep = (
   step: number,
-  appointmentDetails: Appointments,
+  appointmentDetails: any,
   toastHelpers: ToastHelpers
 ): boolean => {
   switch (step) {
     case 1:
-      return validateClinicSelection(appointmentDetails.selectedClinic, toastHelpers);
+      return validateClinicSelection(appointmentDetails.branch, toastHelpers);
     case 2:
-      return validateDateTimeSelection(appointmentDetails.selectedDate, appointmentDetails.selectedTime, toastHelpers);
+      return validateSlotSelection(appointmentDetails.slot, toastHelpers);
     case 3:
       return validatePatientSelection();
     case 4:
@@ -83,7 +106,7 @@ export const validateCurrentStep = (
 
 export const validateCurrentAppointmentStep = (
   step: number,
-  appointment: Appointments,
+  appointment: any,
   toastHelpers: ToastHelpers
 ): boolean => {
   switch (step) {
@@ -99,6 +122,15 @@ export const validateCurrentAppointmentStep = (
       return true;
   }
 };
+
+export interface AppointmentDetails {
+  selectedClinic?: Branch;
+  selectedDate?: string;
+  selectedTime?: string;
+  selectedMember?: string;
+  doctorName?: string;
+  specialty?: string;
+}
 
 // Book appointment function
 export const bookAppointment = (

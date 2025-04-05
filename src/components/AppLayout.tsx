@@ -7,9 +7,10 @@ import { Navbar } from "./Navbar";
 export interface AppLayoutProps {
   children: ReactNode;
   hideNav?: boolean;
+  isRequiredLogin?: number;
 }
 
-export const AppLayout = ({ children, hideNav = false }: AppLayoutProps) => {
+export const AppLayout = ({ children, hideNav = false, isRequiredLogin }: AppLayoutProps) => {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       {!hideNav && <Navbar />}

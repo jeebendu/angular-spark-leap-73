@@ -5,79 +5,43 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { BookAppointmentModal } from "@/components/BookAppointmentModal";
 import { Doctor, LanguagesList, Specialization } from "@/pages/DoctorDetails";
-import { Clinic } from "@/services/appointmentService";
-import {verifyLogin} from "@/services/authHandler";
+import { verifyLogin } from "@/services/authHandler";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
 
 interface DoctorHeaderProps {
   doctor: Doctor;
-  id:string;
+  id: string;
   specializationList: Specialization[];
-  clinics:Clinic[];
-  languageList:LanguagesList[];
-  onButtonClick:() => void;
-  // doctor: {
-  //    id: string;
-  //     firstname: string;
-  //     lastname: string;
-  //     specialty: string;
-  //     qualification: string;
-  //     desgination: string;
-  //     email: string;
-  //     expYear: number;
-  //     specializationList: Specialization[];
-  //     clinics:Clinic[];
-  //     phone:string;
-  //     pincode:string;
-  //     joiningDate:Date;
-  //     rating: number;
-  //     reviewCount: number;
-  //     consultationFee: string;
-  //     bio: string;
-  //     languages: string[];
-  //     education: {
-  //       degree: string;
-  //       institute: string;
-  //       year: string;
-  //     }[];
-    // clinics: {
-    //   name: string;
-    //   address: string;
-    //   phone: string;
-    //   timings: string;
-    //   days: string;
-    // }[];
-  // };
-  
+  clinics?: any[]; // Using any here to accommodate various clinic structures
+  languageList: LanguagesList[];
+  onButtonClick: () => void;
 }
 
-
-
-
-export const DoctorHeader = ({doctor,id,specializationList = [] ,languageList =[] ,onButtonClick}: DoctorHeaderProps) => {
+export const DoctorHeader = ({
+  doctor,
+  id,
+  specializationList = [],
+  languageList = [],
+  onButtonClick
+}: DoctorHeaderProps) => {
   const [isModalOpen, setModalOpen] = useState(false);
 
-
-
-  const verifyLoginAndBook = async(setModalOpen: (open: boolean) => void) => {
+  const verifyLoginAndBook = async (setModalOpen: (open: boolean) => void) => {
     try {
       const isLoggedIn = await verifyLogin();
-      if(isLoggedIn){
+      if (isLoggedIn) {
         console.log("verifying login");
         setModalOpen(true);
-      }
-      else{
+      } else {
         setModalOpen(false);
         onButtonClick();
-        }
-      } catch (error) {
+      }
+    } catch (error) {
       onButtonClick();
       setModalOpen(false);
-      
     }
-    
-    }
+  };
 
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden mb-6">
@@ -104,7 +68,7 @@ export const DoctorHeader = ({doctor,id,specializationList = [] ,languageList =[
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">{doctor.firstname}  {doctor.lastname}</h1>
                 <p className="text-gray-600">
-                  {doctor.specializationList.map((specialization, index) => (
+                  {doctor.specializationList?.map((specialization, index) => (
                     <span key={index}>
                       {Array.isArray(specialization.name) ? specialization.name.join(", ") : specialization.name}
                     </span>
@@ -115,8 +79,8 @@ export const DoctorHeader = ({doctor,id,specializationList = [] ,languageList =[
                 <div className="flex items-center mt-2">
                   <div className="flex items-center">
                     <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    <span className="ml-1 text-sm font-medium">{doctor.rating}</span>
-                    <span className="ml-1 text-sm text-gray-500">({doctor.reviewCount} reviews)</span>
+                    <span className="ml-1 text-sm font-medium">{doctor.rating || 0}</span>
+                    <span className="ml-1 text-sm text-gray-500">({doctor.reviewCount || 0} reviews)</span>
                   </div>
                   <span className="mx-2 text-gray-300">|</span>
                   <div className="flex items-center">
@@ -132,16 +96,15 @@ export const DoctorHeader = ({doctor,id,specializationList = [] ,languageList =[
                   </Badge>
                   <Badge variant="outline" className="flex items-center gap-1 rounded-full px-3 py-1">
                     <Languages className="h-3 w-3" />
-                    {doctor.languageList.map((languageList, index) => (
+                    {doctor.languageList?.map((languageList, index) => (
                       <span key={index}>
-                      {Array.isArray(languageList.name) ? languageList.name.join(", ") : languageList.name}
-                    </span>
-                    ))
-                   }
+                        {Array.isArray(languageList.name) ? languageList.name.join(", ") : languageList.name}
+                      </span>
+                    ))}
                   </Badge>
                   <Badge variant="outline" className="flex items-center gap-1 rounded-full px-3 py-1">
                     <Building className="h-3 w-3" />
-                    <span>{doctor?.clinics?.length} Clinics</span>
+                    <span>{doctor?.clinics?.length || doctor?.branchList?.length || 0} Clinics</span>
                   </Badge>
                 </div>
               </div>
@@ -158,24 +121,26 @@ export const DoctorHeader = ({doctor,id,specializationList = [] ,languageList =[
             
             <Separator className="my-4" />
             
-            <p className="text-gray-700 text-sm md:text-base">{doctor.biography}</p>
+            <p className="text-gray-700 text-sm md:text-base">{doctor.biography || 'No biography available'}</p>
           </div>
           
           <div className="flex items-center justify-between mt-6">
             <div>
               <p className="text-gray-500 text-sm">Consultation Fee</p>
-              <p className="text-xl font-bold text-primary">{doctor.consultationFee}₹1,200</p>
+              <p className="text-xl font-bold text-primary">₹{doctor.consultationFee || 1200}</p>
             </div>
             
             <BookAppointmentModal 
               doctorName={doctor.firstname + " " + doctor.lastname}
-              specialty={doctor.specializationList[0]?.name}
+              specialty={doctor.specializationList?.[0]?.name}
               trigger={
-                <Button className="sky-button rounded-full" onClick={()=>verifyLoginAndBook(setModalOpen)}>Book Appointment</Button>
+                <Button className="sky-button rounded-full" onClick={() => verifyLoginAndBook(setModalOpen)}>
+                  Book Appointment
+                </Button>
               }
               id={id}
-              opening={isModalOpen} // Pass the modal open state
-              onClose={() => setModalOpen(false)} // Handle modal close
+              opening={isModalOpen}
+              onClose={() => setModalOpen(false)}
             />
           </div>
         </div>

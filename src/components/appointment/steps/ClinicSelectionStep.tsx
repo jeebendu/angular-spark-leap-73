@@ -1,23 +1,16 @@
 
-import { Braces, Building } from "lucide-react";
+import { Building } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Branch, Clinic } from "@/services/appointmentService";
+import { Branch } from "@/models/Branch";
 import { useEffect } from "react";
 import { Appointments } from "@/components/BookAppointmentModal";
 
-
-
-
-
-
 interface ClinicSelectionStepProps {
   appointmentObj: Appointments;
-  setSelectedClinic: (branch: Branch) =>void;
+  setSelectedClinic: (branch: Branch) => void;
   branches: Branch[];
 }
-
-
 
 export function ClinicSelectionStep({ 
   appointmentObj, 
@@ -29,7 +22,6 @@ export function ClinicSelectionStep({
     const selectedBranch = branches.find(branch => branch.id == branchId);
     if (selectedBranch) {
       setSelectedClinic(selectedBranch);
-      
     }
   };
 
@@ -46,7 +38,7 @@ export function ClinicSelectionStep({
           onValueChange={handleClinicSelection}
           className="space-y-3"
         >
-          {branches.map((branch) => (
+          {branches?.map((branch) => (
             <div 
               key={branch.id} 
               className={`border rounded-lg p-4 transition-colors ${
@@ -57,7 +49,11 @@ export function ClinicSelectionStep({
                 <RadioGroupItem value={branch.id} id={`clinic-${branch.id}`} className="mt-1" />
                 <Label htmlFor={`clinic-${branch.id}`} className="ml-2 cursor-pointer">
                   <div className="font-medium">{branch.name}</div>
-                  <div className="text-sm text-gray-500">{`${branch.city}, ${branch.district.name}, ${branch.state.name}`}</div>
+                  <div className="text-sm text-gray-500">
+                    {branch.city && branch.district?.name && branch.state?.name ? 
+                      `${branch.city}, ${branch.district.name}, ${branch.state.name}` : 
+                      branch.location || "Location not available"}
+                  </div>
                 </Label>
               </div>
             </div>

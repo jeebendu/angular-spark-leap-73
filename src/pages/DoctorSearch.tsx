@@ -1,11 +1,9 @@
-
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Slider } from "@/components/ui/slider";
 import { DoctorCard } from "@/components/DoctorCard";
 import { 
   Select,
@@ -50,6 +48,10 @@ import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { useLocation } from "@/contexts/LocationContext";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/components/ui/use-toast";
+import { DoctorFilters } from "@/components/doctor/DoctorFilters";
+import { MobileDoctorFilters } from "@/components/doctor/MobileDoctorFilters";
+
+// Import only the types/interfaces we need from this file
 
 const DoctorSearch = () => {
   const [searchParams] = useSearchParams();
@@ -296,26 +298,13 @@ const DoctorSearch = () => {
     }
   };
 
-  // Filter function to help with tooltips and contextual help
-  const getFilterHelp = (filterType: string) => {
-    switch (filterType) {
-      case 'specialty':
-        return "Select specialties to find doctors with specific expertise";
-      case 'gender':
-        return "Filter doctors by gender preference";
-      case 'experience':
-        return "Find doctors with your preferred years of medical experience";
-      case 'languages':
-        return "Filter doctors who speak specific languages";
-      case 'price':
-        return "Set your budget range for consultation fees";
-      case 'availability':
-        return "Find doctors with appointments available soon";
-      case 'rating':
-        return "Filter by patient satisfaction ratings";
-      default:
-        return "Apply filters to refine your search";
-    }
+  // Apply filters function
+  const applyFilters = () => {
+    // In a real app, this would trigger API call with filter parameters
+    toast({
+      title: "Filters Applied",
+      description: "Doctor results have been filtered based on your preferences."
+    });
   };
   
   return (
@@ -368,165 +357,31 @@ const DoctorSearch = () => {
           </ToggleGroup>
           
           {isMobile ? (
-            <Dialog open={filterOpen} onOpenChange={setFilterOpen}>
-              <DialogTrigger asChild>
-                <Button 
-                  variant="outline" 
-                  className="flex items-center gap-2 border border-gray-200 bg-white"
-                >
-                  <Filter className="h-4 w-4" />
-                  <span>Filters</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="bg-white sm:max-w-md modal-background">
-                <DialogHeader>
-                  <DialogTitle className="flex justify-between items-center">
-                    <span>Filters</span>
-                    <DialogClose asChild>
-                      <Button variant="ghost" size="icon">
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </DialogClose>
-                  </DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4 py-4 max-h-[70vh] overflow-y-auto">
-                  {/* Mobile filters */}
-                  <div className="space-y-2">
-                    <h3 className="font-medium">Specialty</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {specialties.map((specialty) => (
-                        <Button
-                          key={specialty}
-                          variant={selectedSpecialties.includes(specialty) ? "default" : "outline"}
-                          size="sm"
-                          className={`rounded-full text-xs ${selectedSpecialties.includes(specialty) ? 'bg-primary text-white' : 'bg-white'}`}
-                          onClick={() => toggleSpecialty(specialty)}
-                        >
-                          {specialty}
-                          {selectedSpecialties.includes(specialty) && (
-                            <X className="ml-1 h-3 w-3" />
-                          )}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <h3 className="font-medium">Gender</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {genders.map((gender) => (
-                        <Button
-                          key={gender}
-                          variant={selectedGenders.includes(gender) ? "default" : "outline"}
-                          size="sm"
-                          className={`rounded-full text-xs ${selectedGenders.includes(gender) ? 'bg-primary text-white' : 'bg-white'}`}
-                          onClick={() => toggleGender(gender)}
-                        >
-                          {gender}
-                          {selectedGenders.includes(gender) && (
-                            <X className="ml-1 h-3 w-3" />
-                          )}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <h3 className="font-medium">Experience</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {experienceRanges.map((experience) => (
-                        <Button
-                          key={experience}
-                          variant={selectedExperience.includes(experience) ? "default" : "outline"}
-                          size="sm"
-                          className={`rounded-full text-xs ${selectedExperience.includes(experience) ? 'bg-primary text-white' : 'bg-white'}`}
-                          onClick={() => toggleExperience(experience)}
-                        >
-                          {experience}
-                          {selectedExperience.includes(experience) && (
-                            <X className="ml-1 h-3 w-3" />
-                          )}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <h3 className="font-medium">Languages</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {languages.map((language) => (
-                        <Button
-                          key={language}
-                          variant={selectedLanguages.includes(language) ? "default" : "outline"}
-                          size="sm"
-                          className={`rounded-full text-xs ${selectedLanguages.includes(language) ? 'bg-primary text-white' : 'bg-white'}`}
-                          onClick={() => toggleLanguage(language)}
-                        >
-                          {language}
-                          {selectedLanguages.includes(language) && (
-                            <X className="ml-1 h-3 w-3" />
-                          )}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <h3 className="font-medium">Price Range</h3>
-                    <div className="px-2">
-                      <Slider
-                        defaultValue={[500, 2000]}
-                        max={5000}
-                        step={100}
-                        onValueChange={(value) => setPriceRange(value)}
-                      />
-                      <div className="flex justify-between mt-2 text-sm">
-                        <span>₹{priceRange[0]}</span>
-                        <span>₹{priceRange[1]}</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <h3 className="font-medium">Availability</h3>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm">Available Today</span>
-                        <Switch id="available-today" />
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm">Available This Week</span>
-                        <Switch id="available-week" />
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <h3 className="font-medium">Rating</h3>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm flex items-center">
-                          <span>4+</span>
-                          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400 ml-1" />
-                        </span>
-                        <Switch id="rating-4" />
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm flex items-center">
-                          <span>3+</span>
-                          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400 ml-1" />
-                        </span>
-                        <Switch id="rating-3" />
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="pt-4">
-                    <Button className="w-full sky-button">Apply Filters</Button>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
+            <>
+              <Button 
+                variant="outline" 
+                className="flex items-center gap-2 border border-gray-200 bg-white"
+                onClick={() => setFilterOpen(true)}
+              >
+                <Filter className="h-4 w-4" />
+                <span>Filters</span>
+              </Button>
+              <MobileDoctorFilters 
+                open={filterOpen}
+                onOpenChange={setFilterOpen}
+                selectedSpecialties={selectedSpecialties}
+                selectedGenders={selectedGenders}
+                selectedLanguages={selectedLanguages}
+                selectedExperience={selectedExperience}
+                priceRange={priceRange}
+                toggleSpecialty={toggleSpecialty}
+                toggleGender={toggleGender}
+                toggleLanguage={toggleLanguage}
+                toggleExperience={toggleExperience}
+                setPriceRange={setPriceRange}
+                applyFilters={applyFilters}
+              />
+            </>
           ) : (
             <Button 
               variant="outline" 
@@ -542,247 +397,21 @@ const DoctorSearch = () => {
       
       <div className="flex flex-col md:flex-row gap-6">
         {/* Filters - Desktop */}
-        {!isMobile && (
+        {!isMobile && filterOpen && (
           <div className="w-full md:w-64 shrink-0">
-            <Card className="sticky top-24 border-none card-shadow">
-              <CardContent className="p-4">
-                <h3 className="font-medium text-lg mb-4 flex items-center justify-between">
-                  <span>Filters</span>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p className="w-64 text-xs">Apply filters to narrow down your search results</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </h3>
-                
-                <div className="space-y-6">
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-medium">Specialty</h4>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <HelpCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="w-64 text-xs">{getFilterHelp('specialty')}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {specialties.map((specialty) => (
-                        <Button
-                          key={specialty}
-                          variant={selectedSpecialties.includes(specialty) ? "default" : "outline"}
-                          size="sm"
-                          className={`rounded-full text-xs ${selectedSpecialties.includes(specialty) ? 'bg-primary text-white' : 'bg-white'}`}
-                          onClick={() => toggleSpecialty(specialty)}
-                        >
-                          {specialty}
-                          {selectedSpecialties.includes(specialty) && (
-                            <X className="ml-1 h-3 w-3" />
-                          )}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-medium">Gender</h4>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <HelpCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="w-64 text-xs">{getFilterHelp('gender')}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {genders.map((gender) => (
-                        <Button
-                          key={gender}
-                          variant={selectedGenders.includes(gender) ? "default" : "outline"}
-                          size="sm"
-                          className={`rounded-full text-xs ${selectedGenders.includes(gender) ? 'bg-primary text-white' : 'bg-white'}`}
-                          onClick={() => toggleGender(gender)}
-                        >
-                          {gender}
-                          {selectedGenders.includes(gender) && (
-                            <X className="ml-1 h-3 w-3" />
-                          )}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-medium">Experience</h4>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <HelpCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="w-64 text-xs">{getFilterHelp('experience')}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {experienceRanges.map((experience) => (
-                        <Button
-                          key={experience}
-                          variant={selectedExperience.includes(experience) ? "default" : "outline"}
-                          size="sm"
-                          className={`rounded-full text-xs ${selectedExperience.includes(experience) ? 'bg-primary text-white' : 'bg-white'}`}
-                          onClick={() => toggleExperience(experience)}
-                        >
-                          {experience}
-                          {selectedExperience.includes(experience) && (
-                            <X className="ml-1 h-3 w-3" />
-                          )}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-medium">Languages</h4>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <HelpCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="w-64 text-xs">{getFilterHelp('languages')}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {languages.map((language) => (
-                        <Button
-                          key={language}
-                          variant={selectedLanguages.includes(language) ? "default" : "outline"}
-                          size="sm"
-                          className={`rounded-full text-xs ${selectedLanguages.includes(language) ? 'bg-primary text-white' : 'bg-white'}`}
-                          onClick={() => toggleLanguage(language)}
-                        >
-                          {language}
-                          {selectedLanguages.includes(language) && (
-                            <X className="ml-1 h-3 w-3" />
-                          )}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-medium">Price Range</h4>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <HelpCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="w-64 text-xs">{getFilterHelp('price')}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-                    <div className="px-2">
-                      <Slider
-                        defaultValue={[500, 2000]}
-                        max={5000}
-                        step={100}
-                        onValueChange={(value) => setPriceRange(value)}
-                      />
-                      <div className="flex justify-between mt-2 text-sm">
-                        <span>₹{priceRange[0]}</span>
-                        <span>₹{priceRange[1]}</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-medium">Availability</h4>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <HelpCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="w-64 text-xs">{getFilterHelp('availability')}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center">
-                        <Switch id="desktop-available-today" className="mr-2" />
-                        <label htmlFor="desktop-available-today" className="text-sm">
-                          Available Today
-                        </label>
-                      </div>
-                      <div className="flex items-center">
-                        <Switch id="desktop-available-week" className="mr-2" />
-                        <label htmlFor="desktop-available-week" className="text-sm">
-                          Available This Week
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-medium">Rating</h4>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <HelpCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="w-64 text-xs">{getFilterHelp('rating')}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center">
-                        <Switch id="desktop-rating-4-plus" className="mr-2" />
-                        <label htmlFor="desktop-rating-4-plus" className="text-sm flex items-center">
-                          <span>4+</span>
-                          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400 ml-1" />
-                        </label>
-                      </div>
-                      <div className="flex items-center">
-                        <Switch id="desktop-rating-3-plus" className="mr-2" />
-                        <label htmlFor="desktop-rating-3-plus" className="text-sm flex items-center">
-                          <span>3+</span>
-                          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400 ml-1" />
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <Button className="w-full sky-button">Apply Filters</Button>
-                </div>
-              </CardContent>
-            </Card>
+            <DoctorFilters 
+              selectedSpecialties={selectedSpecialties}
+              selectedGenders={selectedGenders}
+              selectedLanguages={selectedLanguages}
+              selectedExperience={selectedExperience}
+              priceRange={priceRange}
+              toggleSpecialty={toggleSpecialty}
+              toggleGender={toggleGender}
+              toggleLanguage={toggleLanguage}
+              toggleExperience={toggleExperience}
+              setPriceRange={setPriceRange}
+              applyFilters={applyFilters}
+            />
           </div>
         )}
         
@@ -1129,90 +758,4 @@ const DoctorSearch = () => {
               
               <div className="bg-gray-50 p-4 rounded-lg space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Doctor</span>
-                  <span className="text-sm font-medium">{selectedDoctor}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Date</span>
-                  <span className="text-sm font-medium">{date?.toLocaleDateString()}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Time</span>
-                  <span className="text-sm font-medium">{selectedSlot}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Clinic</span>
-                  <span className="text-sm font-medium">
-                    {doctors.find(d => d.name === selectedDoctor)?.clinics.find(c => c.id === selectedClinic)?.name}
-                  </span>
-                </div>
-                <div className="pt-2 border-t">
-                  <div className="flex justify-between font-medium">
-                    <span>Consultation Fee</span>
-                    <span>₹{doctors.find(d => d.name === selectedDoctor)?.price || 1200}</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">Payment to be made at the clinic</p>
-                </div>
-              </div>
-              
-              <div className="pt-4 flex justify-between">
-                <Button variant="outline" onClick={prevStep}>Back</Button>
-                <Button className="sky-button" onClick={nextStep}>Confirm Booking</Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-      
-      {/* Success Dialog */}
-      <AlertDialog open={successDialogOpen} onOpenChange={setSuccessDialogOpen}>
-        <AlertDialogContent className="bg-white modal-background">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-center text-xl text-green-600">Appointment Confirmed!</AlertDialogTitle>
-            <AlertDialogDescription className="text-center">
-              Your appointment has been successfully booked
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          
-          <div className="flex flex-col items-center py-4">
-            <div className="bg-gray-50 p-4 rounded-lg w-full max-w-sm mx-auto">
-              <div className="flex justify-between mb-1">
-                <span className="text-sm text-muted-foreground">Appointment ID</span>
-                <span className="text-sm font-medium">APT123456</span>
-              </div>
-              <div className="flex justify-between mb-1">
-                <span className="text-sm text-muted-foreground">Doctor</span>
-                <span className="text-sm font-medium">{selectedDoctor}</span>
-              </div>
-              <div className="flex justify-between mb-1">
-                <span className="text-sm text-muted-foreground">Date & Time</span>
-                <span className="text-sm font-medium">{date?.toLocaleDateString()} {selectedSlot}</span>
-              </div>
-              <div className="flex justify-between mb-1">
-                <span className="text-sm text-muted-foreground">Clinic</span>
-                <span className="text-sm font-medium">
-                  {doctors.find(d => d.name === selectedDoctor)?.clinics.find(c => c.id === selectedClinic)?.name}
-                </span>
-              </div>
-            </div>
-            
-            <div className="my-4 bg-white p-2 border rounded-lg">
-              <img src="https://placehold.co/200/eaf7fc/33C3F0?text=QR+Code&font=montserrat" alt="Appointment QR Code" className="w-32 h-32 mx-auto" />
-            </div>
-            
-            <p className="text-sm text-center text-muted-foreground">
-              Show this QR code at the clinic reception
-            </p>
-          </div>
-          
-          <AlertDialogFooter className="flex flex-col sm:flex-row gap-2">
-            <AlertDialogCancel className="sm:mt-0">Close</AlertDialogCancel>
-            <AlertDialogAction className="sky-button">Download Receipt</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </AppLayout>
-  );
-};
-
-export default DoctorSearch;
+                  <span className="text-sm text-

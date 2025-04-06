@@ -50,11 +50,27 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
+// Define PatientFormData interface that matches ReviewPatientDialog's expectations
+interface PatientFormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  gender: string;
+  age: string;
+  clinic: string;
+  doctor: string;
+  appointmentDate: string;
+  appointmentTime: string;
+  appointmentType: string;
+  reason?: string;
+}
+
 const AddPatient = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
-  const [formData, setFormData] = useState<FormValues | null>(null);
+  const [formData, setFormData] = useState<PatientFormData | null>(null);
 
   // Get clinics data
   const clinics = getClinics();
@@ -78,7 +94,8 @@ const AddPatient = () => {
   });
 
   const onSubmit = (values: FormValues) => {
-    setFormData(values);
+    // Cast values to PatientFormData since validation ensures all required fields are present
+    setFormData(values as PatientFormData);
     setReviewDialogOpen(true);
   };
 

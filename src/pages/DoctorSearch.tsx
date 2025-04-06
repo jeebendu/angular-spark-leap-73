@@ -42,23 +42,6 @@ const DoctorSearch = () => {
   const observer = useRef<IntersectionObserver>();
   const { toast } = useToast();
   
-  const specialties = [
-    "All Specialties",
-    "Cardiology",
-    "Neurology",
-    "Orthopedics",
-    "Dermatology",
-    "Pediatrics",
-    "Internal Medicine",
-    "Ophthalmology",
-    "Dentistry",
-    "Gynecology"
-  ];
-
-  const genders = ["Male", "Female"];
-  const languages = ["English", "Hindi", "Tamil", "Telugu", "Kannada", "Malayalam"];
-  const experienceRanges = ["0-5 years", "5-10 years", "10-15 years", "15+ years"];
-  
   const timeSlots = [
     "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", 
     "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM",

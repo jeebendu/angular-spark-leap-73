@@ -12,7 +12,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { fetchAllSpecializations } from "@/services/SpecializationService";
+import { fetchAllSpecializations, fetchLanguageList } from "@/services/SpecializationService";
 
 interface DoctorFiltersProps {
   selectedSpecialties: string[];
@@ -41,17 +41,42 @@ export const DoctorFilters = ({
   setPriceRange,
   applyFilters,
 }: DoctorFiltersProps) => {
-  const genders = ["Male", "Female"];
-  const languages = ["English", "Hindi", "Tamil", "Telugu", "Kannada", "Malayalam"];
-  const experienceRanges = ["0-5 years", "5-10 years", "10-15 years", "15+ years"];
+  const genders = [
+    { key: "male", value: "Male" },
+    { key: "female", value: "Female" },
+  ];
+
+  const experienceRanges = [
+    { key: "0-5", value: "0-5 years" },
+    { key: "5-10", value: "5-10 years" },
+    { key: "10-15", value: "10-15 years" },
+    { key: "15+", value: "15+ years" },
+  ];
+
+  const [languages, setLanguages] = useState<{ id: number; name: string }[]>([]);
   const [specializations, setSpecializations] = useState<{ id: number; name: string }[]>([]);
   const [specialtySearch, setSpecialtySearch] = useState("");
   const [showAllSpecialties, setShowAllSpecialties] = useState(false);
 
+  // Fetch languages from the API
+  useEffect(() => {
+    const fetchLanguages = async () => {
+      try {
+        const response = await fetchLanguageList();
+        setLanguages(response.data); // Assuming the API response has a `data` field with objects containing `id` and `name`
+      } catch (error) {
+        console.error("Failed to fetch languages:", error);
+      }
+    };
+
+    fetchLanguages();
+  }, []);
+
+  // Fetch specializations from the API
   useEffect(() => {
     const fetchSpecialties = async () => {
       try {
-        const response = await fetchAllSpecializations(); // Call the API
+        const response = await fetchAllSpecializations();
         setSpecializations(response.data); // Assuming the API response has a `data` field with objects containing `id` and `name`
       } catch (error) {
         console.error("Failed to fetch specializations:", error);
@@ -174,16 +199,16 @@ export const DoctorFilters = ({
               <div className="flex flex-wrap gap-2">
                 {genders.map((gender) => (
                   <Button
-                    key={gender}
-                    variant={selectedGenders.includes(gender) ? "default" : "outline"}
+                    key={gender.key}
+                    variant={selectedGenders.includes(gender.key) ? "default" : "outline"}
                     size="sm"
                     className={`rounded-full text-xs ${
-                      selectedGenders.includes(gender) ? "bg-[#0ABAB5] text-white" : "bg-white"
+                      selectedGenders.includes(gender.key) ? "bg-[#0ABAB5] text-white" : "bg-white"
                     }`}
-                    onClick={() => toggleGender(gender)}
+                    onClick={() => toggleGender(gender.key)}
                   >
-                    {gender}
-                    {selectedGenders.includes(gender) && <X className="ml-1 h-3 w-3" />}
+                    {gender.value}
+                    {selectedGenders.includes(gender.key) && <X className="ml-1 h-3 w-3" />}
                   </Button>
                 ))}
               </div>
@@ -207,16 +232,16 @@ export const DoctorFilters = ({
               <div className="flex flex-wrap gap-2">
                 {experienceRanges.map((experience) => (
                   <Button
-                    key={experience}
-                    variant={selectedExperience.includes(experience) ? "default" : "outline"}
+                    key={experience.key}
+                    variant={selectedExperience.includes(experience.key) ? "default" : "outline"}
                     size="sm"
                     className={`rounded-full text-xs ${
-                      selectedExperience.includes(experience) ? "bg-[#0ABAB5] text-white" : "bg-white"
+                      selectedExperience.includes(experience.key) ? "bg-[#0ABAB5] text-white" : "bg-white"
                     }`}
-                    onClick={() => toggleExperience(experience)}
+                    onClick={() => toggleExperience(experience.key)}
                   >
-                    {experience}
-                    {selectedExperience.includes(experience) && <X className="ml-1 h-3 w-3" />}
+                    {experience.value}
+                    {selectedExperience.includes(experience.key) && <X className="ml-1 h-3 w-3" />}
                   </Button>
                 ))}
               </div>
@@ -240,16 +265,16 @@ export const DoctorFilters = ({
               <div className="flex flex-wrap gap-2">
                 {languages.map((language) => (
                   <Button
-                    key={language}
-                    variant={selectedLanguages.includes(language) ? "default" : "outline"}
+                    key={language.id}
+                    variant={selectedLanguages.includes(language.name) ? "default" : "outline"}
                     size="sm"
                     className={`rounded-full text-xs ${
-                      selectedLanguages.includes(language) ? "bg-[#0ABAB5] text-white" : "bg-white"
+                      selectedLanguages.includes(language.name) ? "bg-[#0ABAB5] text-white" : "bg-white"
                     }`}
-                    onClick={() => toggleLanguage(language)}
+                    onClick={() => toggleLanguage(language.name)}
                   >
-                    {language}
-                    {selectedLanguages.includes(language) && <X className="ml-1 h-3 w-3" />}
+                    {language.name}
+                    {selectedLanguages.includes(language.name) && <X className="ml-1 h-3 w-3" />}
                   </Button>
                 ))}
               </div>

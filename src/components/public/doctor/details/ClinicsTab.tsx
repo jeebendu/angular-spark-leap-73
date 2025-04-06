@@ -8,9 +8,6 @@ import { Doctor } from "@/models/doctor/Doctor";
 import { CalendarDays, CheckCircle2, Clock, MapPin } from "lucide-react";
 import { BookAppointmentModal } from "../../appointments/BookAppointmentModal";
 import { format } from "date-fns";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 
 interface ClinicsTabProps {
   clinics: Clinic[];
@@ -22,7 +19,6 @@ export const ClinicsTab = ({ clinics, doctor }: ClinicsTabProps) => {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const isMobile = useIsMobile();
   
   const timeSlots = [
     "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", 
@@ -47,83 +43,6 @@ export const ClinicsTab = ({ clinics, doctor }: ClinicsTabProps) => {
     // Open modal directly at step 3 since clinic and date/time are already selected
     setIsModalOpen(true);
   };
-  
-  // Render the time slots content
-  const renderTimeSlotsContent = () => (
-    <div className="bg-white rounded-lg border h-full p-4">
-      {date ? (
-        <div className="space-y-3">
-          <h4 className="text-md font-medium mb-1">
-            Available Slots for {format(date, "EEEE, MMMM d")}
-          </h4>
-          
-          {morningSlots.length > 0 && (
-            <div className="mb-2">
-              <h5 className="text-sm font-medium text-gray-500 mb-2">Morning</h5>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                {morningSlots.map((time) => (
-                  <Button
-                    key={time}
-                    variant="outline"
-                    className={`text-sm h-10 ${
-                      selectedTimeSlot === time ? "bg-primary text-white border-primary hover:bg-primary/90 hover:text-white" : ""
-                    }`}
-                    onClick={() => handleTimeSlotSelection(time)}
-                  >
-                    {time}
-                  </Button>
-                ))}
-              </div>
-            </div>
-          )}
-          
-          {afternoonSlots.length > 0 && (
-            <div className="mb-2">
-              <h5 className="text-sm font-medium text-gray-500 mb-2">Afternoon</h5>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                {afternoonSlots.map((time) => (
-                  <Button
-                    key={time}
-                    variant="outline"
-                    className={`text-sm h-10 ${
-                      selectedTimeSlot === time ? "bg-primary text-white border-primary hover:bg-primary/90 hover:text-white" : ""
-                    }`}
-                    onClick={() => handleTimeSlotSelection(time)}
-                  >
-                    {time}
-                  </Button>
-                ))}
-              </div>
-            </div>
-          )}
-          
-          {eveningSlots.length > 0 && (
-            <div>
-              <h5 className="text-sm font-medium text-gray-500 mb-2">Evening</h5>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                {eveningSlots.map((time) => (
-                  <Button
-                    key={time}
-                    variant="outline"
-                    className={`text-sm h-10 ${
-                      selectedTimeSlot === time ? "bg-primary text-white border-primary hover:bg-primary/90 hover:text-white" : ""
-                    }`}
-                    onClick={() => handleTimeSlotSelection(time)}
-                  >
-                    {time}
-                  </Button>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      ) : (
-        <div className="h-full flex items-center justify-center text-gray-400">
-          <p>Please select a date to view available slots</p>
-        </div>
-      )}
-    </div>
-  );
   
   return (
     <div className="p-6">
@@ -171,42 +90,93 @@ export const ClinicsTab = ({ clinics, doctor }: ClinicsTabProps) => {
       <div className="mt-8">
         <h3 className="text-lg font-medium mb-4">Select Appointment Date & Time</h3>
         
-        {isMobile ? (
-          <Drawer>
-            <DrawerTrigger asChild>
-              <div className="bg-white rounded-md border shadow-sm p-4 mb-4">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={setDate}
-                  className="mx-auto"
-                  disabled={(date) => date < new Date(new Date().setHours(0,0,0,0))}
-                />
-              </div>
-            </DrawerTrigger>
-            <DrawerContent className="p-0">
-              <div className="p-4 max-h-[80vh] overflow-y-auto">
-                {renderTimeSlotsContent()}
-              </div>
-            </DrawerContent>
-          </Drawer>
-        ) : (
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="md:w-1/2">
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={setDate}
-                className="rounded-md border bg-white w-full max-w-full shadow-sm"
-                disabled={(date) => date < new Date(new Date().setHours(0,0,0,0))}
-              />
-            </div>
-            
-            <div className="md:w-1/2">
-              {renderTimeSlotsContent()}
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="md:w-1/2">
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={setDate}
+              className="rounded-md border bg-white w-full max-w-full shadow-sm"
+              disabled={(date) => date < new Date(new Date().setHours(0,0,0,0))}
+            />
+          </div>
+          
+          <div className="md:w-1/2">
+            <div className="bg-white rounded-lg border h-full p-4">
+              {date ? (
+                <div className="space-y-3">
+                  <h4 className="text-md font-medium mb-1">
+                    Available Slots for {format(date, "EEEE, MMMM d")}
+                  </h4>
+                  
+                  {morningSlots.length > 0 && (
+                    <div className="mb-2">
+                      <h5 className="text-sm font-medium text-gray-500 mb-2">Morning</h5>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                        {morningSlots.map((time) => (
+                          <Button
+                            key={time}
+                            variant="outline"
+                            className={`text-sm h-10 ${
+                              selectedTimeSlot === time ? "bg-primary text-white border-primary hover:bg-primary/90 hover:text-white" : ""
+                            }`}
+                            onClick={() => handleTimeSlotSelection(time)}
+                          >
+                            {time}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {afternoonSlots.length > 0 && (
+                    <div className="mb-2">
+                      <h5 className="text-sm font-medium text-gray-500 mb-2">Afternoon</h5>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                        {afternoonSlots.map((time) => (
+                          <Button
+                            key={time}
+                            variant="outline"
+                            className={`text-sm h-10 ${
+                              selectedTimeSlot === time ? "bg-primary text-white border-primary hover:bg-primary/90 hover:text-white" : ""
+                            }`}
+                            onClick={() => handleTimeSlotSelection(time)}
+                          >
+                            {time}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {eveningSlots.length > 0 && (
+                    <div>
+                      <h5 className="text-sm font-medium text-gray-500 mb-2">Evening</h5>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                        {eveningSlots.map((time) => (
+                          <Button
+                            key={time}
+                            variant="outline"
+                            className={`text-sm h-10 ${
+                              selectedTimeSlot === time ? "bg-primary text-white border-primary hover:bg-primary/90 hover:text-white" : ""
+                            }`}
+                            onClick={() => handleTimeSlotSelection(time)}
+                          >
+                            {time}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="h-full flex items-center justify-center text-gray-400">
+                  <p>Please select a date to view available slots</p>
+                </div>
+              )}
             </div>
           </div>
-        )}
+        </div>
       </div>
       
       {/* BookAppointmentModal with controlled open state and initial step set to 3 */}

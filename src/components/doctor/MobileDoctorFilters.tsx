@@ -80,21 +80,21 @@ export const MobileDoctorFilters = ({
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="bg-white sm:max-w-md modal-background">
-          <DialogHeader>
-            <DialogTitle className="flex justify-between items-center">
-              <span>Filters</span>
+        <DialogContent className="bg-white sm:max-w-md modal-background p-0">
+          <DialogHeader className="sticky top-0 z-10 bg-white p-4 border-b">
+            <div className="flex justify-between items-center">
+              <DialogTitle className="text-lg font-semibold">Filters</DialogTitle>
               <DialogClose asChild>
                 <Button variant="ghost" size="icon">
                   <X className="h-4 w-4" />
                 </Button>
               </DialogClose>
-            </DialogTitle>
+            </div>
           </DialogHeader>
           
-          <ScrollArea className="max-h-[70vh]">
+          <ScrollArea className="max-h-[70vh] px-4">
             <div className="space-y-4 py-4">
-              {/* Mobile filters */}
+              {/* Specialties section */}
               <div className="space-y-2">
                 <h3 className="font-medium">Specialty</h3>
                 <div className="relative mb-2">
@@ -136,6 +136,7 @@ export const MobileDoctorFilters = ({
                 )}
               </div>
               
+              {/* Gender section */}
               <div className="space-y-2">
                 <h3 className="font-medium">Gender</h3>
                 <div className="flex flex-wrap gap-2">
@@ -156,6 +157,7 @@ export const MobileDoctorFilters = ({
                 </div>
               </div>
               
+              {/* Experience section */}
               <div className="space-y-2">
                 <h3 className="font-medium">Experience</h3>
                 <div className="flex flex-wrap gap-2">
@@ -176,7 +178,8 @@ export const MobileDoctorFilters = ({
                 </div>
               </div>
               
-              <div className="space-y-2">
+              {/* Languages section */}
+              <div className="space-y-2 pb-6">
                 <h3 className="font-medium">Languages</h3>
                 <div className="flex flex-wrap gap-2">
                   {languages.map((language) => (
@@ -198,7 +201,7 @@ export const MobileDoctorFilters = ({
             </div>
           </ScrollArea>
           
-          <div className="sticky bottom-0 pt-4 bg-white border-t">
+          <div className="sticky bottom-0 p-4 bg-white border-t">
             <Button 
               className="w-full bg-[#0ABAB5] hover:bg-[#09a09b] text-white" 
               onClick={() => {
@@ -211,16 +214,6 @@ export const MobileDoctorFilters = ({
           </div>
         </DialogContent>
       </Dialog>
-      
-      {/* Fixed filter button for mobile */}
-      <Button
-        variant="default"
-        className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-40 rounded-full bg-[#0ABAB5] text-white shadow-lg px-6 py-6 h-auto md:hidden flex items-center gap-2"
-        onClick={() => onOpenChange(true)}
-      >
-        <Filter className="h-5 w-5" />
-        <span className="font-medium">Filters</span>
-      </Button>
     </>
   );
 };

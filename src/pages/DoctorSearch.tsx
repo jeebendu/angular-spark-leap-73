@@ -17,7 +17,7 @@ const DoctorSearch = () => {
   const [searchTerm, setSearchTerm] = useState(initialQuery);
   const [priceRange, setPriceRange] = useState<[number, number]>([500, 2000]);
   const isMobile = useIsMobile();
-  const [filterOpen, setFilterOpen] = useState(!isMobile);
+  const [filterOpen, setFilterOpen] = useState(false);
   const [selectedSpecialties, setSelectedSpecialties] = useState<string[]>(
     initialSpecialty ? [initialSpecialty] : []
   );
@@ -167,6 +167,14 @@ const DoctorSearch = () => {
     }
   }, [initialSpecialty]);
 
+  useEffect(() => {
+    if (isMobile) {
+      setFilterOpen(false);
+    } else {
+      setFilterOpen(true);
+    }
+  }, [isMobile]);
+
   const toggleSpecialty = (specialty: string) => {
     if (selectedSpecialties.includes(specialty)) {
       setSelectedSpecialties(selectedSpecialties.filter(s => s !== specialty));
@@ -230,15 +238,14 @@ const DoctorSearch = () => {
   };
 
   const applyFilters = () => {
-    toast({
-      title: "Filters Applied",
-      description: "Doctor results have been filtered based on your preferences."
-    });
+    if (isMobile) {
+      setFilterOpen(false);
+    }
   };
   
   return (
     <AppLayout>
-      <div className="container px-4 py-6">
+      <div className="container px-2 sm:px-4 py-3 sm:py-6">
         <DoctorSearchBar
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
@@ -261,8 +268,8 @@ const DoctorSearch = () => {
           applyFilters={applyFilters}
         />
         
-        <div className="flex flex-col md:flex-row gap-6">
-          {!isMobile && filterOpen && (
+        <div className="flex flex-col md:flex-row gap-4 md:gap-6">
+          {!isMobile && (
             <div className="w-full md:w-64 shrink-0">
               <DoctorFilters 
                 selectedSpecialties={selectedSpecialties}

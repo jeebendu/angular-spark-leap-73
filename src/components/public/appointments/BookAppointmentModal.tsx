@@ -28,7 +28,7 @@ import { PatientSelectionStep } from "./steps/PatientSelectionStep";
 import { ReviewStep } from "./steps/ReviewStep";
 import { PaymentStep } from "./steps/PaymentStep";
 import { NavigationButtons } from "./NavigationButtons";
-import { BookingSuccessDialog } from "./BookingSuccessDialog";
+import { BookingSuccessDialog } from "./steps/BookingSuccessDialog";
 
 interface BookAppointmentModalProps {
   doctorName?: string;

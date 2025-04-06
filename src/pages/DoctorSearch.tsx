@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
@@ -267,6 +266,10 @@ const DoctorSearch = () => {
           toggleExperience={toggleExperience}
           setPriceRange={setPriceRange}
           applyFilters={applyFilters}
+          setSelectedSpecialties={setSelectedSpecialties}
+          setSelectedGenders={setSelectedGenders}
+          setSelectedLanguages={setSelectedLanguages}
+          setSelectedExperience={setSelectedExperience}
         />
         
         <div className="flex flex-col md:flex-row gap-4 md:gap-6 mt-4">

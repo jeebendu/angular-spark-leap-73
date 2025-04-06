@@ -30,6 +30,11 @@ interface DoctorSearchBarProps {
   toggleExperience: (experience: string) => void;
   setPriceRange: Dispatch<SetStateAction<[number, number]>>;
   applyFilters: () => void;
+  // Adding the missing setter functions
+  setSelectedSpecialties: Dispatch<SetStateAction<string[]>>;
+  setSelectedGenders: Dispatch<SetStateAction<string[]>>;
+  setSelectedLanguages: Dispatch<SetStateAction<string[]>>;
+  setSelectedExperience: Dispatch<SetStateAction<string[]>>;
 }
 
 export function DoctorSearchBar({
@@ -51,7 +56,12 @@ export function DoctorSearchBar({
   toggleLanguage,
   toggleExperience,
   setPriceRange,
-  applyFilters
+  applyFilters,
+  // Adding the missing setter functions to destructuring
+  setSelectedSpecialties,
+  setSelectedGenders,
+  setSelectedLanguages,
+  setSelectedExperience
 }: DoctorSearchBarProps) {
   const isMobile = useIsMobile();
 

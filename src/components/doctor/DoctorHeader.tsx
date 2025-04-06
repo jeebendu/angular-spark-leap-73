@@ -1,8 +1,7 @@
 
-import { Heart, Share2, Star, ThumbsUp, Award, Languages, Building } from "lucide-react";
+import { Heart, Share2, Star, ThumbsUp, Award, Languages, Building, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { BookAppointmentModal } from "@/components/BookAppointmentModal";
 
 interface DoctorHeaderProps {
@@ -30,30 +29,25 @@ interface DoctorHeaderProps {
 export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden mb-6">
-      <div className="md:flex">
-        <div className="md:w-1/3 lg:w-1/4 relative">
-          <img 
-            src={`https://placehold.co/600x400/eaf7fc/33C3F0?text=Dr.+Emily&font=montserrat`}
-            alt={doctor.name}
-            className="w-full h-full object-cover object-center"
-          />
-          <div className="absolute top-4 right-4 md:hidden">
-            <Button variant="outline" size="icon" className="rounded-full bg-white">
-              <Heart className="h-5 w-5 text-rose-500" />
-            </Button>
-            <Button variant="outline" size="icon" className="rounded-full bg-white ml-2">
-              <Share2 className="h-5 w-5" />
-            </Button>
+      <div className="flex flex-col">
+        {/* Header with image and basic info */}
+        <div className="flex">
+          {/* Doctor Image */}
+          <div className="w-1/4 md:w-1/5">
+            <img 
+              src={`https://placehold.co/600x400/eaf7fc/33C3F0?text=Dr.+Emily&font=montserrat`}
+              alt={doctor.name}
+              className="w-full h-full object-cover object-center"
+            />
           </div>
-        </div>
-        
-        <div className="p-6 md:w-2/3 lg:w-3/4 flex flex-col justify-between">
-          <div>
+          
+          {/* Basic Doctor Info */}
+          <div className="p-4 w-3/4 md:w-4/5">
             <div className="flex items-start justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">{doctor.name}</h1>
+                <h1 className="text-xl md:text-2xl font-bold text-gray-900">{doctor.name}</h1>
                 <p className="text-gray-600">{doctor.specialty}</p>
-                <p className="text-sm text-gray-500">{doctor.qualifications}</p>
+                <p className="text-xs md:text-sm text-gray-500">{doctor.qualifications}</p>
                 
                 <div className="flex items-center mt-2">
                   <div className="flex items-center">
@@ -64,55 +58,57 @@ export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
                   <span className="mx-2 text-gray-300">|</span>
                   <div className="flex items-center">
                     <ThumbsUp className="h-4 w-4 text-primary" />
-                    <span className="ml-1 text-sm">98% Recommended</span>
+                    <span className="ml-1 text-xs md:text-sm">98% Recommended</span>
                   </div>
                 </div>
                 
                 <div className="flex flex-wrap gap-2 mt-3">
-                  <Badge variant="outline" className="flex items-center gap-1 rounded-full px-3 py-1">
-                    <Award className="h-3 w-3" />
+                  <Badge variant="outline" className="flex items-center gap-1 rounded-full px-3 py-1 text-xs">
+                    <Clock className="h-3 w-3" />
                     <span>{doctor.experience}</span>
                   </Badge>
-                  <Badge variant="outline" className="flex items-center gap-1 rounded-full px-3 py-1">
+                  <Badge variant="outline" className="flex items-center gap-1 rounded-full px-3 py-1 text-xs">
                     <Languages className="h-3 w-3" />
                     <span>{doctor.languages.join(", ")}</span>
                   </Badge>
-                  <Badge variant="outline" className="flex items-center gap-1 rounded-full px-3 py-1">
+                  <Badge variant="outline" className="flex items-center gap-1 rounded-full px-3 py-1 text-xs">
                     <Building className="h-3 w-3" />
                     <span>{doctor.clinics.length} Clinics</span>
                   </Badge>
                 </div>
               </div>
               
-              <div className="hidden md:flex">
-                <Button variant="outline" size="icon" className="rounded-full">
-                  <Heart className="h-5 w-5 text-rose-500" />
+              <div className="flex">
+                <Button variant="outline" size="icon" className="rounded-full h-9 w-9">
+                  <Heart className="h-4 w-4 text-rose-500" />
                 </Button>
-                <Button variant="outline" size="icon" className="rounded-full ml-2">
-                  <Share2 className="h-5 w-5" />
+                <Button variant="outline" size="icon" className="rounded-full ml-2 h-9 w-9">
+                  <Share2 className="h-4 w-4" />
                 </Button>
               </div>
             </div>
             
-            <Separator className="my-4" />
-            
-            <p className="text-gray-700 text-sm md:text-base leading-relaxed">{doctor.bio}</p>
-          </div>
-          
-          <div className="flex items-center justify-between mt-6">
-            <div>
-              <p className="text-gray-500 text-sm">Consultation Fee</p>
-              <p className="text-xl font-bold text-primary">₹{doctor.consultationFee.replace('₹', '')}</p>
+            {/* Consultation Fee and Book Appointment */}
+            <div className="flex items-center justify-between mt-3">
+              <div>
+                <p className="text-gray-500 text-xs">Consultation Fee</p>
+                <p className="text-lg font-bold text-primary">₹{doctor.consultationFee.replace('₹', '')}</p>
+              </div>
+              
+              <BookAppointmentModal 
+                doctorName={doctor.name}
+                specialty={doctor.specialty}
+                trigger={
+                  <Button className="sky-button rounded-full px-6 py-1 h-auto">Book Appointment</Button>
+                }
+              />
             </div>
-            
-            <BookAppointmentModal 
-              doctorName={doctor.name}
-              specialty={doctor.specialty}
-              trigger={
-                <Button className="sky-button rounded-full px-8 py-2">Book Appointment</Button>
-              }
-            />
           </div>
+        </div>
+        
+        {/* Doctor Bio - Full width below */}
+        <div className="px-4 pb-4">
+          <p className="text-gray-700 text-sm leading-relaxed">{doctor.bio}</p>
         </div>
       </div>
     </div>

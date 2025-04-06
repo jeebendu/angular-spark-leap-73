@@ -31,7 +31,7 @@ export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden mb-6">
       <div className="md:flex">
-        <div className="md:w-1/3 relative">
+        <div className="md:w-1/3 lg:w-1/4 relative">
           <img 
             src={`https://res.cloudinary.com/dzxuxfagt/image/upload/w_500,h_500,c_thumb,g_face/assets/doctor_placeholder.png`}
             alt={doctor.name}
@@ -47,7 +47,7 @@ export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
           </div>
         </div>
         
-        <div className="p-6 md:w-2/3 flex flex-col justify-between">
+        <div className="p-6 md:w-2/3 lg:w-3/4 flex flex-col justify-between">
           <div>
             <div className="flex items-start justify-between">
               <div>
@@ -59,7 +59,7 @@ export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
                   <div className="flex items-center">
                     <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                     <span className="ml-1 text-sm font-medium">{doctor.rating}</span>
-                    <span className="ml-1 text-sm text-gray-500">({doctor.reviewCount} reviews)</span>
+                    <span className="ml-1 text-xs text-gray-500">({doctor.reviewCount} reviews)</span>
                   </div>
                   <span className="mx-2 text-gray-300">|</span>
                   <div className="flex items-center">
@@ -96,20 +96,20 @@ export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
             
             <Separator className="my-4" />
             
-            <p className="text-gray-700 text-sm md:text-base">{doctor.bio}</p>
+            <p className="text-gray-700 text-sm md:text-base leading-relaxed">{doctor.bio}</p>
           </div>
           
           <div className="flex items-center justify-between mt-6">
             <div>
               <p className="text-gray-500 text-sm">Consultation Fee</p>
-              <p className="text-xl font-bold text-primary">{doctor.consultationFee}</p>
+              <p className="text-xl font-bold text-primary">₹{doctor.consultationFee.replace('₹', '')}</p>
             </div>
             
             <BookAppointmentModal 
               doctorName={doctor.name}
               specialty={doctor.specialty}
               trigger={
-                <Button className="sky-button rounded-full">Book Appointment</Button>
+                <Button className="sky-button rounded-full px-8 py-2">Book Appointment</Button>
               }
             />
           </div>

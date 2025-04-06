@@ -6,8 +6,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useToast } from "@/components/ui/use-toast";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 
 // Import the appointment service
@@ -54,10 +53,9 @@ export function BookAppointmentModal({
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedMember, setSelectedMember] = useState("self");
-  const [paymentMethod, setPaymentMethod] = useState("card");
+  const [paymentMethod, setPaymentMethod] = useState("clinic"); // Changed default to clinic
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const toastObject = useToast();
   
   // Get data from service
   const clinics = getClinics();
@@ -67,7 +65,7 @@ export function BookAppointmentModal({
   // Get the selected clinic object based on ID
   const selectedClinic = getClinicById(selectedClinicId);
   
-  const stepLabels = ["Clinic", "Date & Time", "Patient", "Review", "Payment"];
+  const stepLabels = ["Clinic", "Date", "Patient", "Review", "Payment"];
 
   // Handle controlled/uncontrolled state
   const isControlled = controlledOpen !== undefined && setControlledOpen !== undefined;
@@ -96,18 +94,6 @@ export function BookAppointmentModal({
     }
   }, [getOpenState(), initialClinicId, selectedClinicId, initialStep]);
   
-  // Auto-advance to next step when date and time are selected
-  useEffect(() => {
-    if (step === 2 && selectedDate && selectedTime) {
-      // Add a small delay to allow user to see their selection before advancing
-      const timer = setTimeout(() => {
-        validateCurrentStepWithErrorHandling(true);
-      }, 800);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [selectedDate, selectedTime, step]);
-  
   const validateCurrentStepWithErrorHandling = (autoAdvance = false) => {
     setErrorMessage(null);
     
@@ -118,7 +104,11 @@ export function BookAppointmentModal({
       selectedMember, 
       doctorName, 
       specialty 
-    }, toastObject);
+    }, {
+      toast: () => ({} as any),
+      dismiss: () => {},
+      toasts: []
+    });
     
     if (!isValid) {
       switch (step) {
@@ -173,7 +163,11 @@ export function BookAppointmentModal({
       selectedMember,
       doctorName,
       specialty
-    }, toastObject);
+    }, {
+      toast: () => ({} as any),
+      dismiss: () => {},
+      toasts: []
+    });
     
     setOpenState(false);
     // Show success dialog
@@ -186,8 +180,80 @@ export function BookAppointmentModal({
     setSelectedDate("");
     setSelectedTime("");
     setSelectedMember("self");
-    setPaymentMethod("card");
+    setPaymentMethod("clinic");
     setErrorMessage(null);
+  };
+  
+  // Step content rendering with proper titles
+  const renderStepContent = () => {
+    switch (step) {
+      case 1:
+        return (
+          <ClinicSelectionStep 
+            selectedClinic={selectedClinicId}
+            setSelectedClinic={setSelectedClinicId}
+            clinics={clinics}
+          />
+        );
+      case 2:
+        return (
+          <DateTimeSelectionStep 
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
+            selectedTime={selectedTime}
+            setSelectedTime={setSelectedTime}
+            availableTimes={availableTimes}
+          />
+        );
+      case 3:
+        return (
+          <PatientSelectionStep 
+            selectedMember={selectedMember}
+            setSelectedMember={setSelectedMember}
+            familyMembers={familyMembers}
+          />
+        );
+      case 4:
+        return (
+          <ReviewStep 
+            doctorName={doctorName}
+            specialty={specialty}
+            selectedClinic={selectedClinicId}
+            clinics={clinics}
+            selectedDate={selectedDate}
+            selectedTime={selectedTime}
+            selectedMember={selectedMember}
+            familyMembers={familyMembers}
+          />
+        );
+      case 5:
+        return (
+          <PaymentStep 
+            paymentMethod={paymentMethod}
+            setPaymentMethod={setPaymentMethod}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+  
+  // Get step icon and title based on current step
+  const getStepTitle = () => {
+    switch (step) {
+      case 1:
+        return "Select Clinic";
+      case 2:
+        return "Select Date & Time";
+      case 3:
+        return "Patient Details";
+      case 4:
+        return "Review Appointment";
+      case 5:
+        return "Payment";
+      default:
+        return "Book Appointment";
+    }
   };
   
   return (
@@ -205,25 +271,26 @@ export function BookAppointmentModal({
           {trigger}
         </DialogTrigger>
         <DialogContent 
-          className="sm:max-w-[800px] p-0 overflow-hidden bg-white modal-background"
+          className="sm:max-w-[800px] p-0 overflow-hidden bg-white"
           onPointerDownOutside={(e) => e.preventDefault()} // Prevent closing on outside click
           onEscapeKeyDown={(e) => e.preventDefault()} // Prevent closing on escape key
         >
-          <DialogHeader className="p-6 pb-2 sticky top-0 bg-white z-10">
+          <DialogHeader className="p-6 pb-2 sticky top-0 bg-white z-10 border-b">
             <div className="absolute right-4 top-4">
               <button 
                 onClick={() => setOpenState(false)} 
-                className="h-6 w-6 rounded-full flex items-center justify-center hover:bg-slate-100"
+                className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-slate-100"
+                aria-label="Close dialog"
               >
-                <X className="h-4 w-4" />
+                <X className="h-5 w-5" />
               </button>
             </div>
-            <DialogTitle>Book an Appointment</DialogTitle>
+            <DialogTitle>{getStepTitle()}</DialogTitle>
           </DialogHeader>
           
-          <div className="px-6 pt-2 pb-6">
+          <div className="px-6 pt-4 pb-0">
             {/* Step indicator */}
-            <div className="sticky top-14 bg-white z-10 pt-2 pb-4">
+            <div className="sticky top-16 bg-white z-10 pb-4">
               <StepIndicator 
                 currentStep={step} 
                 totalSteps={5} 
@@ -237,63 +304,19 @@ export function BookAppointmentModal({
             
             {/* Error message */}
             {errorMessage && (
-              <div className="mb-4 p-2 bg-red-50 text-red-600 border border-red-200 rounded text-sm">
+              <div className="mb-4 p-3 bg-red-50 text-red-600 border border-red-200 rounded text-sm">
                 {errorMessage}
               </div>
             )}
-            
-            {/* Step content - made scrollable */}
-            <div className="max-h-[60vh] overflow-y-auto pr-2 pb-16">
-              {step === 1 && (
-                <ClinicSelectionStep 
-                  selectedClinic={selectedClinicId}
-                  setSelectedClinic={setSelectedClinicId}
-                  clinics={clinics}
-                />
-              )}
-              
-              {step === 2 && (
-                <DateTimeSelectionStep 
-                  selectedDate={selectedDate}
-                  setSelectedDate={setSelectedDate}
-                  selectedTime={selectedTime}
-                  setSelectedTime={setSelectedTime}
-                  availableTimes={availableTimes}
-                />
-              )}
-              
-              {step === 3 && (
-                <PatientSelectionStep 
-                  selectedMember={selectedMember}
-                  setSelectedMember={setSelectedMember}
-                  familyMembers={familyMembers}
-                />
-              )}
-              
-              {step === 4 && (
-                <ReviewStep 
-                  doctorName={doctorName}
-                  specialty={specialty}
-                  selectedClinic={selectedClinicId}
-                  clinics={clinics}
-                  selectedDate={selectedDate}
-                  selectedTime={selectedTime}
-                  selectedMember={selectedMember}
-                  familyMembers={familyMembers}
-                />
-              )}
-              
-              {step === 5 && (
-                <PaymentStep 
-                  paymentMethod={paymentMethod}
-                  setPaymentMethod={setPaymentMethod}
-                />
-              )}
-            </div>
           </div>
           
-          {/* Navigation Buttons - fixed at bottom */}
-          <div className="sticky bottom-0 bg-white z-10">
+          {/* Step content - made scrollable with padding to prevent content being hidden by buttons */}
+          <div className="px-6 pb-20 max-h-[60vh] overflow-y-auto">
+            {renderStepContent()}
+          </div>
+          
+          {/* Navigation Buttons - fixed at bottom with shadow */}
+          <div className="sticky bottom-0 bg-white z-10 border-t shadow-md">
             <NavigationButtons 
               step={step}
               totalSteps={5}
@@ -305,7 +328,7 @@ export function BookAppointmentModal({
         </DialogContent>
       </Dialog>
 
-      {/* Add the success dialog */}
+      {/* Success dialog */}
       <BookingSuccessDialog
         open={successDialogOpen}
         onOpenChange={setSuccessDialogOpen}

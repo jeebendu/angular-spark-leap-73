@@ -12,7 +12,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 interface FamilyMember {
   id: string;
@@ -34,11 +34,13 @@ export function PatientSelectionStep({
   const [isAddingMember, setIsAddingMember] = useState(false);
   const [newMemberName, setNewMemberName] = useState("");
   const [newMemberRelationship, setNewMemberRelationship] = useState("");
+  const [formError, setFormError] = useState("");
   const { toast } = useToast();
 
   const handleAddFamilyMember = () => {
-    // In a real app, this would make an API call to save the new family member
-    // For now, just show a toast that we'd add the member
+    // Clear previous errors
+    setFormError("");
+    
     if (newMemberName && newMemberRelationship) {
       toast({
         title: "Family member added",
@@ -49,73 +51,56 @@ export function PatientSelectionStep({
       setNewMemberName("");
       setNewMemberRelationship("");
     } else {
-      toast({
-        title: "Please fill all fields",
-        description: "Both name and relationship are required.",
-        variant: "destructive"
-      });
+      setFormError("Both name and relationship are required.");
     }
   };
 
+  // Prepare family members to display, including self
+  const allPatients = [
+    { id: "self", name: "Myself", relationship: "Primary Account" },
+    ...familyMembers
+  ];
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-medium mb-4 flex items-center">
-          <Users className="mr-2 h-5 w-5" />
-          Patient Details
-        </h3>
-        
-        <Label className="block mb-4">Who is this appointment for?</Label>
-        
-        <RadioGroup 
-          value={selectedMember} 
-          onValueChange={setSelectedMember}
-          className="space-y-3"
-        >
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {allPatients.map((member) => (
           <div 
-            className={`border rounded-lg p-4 transition-colors flex items-center ${
-              selectedMember === "self" ? "border-primary bg-slate-50" : "border-gray-200"
+            key={member.id} 
+            className={`border rounded-lg p-3 transition-colors flex items-center cursor-pointer ${
+              selectedMember === member.id ? "border-primary bg-slate-50" : "border-gray-200"
             }`}
+            onClick={() => setSelectedMember(member.id)}
           >
-            <RadioGroupItem value="self" id="self" className="mr-4" />
-            <Label htmlFor="self" className="cursor-pointer flex items-center">
-              <UserCircle className="h-10 w-10 mr-3 text-gray-400" />
-              <div>
-                <div className="font-medium">Myself</div>
-                <div className="text-xs text-gray-500">Primary Account</div>
-              </div>
-            </Label>
-          </div>
-          
-          {familyMembers.map((member) => (
-            <div 
-              key={member.id} 
-              className={`border rounded-lg p-4 transition-colors flex items-center ${
-                selectedMember === member.id ? "border-primary bg-slate-50" : "border-gray-200"
-              }`}
-            >
-              <RadioGroupItem value={member.id} id={`member-${member.id}`} className="mr-4" />
-              <Label htmlFor={`member-${member.id}`} className="cursor-pointer flex items-center">
-                <UserCircle className="h-10 w-10 mr-3 text-gray-400" />
+            <RadioGroupItem 
+              value={member.id} 
+              id={`member-${member.id}`} 
+              className="mr-3" 
+              checked={selectedMember === member.id}
+              onCheckedChange={() => setSelectedMember(member.id)}
+            />
+            <Label htmlFor={`member-${member.id}`} className="cursor-pointer flex-1">
+              <div className="flex items-center">
+                <UserCircle className="h-8 w-8 mr-2 text-gray-400" />
                 <div>
                   <div className="font-medium">{member.name}</div>
                   <div className="text-xs text-gray-500">{member.relationship}</div>
                 </div>
-              </Label>
-            </div>
-          ))}
-        </RadioGroup>
-        
-        <div className="mt-6">
-          <Button
-            variant="outline"
-            className="w-full border-dashed flex items-center justify-center h-16"
-            onClick={() => setIsAddingMember(true)}
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add a new family member
-          </Button>
-        </div>
+              </div>
+            </Label>
+          </div>
+        ))}
+      </div>
+      
+      <div className="mt-4">
+        <Button
+          variant="outline"
+          className="w-full border-dashed flex items-center justify-center h-12"
+          onClick={() => setIsAddingMember(true)}
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Add a new family member
+        </Button>
       </div>
 
       <Dialog open={isAddingMember} onOpenChange={setIsAddingMember}>
@@ -123,7 +108,14 @@ export function PatientSelectionStep({
           <DialogHeader>
             <DialogTitle>Add Family Member</DialogTitle>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
+          
+          {formError && (
+            <div className="p-3 rounded bg-red-50 text-red-600 text-sm">
+              {formError}
+            </div>
+          )}
+          
+          <div className="grid gap-4 py-2">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">
                 Name

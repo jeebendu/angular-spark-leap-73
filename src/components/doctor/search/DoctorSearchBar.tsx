@@ -1,6 +1,6 @@
 
-import React from "react";
-import { Search, Filter, Rows, LayoutList, SlidersHorizontal, X } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
+import { Search, Filter, Rows, LayoutList, SlidersHorizontal, X, Mic } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -9,6 +9,8 @@ import { MobileDoctorFilters } from "@/components/doctor/MobileDoctorFilters";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Dispatch, SetStateAction } from "react";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import { useToast } from "@/components/ui/use-toast";
 
 interface DoctorSearchBarProps {
   searchTerm: string;
@@ -35,6 +37,13 @@ interface DoctorSearchBarProps {
   setSelectedGenders: Dispatch<SetStateAction<string[]>>;
   setSelectedLanguages: Dispatch<SetStateAction<string[]>>;
   setSelectedExperience: Dispatch<SetStateAction<string[]>>;
+}
+
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
 }
 
 export function DoctorSearchBar({
@@ -64,10 +73,80 @@ export function DoctorSearchBar({
   setSelectedExperience
 }: DoctorSearchBarProps) {
   const isMobile = useIsMobile();
+  const { toast } = useToast();
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const [isListening, setIsListening] = useState(false);
 
   // Calculate total selected filters
   const totalFilters = selectedSpecialties.length + selectedGenders.length + 
                         selectedLanguages.length + selectedExperience.length;
+
+  const clearSearch = () => {
+    setSearchTerm("");
+    if (searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  };
+
+  const handleVoiceSearch = () => {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      toast({
+        title: "Voice Search Unavailable",
+        description: "Voice search is not supported in your browser.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+    if (!SpeechRecognitionAPI) {
+      toast({
+        title: "Voice Search Unavailable",
+        description: "Voice search is not supported in your browser.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    const recognition = new SpeechRecognitionAPI();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    
+    setIsListening(true);
+    
+    recognition.start();
+    
+    toast({
+      title: "Listening...",
+      description: "Speak now to search for doctors or specialities",
+    });
+    
+    recognition.onresult = (event: any) => {
+      const speechResult = event.results[0][0].transcript;
+      setSearchTerm(speechResult);
+      setIsListening(false);
+      
+      toast({
+        title: "Voice Recognized",
+        description: `Searching for: "${speechResult}"`,
+      });
+    };
+    
+    recognition.onerror = (event: any) => {
+      setIsListening(false);
+      toast({
+        title: "Voice Search Error",
+        description: `Error: ${event.error}`,
+        variant: "destructive",
+      });
+    };
+    
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+  };
 
   return (
     <div className="space-y-3">
@@ -75,12 +154,35 @@ export function DoctorSearchBar({
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
+            ref={searchInputRef}
             type="text"
             placeholder="Search by doctor name, specialty, condition..."
-            className="pl-10 pr-4 py-2 bg-white rounded-[30px]"
+            className="pl-10 pr-16 py-2 bg-white rounded-[30px]"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
+          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-1">
+            {searchTerm && (
+              <Button 
+                onClick={clearSearch}
+                className="p-1 h-8 w-8 rounded-full"
+                variant="ghost"
+              >
+                <X className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+              </Button>
+            )}
+            <Button 
+              onClick={handleVoiceSearch}
+              className="p-1 h-8 w-8 rounded-full"
+              variant="ghost"
+              disabled={isListening}
+            >
+              <Mic className={cn(
+                "h-4 w-4 transition-colors", 
+                isListening ? "text-primary animate-pulse" : "text-gray-400 hover:text-primary"
+              )} />
+            </Button>
+          </div>
         </div>
         
         <Button 

@@ -11,6 +11,8 @@ import {
   AlertDialogTitle 
 } from "@/components/ui/alert-dialog";
 import { Check, Download } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Drawer, DrawerContent } from "@/components/ui/drawer";
 
 interface BookingSuccessDialogProps {
   open: boolean;
@@ -33,6 +35,75 @@ export function BookingSuccessDialog({
 }: BookingSuccessDialogProps) {
   const doctor = doctors.find(d => d.name === selectedDoctor);
   const clinic = doctor?.clinics.find(c => c.id === selectedClinic);
+  const isMobile = useIsMobile();
+  
+  const renderContent = () => (
+    <>
+      <div className="mx-auto rounded-full bg-green-100 p-3 w-16 h-16 flex items-center justify-center mb-4">
+        <Check className="h-8 w-8 text-green-600" strokeWidth={3} />
+      </div>
+      <div className="text-center">
+        <h3 className="text-xl text-green-600 font-semibold mb-1">Appointment Confirmed!</h3>
+        <p className="text-muted-foreground mb-4">
+          Your appointment has been successfully booked
+        </p>
+      </div>
+      
+      <div className="flex flex-col items-center py-2">
+        <div className="bg-gray-50 p-4 rounded-lg w-full max-w-sm mx-auto">
+          <div className="flex justify-between mb-1">
+            <span className="text-sm text-muted-foreground">Appointment ID</span>
+            <span className="text-sm font-medium">APT123456</span>
+          </div>
+          <div className="flex justify-between mb-1">
+            <span className="text-sm text-muted-foreground">Doctor</span>
+            <span className="text-sm font-medium">{selectedDoctor}</span>
+          </div>
+          <div className="flex justify-between mb-1">
+            <span className="text-sm text-muted-foreground">Date & Time</span>
+            <span className="text-sm font-medium">{date?.toLocaleDateString()} {selectedSlot}</span>
+          </div>
+          <div className="flex justify-between mb-1">
+            <span className="text-sm text-muted-foreground">Clinic</span>
+            <span className="text-sm font-medium">{clinic?.name}</span>
+          </div>
+        </div>
+        
+        <div className="my-4 bg-white p-2 border rounded-lg">
+          <img src="https://placehold.co/200/eaf7fc/33C3F0?text=QR+Code&font=montserrat" alt="Appointment QR Code" className="w-32 h-32 mx-auto" />
+        </div>
+        
+        <p className="text-sm text-center text-muted-foreground">
+          Show this QR code at the clinic reception
+        </p>
+      </div>
+      
+      <div className="flex flex-col sm:flex-row gap-2 mt-4 justify-end">
+        <button 
+          onClick={() => onOpenChange(false)} 
+          className="px-4 py-2 border rounded-md"
+        >
+          Close
+        </button>
+        <button 
+          className="px-4 py-2 bg-sky-500 text-white rounded-md flex items-center justify-center"
+        >
+          <Download className="h-4 w-4 mr-2" />
+          Download Receipt
+        </button>
+      </div>
+    </>
+  );
+  
+  if (isMobile) {
+    return (
+      <Drawer open={open} onOpenChange={onOpenChange}>
+        <DrawerContent className="px-4 py-6 max-h-[90vh] overflow-y-auto">
+          {renderContent()}
+        </DrawerContent>
+      </Drawer>
+    );
+  }
   
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>

@@ -1,10 +1,8 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Star, Heart, MapPin, Navigation } from "lucide-react";
-import { Tooltip, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Star, MapPin } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DoctorClinic {
@@ -114,23 +112,16 @@ export function DoctorListItem({ doctor, index, isLastItem, lastDoctorElementRef
               </div>
             ) : (
               <div className="flex w-full">
-                {/* Doctor Image Section */}
                 <div className="w-32 h-32 relative cursor-pointer" onClick={handleViewProfile}>
                   <img 
                     src={doctor.imageSrc}
                     alt={doctor.name}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute top-2 left-2 bg-green-400/90 text-white text-[10px] px-2 py-0.5 rounded-full flex items-center">
-                    <Heart className="h-2 w-2 mr-0.5 fill-white text-white" />
-                    <span>98% Recommended</span>
-                  </div>
                 </div>
                 
-                {/* Doctor Info Section */}
                 <div className="flex-1 p-4 flex flex-col justify-between">
                   <div className="flex justify-between">
-                    {/* Doctor Name, Specialty and Rating */}
                     <div>
                       <div className="flex items-center gap-2">
                         <h3 className="font-semibold text-lg cursor-pointer hover:text-primary" onClick={handleViewProfile}>{doctor.name}</h3>
@@ -143,7 +134,6 @@ export function DoctorListItem({ doctor, index, isLastItem, lastDoctorElementRef
                       
                       <p className="text-muted-foreground text-sm">{doctor.specialty}</p>
                       
-                      {/* Tags */}
                       <div className="flex flex-wrap gap-2 mt-3">
                         <div className="px-3 py-1 bg-gray-100 rounded-full text-xs">
                           {doctor.experience}
@@ -156,20 +146,18 @@ export function DoctorListItem({ doctor, index, isLastItem, lastDoctorElementRef
                         </div>
                       </div>
                       
-                      {/* Clinic Information */}
                       {doctor.clinics.length > 0 && (
-                        <div className="mt-3">
+                        <div className="mt-2">
                           <div className="flex items-center">
                             <MapPin className="h-3.5 w-3.5 mr-1 text-gray-500" />
-                            <span className="text-gray-700 text-sm">{doctor.clinics[0].name}, {doctor.clinics[0].location}</span>
+                            <span className="text-gray-700 text-xs">{doctor.clinics[0].name}, {doctor.clinics[0].location}</span>
                           </div>
                         </div>
                       )}
                     </div>
                     
-                    {/* Buttons */}
-                    <div className="flex flex-col gap-2">
-                      <div className="text-lg font-semibold text-right mb-2">₹{doctor.price}</div>
+                    <div className="flex flex-col items-end gap-2">
+                      <div className="text-lg font-semibold mb-2">₹{doctor.price}</div>
                       <Button 
                         size="sm"
                         variant="outline"

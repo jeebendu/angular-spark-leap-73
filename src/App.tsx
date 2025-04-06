@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { LocationProvider } from "./contexts/LocationContext";
 import { useEffect } from "react";
+import { setPageTitle } from "./utils/seoUtils";
 
 // Pages
 import Index from "./pages/Index";
@@ -26,11 +27,46 @@ import Chat from "./pages/public/Chat";
 import Appointments from "./pages/public/Appointments";
 import ClinichubLanding from "./pages/public/ClinichubLanding";
 
+// Map of routes to page titles
+const routeTitles: Record<string, string> = {
+  "/": "Home",
+  "/doctor/search": "Find Doctors",
+  "/appointments": "Your Appointments",
+  "/reports": "Medical Reports",
+  "/tests": "Medical Tests",
+  "/account": "Your Account",
+  "/chat": "Chat with Doctors",
+  "/clinic-management": "Clinic Management",
+  "/doctor": "Doctor Dashboard",
+  "/doctor/appointments": "Manage Appointments",
+  "/doctor/schedule": "Manage Schedule",
+  "/doctor/onboarding": "Doctor Onboarding",
+  "/staff": "Staff Dashboard",
+  "/staff/add-patient": "Add New Patient",
+};
+
 const ScrollToTop = () => {
   const { pathname } = useLocation();
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    
+    // Set page title based on route
+    const exactRouteTitle = routeTitles[pathname];
+    if (exactRouteTitle) {
+      setPageTitle(exactRouteTitle);
+    } else {
+      // For dynamic routes like /doctor/:doctorId
+      const pathSegments = pathname.split('/').filter(segment => segment);
+      if (pathSegments.length > 0) {
+        const baseRoute = `/${pathSegments[0]}`;
+        if (routeTitles[baseRoute]) {
+          setPageTitle(routeTitles[baseRoute]);
+        } else {
+          setPageTitle(); // Default title
+        }
+      }
+    }
   }, [pathname]);
 
   return null;

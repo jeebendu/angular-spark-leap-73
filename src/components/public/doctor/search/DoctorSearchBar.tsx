@@ -8,8 +8,9 @@ import { useToast } from "@/components/ui/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { Filter, LayoutList, Mic, Rows, Search, X } from "lucide-react";
-import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { MobileDoctorFilters } from "./MobileDoctorFilters";
+import { parseQueryAndApplyFilters } from "@/utils/doctorFilterUtils";
 
 interface DoctorSearchBarProps {
   searchTerm: string;
@@ -92,8 +93,66 @@ export function DoctorSearchBar({
     }
   };
 
+  // Function to analyze the search query and apply relevant filters
+  const analyzeSearchQuery = () => {
+    if (!searchTerm) return;
+    
+    // Import mock data for filter parsing until we have real data
+    const mockSpecializations = [
+      { id: 1, name: "Cardiologist" },
+      { id: 2, name: "Neurologist" },
+      { id: 3, name: "Orthopedist" },
+      { id: 4, name: "Dermatologist" },
+      { id: 5, name: "Pediatrician" },
+      { id: 6, name: "Ophthalmologist" },
+      { id: 7, name: "Dentist" },
+      { id: 8, name: "Gynecologist" },
+      { id: 9, name: "ENT Specialist" },
+      { id: 10, name: "Psychiatrist" },
+    ];
+    
+    const mockLanguages = [
+      { id: 1, name: "English" },
+      { id: 2, name: "Hindi" },
+      { id: 3, name: "Tamil" },
+      { id: 4, name: "Telugu" },
+      { id: 5, name: "Bengali" },
+    ];
+    
+    const genderOptions = [
+      { key: "male", value: "Male" },
+      { key: "female", value: "Female" },
+    ];
+    
+    const experienceRangeOptions = [
+      { key: "0-5", value: "0-5" },
+      { key: "5-10", value: "5-10" },
+      { key: "10-15", value: "10-15" },
+      { key: "15+", value: "15+" },
+    ];
+    
+    // Clear previous filter selections
+    setSelectedSpecialties([]);
+    setSelectedGenders([]);
+    setSelectedLanguages([]);
+    setSelectedExperience([]);
+    
+    // Parse the search query and apply filters
+    parseQueryAndApplyFilters(
+      searchTerm,
+      mockSpecializations,
+      mockLanguages,
+      genderOptions,
+      experienceRangeOptions,
+      toggleSpecialty,
+      toggleGender,
+      toggleLanguage,
+      toggleExperience
+    );
+  };
+
   const handleVoiceSearch = () => {
-    if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
       toast({
         title: "Voice Search Unavailable",
         description: "Voice search is not supported in your browser.",
@@ -103,7 +162,7 @@ export function DoctorSearchBar({
     }
 
     const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
-
+    
     if (!SpeechRecognitionAPI) {
       toast({
         title: "Voice Search Unavailable",
@@ -112,18 +171,18 @@ export function DoctorSearchBar({
       });
       return;
     }
-
+    
     const recognition = new SpeechRecognitionAPI();
-    recognition.lang = "en-US";
+    recognition.lang = 'en-US';
     recognition.interimResults = true;
     recognition.maxAlternatives = 1;
-
+    
     setIsListening(true);
     setShowVoiceOverlay(true);
     setVoiceText("Listening...");
-
+    
     recognition.start();
-
+    
     recognition.onresult = (event: any) => {
       const current = event.resultIndex;
       const transcript = event.results[current][0].transcript;
@@ -140,12 +199,12 @@ export function DoctorSearchBar({
         
         // Apply filters immediately after successful voice recognition
         setTimeout(() => {
-          applyFilters();
+          handleSearch(transcript);
           setShowVoiceOverlay(false);
         }, 1000);
       }
     };
-
+    
     recognition.onerror = (event: any) => {
       setIsListening(false);
       setShowVoiceOverlay(false);
@@ -155,7 +214,7 @@ export function DoctorSearchBar({
         variant: "destructive",
       });
     };
-
+    
     recognition.onend = () => {
       setIsListening(false);
       setTimeout(() => {
@@ -170,9 +229,11 @@ export function DoctorSearchBar({
     setIsSearchExpanded(!isSearchExpanded);
   };
 
-  // Function to handle search submission
-  const handleSearch = () => {
-    // Apply filters to trigger search
+  // Function to handle search submission with analysis and filter application
+  const handleSearch = (searchValue?: string) => {
+    const valueToSearch = searchValue || searchTerm;
+    setSearchTerm(valueToSearch);
+    analyzeSearchQuery();
     applyFilters();
   };
 
@@ -225,7 +286,11 @@ export function DoctorSearchBar({
           />
           <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-1">
             {searchTerm && (
-              <Button onClick={clearSearch} className="p-1 h-8 w-8 rounded-full" variant="ghost">
+              <Button 
+                onClick={clearSearch}
+                className="p-1 h-8 w-8 rounded-full" 
+                variant="ghost"
+              >
                 <X className="h-4 w-4 text-gray-400 hover:text-gray-600" />
               </Button>
             )}
@@ -249,7 +314,7 @@ export function DoctorSearchBar({
             <Button
               variant="default"
               className="h-9 w-9 p-0 rounded-full flex items-center justify-center bg-[#0ABAB5] hover:bg-[#09a09b]"
-              onClick={handleSearch}
+              onClick={() => handleSearch()}
             >
               <Search className="h-4 w-4 text-white" />
             </Button>

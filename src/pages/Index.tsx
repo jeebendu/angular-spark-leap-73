@@ -8,6 +8,7 @@ import { SearchBar } from "@/components/public/home/search/SearchBar";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import authService from "@/services/authService";
+import { setPageTitle, updateMetaTags } from "@/utils/seoUtils";
 import { motion } from "framer-motion";
 import { Calendar, ChevronRight, Clock, LockKeyhole, Users } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -45,6 +46,13 @@ const Index = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
+    // Set the page title and meta tags
+    setPageTitle("Home");
+    updateMetaTags(
+      "Find and book appointments with top specialists in your area with ClinicHub.care.",
+      "doctor appointments, online booking, medical consultation, health specialists, clinics"
+    );
+    
     const checkLoginStatus = () => {
       setIsLoggedIn(authService.isLoggedIn());
     };

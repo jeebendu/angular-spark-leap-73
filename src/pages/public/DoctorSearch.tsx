@@ -6,6 +6,7 @@ import { DoctorSearchBar } from "@/components/public/doctor/search/DoctorSearchB
 import { DoctorsList } from "@/components/public/doctor/search/DoctorsList";
 import { useToast } from "@/components/ui/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { setPageTitle, updateMetaTags } from "@/utils/seoUtils";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
@@ -41,54 +42,14 @@ const DoctorSearch = () => {
   
   const observer = useRef<IntersectionObserver>();
   const { toast } = useToast();
-  
-  const timeSlots = [
-    "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", 
-    "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM",
-    "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM", 
-    "04:00 PM", "04:30 PM", "05:00 PM", "05:30 PM"
-  ];
-
-  const doctorClinics = [
-    [
-      { id: "1a", name: "HeartCare Clinic", location: "Koramangala", distance: "2.3 km", available: true },
-      { id: "1b", name: "City Heart Center", location: "Indiranagar", distance: "5.1 km", available: true }
-    ],
-    [
-      { id: "2a", name: "Neuroscience Institute", location: "JP Nagar", distance: "4.5 km", available: true },
-      { id: "2b", name: "Brain & Spine Center", location: "Whitefield", distance: "12.3 km", available: false },
-      { id: "2c", name: "City Neuro Hospital", location: "MG Road", distance: "3.8 km", available: true }
-    ],
-    [
-      { id: "3a", name: "Orthopedic Specialties", location: "Marathahalli", distance: "8.7 km", available: true }
-    ],
-    [
-      { id: "4a", name: "Skin & Care Center", location: "Jayanagar", distance: "6.2 km", available: true },
-      { id: "4b", name: "Derma Solutions", location: "Electronic City", distance: "15.4 km", available: false }
-    ],
-    [
-      { id: "5a", name: "Kids Care Hospital", location: "Banashankari", distance: "7.1 km", available: true },
-      { id: "5b", name: "Children's Special Clinic", location: "HSR Layout", distance: "4.3 km", available: true }
-    ],
-    [
-      { id: "6a", name: "General Health Center", location: "Malleshwaram", distance: "9.8 km", available: true },
-      { id: "6b", name: "Family Health Clinic", location: "BTM Layout", distance: "3.5 km", available: true }
-    ],
-    [
-      { id: "7a", name: "Vision Care Center", location: "Richmond Road", distance: "2.9 km", available: true },
-      { id: "7b", name: "Eye Specialists", location: "Koramangala", distance: "2.1 km", available: true }
-    ],
-    [
-      { id: "8a", name: "Dental Care Clinic", location: "Indiranagar", distance: "4.7 km", available: true },
-      { id: "8b", name: "Smile Specialists", location: "JP Nagar", distance: "5.3 km", available: true }
-    ],
-    [
-      { id: "9a", name: "Women's Health Center", location: "Jayanagar", distance: "6.4 km", available: true },
-      { id: "9b", name: "Mother & Child Clinic", location: "Whitefield", distance: "13.2 km", available: false }
-    ]
-  ];
 
   useEffect(() => {
+    setPageTitle("Find Doctors");
+    updateMetaTags(
+      "Search and find the best doctors near you. Filter by specialty, experience, gender, and more.",
+      "doctor search, find specialist, medical professionals, healthcare providers"
+    );
+    
     setLoading(true);
     setTimeout(() => {
       const initialDoctors = [...Array(12)].map((_, index) => ({

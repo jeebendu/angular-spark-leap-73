@@ -21,6 +21,8 @@ import ProcessAppointment from "./pages/doctor/ProcessAppointment";
 import DoctorOnboardingPage from "./pages/doctor/Onboarding";
 import { DoctorSchedulePage } from "./pages/doctor/Schedule";
 import ClinicManagementLanding from "./pages/ClinicManagementLanding";
+import StaffDashboard from "./pages/staff/Dashboard";
+import AddPatient from "./pages/staff/AddPatient";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -69,6 +71,10 @@ function App() {
               <Route path="/doctor/process-appointment" element={<ProcessAppointment />} />
               <Route path="/doctor/onboarding" element={<DoctorOnboardingPage />} />
               <Route path="/doctor/schedule" element={<DoctorSchedulePage />} />
+              
+              {/* Staff Routes */}
+              <Route path="/staff" element={<StaffDashboard />} />
+              <Route path="/staff/add-patient" element={<AddPatient />} />
             </Routes>
           </BrowserRouter>
         </LocationProvider>

@@ -184,6 +184,14 @@ const DoctorSearch = () => {
     }
   }, [initialSpecialty]);
 
+  useEffect(() => {
+    if (isMobile) {
+      setFilterOpen(false);
+    } else {
+      setFilterOpen(true);
+    }
+  }, [isMobile]);
+
   const toggleSpecialty = (specialty: string) => {
     if (selectedSpecialties.includes(specialty)) {
       setSelectedSpecialties(selectedSpecialties.filter(s => s !== specialty));
@@ -247,7 +255,9 @@ const DoctorSearch = () => {
   };
 
   const applyFilters = () => {
-    // No toast notification for filter selection
+    if (isMobile) {
+      setFilterOpen(false);
+    }
   };
   
   return (
@@ -276,7 +286,7 @@ const DoctorSearch = () => {
         />
         
         <div className="flex flex-col md:flex-row gap-4 md:gap-6">
-          {!isMobile && filterOpen && (
+          {!isMobile && (
             <div className="w-full md:w-64 shrink-0">
               <DoctorFilters 
                 selectedSpecialties={selectedSpecialties}

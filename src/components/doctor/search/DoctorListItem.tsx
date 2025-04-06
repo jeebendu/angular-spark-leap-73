@@ -3,7 +3,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Star, Heart, MapPin } from "lucide-react";
+import { Star, Heart, MapPin, Clock, Languages, Building } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DoctorClinic {
@@ -78,14 +78,17 @@ export function DoctorListItem({ doctor, index, isLastItem, lastDoctorElementRef
                   <p className="text-muted-foreground text-sm">{doctor.specialty}</p>
                   
                   <div className="flex flex-wrap gap-2 mt-2">
-                    <div className="px-3 py-1 bg-gray-100 rounded-full text-xs">
+                    <div className="px-3 py-1 bg-gray-100 rounded-full text-xs flex items-center">
+                      <Clock className="h-3 w-3 mr-1" />
                       {doctor.experience}
                     </div>
-                    <div className="px-3 py-1 bg-gray-100 rounded-full text-xs">
+                    <div className="px-3 py-1 bg-gray-100 rounded-full text-xs flex items-center">
+                      <Languages className="h-3 w-3 mr-1" />
                       {doctor.languages.join(", ")}
                     </div>
-                    <div className="px-3 py-1 bg-gray-100 rounded-full text-xs">
-                      Available today
+                    <div className="px-3 py-1 bg-gray-100 rounded-full text-xs flex items-center">
+                      <Building className="h-3 w-3 mr-1" />
+                      {doctor.clinics.length} {doctor.clinics.length === 1 ? 'Clinic' : 'Clinics'}
                     </div>
                   </div>
                   

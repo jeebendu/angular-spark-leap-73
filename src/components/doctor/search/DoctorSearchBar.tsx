@@ -67,13 +67,24 @@ export function DoctorSearchBar({
         />
       </div>
       
-      <Button 
-        variant="outline"
-        className="flex items-center gap-2 border border-gray-200 bg-white h-10 w-10 p-0 rounded-full"
-        onClick={() => setFilterOpen(true)}
-      >
-        <Filter className="h-4 w-4" />
-      </Button>
+      {isMobile ? (
+        <Button 
+          variant="outline"
+          className="flex items-center gap-2 border border-gray-200 bg-white h-10 w-10 p-0 rounded-full"
+          onClick={() => setFilterOpen(true)}
+        >
+          <Filter className="h-4 w-4" />
+        </Button>
+      ) : (
+        <Button 
+          variant="outline"
+          className="flex items-center gap-2 border border-gray-200 bg-white h-10 px-4 rounded-[30px]"
+          onClick={() => setFilterOpen(!filterOpen)}
+        >
+          <Filter className="h-4 w-4 mr-1" />
+          <span className="hidden md:inline">Filter</span>
+        </Button>
+      )}
       
       <div className="md:flex hidden gap-2">
         <Select value={sortBy} onValueChange={setSortBy}>
@@ -100,21 +111,23 @@ export function DoctorSearchBar({
       </div>
       
       {/* Mobile Doctor Filters */}
-      <MobileDoctorFilters 
-        open={filterOpen}
-        onOpenChange={setFilterOpen}
-        selectedSpecialties={selectedSpecialties}
-        selectedGenders={selectedGenders}
-        selectedLanguages={selectedLanguages}
-        selectedExperience={selectedExperience}
-        priceRange={priceRange}
-        toggleSpecialty={toggleSpecialty}
-        toggleGender={toggleGender}
-        toggleLanguage={toggleLanguage}
-        toggleExperience={toggleExperience}
-        setPriceRange={setPriceRange}
-        applyFilters={applyFilters}
-      />
+      {isMobile && (
+        <MobileDoctorFilters 
+          open={filterOpen}
+          onOpenChange={setFilterOpen}
+          selectedSpecialties={selectedSpecialties}
+          selectedGenders={selectedGenders}
+          selectedLanguages={selectedLanguages}
+          selectedExperience={selectedExperience}
+          priceRange={priceRange}
+          toggleSpecialty={toggleSpecialty}
+          toggleGender={toggleGender}
+          toggleLanguage={toggleLanguage}
+          toggleExperience={toggleExperience}
+          setPriceRange={setPriceRange}
+          applyFilters={applyFilters}
+        />
+      )}
     </div>
   );
 }

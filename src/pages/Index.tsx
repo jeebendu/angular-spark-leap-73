@@ -1,6 +1,7 @@
+
 import { Calendar, Star, Award, ThumbsUp, Clock, ChevronRight, Phone, Laptop, Users, LockKeyhole } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
-import { SearchBar } from "@/components/SearchBar";
+import { SearchBar } from "@/components/public/doctor-search/SearchBar";
 import { Button } from "@/components/ui/button";
 import { Specializations } from "@/components/Specializations";
 import { motion } from "framer-motion";
@@ -9,7 +10,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
 import { AppointmentCard } from "@/components/AppointmentCard";
 import { PromotionalBanner } from "@/components/PromotionalBanner";
-import { AppDownloadSection } from "@/components/AppDownloadSection";
+import { AppDownloadSection } from "@/components/public/home/AppDownloadSection";
 import authService from "@/services/authService";
 
 // Mock upcoming appointments data

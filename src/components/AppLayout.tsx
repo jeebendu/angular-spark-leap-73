@@ -1,27 +1,33 @@
 
-import { ReactNode } from "react";
-import { Navbar } from "@/components/Navbar";
-import { MobileNavigation } from "@/components/MobileNavigation";
-import { Footer } from "@/components/Footer";
+import { Navbar } from "@/components/public/shared/Navbar";
+import { Footer } from "@/components/public/shared/Footer";
+import { MobileNavigation } from "./MobileNavigation";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface AppLayoutProps {
-  children: ReactNode;
+  children: React.ReactNode;
+  showFooter?: boolean;
+  showMobileNav?: boolean;
 }
 
-export function AppLayout({ children }: AppLayoutProps) {
+export function AppLayout({ 
+  children, 
+  showFooter = true,
+  showMobileNav = true
+}: AppLayoutProps) {
   const isMobile = useIsMobile();
   
   return (
-    <div className="min-h-screen bg-[#F8F9FC] flex flex-col">
+    <div className="flex flex-col min-h-screen">
       <Navbar />
-      <main className={`pb-${isMobile ? '20' : '6'} flex-grow`}>
-        <div className="max-w-6xl mx-auto px-4 w-full">
-          {children}
-        </div>
+      
+      <main className="flex-1 container mx-auto px-4 max-w-6xl">
+        {children}
       </main>
-      <Footer />
-      <MobileNavigation />
+      
+      {showFooter && <Footer />}
+      
+      {showMobileNav && isMobile && <MobileNavigation />}
     </div>
   );
 }

@@ -10,7 +10,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { Filter, LayoutList, Mic, Rows, Search, X } from "lucide-react";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
-import { MobileDoctorFilters } from "../MobileDoctorFilters";
+import { MobileDoctorFilters } from "./MobileDoctorFilters";
 
 interface DoctorSearchBarProps {
   searchTerm: string;

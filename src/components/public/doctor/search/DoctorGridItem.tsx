@@ -1,7 +1,5 @@
-
-
 import { motion } from "framer-motion";
-import { DoctorCard } from "../DoctorCard";
+import { DoctorCard } from "./DoctorCard";
 
 interface DoctorGridItemProps {
   doctor: {

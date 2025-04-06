@@ -13,7 +13,7 @@ This directory contains components used in the public-facing parts of the applic
 - **home/**: Components specific to the home page
   - `AppDownloadSection.tsx`: Section promoting the mobile app
 
-- **doctor-search/**: Components for doctor search functionality
+- **doctor/search/**: Components for doctor search functionality
   - `SearchBar.tsx`: Search bar for finding doctors
 
 - **appointments/**: Components for appointment related pages

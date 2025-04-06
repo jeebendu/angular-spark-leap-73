@@ -7,7 +7,7 @@ import { Clinic } from "@/models/Clinic";
 import { Doctor } from "@/models/Doctor";
 import { CalendarDays, CheckCircle2, Clock, MapPin } from "lucide-react";
 import { useState } from "react";
-import { BookAppointmentModal } from "../appointments/BookAppointmentModal";
+import { BookAppointmentModal } from "../../appointments/BookAppointmentModal";
 
 
 interface ClinicsTabProps {

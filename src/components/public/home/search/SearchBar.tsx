@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { Clock, Mic, Search, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LocationSelector } from "../shared/LocationSelector";
+import { LocationSelector } from "./LocationSelector";
 
 declare global {
   interface Window {
@@ -43,7 +43,7 @@ export function SearchBar() {
 
   const handleDoctorSearch = (term = "") => {
     const searchTerm = term || searchQuery;
-    navigate(`/doctor-search${searchTerm ? `?query=${encodeURIComponent(searchTerm)}` : ""}`);
+    navigate(`/doctor/search${searchTerm ? `?query=${encodeURIComponent(searchTerm)}` : ""}`);
     setOpenSuggestions(false);
   };
 

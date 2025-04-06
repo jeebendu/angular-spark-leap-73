@@ -4,7 +4,7 @@ import { AppointmentCard } from "@/components/public/appointments/AppointmentCar
 import { Specializations } from "@/components/public/doctor/specialization/Specializations";
 import { AppDownloadSection } from "@/components/public/home/AppDownloadSection";
 import { PromotionalBanner } from "@/components/public/home/PromotionalBanner";
-import { SearchBar } from "@/components/public/home/SearchBar";
+import { SearchBar } from "@/components/public/home/search/SearchBar";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import authService from "@/services/authService";
@@ -128,7 +128,7 @@ const Index = () => {
             title="Consult with specialist doctors online"
             subtitle="Get medical advice from the comfort of your home"
             buttonText="Start for free"
-            buttonLink="/doctor-search"
+            buttonLink="/doctor/search"
             bgColor="bg-[#0ABAB5]"
           />
         </motion.section>

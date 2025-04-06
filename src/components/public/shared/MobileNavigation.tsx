@@ -16,7 +16,7 @@ export function MobileNavigation() {
           <Home className="w-5 h-5" />
           <span className="text-xs mt-1">Home</span>
         </Link>
-        <Link to="/doctor-search" className={`flex flex-col items-center p-2 ${location.pathname.includes('/doctor-search') ? 'text-primary' : 'text-muted-foreground'}`}>
+        <Link to="/doctor/search" className={`flex flex-col items-center p-2 ${location.pathname.includes('/doctor/search') ? 'text-primary' : 'text-muted-foreground'}`}>
           <Search className="w-5 h-5" />
           <span className="text-xs mt-1">Find</span>
         </Link>

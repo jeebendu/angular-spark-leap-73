@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import * as Icons from "lucide-react"; // Import all icons dynamically
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AllSpecializationsModal } from "../AllSpecializationsModal";
+import { SpecializationsModal } from "./SpecializationsModal";
 
 export function Specializations() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -26,7 +26,7 @@ export function Specializations() {
   }, []);
 
   const handleSpecializationClick = (specialization: string) => {
-    navigate(`/doctor-search?specialty=${encodeURIComponent(specialization)}`);
+    navigate(`/doctor/search?specialty=${encodeURIComponent(specialization)}`);
   };
 
   return (
@@ -84,7 +84,7 @@ export function Specializations() {
         </div>
       </div>
 
-      <AllSpecializationsModal
+      <SpecializationsModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         specializations={specializations}

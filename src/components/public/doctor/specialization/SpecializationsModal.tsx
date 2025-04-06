@@ -18,12 +18,12 @@ interface AllSpecializationsModalProps {
   specializations: Specialization[];
 }
 
-export function AllSpecializationsModal({ isOpen, onClose, specializations }: AllSpecializationsModalProps) {
+export function SpecializationsModal({ isOpen, onClose, specializations }: AllSpecializationsModalProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
   const handleSpecializationClick = (specialization: string) => {
-    navigate(`/doctor-search?specialty=${encodeURIComponent(specialization)}`);
+    navigate(`/doctor/search?specialty=${encodeURIComponent(specialization)}`);
     onClose();
   };
 

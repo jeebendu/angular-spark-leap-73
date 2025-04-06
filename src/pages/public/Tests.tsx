@@ -1,6 +1,6 @@
 
 import { AppLayout } from "@/components/AppLayout";
-import { SearchBar } from "@/components/public/home/SearchBar";
+import { SearchBar } from "@/components/public/home/search/SearchBar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Beaker, CalendarDays, ChevronRight, Clock, Heart, Syringe, TestTubes, Thermometer } from "lucide-react";

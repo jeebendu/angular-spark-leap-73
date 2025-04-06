@@ -2,12 +2,11 @@ import { AppLayout } from "@/components/AppLayout";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
-
-import { DoctorDetailsTabs } from "@/components/public/doctor/DoctorDetailsTabs";
-import { DoctorHeader } from "@/components/public/doctor/DoctorHeader";
-import { SimilarDoctors } from "@/components/public/doctor/SimilarDoctors";
 import { Doctor } from "@/models/Doctor";
 import { fetchDoctorById } from "@/services/DoctorService"; // Import the service function
+import { DoctorHeader } from "@/components/public/doctor/details/DoctorHeader";
+import { DoctorDetailsTabs } from "@/components/public/doctor/details/DoctorDetailsTabs";
+import { SimilarDoctors } from "@/components/public/doctor/details/SimilarDoctors";
 
 const DoctorDetails = () => {
   const { doctorId } = useParams(); // Get the doctor ID from the URL
@@ -60,7 +59,7 @@ const DoctorDetails = () => {
     <AppLayout>
       <div className="container px-4 py-6 max-w-6xl mx-auto">
         {/* Back button */}
-        <Link to="/doctor-search" className="flex items-center text-primary mb-6 hover:underline">
+        <Link to="/doctor/search" className="flex items-center text-primary mb-6 hover:underline">
           <ArrowLeft className="h-4 w-4 mr-1" />
           Back to search
         </Link>

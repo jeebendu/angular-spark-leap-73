@@ -1,7 +1,7 @@
 import { AppLayout } from "@/components/AppLayout";
 import { BookingModal } from "@/components/public/appointments/BookingModal";
 import { BookingSuccessDialog } from "@/components/public/appointments/BookingSuccessDialog";
-import { DoctorFilters } from "@/components/public/doctor/DoctorFilters";
+import { DoctorFilters } from "@/components/public/doctor/search/DoctorFilters";
 import { DoctorSearchBar } from "@/components/public/doctor/search/DoctorSearchBar";
 import { DoctorsList } from "@/components/public/doctor/search/DoctorsList";
 import { useToast } from "@/components/ui/use-toast";

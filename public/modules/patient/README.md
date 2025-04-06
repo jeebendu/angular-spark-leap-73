@@ -9,7 +9,7 @@ This directory contains static assets related to the patient module, including:
 
 These assets are organized to correspond with the patient-facing routes in the application:
 - Home (/)
-- Doctor Search (/doctor-search)
+- Doctor Search (/doctor/search)
 - Doctor Details (/doctor/:doctorId)
 - Appointments (/appointments)
 - Reports (/reports)

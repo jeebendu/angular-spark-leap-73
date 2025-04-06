@@ -255,7 +255,7 @@ const DoctorSearch = () => {
   
   return (
     <AppLayout>
-      <div className="container px-4 py-6">
+      <div className="container-width py-6">
         <DoctorSearchBar
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}

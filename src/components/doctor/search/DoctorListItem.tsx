@@ -1,9 +1,10 @@
+
 import React from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Star, Heart, MapPin, Navigation } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tooltip, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DoctorClinic {
@@ -35,6 +36,10 @@ interface DoctorListItemProps {
 
 export function DoctorListItem({ doctor, index, isLastItem, lastDoctorElementRef, handleBookAppointment }: DoctorListItemProps) {
   const isMobile = useIsMobile();
+  
+  const handleViewProfile = () => {
+    window.location.href = `/doctor/${doctor.id}`;
+  };
   
   return (
     <motion.div
@@ -110,7 +115,7 @@ export function DoctorListItem({ doctor, index, isLastItem, lastDoctorElementRef
             ) : (
               <div className="flex w-full">
                 {/* Doctor Image Section */}
-                <div className="w-32 h-32 relative">
+                <div className="w-32 h-32 relative cursor-pointer" onClick={handleViewProfile}>
                   <img 
                     src={doctor.imageSrc}
                     alt={doctor.name}
@@ -127,19 +132,16 @@ export function DoctorListItem({ doctor, index, isLastItem, lastDoctorElementRef
                   <div className="flex justify-between">
                     {/* Doctor Name, Specialty and Rating */}
                     <div>
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-semibold text-lg">{doctor.name}</h3>
-                        <div className="text-lg font-semibold ml-8">₹{doctor.price}</div>
-                      </div>
-                      <p className="text-muted-foreground text-sm">{doctor.specialty}</p>
-                      
-                      <div className="flex items-center gap-1 mt-1">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-semibold text-lg cursor-pointer hover:text-primary" onClick={handleViewProfile}>{doctor.name}</h3>
                         <div className="flex items-center">
                           <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                           <span className="font-medium ml-1">{doctor.rating}</span>
+                          <span className="text-muted-foreground ml-1">({doctor.reviewCount})</span>
                         </div>
-                        <span className="text-muted-foreground">({doctor.reviewCount})</span>
                       </div>
+                      
+                      <p className="text-muted-foreground text-sm">{doctor.specialty}</p>
                       
                       {/* Tags */}
                       <div className="flex flex-wrap gap-2 mt-3">
@@ -153,17 +155,28 @@ export function DoctorListItem({ doctor, index, isLastItem, lastDoctorElementRef
                           Available today
                         </div>
                       </div>
+                      
+                      {/* Clinic Information */}
+                      {doctor.clinics.length > 0 && (
+                        <div className="mt-3">
+                          <div className="flex items-center">
+                            <MapPin className="h-3.5 w-3.5 mr-1 text-gray-500" />
+                            <span className="text-gray-700 text-sm">{doctor.clinics[0].name}, {doctor.clinics[0].location}</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
                     
                     {/* Buttons */}
                     <div className="flex flex-col gap-2">
+                      <div className="text-lg font-semibold text-right mb-2">₹{doctor.price}</div>
                       <Button 
                         size="sm"
                         variant="outline"
                         className="w-28 rounded-full border-primary text-primary"
-                        onClick={() => window.location.href = `/doctor/${doctor.id}`}
+                        onClick={handleViewProfile}
                       >
-                        Profile
+                        View Profile
                       </Button>
                       <Button 
                         className="w-28 sky-button rounded-full"
@@ -173,16 +186,6 @@ export function DoctorListItem({ doctor, index, isLastItem, lastDoctorElementRef
                       </Button>
                     </div>
                   </div>
-                  
-                  {/* Clinic Information */}
-                  {doctor.clinics.length > 0 && (
-                    <div className="mt-3">
-                      <div className="flex items-start">
-                        <MapPin className="h-4 w-4 mr-1 text-gray-500 mt-0.5" />
-                        <span className="text-gray-700">{doctor.clinics[0].name}, {doctor.clinics[0].location}</span>
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
             )}

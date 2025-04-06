@@ -2,7 +2,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
-import { Doctor } from "@/models/Doctor";
+import { Doctor } from "@/models/doctor/Doctor";
 import { fetchDoctorById } from "@/services/DoctorService"; // Import the service function
 import { DoctorHeader } from "@/components/public/doctor/details/DoctorHeader";
 import { DoctorDetailsTabs } from "@/components/public/doctor/details/DoctorDetailsTabs";

@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { Education, Language } from "@/models/Doctor";
+import { Education, Language } from "@/models/doctor/Doctor";
 import { Mail, Phone } from "lucide-react";
 
 interface AboutTabProps {

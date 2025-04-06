@@ -1,7 +1,6 @@
-
-import { Appointment, ClinicReference } from "@/models/Appointment";
-import { Clinic } from "@/models/Clinic";
-import { FamilyMember } from "@/models/Patient";
+import { Appointment, ClinicReference } from "@/models/appointment/Appointment";
+import { Clinic } from "@/models/clinic/Clinic";
+import { FamilyMember } from "@/models/patient/Patient";
 
 // We need to manually define the ToasterToast type since it's not exported from the module
 interface ToasterToast {

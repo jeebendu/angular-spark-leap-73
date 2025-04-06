@@ -1,7 +1,7 @@
 
 import { AppointmentList } from "@/components/doctor/AppointmentList";
 import { DoctorLayout } from "@/components/doctor/DoctorLayout";
-import { AppointmentDetails } from "@/models/Appointment";
+import { AppointmentDetails } from "@/models/appointment/Appointment";
 import { useState } from "react";
 
 // Sample appointment data

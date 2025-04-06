@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, Clock, Eye, Phone, Mail, MapPin, CalendarClock, ChevronRight } from "lucide-react";
-import { AppointmentDetails } from "@/models/Appointment";
+import { AppointmentDetails } from "@/models/appointment/Appointment";
 import { format } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";

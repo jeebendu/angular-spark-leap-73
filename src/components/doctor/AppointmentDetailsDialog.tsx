@@ -1,8 +1,9 @@
+
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Phone, Mail, User, ChevronRight } from "lucide-react";
-import { AppointmentDetails } from "@/models/Appointment";
+import { AppointmentDetails } from "@/models/appointment/Appointment";
 import { format } from "date-fns";
 
 interface AppointmentDetailsDialogProps {

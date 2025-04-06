@@ -1,4 +1,5 @@
-import { Branch } from "./Branch";
+
+import { Branch } from "../shared/Branch";
 
 export interface User {
   id: number;

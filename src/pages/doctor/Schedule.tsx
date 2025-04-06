@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Clock, Plus, Trash2 } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { cn } from "@/lib/utils";
-import { DayAvailability, TimeSlot } from "@/models/Availability";
+import { DayAvailability, TimeSlot } from "@/models/appointment/Availability";
 import { useToast } from "@/hooks/use-toast";
 import { DoctorLayout } from "@/components/doctor/DoctorLayout";
 

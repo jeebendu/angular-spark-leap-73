@@ -1,6 +1,6 @@
 
 import React from "react";
-import { AppointmentDetails } from "@/models/Appointment";
+import { AppointmentDetails } from "@/models/appointment/Appointment";
 import { AppointmentListCard } from "./AppointmentListCard";
 import { AppointmentGridCard } from "./AppointmentGridCard";
 import { motion } from "framer-motion";

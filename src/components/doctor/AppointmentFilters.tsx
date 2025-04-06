@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Calendar, ChevronDown, Filter, Search } from "lucide-react";
 import {
@@ -17,7 +16,7 @@ import {
 } from "@/components/ui/popover";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { format } from "date-fns";
-import { AppointmentFilterState } from "@/models/AppointmentFilters";
+import { AppointmentFilterState } from "@/models/appointment/AppointmentFilters";
 
 interface AppointmentFiltersProps {
   filters: AppointmentFilterState;

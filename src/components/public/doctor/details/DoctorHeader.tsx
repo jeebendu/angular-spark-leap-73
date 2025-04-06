@@ -3,7 +3,7 @@ import { Heart, Share2, Star, ThumbsUp, Award, Languages, Building } from "lucid
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Doctor } from "@/models/Doctor";
+import { Doctor } from "@/models/doctor/Doctor";
 import { BookAppointmentModal } from "../../appointments/BookAppointmentModal";
 
 interface DoctorHeaderProps { doctor: Doctor }

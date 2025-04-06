@@ -1,7 +1,6 @@
-
 import { ClipboardCheck } from "lucide-react";
 import { getClinicById, getFamilyMemberById, type Clinic, type FamilyMember } from "@/services/appointmentService";
-import { ClinicReference } from "@/models/Appointment";
+import { ClinicReference } from "@/models/appointment/Appointment";
 
 interface ReviewStepProps {
   doctorName?: string;

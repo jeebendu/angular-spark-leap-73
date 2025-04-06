@@ -1,14 +1,11 @@
-
-
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent } from "@/components/ui/card";
-import { Clinic } from "@/models/Clinic";
-import { Doctor } from "@/models/Doctor";
+import { Clinic } from "@/models/clinic/Clinic";
+import { Doctor } from "@/models/doctor/Doctor";
 import { CalendarDays, CheckCircle2, Clock, MapPin } from "lucide-react";
 import { useState } from "react";
 import { BookAppointmentModal } from "../../appointments/BookAppointmentModal";
-
 
 interface ClinicsTabProps {
   clinics: Clinic[];

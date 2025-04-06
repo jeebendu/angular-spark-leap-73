@@ -1,5 +1,5 @@
 import http from "@/lib/JwtInterceptor";
-import { Doctor } from "@/models/Doctor";
+import { Doctor } from "@/models/doctor/Doctor";
 
 export const fetchDoctorDetailsById = async (id: any) => {
   return await http.get<Doctor>(`/v1/doctor/id/${id}`);

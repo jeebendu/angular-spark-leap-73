@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,7 +14,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 196 85% 55%;
+    --primary: 176 100% 36%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -22,7 +23,7 @@
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 196 85% 95%;
+    --accent: 176 100% 95%;
     --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
@@ -30,7 +31,7 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 196 85% 55%;
+    --ring: 176 100% 36%;
 
     --radius: 0.75rem;
   }
@@ -45,7 +46,7 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 196 85% 55%;
+    --primary: 176 100% 36%;
     --primary-foreground: 222.2 47.4% 11.2%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -62,7 +63,7 @@
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --ring: 176 100% 36%;
   }
 }
 
@@ -81,6 +82,10 @@
 }
 
 @layer components {
+  .container-width {
+    @apply max-w-6xl mx-auto px-4 w-full;
+  }
+  
   .sky-gradient {
     @apply bg-gradient-to-r from-[#33C3F0] to-[#38B6FF];
   }
@@ -161,6 +166,30 @@
   /* Banner styling */
   .promo-banner {
     @apply w-full rounded-xl overflow-hidden my-6 relative;
+  }
+
+  /* Mobile-specific adjustments */
+  @media (max-width: 767px) {
+    .container {
+      @apply px-2;
+    }
+  }
+
+  /* Doctor search page specific styles */
+  .filter-checkbox-container {
+    @apply max-h-[300px] overflow-y-auto pr-2;
+  }
+  
+  .specialty-checkbox-item {
+    @apply flex items-center space-x-2 py-1;
+  }
+  
+  .specialty-checkbox-label {
+    @apply text-sm leading-none;
+  }
+  
+  .mobile-filter-button {
+    @apply fixed bottom-4 left-1/2 transform -translate-x-1/2 z-40 px-6 py-2 rounded-full bg-primary text-white shadow-lg;
   }
 }
 

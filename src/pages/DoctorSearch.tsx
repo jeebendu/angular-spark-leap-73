@@ -1,57 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { DoctorCard } from "@/components/DoctorCard";
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { 
-  ArrowUpDown,
-  Calendar,
-  Check,
-  Clock,
-  Filter,
-  Heart,
-  LayoutList,
-  MapPin,
-  Rows,
-  Search, 
-  SlidersHorizontal, 
-  Star, 
-  X,
-  HelpCircle,
-  Building,
-  Navigation
-} from "lucide-react";
-import { 
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogClose
-} from "@/components/ui/dialog";
-import { Switch } from "@/components/ui/switch";
-import { motion } from "framer-motion";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { Checkbox } from "@/components/ui/checkbox";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Calendar as CalendarComponent } from "@/components/ui/calendar";
-import { useLocation } from "@/contexts/LocationContext";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/components/ui/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { DoctorFilters } from "@/components/doctor/DoctorFilters";
-import { MobileDoctorFilters } from "@/components/doctor/MobileDoctorFilters";
-
-// Import only the types/interfaces we need from this file
+import { DoctorSearchBar } from "@/components/doctor/search/DoctorSearchBar";
+import { DoctorsList } from "@/components/doctor/search/DoctorsList";
+import { BookingModal } from "@/components/doctor/search/BookingModal";
+import { BookingSuccessDialog } from "@/components/doctor/search/BookingSuccessDialog";
 
 const DoctorSearch = () => {
   const [searchParams] = useSearchParams();
@@ -59,8 +15,9 @@ const DoctorSearch = () => {
   const initialSpecialty = searchParams.get("specialty") || "";
   
   const [searchTerm, setSearchTerm] = useState(initialQuery);
-  const [priceRange, setPriceRange] = useState([500, 2000]);
-  const [filterOpen, setFilterOpen] = useState(false);
+  const [priceRange, setPriceRange] = useState<[number, number]>([500, 2000]);
+  const isMobile = useIsMobile();
+  const [filterOpen, setFilterOpen] = useState(!isMobile);
   const [selectedSpecialties, setSelectedSpecialties] = useState<string[]>(
     initialSpecialty ? [initialSpecialty] : []
   );
@@ -83,8 +40,6 @@ const DoctorSearch = () => {
   const [showNoMoreDoctors, setShowNoMoreDoctors] = useState(false);
   
   const observer = useRef<IntersectionObserver>();
-  const isMobile = useIsMobile();
-  const { location } = useLocation();
   const { toast } = useToast();
   
   const specialties = [
@@ -150,9 +105,7 @@ const DoctorSearch = () => {
     ]
   ];
 
-  // Generate initial set of doctors
   useEffect(() => {
-    // Simulate API fetch delay
     setLoading(true);
     setTimeout(() => {
       const initialDoctors = [...Array(12)].map((_, index) => ({
@@ -173,7 +126,6 @@ const DoctorSearch = () => {
     }, 1000);
   }, []);
 
-  // Setup infinite scrolling
   const lastDoctorElementRef = useCallback((node: HTMLDivElement | null) => {
     if (loading) return;
     
@@ -193,7 +145,6 @@ const DoctorSearch = () => {
     
     setLoading(true);
     
-    // Simulate API fetch with timeout
     setTimeout(() => {
       if (page >= 3) {
         setHasMore(false);
@@ -225,9 +176,7 @@ const DoctorSearch = () => {
   };
 
   useEffect(() => {
-    // If initial specialty was provided, apply the filter
     if (initialSpecialty) {
-      // Filter logic would be implemented here in a real app
       toast({
         title: "Filter Applied",
         description: `Showing doctors specialized in ${initialSpecialty}`,
@@ -274,7 +223,6 @@ const DoctorSearch = () => {
     
     if (clinicId) {
       setSelectedClinic(clinicId);
-      // If clinic is selected directly, skip to step 2
       setBookingStep(2);
     }
   };
@@ -298,9 +246,7 @@ const DoctorSearch = () => {
     }
   };
 
-  // Apply filters function
   const applyFilters = () => {
-    // In a real app, this would trigger API call with filter parameters
     toast({
       title: "Filters Applied",
       description: "Doctor results have been filtered based on your preferences."
@@ -309,66 +255,33 @@ const DoctorSearch = () => {
   
   return (
     <AppLayout>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold mb-2">Find the Right Doctor</h1>
-        <p className="text-muted-foreground">Search from our network of specialized doctors</p>
-        {location.locality && (
-          <div className="flex items-center mt-2 text-sm text-primary">
-            <MapPin className="h-4 w-4 mr-1" />
-            <span>Showing results near {location.locality}</span>
-          </div>
-        )}
-      </div>
-      
-      {/* Search Bar */}
-      <div className="flex items-center gap-2 mb-6">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <Input
-            type="text"
-            placeholder="Search by doctor name, specialty, condition..."
-            className="pl-10 pr-4 py-2 bg-white"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
+      <div className="container px-4 py-6">
+        <DoctorSearchBar
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          filterOpen={filterOpen}
+          setFilterOpen={setFilterOpen}
+          selectedSpecialties={selectedSpecialties}
+          selectedGenders={selectedGenders}
+          selectedLanguages={selectedLanguages}
+          selectedExperience={selectedExperience}
+          priceRange={priceRange}
+          toggleSpecialty={toggleSpecialty}
+          toggleGender={toggleGender}
+          toggleLanguage={toggleLanguage}
+          toggleExperience={toggleExperience}
+          setPriceRange={setPriceRange}
+          applyFilters={applyFilters}
+        />
         
-        <div className="flex gap-2">
-          <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="w-[160px] md:flex hidden">
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="relevance">Relevance</SelectItem>
-              <SelectItem value="rating">Rating: High to Low</SelectItem>
-              <SelectItem value="price_low">Price: Low to High</SelectItem>
-              <SelectItem value="price_high">Price: High to Low</SelectItem>
-              <SelectItem value="experience">Experience</SelectItem>
-            </SelectContent>
-          </Select>
-          
-          <ToggleGroup type="single" value={viewMode} onValueChange={(value) => value && setViewMode(value as "grid" | "list")}>
-            <ToggleGroupItem value="grid" aria-label="Grid view" className="md:flex hidden">
-              <LayoutList className="h-4 w-4" />
-            </ToggleGroupItem>
-            <ToggleGroupItem value="list" aria-label="List view" className="md:flex hidden">
-              <Rows className="h-4 w-4" />
-            </ToggleGroupItem>
-          </ToggleGroup>
-          
-          {isMobile ? (
-            <>
-              <Button 
-                variant="outline" 
-                className="flex items-center gap-2 border border-gray-200 bg-white"
-                onClick={() => setFilterOpen(true)}
-              >
-                <Filter className="h-4 w-4" />
-                <span>Filters</span>
-              </Button>
-              <MobileDoctorFilters 
-                open={filterOpen}
-                onOpenChange={setFilterOpen}
+        <div className="flex flex-col md:flex-row gap-6">
+          {!isMobile && filterOpen && (
+            <div className="w-full md:w-64 shrink-0">
+              <DoctorFilters 
                 selectedSpecialties={selectedSpecialties}
                 selectedGenders={selectedGenders}
                 selectedLanguages={selectedLanguages}
@@ -381,465 +294,48 @@ const DoctorSearch = () => {
                 setPriceRange={setPriceRange}
                 applyFilters={applyFilters}
               />
-            </>
-          ) : (
-            <Button 
-              variant="outline" 
-              className="flex items-center gap-2 border border-gray-200 bg-white"
-              onClick={() => setFilterOpen(!filterOpen)}
-            >
-              <SlidersHorizontal className="h-4 w-4" />
-              <span>Filters</span>
-            </Button>
+            </div>
           )}
-        </div>
-      </div>
-      
-      <div className="flex flex-col md:flex-row gap-6">
-        {/* Filters - Desktop */}
-        {!isMobile && filterOpen && (
-          <div className="w-full md:w-64 shrink-0">
-            <DoctorFilters 
-              selectedSpecialties={selectedSpecialties}
-              selectedGenders={selectedGenders}
-              selectedLanguages={selectedLanguages}
-              selectedExperience={selectedExperience}
-              priceRange={priceRange}
-              toggleSpecialty={toggleSpecialty}
-              toggleGender={toggleGender}
-              toggleLanguage={toggleLanguage}
-              toggleExperience={toggleExperience}
-              setPriceRange={setPriceRange}
-              applyFilters={applyFilters}
+          
+          <div className="flex-1">
+            <DoctorsList
+              doctors={doctors}
+              viewMode={viewMode}
+              lastDoctorElementRef={lastDoctorElementRef}
+              loading={loading}
+              handleBookAppointment={handleBookAppointment}
+              showNoMoreDoctors={showNoMoreDoctors}
             />
           </div>
-        )}
-        
-        {/* Doctor Results */}
-        <div className="flex-1">
-          {loading && doctors.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-              <p className="mt-4 text-muted-foreground">Loading doctors...</p>
-            </div>
-          )}
-          
-          {viewMode === "grid" ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {doctors.map((doctor, index) => {
-                // Determine if this is the last element for infinite scroll
-                const isLastItem = index === doctors.length - 1;
-                
-                return (
-                  <motion.div
-                    key={doctor.id}
-                    ref={isLastItem ? lastDoctorElementRef : null}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index % 12 * 0.05, duration: 0.3 }}
-                  >
-                    <DoctorCard
-                      id={doctor.id}
-                      name={doctor.name}
-                      specialty={doctor.specialty}
-                      rating={doctor.rating}
-                      reviewCount={doctor.reviewCount}
-                      price={`₹${doctor.price}`}
-                      imageSrc={doctor.imageSrc}
-                      experience={doctor.experience}
-                      languages={doctor.languages}
-                      clinics={doctor.clinics}
-                      onBookNow={(name) => handleBookAppointment(name)}
-                    />
-                  </motion.div>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="flex flex-col gap-4">
-              {doctors.map((doctor, index) => {
-                // Determine if this is the last element for infinite scroll
-                const isLastItem = index === doctors.length - 1;
-                
-                return (
-                  <motion.div
-                    key={doctor.id}
-                    ref={isLastItem ? lastDoctorElementRef : null}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index % 12 * 0.05, duration: 0.3 }}
-                    className="group"
-                  >
-                    <Card className="overflow-hidden border-none card-shadow group-hover:shadow-lg transition-shadow">
-                      <CardContent className="p-0">
-                        <div className="flex flex-col md:flex-row">
-                          <div className="md:w-1/4 w-full aspect-[3/2] md:aspect-square relative">
-                            <img 
-                              src={doctor.imageSrc}
-                              alt={doctor.name}
-                              className="w-full h-full object-cover"
-                            />
-                            <div className="absolute top-2 right-2 bg-white/80 backdrop-blur-sm px-2 py-1 rounded-full text-xs font-medium text-primary flex items-center">
-                              <Heart className="h-3 w-3 mr-1 fill-red-500 text-red-500" />
-                              98% Recommended
-                            </div>
-                          </div>
-                          
-                          <div className="flex-1 p-4 flex flex-col md:flex-row">
-                            <div className="flex-1">
-                              <div className="flex flex-wrap items-start justify-between">
-                                <div>
-                                  <h3 className="font-semibold text-base md:text-lg">{doctor.name}</h3>
-                                  <p className="text-muted-foreground text-sm">{doctor.specialty}</p>
-                                  
-                                  <div className="flex items-center gap-1 mt-1">
-                                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                                    <span className="text-sm font-medium">{doctor.rating}</span>
-                                    <span className="text-sm text-muted-foreground">({doctor.reviewCount})</span>
-                                  </div>
-                                </div>
-                                
-                                <span className="font-semibold md:text-lg">₹{doctor.price}</span>
-                              </div>
-                              
-                              <div className="mt-3 flex flex-wrap gap-2">
-                                <div className="px-3 py-1 bg-gray-100 rounded-full text-xs flex items-center">
-                                  <span>{doctor.experience}</span>
-                                </div>
-                                <div className="px-3 py-1 bg-gray-100 rounded-full text-xs flex items-center">
-                                  <span>{doctor.languages.join(", ")}</span>
-                                </div>
-                                <div className="px-3 py-1 bg-gray-100 rounded-full text-xs flex items-center">
-                                  <span>Available today</span>
-                                </div>
-                              </div>
-                              
-                              <div className="mt-3">
-                                <p className="text-xs font-medium mb-2">Available at:</p>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                  {doctor.clinics.map((clinic, cIndex) => (
-                                    <TooltipProvider key={clinic.id}>
-                                      <Tooltip>
-                                        <TooltipTrigger asChild>
-                                          <div 
-                                            className={`px-3 py-2 ${clinic.available ? 'bg-blue-50' : 'bg-gray-100'} rounded-lg text-xs flex items-center justify-between cursor-pointer hover:bg-blue-100 transition-colors`}
-                                            onClick={() => clinic.available && handleBookAppointment(doctor.name, clinic.id)}
-                                          >
-                                            <div className="flex items-center">
-                                              <Building className="h-3 w-3 mr-2 text-primary" />
-                                              <div>
-                                                <p className="font-medium">{clinic.name}</p>
-                                                <p className="text-muted-foreground mt-0.5">{clinic.location}</p>
-                                              </div>
-                                            </div>
-                                            <div className="flex items-center">
-                                              <Navigation className="h-3 w-3 mr-1 text-gray-500" />
-                                              <span className="text-gray-500">{clinic.distance}</span>
-                                            </div>
-                                          </div>
-                                        </TooltipTrigger>
-                                        <TooltipContent side="bottom">
-                                          {clinic.available ? (
-                                            <p className="text-xs">Click to book appointment at this clinic</p>
-                                          ) : (
-                                            <p className="text-xs">No appointments available at this clinic</p>
-                                          )}
-                                        </TooltipContent>
-                                      </Tooltip>
-                                    </TooltipProvider>
-                                  ))}
-                                </div>
-                              </div>
-                              
-                              <div className="mt-4 flex items-center justify-between md:hidden">
-                                <div className="space-x-2">
-                                  <Button 
-                                    size="sm" 
-                                    variant="outline"
-                                    className="rounded-full border-primary text-primary"
-                                    onClick={() => window.location.href = `/doctor/${doctor.id}`}
-                                  >
-                                    Profile
-                                  </Button>
-                                  <Button 
-                                    size="sm" 
-                                    className="sky-button rounded-full"
-                                    onClick={() => handleBookAppointment(doctor.name)}
-                                  >
-                                    Book Now
-                                  </Button>
-                                </div>
-                              </div>
-                            </div>
-                            
-                            <div className="flex items-center justify-end md:w-32 hidden md:flex">
-                              <div className="space-y-2">
-                                <Button 
-                                  size="sm"
-                                  variant="outline"
-                                  className="w-full rounded-full border-primary text-primary"
-                                  onClick={() => window.location.href = `/doctor/${doctor.id}`}
-                                >
-                                  Profile
-                                </Button>
-                                <Button 
-                                  className="w-full sky-button rounded-full"
-                                  onClick={() => handleBookAppointment(doctor.name)}
-                                >
-                                  Book Now
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                );
-              })}
-            </div>
-          )}
-          
-          {/* Loading indicator at bottom */}
-          {loading && doctors.length > 0 && (
-            <div className="flex justify-center items-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-              <span className="ml-3 text-sm text-muted-foreground">Loading more doctors...</span>
-            </div>
-          )}
-          
-          {/* No more doctors message */}
-          {showNoMoreDoctors && (
-            <div className="text-center py-8 border-t mt-6">
-              <p className="text-muted-foreground">No more doctors to display</p>
-              <p className="text-sm text-muted-foreground mt-1">Try adjusting your filters to see more results</p>
-            </div>
-          )}
         </div>
+        
+        <BookingModal
+          open={bookingOpen}
+          onOpenChange={setBookingOpen}
+          bookingStep={bookingStep}
+          selectedDoctor={selectedDoctor}
+          selectedClinic={selectedClinic}
+          date={date}
+          selectedSlot={selectedSlot}
+          timeSlots={timeSlots}
+          doctors={doctors}
+          setSelectedClinic={setSelectedClinic}
+          setDate={setDate}
+          handleSlotSelection={handleSlotSelection}
+          nextStep={nextStep}
+          prevStep={prevStep}
+        />
+        
+        <BookingSuccessDialog
+          open={successDialogOpen}
+          onOpenChange={setSuccessDialogOpen}
+          selectedDoctor={selectedDoctor}
+          selectedClinic={selectedClinic}
+          date={date}
+          selectedSlot={selectedSlot}
+          doctors={doctors}
+        />
       </div>
-      
-      {/* Booking Dialog */}
-      <Dialog open={bookingOpen} onOpenChange={setBookingOpen}>
-        <DialogContent className="bg-white sm:max-w-lg modal-background">
-          <DialogHeader>
-            <DialogTitle>Book Appointment</DialogTitle>
-          </DialogHeader>
-          
-          {bookingStep === 1 && (
-            <div className="space-y-4">
-              <h3 className="font-medium text-lg">Select Clinic</h3>
-              <div className="space-y-3 max-h-[50vh] overflow-y-auto pr-2">
-                {/* Get the right clinics for the selected doctor */}
-                {doctors.find(d => d.name === selectedDoctor)?.clinics.map((clinic, index) => (
-                  <div 
-                    key={clinic.id}
-                    className={`p-3 border rounded-lg hover:border-primary cursor-pointer transition-all ${selectedClinic === clinic.id ? 'border-primary bg-blue-50' : ''} ${!clinic.available ? 'opacity-60 cursor-not-allowed' : ''}`}
-                    onClick={() => clinic.available && setSelectedClinic(clinic.id)}
-                  >
-                    <div className="flex justify-between">
-                      <div>
-                        <div className="flex items-center">
-                          <h4 className="font-medium">{clinic.name}</h4>
-                          {!clinic.available && (
-                            <span className="ml-2 text-xs text-red-500 py-0.5 px-2 bg-red-50 rounded-full">
-                              No Slots Available
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-sm text-muted-foreground">{clinic.location}</p>
-                        <div className="flex items-center mt-1 text-xs text-gray-500">
-                          <Navigation className="h-3 w-3 mr-1" />
-                          <span>{clinic.distance} from your location</span>
-                        </div>
-                      </div>
-                      <Checkbox 
-                        id={`clinic-${index}`} 
-                        checked={selectedClinic === clinic.id}
-                        disabled={!clinic.available}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-              
-              <div className="pt-4 flex justify-end">
-                <Button 
-                  className="sky-button" 
-                  onClick={nextStep}
-                  disabled={!selectedClinic}
-                >
-                  Continue
-                </Button>
-              </div>
-            </div>
-          )}
-          
-          {bookingStep === 2 && (
-            <div className="space-y-4">
-              <h3 className="font-medium text-lg">Select Date & Time</h3>
-              
-              <div className="flex flex-col sm:flex-row gap-4">
-                <div className="sm:w-1/2">
-                  <CalendarComponent
-                    mode="single"
-                    selected={date}
-                    onSelect={setDate}
-                    className="rounded-md border"
-                  />
-                </div>
-                
-                <div className="sm:w-1/2">
-                  <h4 className="font-medium mb-2">Available Slots</h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    {timeSlots.map((slot) => (
-                      <Button
-                        key={slot}
-                        variant={selectedSlot === slot ? "default" : "outline"}
-                        size="sm"
-                        className={selectedSlot === slot ? 'bg-primary text-white' : ''}
-                        onClick={() => handleSlotSelection(slot)}
-                      >
-                        {slot}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              
-              <div className="pt-4 flex justify-between">
-                <Button variant="outline" onClick={prevStep}>Back</Button>
-                <Button className="sky-button" onClick={nextStep} disabled={!selectedSlot}>Continue</Button>
-              </div>
-            </div>
-          )}
-          
-          {bookingStep === 3 && (
-            <div className="space-y-4">
-              <h3 className="font-medium text-lg">Patient Information</h3>
-              
-              <div className="grid gap-4">
-                <div className="grid sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-sm font-medium mb-1 block">First Name</label>
-                    <Input placeholder="Enter first name" />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium mb-1 block">Last Name</label>
-                    <Input placeholder="Enter last name" />
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="text-sm font-medium mb-1 block">Email</label>
-                  <Input type="email" placeholder="Enter email address" />
-                </div>
-                
-                <div>
-                  <label className="text-sm font-medium mb-1 block">Phone Number</label>
-                  <Input type="tel" placeholder="Enter phone number" />
-                </div>
-                
-                <div>
-                  <label className="text-sm font-medium mb-1 block">Reason for Visit</label>
-                  <Input placeholder="Briefly describe your symptoms or reason" />
-                </div>
-              </div>
-              
-              <div className="pt-4 flex justify-between">
-                <Button variant="outline" onClick={prevStep}>Back</Button>
-                <Button className="sky-button" onClick={nextStep}>Continue</Button>
-              </div>
-            </div>
-          )}
-          
-          {bookingStep === 4 && (
-            <div className="space-y-4">
-              <h3 className="font-medium text-lg">Confirm Appointment</h3>
-              
-              <div className="bg-gray-50 p-4 rounded-lg space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Doctor</span>
-                  <span className="text-sm font-medium">{selectedDoctor}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Date</span>
-                  <span className="text-sm font-medium">{date?.toLocaleDateString()}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Time</span>
-                  <span className="text-sm font-medium">{selectedSlot}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Clinic</span>
-                  <span className="text-sm font-medium">
-                    {doctors.find(d => d.name === selectedDoctor)?.clinics.find(c => c.id === selectedClinic)?.name}
-                  </span>
-                </div>
-                <div className="pt-2 border-t">
-                  <div className="flex justify-between font-medium">
-                    <span>Consultation Fee</span>
-                    <span>₹{doctors.find(d => d.name === selectedDoctor)?.price || 1200}</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">Payment to be made at the clinic</p>
-                </div>
-              </div>
-              
-              <div className="pt-4 flex justify-between">
-                <Button variant="outline" onClick={prevStep}>Back</Button>
-                <Button className="sky-button" onClick={nextStep}>Confirm Booking</Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-      
-      {/* Success Dialog */}
-      <AlertDialog open={successDialogOpen} onOpenChange={setSuccessDialogOpen}>
-        <AlertDialogContent className="bg-white modal-background">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-center text-xl text-green-600">Appointment Confirmed!</AlertDialogTitle>
-            <AlertDialogDescription className="text-center">
-              Your appointment has been successfully booked
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          
-          <div className="flex flex-col items-center py-4">
-            <div className="bg-gray-50 p-4 rounded-lg w-full max-w-sm mx-auto">
-              <div className="flex justify-between mb-1">
-                <span className="text-sm text-muted-foreground">Appointment ID</span>
-                <span className="text-sm font-medium">APT123456</span>
-              </div>
-              <div className="flex justify-between mb-1">
-                <span className="text-sm text-muted-foreground">Doctor</span>
-                <span className="text-sm font-medium">{selectedDoctor}</span>
-              </div>
-              <div className="flex justify-between mb-1">
-                <span className="text-sm text-muted-foreground">Date & Time</span>
-                <span className="text-sm font-medium">{date?.toLocaleDateString()} {selectedSlot}</span>
-              </div>
-              <div className="flex justify-between mb-1">
-                <span className="text-sm text-muted-foreground">Clinic</span>
-                <span className="text-sm font-medium">
-                  {doctors.find(d => d.name === selectedDoctor)?.clinics.find(c => c.id === selectedClinic)?.name}
-                </span>
-              </div>
-            </div>
-            
-            <div className="my-4 bg-white p-2 border rounded-lg">
-              <img src="https://placehold.co/200/eaf7fc/33C3F0?text=QR+Code&font=montserrat" alt="Appointment QR Code" className="w-32 h-32 mx-auto" />
-            </div>
-            
-            <p className="text-sm text-center text-muted-foreground">
-              Show this QR code at the clinic reception
-            </p>
-          </div>
-          
-          <AlertDialogFooter className="flex flex-col sm:flex-row gap-2">
-            <AlertDialogCancel className="sm:mt-0">Close</AlertDialogCancel>
-            <AlertDialogAction className="sky-button">Download Receipt</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </AppLayout>
   );
 };

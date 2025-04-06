@@ -16,19 +16,19 @@ export function MobileNavigation() {
           <Home className="w-5 h-5" />
           <span className="text-xs mt-1">Home</span>
         </Link>
-        <Link to="/doctor-search" className={`flex flex-col items-center p-2 ${location.pathname === '/doctor-search' ? 'text-primary' : 'text-muted-foreground'}`}>
+        <Link to="/doctor-search" className={`flex flex-col items-center p-2 ${location.pathname.includes('/doctor-search') ? 'text-primary' : 'text-muted-foreground'}`}>
           <Search className="w-5 h-5" />
           <span className="text-xs mt-1">Find</span>
         </Link>
-        <Link to="/appointments" className={`flex flex-col items-center p-2 ${location.pathname === '/appointments' ? 'text-primary' : 'text-muted-foreground'}`}>
+        <Link to="/appointments" className={`flex flex-col items-center p-2 ${location.pathname.includes('/appointments') ? 'text-primary' : 'text-muted-foreground'}`}>
           <Calendar className="w-5 h-5" />
           <span className="text-xs mt-1">Bookings</span>
         </Link>
-        <Link to="/chat" className={`flex flex-col items-center p-2 ${location.pathname === '/chat' ? 'text-primary' : 'text-muted-foreground'}`}>
+        <Link to="/chat" className={`flex flex-col items-center p-2 ${location.pathname.includes('/chat') ? 'text-primary' : 'text-muted-foreground'}`}>
           <MessageSquare className="w-5 h-5" />
           <span className="text-xs mt-1">Chat</span>
         </Link>
-        <Link to="/account" className={`flex flex-col items-center p-2 ${location.pathname === '/account' ? 'text-primary' : 'text-muted-foreground'}`}>
+        <Link to="/account" className={`flex flex-col items-center p-2 ${location.pathname.includes('/account') ? 'text-primary' : 'text-muted-foreground'}`}>
           <User className="w-5 h-5" />
           <span className="text-xs mt-1">Profile</span>
         </Link>

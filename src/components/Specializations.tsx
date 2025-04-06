@@ -1,176 +1,138 @@
-import { useEffect, useState } from "react";
+
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Heart, Activity, Brain, Bone, Stethoscope, Syringe, Microscope, Plus, TestTube, Eye, 
   ShieldAlert, Baby, User, Thermometer, Ear, ShieldCheck, Pill, Cross, Leaf } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { AllSpecializationsModal } from "./AllSpecializationsModal";
-import { fetchAllSpecializations } from "@/services/SpecializationService";
-
-export interface Specialization {
-  name: string;
-  icon: string;
-  id: string;
-}
 
 export function Specializations() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const [specializationList, setSpecializationList] = useState<Specialization[]>([]);
-  const [specialization, setSpecialization] = useState({
-    name: "",
-    icon: "",
-    id: ""
-  });
-
   const navigate = useNavigate();
 
-  // const specializations = [
-  //   { 
-  //     name: "General Physician", 
-  //     icon: <Stethoscope className="w-6 h-6 text-primary" />,
-  //     bg: "bg-blue-50" 
-  //   },
-  //   { 
-  //     name: "Cardiology", 
-  //     icon: <Heart className="w-6 h-6 text-rose-500" />,
-  //     bg: "bg-rose-50" 
-  //   },
-  //   { 
-  //     name: "Neurology", 
-  //     icon: <Brain className="w-6 h-6 text-purple-500" />,
-  //     bg: "bg-purple-50" 
-  //   },
-  //   { 
-  //     name: "Orthopedics", 
-  //     icon: <Bone className="w-6 h-6 text-gray-600" />,
-  //     bg: "bg-gray-50" 
-  //   },
-  //   { 
-  //     name: "Pharmacy", 
-  //     icon: <Pill className="w-6 h-6 text-blue-500" />,
-  //     bg: "bg-blue-50" 
-  //   },
-  //   { 
-  //     name: "Vaccinations", 
-  //     icon: <Syringe className="w-6 h-6 text-green-500" />,
-  //     bg: "bg-green-50" 
-  //   },
-  //   { 
-  //     name: "Pathology", 
-  //     icon: <Microscope className="w-6 h-6 text-amber-500" />,
-  //     bg: "bg-amber-50" 
-  //   },
-  //   { 
-  //     name: "Lab Tests", 
-  //     icon: <TestTube className="w-6 h-6 text-cyan-500" />,
-  //     bg: "bg-cyan-50" 
-  //   },
-  //   { 
-  //     name: "Cardio Tests", 
-  //     icon: <Activity className="w-6 h-6 text-red-500" />,
-  //     bg: "bg-red-50" 
-  //   }
-  // ];
+  const specializations = [
+    { 
+      name: "General Physician", 
+      icon: <Stethoscope className="w-6 h-6 text-white" />,
+      bg: "bg-primary" 
+    },
+    { 
+      name: "Cardiology", 
+      icon: <Heart className="w-6 h-6 text-white" />,
+      bg: "bg-primary" 
+    },
+    { 
+      name: "Neurology", 
+      icon: <Brain className="w-6 h-6 text-white" />,
+      bg: "bg-primary" 
+    },
+    { 
+      name: "Orthopedics", 
+      icon: <Bone className="w-6 h-6 text-white" />,
+      bg: "bg-primary" 
+    },
+    { 
+      name: "Pharmacy", 
+      icon: <Pill className="w-6 h-6 text-white" />,
+      bg: "bg-primary" 
+    },
+    { 
+      name: "Vaccinations", 
+      icon: <Syringe className="w-6 h-6 text-white" />,
+      bg: "bg-primary" 
+    },
+    { 
+      name: "Pathology", 
+      icon: <Microscope className="w-6 h-6 text-white" />,
+      bg: "bg-primary" 
+    },
+    { 
+      name: "Lab Tests", 
+      icon: <TestTube className="w-6 h-6 text-white" />,
+      bg: "bg-primary" 
+    },
+    { 
+      name: "Cardio Tests", 
+      icon: <Activity className="w-6 h-6 text-white" />,
+      bg: "bg-primary" 
+    }
+  ];
   
   // Extended specializations list for the modal
-  // const allSpecializations = [
-  //   ...specializations,
-  //   { 
-  //     name: "Ophthalmology", 
-  //     icon: <Eye className="w-6 h-6 text-blue-600" />,
-  //     bg: "bg-blue-50" 
-  //   },
-  //   { 
-  //     name: "Dentistry", 
-  //     icon: <ShieldAlert className="w-6 h-6 text-amber-600" />,
-  //     bg: "bg-amber-50" 
-  //   },
-  //   { 
-  //     name: "Pediatrics", 
-  //     icon: <Baby className="w-6 h-6 text-green-600" />,
-  //     bg: "bg-green-50" 
-  //   },
-  //   { 
-  //     name: "Dermatology", 
-  //     icon: <User className="w-6 h-6 text-pink-500" />,
-  //     bg: "bg-pink-50" 
-  //   },
-  //   { 
-  //     name: "Pulmonology", 
-  //     icon: <Thermometer className="w-6 h-6 text-blue-500" />,
-  //     bg: "bg-blue-50" 
-  //   },
-  //   { 
-  //     name: "ENT", 
-  //     icon: <Ear className="w-6 h-6 text-purple-600" />,
-  //     bg: "bg-purple-50" 
-  //   },
-  //   { 
-  //     name: "Infectious Disease", 
-  //     icon: <ShieldCheck className="w-6 h-6 text-red-600" />,
-  //     bg: "bg-red-50" 
-  //   },
-  //   { 
-  //     name: "Ayurveda", 
-  //     icon: <Leaf className="w-6 h-6 text-green-600" />,
-  //     bg: "bg-green-50" 
-  //   },
-  //   { 
-  //     name: "Emergency Medicine", 
-  //     icon: <Cross className="w-6 h-6 text-red-500" />,
-  //     bg: "bg-red-50" 
-  //   }
-  // ];
+  const allSpecializations = [
+    ...specializations,
+    { 
+      name: "Ophthalmology", 
+      icon: <Eye className="w-6 h-6 text-white" />,
+      bg: "bg-primary" 
+    },
+    { 
+      name: "Dentistry", 
+      icon: <ShieldAlert className="w-6 h-6 text-white" />,
+      bg: "bg-primary" 
+    },
+    { 
+      name: "Pediatrics", 
+      icon: <Baby className="w-6 h-6 text-white" />,
+      bg: "bg-primary" 
+    },
+    { 
+      name: "Dermatology", 
+      icon: <User className="w-6 h-6 text-white" />,
+      bg: "bg-primary" 
+    },
+    { 
+      name: "Pulmonology", 
+      icon: <Thermometer className="w-6 h-6 text-white" />,
+      bg: "bg-primary" 
+    },
+    { 
+      name: "ENT", 
+      icon: <Ear className="w-6 h-6 text-white" />,
+      bg: "bg-primary" 
+    },
+    { 
+      name: "Infectious Disease", 
+      icon: <ShieldCheck className="w-6 h-6 text-white" />,
+      bg: "bg-primary" 
+    },
+    { 
+      name: "Ayurveda", 
+      icon: <Leaf className="w-6 h-6 text-white" />,
+      bg: "bg-primary" 
+    },
+    { 
+      name: "Emergency Medicine", 
+      icon: <Cross className="w-6 h-6 text-white" />,
+      bg: "bg-primary" 
+    }
+  ];
 
- 
-
-  
-  useEffect(() => {
-getAllSpecialization();
-},[]);
-
-const getAllSpecialization=async()=>{
-  try {
-    const response= await fetchAllSpecializations();
-    setSpecializationList(response.data);
-
-  } catch (error) {
-    console.log(error);
-  }
-
-}
-
-const handleSpecializationClick = (id: number) => {
-  const latitude = 22.3511148;
-  const longitude = 78.6677428;
-  const radius = 5000.0;
-
-  navigate(
-    `/doctor/search?specialty=${encodeURIComponent(id)}&latitude=${latitude}&longitude=${longitude}&radius=${radius}`
-  );
-};
+  const handleSpecializationClick = (specialization: string) => {
+    navigate(`/doctor-search?specialty=${encodeURIComponent(specialization)}`);
+  };
 
   return (
     <>
-      <div className="py-8 bg-green-50 rounded-xl">
+      <div className="py-8 bg-white rounded-xl shadow-sm">
         <div className="text-center mb-8">
-          <h2 className="text-green-600 font-semibold text-sm uppercase tracking-wide">SPECIALIZATIONS</h2>
+          <h2 className="text-primary font-semibold text-sm uppercase tracking-wide">SPECIALIZATIONS</h2>
           <h3 className="text-2xl font-bold mt-2">Find specialized medical care</h3>
           <p className="text-gray-600 mt-2">Discover our network of specialists and find the right doctor for your healthcare needs.</p>
         </div>
         
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 px-4">
-          {specializationList.slice(0, 9).map((item, index) => (
+          {specializations.map((item, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05, duration: 0.3 }}
               className="flex flex-col items-center cursor-pointer"
-              onClick={() => handleSpecializationClick(Number(item.id))}
+              onClick={() => handleSpecializationClick(item.name)}
             >
-              <div className={`w-16 h-16 rounded-full  flex items-center justify-center mb-2`}>
+              <div className={`w-16 h-16 rounded-full ${item.bg} flex items-center justify-center mb-2 shadow-md hover:shadow-lg transition-all`}>
                 {item.icon}
               </div>
               <span className="text-sm font-medium text-center">{item.name}</span>
@@ -180,7 +142,7 @@ const handleSpecializationClick = (id: number) => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: specializationList.length * 0.05, duration: 0.3 }}
+            transition={{ delay: specializations.length * 0.05, duration: 0.3 }}
             className="flex flex-col items-center cursor-pointer"
             onClick={() => setIsModalOpen(true)}
           >
@@ -194,7 +156,7 @@ const handleSpecializationClick = (id: number) => {
         <div className="text-center mt-8">
           <Button 
             variant="outline" 
-            className="rounded-full border-green-500 text-green-600 hover:bg-green-50"
+            className="rounded-full border-primary text-primary hover:bg-accent"
             onClick={() => setIsModalOpen(true)}
           >
             View All Specializations
@@ -205,7 +167,7 @@ const handleSpecializationClick = (id: number) => {
       <AllSpecializationsModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
-        specializations={specializationList} 
+        specializations={allSpecializations} 
       />
     </>
   );

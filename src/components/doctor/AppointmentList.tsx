@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { 
   Tabs, 
@@ -74,8 +75,8 @@ export function AppointmentList({ appointments, onStartAppointment }: Appointmen
     setActiveTab(value as "upcoming" | "completed" | "cancelled");
   };
   
-  const handleFilterChange = (key: keyof AppointmentFilterState, value: string) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
+  const handleFilterChange = (newFilters: AppointmentFilterState) => {
+    setFilters(newFilters);
   };
 
   const handleToggleSortDirection = () => {
@@ -104,24 +105,26 @@ export function AppointmentList({ appointments, onStartAppointment }: Appointmen
         title: "Starting appointment",
         description: "Navigating to appointment processing page..."
       });
-      navigate(`/doctor/process-appointment?id=${appointmentId}`);
+      navigate(`/doctor/appointments/${appointmentId}`);
     }
   };
 
   return (
     <div className="w-full">
-      <h1 className="text-2xl font-bold mb-6">Appointments</h1>
+      <div className="z-20 pt-6 pb-4">
+        <h1 className="text-2xl font-bold mb-6">Appointments</h1>
+      </div>
       
       <AppointmentFilters 
         filters={filters}
         onFilterChange={handleFilterChange}
         onToggleSortDirection={handleToggleSortDirection}
         onClearFilters={handleClearFilters}
-        onToggleViewMode={() => handleFilterChange('viewMode', filters.viewMode === 'list' ? 'grid' : 'list')}
+        onToggleViewMode={() => handleFilterChange({ ...filters, viewMode: filters.viewMode === 'list' ? 'grid' : 'list' })}
       />
 
-      <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <TabsList className="mb-6">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="mt-2">
+        <TabsList className="mb-6 z-10">
           <TabsTrigger value="upcoming" className="relative">
             Upcoming
             <Badge className="ml-2 bg-primary text-white">{counts.upcoming}</Badge>

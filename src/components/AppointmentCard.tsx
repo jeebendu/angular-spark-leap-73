@@ -4,28 +4,45 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-interface AppointmentCardProps {
+interface Appointment {
+  id: string;
   doctorName: string;
   specialty: string;
   date: string;
   time: string;
+  clinicName?: string;
+  location?: string;
+  status: string;
   imageSrc: string;
-  status: "upcoming" | "completed" | "cancelled";
+}
+
+interface AppointmentCardProps {
+  appointment: Appointment;
   className?: string;
   forUser?: string;
 }
 
 export function AppointmentCard({ 
-  doctorName, 
-  specialty, 
-  date, 
-  time, 
-  imageSrc, 
-  status, 
+  appointment,
   className,
   forUser = "You"
 }: AppointmentCardProps) {
+  const { doctorName, specialty, date, time, imageSrc, status } = appointment;
+  
+  // Generate initials from the doctor's name
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(part => part.charAt(0))
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+  };
+  
+  const initials = getInitials(doctorName);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -39,9 +56,10 @@ export function AppointmentCard({
       )}>
         <CardContent className="p-4">
           <div className="flex gap-3">
-            <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
-              <img src={imageSrc} alt={doctorName} className="w-full h-full object-cover" />
-            </div>
+            <Avatar className="w-12 h-12 flex-shrink-0">
+              <AvatarImage src={imageSrc} alt={doctorName} />
+              <AvatarFallback className="bg-primary text-white">{initials}</AvatarFallback>
+            </Avatar>
             
             <div className="flex-1">
               <h3 className="font-semibold text-sm">{doctorName}</h3>
@@ -65,13 +83,14 @@ export function AppointmentCard({
               {status === "upcoming" && <span className="text-xs px-2 py-1 bg-blue-50 text-primary rounded-full">Upcoming</span>}
               {status === "completed" && <span className="text-xs px-2 py-1 bg-green-50 text-green-600 rounded-full">Completed</span>}
               {status === "cancelled" && <span className="text-xs px-2 py-1 bg-red-50 text-red-600 rounded-full">Cancelled</span>}
+              {status === "confirmed" && <span className="text-xs px-2 py-1 bg-blue-50 text-primary rounded-full">Confirmed</span>}
               
               {forUser !== "You" && (
                 <span className="text-xs text-gray-500">For: {forUser}</span>
               )}
             </div>
             
-            {status === "upcoming" && (
+            {(status === "upcoming" || status === "confirmed") && (
               <div className="flex gap-2">
                 <Button size="sm" variant="outline" className="text-xs h-8 rounded-full">Reschedule</Button>
                 <Button size="sm" className="text-xs h-8 sky-button rounded-full gap-1">

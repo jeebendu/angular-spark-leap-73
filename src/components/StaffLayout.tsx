@@ -14,6 +14,8 @@ import {
   LogOut,
   PanelLeftClose,
   PanelLeft,
+  Users,
+  ClipboardList,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,11 +36,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-interface DoctorLayoutProps {
+interface StaffLayoutProps {
   children: ReactNode;
 }
 
-export function DoctorLayout({ children }: DoctorLayoutProps) {
+export function StaffLayout({ children }: StaffLayoutProps) {
   const { pathname } = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [iconOnly, setIconOnly] = useState(false);
@@ -48,11 +50,11 @@ export function DoctorLayout({ children }: DoctorLayoutProps) {
   const toggleIconOnly = () => setIconOnly(!iconOnly);
   
   const navigation = [
-    { name: "Dashboard", href: "/doctor", icon: Home },
-    { name: "Appointments", href: "/doctor/appointments", icon: Calendar },
-    { name: "Patients", href: "/doctor/patients", icon: User },
-    { name: "Schedule", href: "/doctor/schedule", icon: Clock },
-    { name: "Settings", href: "/doctor/settings", icon: Settings },
+    { name: "Dashboard", href: "/staff", icon: Home },
+    { name: "Appointments", href: "/staff/appointments", icon: Calendar },
+    { name: "Patients", href: "/staff/patients", icon: Users },
+    { name: "Schedule", href: "/staff/schedule", icon: Clock },
+    { name: "Settings", href: "/staff/settings", icon: Settings },
   ];
   
   const handleLogout = () => {
@@ -62,16 +64,6 @@ export function DoctorLayout({ children }: DoctorLayoutProps) {
     });
     // In a real app, this would handle actual logout functionality
   };
-
-  // Don't show the sidebar on the onboarding route
-  const isOnboardingRoute = pathname.includes("/doctor/onboarding");
-  if (isOnboardingRoute) {
-    return (
-      <div className="min-h-screen bg-background">
-        <main>{children}</main>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
@@ -106,7 +98,7 @@ export function DoctorLayout({ children }: DoctorLayoutProps) {
                 />
               ) : (
                 <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white font-bold">
-                  D
+                  S
                 </div>
               )}
             </div>
@@ -172,13 +164,13 @@ export function DoctorLayout({ children }: DoctorLayoutProps) {
                 >
                   <div className="flex items-center">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src="https://placehold.co/200/eaf7fc/33C3F0?text=DR&font=montserrat" />
-                      <AvatarFallback>DR</AvatarFallback>
+                      <AvatarImage src="https://placehold.co/200/eaf7fc/33C3F0?text=ST&font=montserrat" />
+                      <AvatarFallback>ST</AvatarFallback>
                     </Avatar>
                     {!iconOnly && (
                       <div className="ml-3">
-                        <p className="text-sm font-medium text-gray-800">Dr. Emily Johnson</p>
-                        <p className="text-xs text-gray-500">Cardiologist</p>
+                        <p className="text-sm font-medium text-gray-800">Staff Member</p>
+                        <p className="text-xs text-gray-500">Reception</p>
                       </div>
                     )}
                   </div>

@@ -15,12 +15,15 @@ import Account from "./pages/Account";
 import Appointments from "./pages/Appointments";
 import DoctorSearch from "./pages/DoctorSearch";
 import DoctorDetails from "./pages/DoctorDetails";
-import DoctorDashboard from "./pages/doctor/Dashboard";
-import DoctorAppointments from "./pages/doctor/Appointments";
+import DashboardPage from "./pages/doctor/Dashboard";
+import DoctorAppointmentsPage from "./pages/doctor/Appointments";
 import ProcessAppointment from "./pages/doctor/ProcessAppointment";
-import DoctorOnboarding from "./pages/doctor/Onboarding";
+import DoctorOnboardingPage from "./pages/doctor/Onboarding";
+import { DoctorSchedulePage } from "./pages/doctor/Schedule";
+import ClinicManagementLanding from "./pages/ClinicManagementLanding";
+import StaffDashboard from "./pages/staff/Dashboard";
+import AddPatient from "./pages/staff/AddPatient";
 
-// Custom component to prevent re-renders
 const ScrollToTop = () => {
   const { pathname } = useLocation();
 
@@ -40,37 +43,44 @@ const queryClient = new QueryClient({
   },
 });
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <LocationProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <ScrollToTop />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/tests" element={<Tests />} />
-            <Route path="/reports" element={<Reports />} />
-            <Route path="/chat" element={<Chat />} />
-            <Route path="/account" element={<Account />} />
-            <Route path="/appointments" element={<Appointments />} />
-            <Route path="/doctor-search" element={<DoctorSearch />} />
-            <Route path="/doctor/:id" element={<DoctorDetails />} />
-            
-            {/* Doctor Dashboard Routes */}
-            <Route path="/doctor" element={<DoctorDashboard />} />
-            <Route path="/doctor/appointments" element={<DoctorAppointments />} />
-            <Route path="/doctor/process-appointment" element={<ProcessAppointment />} />
-            <Route path="/doctor/onboarding" element={<DoctorOnboarding />} />
-            
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </LocationProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <LocationProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <ScrollToTop />
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/doctor-search" element={<DoctorSearch />} />
+              <Route path="/doctor/:doctorId" element={<DoctorDetails />} />
+              <Route path="/appointments" element={<Appointments />} />
+              <Route path="/reports" element={<Reports />} />
+              <Route path="/tests" element={<Tests />} />
+              <Route path="/account" element={<Account />} />
+              <Route path="/chat" element={<Chat />} />
+              <Route path="/clinic-management" element={<ClinicManagementLanding />} />
+              <Route path="*" element={<NotFound />} />
+              
+              {/* Doctor Routes */}
+              <Route path="/doctor" element={<DashboardPage />} />
+              <Route path="/doctor/appointments" element={<DoctorAppointmentsPage />} />
+              <Route path="/doctor/appointments/:appointmentId" element={<ProcessAppointment />} />
+              <Route path="/doctor/process-appointment" element={<ProcessAppointment />} />
+              <Route path="/doctor/onboarding" element={<DoctorOnboardingPage />} />
+              <Route path="/doctor/schedule" element={<DoctorSchedulePage />} />
+              
+              {/* Staff Routes */}
+              <Route path="/staff" element={<StaffDashboard />} />
+              <Route path="/staff/add-patient" element={<AddPatient />} />
+            </Routes>
+          </BrowserRouter>
+        </LocationProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+}
 
 export default App;

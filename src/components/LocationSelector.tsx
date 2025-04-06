@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { MapPin, Navigation } from "lucide-react";
+import { MapPin, Navigation, Clock } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,19 +10,33 @@ import {
 } from "@/components/ui/popover";
 import { useLocation } from "@/contexts/LocationContext";
 import { useToast } from "@/components/ui/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 
-export function LocationSelector() {
+interface LocationSelectorProps {
+  onOpenChange?: (open: boolean) => void;
+}
+
+export function LocationSelector({ onOpenChange }: LocationSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [locationInput, setLocationInput] = useState("");
   const [locationSuggestions, setLocationSuggestions] = useState<string[]>([]);
   const { location, setLocation } = useLocation();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
-  // Simulate Google Maps API location suggestions
+  // Notify parent component when open state changes
   useEffect(() => {
-    if (locationInput.length >= 3) {
-      // This would be replaced with actual Google Maps API call
+    if (onOpenChange) {
+      onOpenChange(isOpen);
+    }
+  }, [isOpen, onOpenChange]);
+
+  // Simulate location suggestions
+  useEffect(() => {
+    if (locationInput.length >= 2) {
+      // This would be replaced with actual API call
       const mockLocations = [
         `${locationInput} North, Bangalore`,
         `${locationInput} South, Bangalore`,
@@ -40,7 +54,7 @@ export function LocationSelector() {
     setLocation({
       locality: suggestion,
       coordinates: {
-        // In a real app, we would get actual coordinates from Google Maps API
+        // In a real app, we would get actual coordinates
         latitude: 12.9716 + Math.random() * 0.05,
         longitude: 77.5946 + Math.random() * 0.05
       }
@@ -56,7 +70,6 @@ export function LocationSelector() {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           // In a real app, you'd reverse geocode to get the address
-          // For now, let's simulate getting a locality
           const mockLocality = "Indiranagar, Bangalore";
           
           setLocation({
@@ -96,118 +109,84 @@ export function LocationSelector() {
   };
 
   return (
-    <div className="relative w-full pr-2 border-r border-gray-200">
+    <div className="relative w-full">
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
-          <Input 
-            type="text" 
-            placeholder="Select your city..." 
-            className="border-0 px-3 py-0 h-10 focus-visible:ring-0 placeholder:text-muted-foreground cursor-pointer text-sm bg-transparent"
-            onClick={() => setIsOpen(true)}
-            value={location.locality || ""}
-            readOnly
-          />
+          <Button
+            variant="ghost" 
+            className="h-9 w-full flex items-center justify-start gap-2 p-0 hover:bg-transparent"
+          >
+            <MapPin className="h-5 w-5 text-primary flex-shrink-0" />
+            <span className={cn("truncate text-sm", isMobile ? "max-w-[80px]" : "")}>
+              {location.locality || "Select location"}
+            </span>
+          </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[320px] p-4 bg-white modal-background" align="start">
-          <div className="space-y-4">
-            <h3 className="font-medium flex items-center">
-              <MapPin className="h-4 w-4 mr-2 text-primary" />
-              Select Your City
+        <PopoverContent className="w-[320px] p-0 bg-white shadow-lg border-0 rounded-lg overflow-hidden" align="start">
+          <div className="border-b p-3">
+            <h3 className="font-medium text-sm mb-2">
+              Select Your Location
             </h3>
-            
             <div className="relative">
               <Input 
                 type="text" 
-                placeholder="Enter locality or PIN code" 
-                className="border border-gray-300 rounded-md px-4 py-2 w-full bg-transparent"
+                placeholder="Search for area, street name..." 
+                className="border border-gray-300 pl-10 pr-2 py-2 w-full bg-transparent h-10 text-sm focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-0"
                 value={locationInput}
                 onChange={(e) => setLocationInput(e.target.value)}
+                autoFocus
               />
-              
-              {locationSuggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-50 max-h-60 overflow-y-auto">
-                  {locationSuggestions.map((suggestion, index) => (
-                    <div 
-                      key={index}
-                      className="px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm"
-                      onClick={() => handleLocationSuggestionClick(suggestion)}
-                    >
-                      <div className="flex items-center">
-                        <MapPin className="h-3 w-3 text-gray-500 mr-2" />
-                        <span>{suggestion}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <MapPin className="h-4 w-4 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
             </div>
-            
+          </div>
+          
+          {locationSuggestions.length > 0 && (
+            <div className="max-h-[220px] overflow-y-auto py-1">
+              {locationSuggestions.map((suggestion, index) => (
+                <div 
+                  key={index}
+                  className="px-4 py-2.5 hover:bg-gray-50 cursor-pointer text-sm flex items-center"
+                  onClick={() => handleLocationSuggestionClick(suggestion)}
+                >
+                  <Clock className="h-4 w-4 text-gray-400 mr-3" />
+                  <span>{suggestion}</span>
+                </div>
+              ))}
+            </div>
+          )}
+          
+          <div className="border-t p-3">
             <Button 
               variant="outline" 
-              className="w-full flex items-center justify-center gap-2 border border-gray-300 rounded-md"
+              className="w-full flex items-center justify-center gap-2 h-10 text-sm border-blue-500 text-blue-500 hover:bg-blue-50"
               onClick={detectCurrentLocation}
               disabled={isLoadingLocation}
             >
-              <Navigation className="h-4 w-4 text-primary" />
-              {isLoadingLocation ? "Detecting..." : "Use current location"}
+              <Navigation className="h-4 w-4" />
+              {isLoadingLocation ? "Detecting..." : "Use my current location"}
             </Button>
-            
-            <div className="pt-2">
-              <h4 className="font-medium text-sm mb-3">Popular Locations</h4>
-              <div className="grid grid-cols-1 gap-y-2">
+          </div>
+          
+          <div className="bg-gray-50 py-3 px-4">
+            <h4 className="font-medium text-xs mb-2 text-gray-500">POPULAR LOCATIONS</h4>
+            <div className="grid grid-cols-1 gap-1">
+              {["Koramangala, Bangalore", "Indiranagar, Bangalore", 
+                "HSR Layout, Bangalore", "Whitefield, Bangalore"].map((city, index) => (
                 <button 
-                  className="text-left px-2 py-1.5 rounded-md hover:bg-gray-100 font-medium text-sm hover:text-primary flex items-center"
+                  key={index}
+                  className="text-left px-2 py-1.5 rounded-md hover:bg-gray-100 text-sm hover:text-primary flex items-center"
                   onClick={() => {
                     setLocation({
-                      locality: "Koramangala, Bangalore",
-                      coordinates: { latitude: 12.9352, longitude: 77.6245 }
+                      locality: city,
+                      coordinates: { latitude: 12.9352 + (index * 0.01), longitude: 77.6245 + (index * 0.01) }
                     });
                     setIsOpen(false);
                   }}
                 >
-                  <MapPin className="h-3.5 w-3.5 mr-2 text-gray-500" />
-                  Koramangala, Bangalore
+                  <MapPin className="h-3 w-3 mr-2 text-gray-500" />
+                  {city}
                 </button>
-                <button 
-                  className="text-left px-2 py-1.5 rounded-md hover:bg-gray-100 font-medium text-sm hover:text-primary flex items-center"
-                  onClick={() => {
-                    setLocation({
-                      locality: "Indiranagar, Bangalore",
-                      coordinates: { latitude: 12.9784, longitude: 77.6408 }
-                    });
-                    setIsOpen(false);
-                  }}
-                >
-                  <MapPin className="h-3.5 w-3.5 mr-2 text-gray-500" />
-                  Indiranagar, Bangalore
-                </button>
-                <button 
-                  className="text-left px-2 py-1.5 rounded-md hover:bg-gray-100 font-medium text-sm hover:text-primary flex items-center"
-                  onClick={() => {
-                    setLocation({
-                      locality: "HSR Layout, Bangalore",
-                      coordinates: { latitude: 12.9116, longitude: 77.6474 }
-                    });
-                    setIsOpen(false);
-                  }}
-                >
-                  <MapPin className="h-3.5 w-3.5 mr-2 text-gray-500" />
-                  HSR Layout, Bangalore
-                </button>
-                <button 
-                  className="text-left px-2 py-1.5 rounded-md hover:bg-gray-100 font-medium text-sm hover:text-primary flex items-center"
-                  onClick={() => {
-                    setLocation({
-                      locality: "Whitefield, Bangalore",
-                      coordinates: { latitude: 12.9698, longitude: 77.7499 }
-                    });
-                    setIsOpen(false);
-                  }}
-                >
-                  <MapPin className="h-3.5 w-3.5 mr-2 text-gray-500" />
-                  Whitefield, Bangalore
-                </button>
-              </div>
+              ))}
             </div>
           </div>
         </PopoverContent>

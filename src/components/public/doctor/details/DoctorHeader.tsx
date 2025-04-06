@@ -5,12 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Doctor } from "@/models/doctor/Doctor";
 import { BookAppointmentModal } from "../../appointments/BookAppointmentModal";
+import { useState } from "react";
 
 interface DoctorHeaderProps { doctor: Doctor }
 
 export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
   // Get the first clinic if available for pre-selection
   const firstClinicId = doctor.clinics && doctor.clinics.length > 0 ? doctor.clinics[0].id : undefined;
+  const [openModal, setOpenModal] = useState(false);
   
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden mb-6">
@@ -102,8 +104,15 @@ export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
               specialty={doctor.specializationList[0]?.name || "Specialty Not Available"}
               initialClinicId={firstClinicId}
               initialStep={firstClinicId ? 2 : 1}
+              open={openModal}
+              onOpenChange={setOpenModal}
               trigger={
-                <Button className="sky-button rounded-full px-8 py-2">Book Appointment</Button>
+                <Button 
+                  className="sky-button rounded-full px-8 py-2"
+                  onClick={() => setOpenModal(true)}
+                >
+                  Book Appointment
+                </Button>
               }
             />
           </div>

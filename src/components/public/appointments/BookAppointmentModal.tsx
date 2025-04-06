@@ -264,6 +264,8 @@ export function BookAppointmentModal({
           if (!newOpen) {
             setOpenState(false);
             resetForm();
+          } else {
+            setOpenState(true);
           }
         }}
       >
@@ -311,7 +313,7 @@ export function BookAppointmentModal({
           </div>
           
           {/* Step content - made scrollable with padding to prevent content being hidden by buttons */}
-          <div className="px-6 pb-20 max-h-[60vh] overflow-y-auto">
+          <div className="px-6 pb-24 max-h-[60vh] overflow-y-auto">
             {renderStepContent()}
           </div>
           

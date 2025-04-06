@@ -53,15 +53,15 @@ export function DateTimeSelectionStep({
           <div className="bg-white rounded-lg border h-full p-4">
             {date ? (
               <div className="space-y-6">
-                <div>
-                  <h4 className="text-sm font-medium text-gray-500 mb-2">Morning</h4>
+                <div className="mb-4">
+                  <h4 className="text-sm font-medium text-gray-500 mb-3">Morning</h4>
                   <div className="grid grid-cols-3 gap-2">
                     {morningSlots.map((time) => (
                       <Button
                         key={time}
-                        variant={selectedTime === time ? "default" : "outline"}
-                        className={`text-xs h-9 ${
-                          selectedTime === time ? "sky-button" : ""
+                        variant="outline"
+                        className={`text-sm h-10 ${
+                          selectedTime === time ? "bg-primary text-white border-primary hover:bg-primary/90 hover:text-white" : ""
                         }`}
                         onClick={() => setSelectedTime(time)}
                       >
@@ -72,14 +72,14 @@ export function DateTimeSelectionStep({
                 </div>
                 
                 <div>
-                  <h4 className="text-sm font-medium text-gray-500 mb-2">Afternoon</h4>
+                  <h4 className="text-sm font-medium text-gray-500 mb-3">Afternoon</h4>
                   <div className="grid grid-cols-3 gap-2">
                     {afternoonSlots.map((time) => (
                       <Button
                         key={time}
-                        variant={selectedTime === time ? "default" : "outline"}
-                        className={`text-xs h-9 ${
-                          selectedTime === time ? "sky-button" : ""
+                        variant="outline"
+                        className={`text-sm h-10 ${
+                          selectedTime === time ? "bg-primary text-white border-primary hover:bg-primary/90 hover:text-white" : ""
                         }`}
                         onClick={() => setSelectedTime(time)}
                       >

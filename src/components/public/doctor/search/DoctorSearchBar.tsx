@@ -134,6 +134,11 @@ export function DoctorSearchBar({
         title: "Voice Recognized",
         description: `Searching for: "${speechResult}"`,
       });
+      
+      // Apply filters immediately after successful voice recognition
+      setTimeout(() => {
+        applyFilters();
+      }, 300);
     };
 
     recognition.onerror = (event: any) => {
@@ -154,6 +159,19 @@ export function DoctorSearchBar({
     setIsSearchExpanded(!isSearchExpanded);
   };
 
+  // Function to handle search submission
+  const handleSearch = () => {
+    // Apply filters to trigger search
+    applyFilters();
+  };
+
+  // Handle pressing Enter key in the search input
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
@@ -164,9 +182,10 @@ export function DoctorSearchBar({
             ref={searchInputRef}
             type="text"
             placeholder="Search by doctor name, specialty, condition..."
-            className="pl-12 pr-16 py-2 bg-white rounded-lg"
+            className="pl-12 pr-16 py-2 bg-white rounded-[30px]"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
           <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-1">
             {searchTerm && (
@@ -190,11 +209,11 @@ export function DoctorSearchBar({
                 )}
               />
             </Button>
-            {/* New search button after the voice button */}
+            {/* Search button after the voice button */}
             <Button
               variant="default"
               className="h-9 w-9 p-0 rounded-lg flex items-center justify-center bg-[#0ABAB5] hover:bg-[#09a09b]"
-              onClick={() => applyFilters()}
+              onClick={handleSearch}
             >
               <Search className="h-4 w-4 text-white" />
             </Button>

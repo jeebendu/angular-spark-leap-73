@@ -1,7 +1,8 @@
 import http from "@/lib/JwtInterceptor";
+import { Doctor } from "@/models/Doctor";
 
 export const fetchDoctorDetailsById = async (id: any) => {
-  return await http.get(`/v1/doctor/id/${id}`);
+  return await http.get<Doctor>(`/v1/doctor/id/${id}`);
 };
 
 export const fetchDoctorReviewsById = async () => {
@@ -9,7 +10,7 @@ export const fetchDoctorReviewsById = async () => {
 };
 
 export const fetchDoctorById = async (id: any) => {
-  return await http.get(`/v1/doctor/id/${id}`);
+  return await http.get<Doctor>(`/v1/doctor/id/${id}`);
 };
 
 export const fetchDoctorClinicByDoctorAndBranch = async (doctorId: any, branchId: any) => {
@@ -21,5 +22,5 @@ export const fetchAllDoctorClinics = async (params: any) => {
 };
 
 export const fetchSimilarDoctors = async (params: any) => {
-  return await http.post(`/v1/public/doctor-clinic/search`, params);
+  return await http.post<Doctor[]>(`/v1/public/doctor-clinic/search`, params);
 };

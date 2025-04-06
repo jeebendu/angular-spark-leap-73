@@ -4,28 +4,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { BookAppointmentModal } from "@/components/BookAppointmentModal";
+import { Doctor } from "@/models/Doctor";
 
-interface DoctorHeaderProps {
-  doctor: {
-    id: string;
-    name: string;
-    specialty: string;
-    qualifications: string;
-    rating: number;
-    reviewCount: number;
-    consultationFee: string;
-    bio: string;
-    languages: string[];
-    experience: string;
-    clinics: {
-      name: string;
-      address: string;
-      phone: string;
-      timings: string;
-      days: string;
-    }[];
-  };
-}
+interface DoctorHeaderProps { doctor: Doctor }
 
 export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
   return (
@@ -33,8 +14,8 @@ export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
       <div className="md:flex">
         <div className="md:w-1/3 lg:w-1/4 relative">
           <img 
-            src={`https://res.cloudinary.com/dzxuxfagt/image/upload/w_500,h_500,c_thumb,g_face/assets/doctor_placeholder.png`}
-            alt={doctor.name}
+            src={doctor.profileImageUrl || "https://res.cloudinary.com/dzxuxfagt/image/upload/w_500,h_500,c_thumb,g_face/assets/doctor_placeholder.png"}
+            alt={doctor.name || "Doctor"}
             className="w-full h-full object-cover object-center"
           />
           <div className="absolute top-4 right-4 md:hidden">
@@ -52,8 +33,14 @@ export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
             <div className="flex items-start justify-between">
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">{doctor.name}</h1>
-                <p className="text-gray-600">{doctor.specialty}</p>
-                <p className="text-sm text-gray-500">{doctor.qualifications}</p>
+                <p className="text-gray-600">
+                  {doctor.specializationList.map((specialization) => (
+                    <span key={specialization.id}>
+                      {Array.isArray(specialization.name) ? specialization.name.join(", ") : specialization.name}
+                    </span>
+                  ))}
+                </p>
+                <p className="text-sm text-gray-500">{doctor.qualification}</p>
                 
                 <div className="flex items-center mt-2">
                   <div className="flex items-center">
@@ -71,15 +58,15 @@ export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
                 <div className="flex flex-wrap gap-2 mt-3">
                   <Badge variant="outline" className="flex items-center gap-1 rounded-full px-3 py-1">
                     <Award className="h-3 w-3" />
-                    <span>{doctor.experience}</span>
+                    <span>{doctor.expYear}</span>
                   </Badge>
                   <Badge variant="outline" className="flex items-center gap-1 rounded-full px-3 py-1">
                     <Languages className="h-3 w-3" />
-                    <span>{doctor.languages.join(", ")}</span>
+                    <span>{doctor.languageList.map(language => language.name).join(", ")}</span>
                   </Badge>
                   <Badge variant="outline" className="flex items-center gap-1 rounded-full px-3 py-1">
                     <Building className="h-3 w-3" />
-                    <span>{doctor.clinics.length} Clinics</span>
+                    <span>{doctor.clinics?.length || 0} Clinics</span>
                   </Badge>
                 </div>
               </div>
@@ -102,12 +89,14 @@ export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
           <div className="flex items-center justify-between mt-6">
             <div>
               <p className="text-gray-500 text-sm">Consultation Fee</p>
-              <p className="text-xl font-bold text-primary">₹{doctor.consultationFee.replace('₹', '')}</p>
+              <p className="text-xl font-bold text-primary">
+                ₹{doctor.consultationFee ? doctor.consultationFee.replace('₹', '') : 'N/A'}
+              </p>
             </div>
             
             <BookAppointmentModal 
               doctorName={doctor.name}
-              specialty={doctor.specialty}
+              specialty={doctor.specializationList[0]?.name || "Specialty Not Available"}
               trigger={
                 <Button className="sky-button rounded-full px-8 py-2">Book Appointment</Button>
               }

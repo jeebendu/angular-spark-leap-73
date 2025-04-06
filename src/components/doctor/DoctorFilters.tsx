@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom"; // Import useLocation for reading URL params
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -41,6 +42,7 @@ export const DoctorFilters = ({
   setPriceRange,
   applyFilters,
 }: DoctorFiltersProps) => {
+  const location = useLocation(); // Get the current location
   const genders = [
     { key: "male", value: "Male" },
     { key: "female", value: "Female" },
@@ -57,6 +59,8 @@ export const DoctorFilters = ({
   const [specializations, setSpecializations] = useState<{ id: number; name: string }[]>([]);
   const [specialtySearch, setSpecialtySearch] = useState("");
   const [showAllSpecialties, setShowAllSpecialties] = useState(false);
+
+  const hasParsedQuery = useRef(false); // Track if the query has already been parsed
 
   // Fetch languages from the API
   useEffect(() => {
@@ -85,6 +89,53 @@ export const DoctorFilters = ({
 
     fetchSpecialties();
   }, []);
+
+  const parseQueryAndApplyFilters = (query: string) => {
+    const lowerCaseQuery = query.toLowerCase();
+
+    // Extract gender dynamically
+    genders.forEach((gender) => {
+      if (lowerCaseQuery.includes(gender.value.toLowerCase())) {
+        toggleGender(gender.key);
+      }
+    });
+
+    // Extract experience dynamically
+    experienceRanges.forEach((range) => {
+      if (lowerCaseQuery.includes(range.value.toLowerCase())) {
+        toggleExperience(range.key);
+      }
+    });
+
+    // Extract specialty dynamically
+    specializations.forEach((specialty) => {
+      if (lowerCaseQuery.includes(specialty.name.toLowerCase())) {
+        toggleSpecialty(specialty.name);
+      }
+    });
+
+    // Extract language dynamically
+    languages.forEach((language) => {
+      if (lowerCaseQuery.includes(language.name.toLowerCase())) {
+        toggleLanguage(language.name);
+      }
+    });
+
+    // Apply filters after parsing
+    applyFilters();
+  };
+
+  // Parse query from URL params only once when the component mounts
+  useEffect(() => {
+    if (!hasParsedQuery.current && specializations.length > 0 && languages.length > 0) {
+      const params = new URLSearchParams(location.search); // Parse the query string
+      const query = params.get("query") || ""; // Get the `query` parameter from the URL
+      if (query) {
+        parseQueryAndApplyFilters(query);
+        hasParsedQuery.current = true; // Mark as parsed
+      }
+    }
+  }, [specializations, languages, location.search]); // Re-run when `specializations`, `languages`, or URL changes
 
   const visibleSpecialties = specializations
     .filter((specialty) =>

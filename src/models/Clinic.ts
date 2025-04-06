@@ -7,4 +7,6 @@ export interface Clinic {
   contact: string;
   address: string;
   branchList: Branch[];
+  days: string;
+  timings: string;
 }

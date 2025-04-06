@@ -1,8 +1,9 @@
 
 import { Branch } from "./Branch";
+import { Clinic } from "./Clinic";
 
-export interface AppointmentDetails {
-  selectedClinic: Branch;
+export interface Appointment {
+  selectedClinic: Clinic;
   selectedDate: string;
   selectedTime: string;
   selectedMember: string;

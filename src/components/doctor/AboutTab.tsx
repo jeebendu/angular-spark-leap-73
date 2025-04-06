@@ -1,16 +1,10 @@
-
 import { Phone, Mail } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-
-interface Education {
-  degree: string;
-  institute: string;
-  year: string;
-}
+import { Education, Language } from "@/models/Doctor";
 
 interface AboutTabProps {
   education: Education[];
-  languages: string[];
+  languages: Language[];
 }
 
 export const AboutTab = ({ education, languages }: AboutTabProps) => {
@@ -20,28 +14,36 @@ export const AboutTab = ({ education, languages }: AboutTabProps) => {
         <div>
           <h3 className="text-lg font-medium mb-3">Education & Qualifications</h3>
           <div className="space-y-3">
-            {education.map((edu, index) => (
-              <div key={index} className="flex">
-                <div className="mr-3 mt-1">
-                  <div className="h-2 w-2 rounded-full bg-primary"></div>
+            {education?.length > 0 ? (
+              education.map((edu, index) => (
+                <div key={index} className="flex">
+                  <div className="mr-3 mt-1">
+                    <div className="h-2 w-2 rounded-full bg-primary"></div>
+                  </div>
+                  <div>
+                    <p className="font-medium">{edu.degree}</p>
+                    <p className="text-sm text-gray-500">{edu.institute} • {edu.year}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-medium">{edu.degree}</p>
-                  <p className="text-sm text-gray-500">{edu.institute} • {edu.year}</p>
-                </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-gray-500">No education details available.</p>
+            )}
           </div>
         </div>
         
         <div>
           <h3 className="text-lg font-medium mb-3">Languages Spoken</h3>
           <div className="flex flex-wrap gap-2">
-            {languages.map((language, index) => (
-              <Badge key={index} variant="secondary" className="rounded-full">
-                {language}
-              </Badge>
-            ))}
+            {languages?.length > 0 ? (
+              languages.map((language, index) => (
+                <Badge key={index} variant="secondary" className="rounded-full">
+                  {language.name}
+                </Badge>
+              ))
+            ) : (
+              <p className="text-gray-500">No languages available.</p>
+            )}
           </div>
         </div>
         

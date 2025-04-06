@@ -1,3 +1,7 @@
+import { Appointment } from "@/models/Appointment";
+import { Clinic } from "@/models/Clinic";
+import { FamilyMember } from "@/models/Patient";
+
 // We need to manually define the ToasterToast type since it's not exported from the module
 interface ToasterToast {
   id: string;
@@ -9,27 +13,6 @@ interface ToasterToast {
   dismiss?: () => void;
 }
 
-// Types
-export interface Clinic {
-  id: string;
-  name: string;
-  address: string;
-}
-
-export interface FamilyMember {
-  id: string;
-  relationship: string;
-  name: string;
-}
-
-interface AppointmentDetails {
-  selectedClinic: string;
-  selectedDate: string;
-  selectedTime: string;
-  selectedMember: string;
-  doctorName?: string;
-  specialty?: string;
-}
 
 export interface ToastHelpers {
   toast: (props: any) => { id: string; dismiss: () => void; update: (props: ToasterToast) => void };
@@ -45,11 +28,7 @@ export const getFamilyMembers = (): FamilyMember[] => [
 ];
 
 // Mock data for clinics
-export const getClinics = (): Clinic[] => [
-  { id: "1", name: "HealthFirst Clinic, Indiranagar", address: "100 Main St, Indiranagar, Bangalore" },
-  { id: "2", name: "MediCare Center, Koramangala", address: "200 Park Ave, Koramangala, Bangalore" },
-  { id: "3", name: "WellBeing Hospital, HSR Layout", address: "300 Oak Rd, HSR Layout, Bangalore" }
-];
+export const getClinics = (): Clinic[] => [];
 
 // Available times
 export const getAvailableTimes = (): string[] => [
@@ -58,7 +37,7 @@ export const getAvailableTimes = (): string[] => [
 ];
 
 // Validation functions
-export const validateClinicSelection = (selectedClinic: string, toastHelpers: ToastHelpers): boolean => {
+export const validateClinicSelection = (selectedClinic: Clinic, toastHelpers: ToastHelpers): boolean => {
   if (!selectedClinic) {
     toastHelpers.toast({
       title: "Please select a clinic",
@@ -93,14 +72,14 @@ export const validateReviewStep = (): boolean => true;
 // Validate current step based on step number
 export const validateCurrentStep = (
   step: number,
-  appointmentDetails: AppointmentDetails,
+  appointment: Appointment,
   toastHelpers: ToastHelpers
 ): boolean => {
   switch(step) {
     case 1:
-      return validateClinicSelection(appointmentDetails.selectedClinic, toastHelpers);
+      return validateClinicSelection(appointment.selectedClinic, toastHelpers);
     case 2:
-      return validateDateTimeSelection(appointmentDetails.selectedDate, appointmentDetails.selectedTime, toastHelpers);
+      return validateDateTimeSelection(appointment.selectedDate, appointment.selectedTime, toastHelpers);
     case 3:
       return validatePatientSelection();
     case 4:
@@ -112,7 +91,7 @@ export const validateCurrentStep = (
 
 // Book appointment function
 export const bookAppointment = (
-  appointmentDetails: AppointmentDetails,
+  appointmentDetails: Appointment,
   toastHelpers: ToastHelpers
 ): void => {
   // In a real app, this would make an API call to save the appointment

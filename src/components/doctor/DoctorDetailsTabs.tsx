@@ -4,31 +4,10 @@ import { ClinicsTab } from "./ClinicsTab";
 import { AboutTab } from "./AboutTab";
 import { ServicesTab } from "./ServicesTab";
 import { ReviewsTab } from "./ReviewsTab";
+import { Doctor } from "@/models/Doctor";
 
-interface Doctor {
-  name: string;
-  specialty: string;
-  rating: number;
-  reviewCount: number;
-  education: {
-    degree: string;
-    institute: string;
-    year: string;
-  }[];
-  languages: string[];
-  services: string[];
-  clinics: {
-    name: string;
-    address: string;
-    phone: string;
-    timings: string;
-    days: string;
-  }[];
-}
 
-interface DoctorDetailsTabsProps {
-  doctor: Doctor;
-}
+interface DoctorDetailsTabsProps { doctor: Doctor }
 
 export const DoctorDetailsTabs = ({ doctor }: DoctorDetailsTabsProps) => {
   return (
@@ -44,14 +23,14 @@ export const DoctorDetailsTabs = ({ doctor }: DoctorDetailsTabsProps) => {
         <TabsContent value="clinics">
           <ClinicsTab 
             clinics={doctor.clinics} 
-            doctor={{ name: doctor.name, specialty: doctor.specialty }} 
+            doctor={doctor} 
           />
         </TabsContent>
         
         <TabsContent value="about">
           <AboutTab 
             education={doctor.education}
-            languages={doctor.languages}
+            languages={doctor.languageList}
           />
         </TabsContent>
         

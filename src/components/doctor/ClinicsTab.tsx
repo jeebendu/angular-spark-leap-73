@@ -5,19 +5,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 import { MapPin, CalendarDays, Clock, CheckCircle2 } from "lucide-react";
 import { BookAppointmentModal } from "@/components/BookAppointmentModal";
+import { Clinic } from "@/models/Clinic";
+import { Doctor } from "@/models/Doctor";
 
-interface Clinic {
-  name: string;
-  address: string;
-  phone: string;
-  timings: string;
-  days: string;
-}
-
-interface Doctor {
-  name: string;
-  specialty: string;
-}
 
 interface ClinicsTabProps {
   clinics: Clinic[];
@@ -45,32 +35,42 @@ export const ClinicsTab = ({ clinics, doctor }: ClinicsTabProps) => {
       <h3 className="text-lg font-medium mb-4">Available Clinics</h3>
       
       <div className="grid md:grid-cols-2 gap-4">
-        {clinics.map((clinic, index) => (
-          <Card key={index} className={`cursor-pointer border-2 ${selectedClinic === index ? 'border-primary' : 'border-gray-100'}`} onClick={() => setSelectedClinic(index)}>
-            <CardContent className="p-4">
-              <div className="flex justify-between">
-                <div>
-                  <h4 className="font-medium text-base">{clinic.name}</h4>
-                  <p className="text-sm text-gray-500 flex items-start mt-1">
-                    <MapPin className="h-4 w-4 mr-1 shrink-0 mt-0.5" />
-                    {clinic.address}
-                  </p>
-                  <div className="flex items-center mt-2 text-sm text-gray-500">
-                    <CalendarDays className="h-4 w-4 mr-1" />
-                    <span>{clinic.days}</span>
+        {clinics?.length > 0 ? (
+          clinics.map((clinic, index) => (
+            <Card
+              key={index}
+              className={`cursor-pointer border-2 ${
+                selectedClinic === index ? "border-primary" : "border-gray-100"
+              }`}
+              onClick={() => setSelectedClinic(index)}
+            >
+              <CardContent className="p-4">
+                <div className="flex justify-between">
+                  <div>
+                    <h4 className="font-medium text-base">{clinic.name}</h4>
+                    <p className="text-sm text-gray-500 flex items-start mt-1">
+                      <MapPin className="h-4 w-4 mr-1 shrink-0 mt-0.5" />
+                      {clinic.address}
+                    </p>
+                    <div className="flex items-center mt-2 text-sm text-gray-500">
+                      <CalendarDays className="h-4 w-4 mr-1" />
+                      <span>{clinic.days}</span>
+                    </div>
+                    <div className="flex items-center mt-1 text-sm text-gray-500">
+                      <Clock className="h-4 w-4 mr-1" />
+                      <span>{clinic.timings}</span>
+                    </div>
                   </div>
-                  <div className="flex items-center mt-1 text-sm text-gray-500">
-                    <Clock className="h-4 w-4 mr-1" />
-                    <span>{clinic.timings}</span>
-                  </div>
+                  {selectedClinic === index && (
+                    <CheckCircle2 className="h-5 w-5 text-primary" />
+                  )}
                 </div>
-                {selectedClinic === index && (
-                  <CheckCircle2 className="h-5 w-5 text-primary" />
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          ))
+        ) : (
+          <p className="text-gray-500">No clinics available.</p>
+        )}
       </div>
       
       <div className="mt-8">

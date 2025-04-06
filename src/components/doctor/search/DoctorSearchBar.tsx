@@ -66,11 +66,10 @@ export function DoctorSearchBar({
   toggleExperience,
   setPriceRange,
   applyFilters,
-  // Adding the missing setter functions to destructuring
   setSelectedSpecialties,
   setSelectedGenders,
   setSelectedLanguages,
-  setSelectedExperience
+  setSelectedExperience,
 }: DoctorSearchBarProps) {
   const isMobile = useIsMobile();
   const { toast } = useToast();
@@ -78,8 +77,11 @@ export function DoctorSearchBar({
   const [isListening, setIsListening] = useState(false);
 
   // Calculate total selected filters
-  const totalFilters = selectedSpecialties.length + selectedGenders.length + 
-                        selectedLanguages.length + selectedExperience.length;
+  const totalFilters =
+    selectedSpecialties.length +
+    selectedGenders.length +
+    selectedLanguages.length +
+    selectedExperience.length;
 
   const clearSearch = () => {
     setSearchTerm("");
@@ -89,7 +91,7 @@ export function DoctorSearchBar({
   };
 
   const handleVoiceSearch = () => {
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
       toast({
         title: "Voice Search Unavailable",
         description: "Voice search is not supported in your browser.",
@@ -99,7 +101,7 @@ export function DoctorSearchBar({
     }
 
     const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
-    
+
     if (!SpeechRecognitionAPI) {
       toast({
         title: "Voice Search Unavailable",
@@ -108,32 +110,32 @@ export function DoctorSearchBar({
       });
       return;
     }
-    
+
     const recognition = new SpeechRecognitionAPI();
-    recognition.lang = 'en-US';
+    recognition.lang = "en-US";
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
-    
+
     setIsListening(true);
-    
+
     recognition.start();
-    
+
     toast({
       title: "Listening...",
-      description: "Speak now to search for doctors or specialities",
+      description: "Speak now to search for doctors or specialties",
     });
-    
+
     recognition.onresult = (event: any) => {
       const speechResult = event.results[0][0].transcript;
       setSearchTerm(speechResult);
       setIsListening(false);
-      
+
       toast({
         title: "Voice Recognized",
         description: `Searching for: "${speechResult}"`,
       });
     };
-    
+
     recognition.onerror = (event: any) => {
       setIsListening(false);
       toast({
@@ -142,7 +144,7 @@ export function DoctorSearchBar({
         variant: "destructive",
       });
     };
-    
+
     recognition.onend = () => {
       setIsListening(false);
     };
@@ -152,40 +154,42 @@ export function DoctorSearchBar({
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          {/* Updated Search Icon */}
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-6 w-6" />
           <Input
             ref={searchInputRef}
             type="text"
             placeholder="Search by doctor name, specialty, condition..."
-            className="pl-10 pr-16 py-2 bg-white rounded-[30px]"
+            className="pl-12 pr-16 py-2 bg-white rounded-[30px]"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-1">
             {searchTerm && (
-              <Button 
-                onClick={clearSearch}
-                className="p-1 h-8 w-8 rounded-full"
-                variant="ghost"
-              >
+              <Button onClick={clearSearch} className="p-1 h-8 w-8 rounded-full" variant="ghost">
                 <X className="h-4 w-4 text-gray-400 hover:text-gray-600" />
               </Button>
             )}
-            <Button 
+            {/* Updated Voice Icon */}
+            <Button
               onClick={handleVoiceSearch}
-              className="p-1 h-8 w-8 rounded-full"
+              className="p-1 h-10 w-10 rounded-full"
               variant="ghost"
               disabled={isListening}
             >
-              <Mic className={cn(
-                "h-4 w-4 transition-colors", 
-                isListening ? "text-primary animate-pulse" : "text-gray-400 hover:text-primary"
-              )} />
+              <Mic
+                className={cn(
+                  "h-6 w-6 transition-transform transform hover:scale-110",
+                  isListening
+                    ? "text-[#0ABAB5] animate-pulse"
+                    : "text-gray-400 hover:text-[#0ABAB5]"
+                )}
+              />
             </Button>
           </div>
         </div>
-        
-        <Button 
+
+        <Button
           variant="outline"
           className="flex items-center gap-2 border border-gray-200 bg-white h-10 w-10 p-0 rounded-full"
           onClick={() => setFilterOpen(!filterOpen)}
@@ -240,16 +244,16 @@ export function DoctorSearchBar({
       {/* Selected filters display */}
       {totalFilters > 0 && (
         <div className="flex flex-wrap gap-2">
-          {selectedSpecialties.map(specialty => (
-            <Badge 
-              key={`specialty-${specialty}`} 
+          {selectedSpecialties.map((specialty) => (
+            <Badge
+              key={`specialty-${specialty}`}
               variant="outline"
               className="bg-white rounded-full pl-2 pr-1 py-0.5 flex items-center gap-1 text-xs"
             >
               {specialty}
-              <Button 
-                size="sm" 
-                variant="ghost" 
+              <Button
+                size="sm"
+                variant="ghost"
                 className="h-5 w-5 p-0 rounded-full hover:bg-gray-100"
                 onClick={() => toggleSpecialty(specialty)}
               >
@@ -257,17 +261,17 @@ export function DoctorSearchBar({
               </Button>
             </Badge>
           ))}
-          
-          {selectedGenders.map(gender => (
-            <Badge 
-              key={`gender-${gender}`} 
+
+          {selectedGenders.map((gender) => (
+            <Badge
+              key={`gender-${gender}`}
               variant="outline"
               className="bg-white rounded-full pl-2 pr-1 py-0.5 flex items-center gap-1 text-xs"
             >
               {gender}
-              <Button 
-                size="sm" 
-                variant="ghost" 
+              <Button
+                size="sm"
+                variant="ghost"
                 className="h-5 w-5 p-0 rounded-full hover:bg-gray-100"
                 onClick={() => toggleGender(gender)}
               >
@@ -275,17 +279,17 @@ export function DoctorSearchBar({
               </Button>
             </Badge>
           ))}
-          
-          {selectedLanguages.map(language => (
-            <Badge 
-              key={`language-${language}`} 
+
+          {selectedLanguages.map((language) => (
+            <Badge
+              key={`language-${language}`}
               variant="outline"
               className="bg-white rounded-full pl-2 pr-1 py-0.5 flex items-center gap-1 text-xs"
             >
               {language}
-              <Button 
-                size="sm" 
-                variant="ghost" 
+              <Button
+                size="sm"
+                variant="ghost"
                 className="h-5 w-5 p-0 rounded-full hover:bg-gray-100"
                 onClick={() => toggleLanguage(language)}
               >
@@ -293,17 +297,17 @@ export function DoctorSearchBar({
               </Button>
             </Badge>
           ))}
-          
-          {selectedExperience.map(exp => (
-            <Badge 
-              key={`exp-${exp}`} 
+
+          {selectedExperience.map((exp) => (
+            <Badge
+              key={`exp-${exp}`}
               variant="outline"
               className="bg-white rounded-full pl-2 pr-1 py-0.5 flex items-center gap-1 text-xs"
             >
               {exp} years
-              <Button 
-                size="sm" 
-                variant="ghost" 
+              <Button
+                size="sm"
+                variant="ghost"
                 className="h-5 w-5 p-0 rounded-full hover:bg-gray-100"
                 onClick={() => toggleExperience(exp)}
               >
@@ -311,10 +315,10 @@ export function DoctorSearchBar({
               </Button>
             </Badge>
           ))}
-          
+
           {totalFilters > 1 && (
-            <Button 
-              variant="link" 
+            <Button
+              variant="link"
               className="text-xs py-0 h-6 text-primary"
               onClick={() => {
                 setSelectedSpecialties([]);

@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Star, Heart, MapPin, Clock, Languages, Building } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useNavigate } from "react-router-dom";
 
 interface DoctorClinic {
   id: string;
@@ -35,9 +36,10 @@ interface DoctorListItemProps {
 
 export function DoctorListItem({ doctor, index, isLastItem, lastDoctorElementRef, handleBookAppointment }: DoctorListItemProps) {
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
   
   const handleViewProfile = () => {
-    window.location.href = `/doctor/${doctor.id}`;
+    navigate(`/doctor/${doctor.id}`);
   };
   
   return (

@@ -1,5 +1,4 @@
 
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -75,6 +74,7 @@ export function DoctorSearchBar({
   const { toast } = useToast();
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [isListening, setIsListening] = useState(false);
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   // Calculate total selected filters
   const totalFilters =
@@ -150,6 +150,10 @@ export function DoctorSearchBar({
     };
   };
 
+  const toggleSearch = () => {
+    setIsSearchExpanded(!isSearchExpanded);
+  };
+
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
@@ -160,7 +164,7 @@ export function DoctorSearchBar({
             ref={searchInputRef}
             type="text"
             placeholder="Search by doctor name, specialty, condition..."
-            className="pl-12 pr-16 py-2 bg-white rounded-[30px]"
+            className="pl-12 pr-16 py-2 bg-white rounded-lg"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -186,12 +190,20 @@ export function DoctorSearchBar({
                 )}
               />
             </Button>
+            {/* New search button after the voice button */}
+            <Button
+              variant="default"
+              className="h-9 w-9 p-0 rounded-lg flex items-center justify-center bg-[#0ABAB5] hover:bg-[#09a09b]"
+              onClick={() => applyFilters()}
+            >
+              <Search className="h-4 w-4 text-white" />
+            </Button>
           </div>
         </div>
 
         <Button
           variant="outline"
-          className="flex items-center gap-2 border border-gray-200 bg-white h-10 w-10 p-0 rounded-full"
+          className="flex items-center gap-2 border border-gray-200 bg-white h-10 w-10 p-0 rounded-lg"
           onClick={() => setFilterOpen(!filterOpen)}
         >
           <Filter className="h-4 w-4" />
@@ -199,7 +211,7 @@ export function DoctorSearchBar({
         
         <div className="md:flex hidden gap-2">
           <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="w-[160px]">
+            <SelectTrigger className="w-[160px] rounded-lg">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
@@ -212,10 +224,10 @@ export function DoctorSearchBar({
           </Select>
           
           <ToggleGroup type="single" value={viewMode} onValueChange={(value) => value && setViewMode(value as "grid" | "list")}>
-            <ToggleGroupItem value="grid" aria-label="Grid view">
+            <ToggleGroupItem value="grid" aria-label="Grid view" className="rounded-lg">
               <LayoutList className="h-4 w-4" />
             </ToggleGroupItem>
-            <ToggleGroupItem value="list" aria-label="List view">
+            <ToggleGroupItem value="list" aria-label="List view" className="rounded-lg">
               <Rows className="h-4 w-4" />
             </ToggleGroupItem>
           </ToggleGroup>
@@ -237,6 +249,10 @@ export function DoctorSearchBar({
             toggleExperience={toggleExperience}
             setPriceRange={setPriceRange}
             applyFilters={applyFilters}
+            setSelectedSpecialties={setSelectedSpecialties}
+            setSelectedGenders={setSelectedGenders}
+            setSelectedLanguages={setSelectedLanguages}
+            setSelectedExperience={setSelectedExperience}
           />
         )}
       </div>
@@ -248,7 +264,7 @@ export function DoctorSearchBar({
             <Badge
               key={`specialty-${specialty}`}
               variant="outline"
-              className="bg-white rounded-full pl-2 pr-1 py-0.5 flex items-center gap-1 text-xs"
+              className="bg-white rounded-lg pl-2 pr-1 py-0.5 flex items-center gap-1 text-xs"
             >
               {specialty}
               <Button
@@ -266,7 +282,7 @@ export function DoctorSearchBar({
             <Badge
               key={`gender-${gender}`}
               variant="outline"
-              className="bg-white rounded-full pl-2 pr-1 py-0.5 flex items-center gap-1 text-xs"
+              className="bg-white rounded-lg pl-2 pr-1 py-0.5 flex items-center gap-1 text-xs"
             >
               {gender}
               <Button
@@ -284,7 +300,7 @@ export function DoctorSearchBar({
             <Badge
               key={`language-${language}`}
               variant="outline"
-              className="bg-white rounded-full pl-2 pr-1 py-0.5 flex items-center gap-1 text-xs"
+              className="bg-white rounded-lg pl-2 pr-1 py-0.5 flex items-center gap-1 text-xs"
             >
               {language}
               <Button
@@ -302,7 +318,7 @@ export function DoctorSearchBar({
             <Badge
               key={`exp-${exp}`}
               variant="outline"
-              className="bg-white rounded-full pl-2 pr-1 py-0.5 flex items-center gap-1 text-xs"
+              className="bg-white rounded-lg pl-2 pr-1 py-0.5 flex items-center gap-1 text-xs"
             >
               {exp} years
               <Button

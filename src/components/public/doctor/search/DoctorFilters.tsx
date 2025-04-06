@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -9,10 +10,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { fetchAllSpecializations, fetchLanguageList } from "@/services/SpecializationService";
 import { HelpCircle, Search, X } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router-dom"; // Import useLocation for reading URL params
+import { useLocation } from "react-router-dom";
+import { genderOptions, experienceRangeOptions } from "@/constants/doctorFilterConstants";
+import { fetchLanguages, fetchSpecializations, parseQueryAndApplyFilters } from "@/utils/doctorFilterUtils";
 
 interface DoctorFiltersProps {
   selectedSpecialties: string[];
@@ -41,100 +43,52 @@ export const DoctorFilters = ({
   setPriceRange,
   applyFilters,
 }: DoctorFiltersProps) => {
-  const location = useLocation(); // Get the current location
-  const genders = [
-    { key: "male", value: "Male" },
-    { key: "female", value: "Female" },
-  ];
-
-  const experienceRanges = [
-    { key: "0-5", value: "0-5 years" },
-    { key: "5-10", value: "5-10 years" },
-    { key: "10-15", value: "10-15 years" },
-    { key: "15+", value: "15+ years" },
-  ];
+  const location = useLocation();
+  const genders = genderOptions;
+  const experienceRanges = experienceRangeOptions;
 
   const [languages, setLanguages] = useState<{ id: number; name: string }[]>([]);
   const [specializations, setSpecializations] = useState<{ id: number; name: string }[]>([]);
   const [specialtySearch, setSpecialtySearch] = useState("");
   const [showAllSpecialties, setShowAllSpecialties] = useState(false);
 
-  const hasParsedQuery = useRef(false); // Track if the query has already been parsed
+  const hasParsedQuery = useRef(false);
 
-  // Fetch languages from the API
+  // Fetch languages and specializations
   useEffect(() => {
-    const fetchLanguages = async () => {
-      try {
-        const response = await fetchLanguageList();
-        setLanguages(response.data); // Assuming the API response has a `data` field with objects containing `id` and `name`
-      } catch (error) {
-        console.error("Failed to fetch languages:", error);
-      }
+    const loadData = async () => {
+      const langData = await fetchLanguages();
+      const specData = await fetchSpecializations();
+      
+      setLanguages(langData);
+      setSpecializations(specData);
     };
-
-    fetchLanguages();
+    
+    loadData();
   }, []);
-
-  // Fetch specializations from the API
-  useEffect(() => {
-    const fetchSpecialties = async () => {
-      try {
-        const response = await fetchAllSpecializations();
-        setSpecializations(response.data); // Assuming the API response has a `data` field with objects containing `id` and `name`
-      } catch (error) {
-        console.error("Failed to fetch specializations:", error);
-      }
-    };
-
-    fetchSpecialties();
-  }, []);
-
-  const parseQueryAndApplyFilters = (query: string) => {
-    const lowerCaseQuery = query.toLowerCase();
-
-    // Extract gender dynamically
-    genders.forEach((gender) => {
-      if (lowerCaseQuery.includes(gender.value.toLowerCase())) {
-        toggleGender(gender.key);
-      }
-    });
-
-    // Extract experience dynamically
-    experienceRanges.forEach((range) => {
-      if (lowerCaseQuery.includes(range.value.toLowerCase())) {
-        toggleExperience(range.key);
-      }
-    });
-
-    // Extract specialty dynamically
-    specializations.forEach((specialty) => {
-      if (lowerCaseQuery.includes(specialty.name.toLowerCase())) {
-        toggleSpecialty(specialty.name);
-      }
-    });
-
-    // Extract language dynamically
-    languages.forEach((language) => {
-      if (lowerCaseQuery.includes(language.name.toLowerCase())) {
-        toggleLanguage(language.name);
-      }
-    });
-
-    // Apply filters after parsing
-    applyFilters();
-  };
 
   // Parse query from URL params only once when the component mounts
   useEffect(() => {
     if (!hasParsedQuery.current && specializations.length > 0 && languages.length > 0) {
-      const params = new URLSearchParams(location.search); // Parse the query string
-      const query = params.get("query") || ""; // Get the `query` parameter from the URL
+      const params = new URLSearchParams(location.search);
+      const query = params.get("query") || "";
+      
       if (query) {
-        parseQueryAndApplyFilters(query);
-        hasParsedQuery.current = true; // Mark as parsed
+        parseQueryAndApplyFilters(
+          query,
+          specializations,
+          languages,
+          genders,
+          experienceRanges,
+          toggleSpecialty,
+          toggleGender,
+          toggleLanguage,
+          toggleExperience
+        );
+        hasParsedQuery.current = true;
       }
     }
-  }, [specializations, languages, location.search]); // Re-run when `specializations`, `languages`, or URL changes
+  }, [specializations, languages, location.search]);
 
   const visibleSpecialties = specializations
     .filter((specialty) =>
@@ -198,7 +152,7 @@ export const DoctorFilters = ({
                   placeholder="Search specialties"
                   value={specialtySearch}
                   onChange={(e) => setSpecialtySearch(e.target.value)}
-                  className="pl-8 py-1 h-8"
+                  className="pl-8 py-1 h-8 rounded-lg"
                 />
               </div>
 
@@ -252,7 +206,7 @@ export const DoctorFilters = ({
                     key={gender.key}
                     variant={selectedGenders.includes(gender.key) ? "default" : "outline"}
                     size="sm"
-                    className={`rounded-full text-xs ${
+                    className={`rounded-lg text-xs ${
                       selectedGenders.includes(gender.key) ? "bg-[#0ABAB5] text-white" : "bg-white"
                     }`}
                     onClick={() => toggleGender(gender.key)}
@@ -285,7 +239,7 @@ export const DoctorFilters = ({
                     key={experience.key}
                     variant={selectedExperience.includes(experience.key) ? "default" : "outline"}
                     size="sm"
-                    className={`rounded-full text-xs ${
+                    className={`rounded-lg text-xs ${
                       selectedExperience.includes(experience.key) ? "bg-[#0ABAB5] text-white" : "bg-white"
                     }`}
                     onClick={() => toggleExperience(experience.key)}
@@ -298,7 +252,7 @@ export const DoctorFilters = ({
             </div>
 
             {/* Languages Filter */}
-            <div className="space-y-2">
+            <div className="space-y-2 pb-6">
               <div className="flex items-center justify-between">
                 <h4 className="font-medium">Languages</h4>
                 <TooltipProvider>
@@ -318,7 +272,7 @@ export const DoctorFilters = ({
                     key={language.id}
                     variant={selectedLanguages.includes(language.name) ? "default" : "outline"}
                     size="sm"
-                    className={`rounded-full text-xs ${
+                    className={`rounded-lg text-xs ${
                       selectedLanguages.includes(language.name) ? "bg-[#0ABAB5] text-white" : "bg-white"
                     }`}
                     onClick={() => toggleLanguage(language.name)}
@@ -331,12 +285,16 @@ export const DoctorFilters = ({
             </div>
           </div>
         </ScrollArea>
-        <Button
-          className="w-full bg-[#0ABAB5] hover:bg-[#09a09b] text-white"
-          onClick={applyFilters}
-        >
-          Apply Filters
-        </Button>
+        
+        {/* Added extra space with mt-4 before Apply Filters button */}
+        <div className="mt-4">
+          <Button
+            className="w-full bg-[#0ABAB5] hover:bg-[#09a09b] text-white rounded-lg"
+            onClick={applyFilters}
+          >
+            Apply Filters
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
@@ -268,7 +269,7 @@ const DoctorSearch = () => {
           applyFilters={applyFilters}
         />
         
-        <div className="flex flex-col md:flex-row gap-4 md:gap-6">
+        <div className="flex flex-col md:flex-row gap-4 md:gap-6 mt-4">
           {!isMobile && (
             <div className="w-full md:w-64 shrink-0">
               <DoctorFilters 

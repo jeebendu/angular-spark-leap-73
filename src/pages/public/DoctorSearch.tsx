@@ -1,6 +1,7 @@
+
 import { AppLayout } from "@/components/AppLayout";
 import { BookAppointmentModal } from "@/components/public/appointments/BookAppointmentModal";
-import { BookingSuccessDialog } from "@/components/public/appointments/BookingSuccessDialog";
+import { BookingSuccessDialog } from "@/components/public/appointments/steps/BookingSuccessDialog";
 import { DoctorFilters } from "@/components/public/doctor/search/DoctorFilters";
 import { DoctorSearchBar } from "@/components/public/doctor/search/DoctorSearchBar";
 import { DoctorsList } from "@/components/public/doctor/search/DoctorsList";

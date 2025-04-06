@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface Appointment {
   id: string;
@@ -29,6 +30,18 @@ export function AppointmentCard({
   forUser = "You"
 }: AppointmentCardProps) {
   const { doctorName, specialty, date, time, imageSrc, status } = appointment;
+  
+  // Generate initials from the doctor's name
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(part => part.charAt(0))
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+  };
+  
+  const initials = getInitials(doctorName);
 
   return (
     <motion.div
@@ -43,9 +56,10 @@ export function AppointmentCard({
       )}>
         <CardContent className="p-4">
           <div className="flex gap-3">
-            <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
-              <img src={imageSrc} alt={doctorName} className="w-full h-full object-cover" />
-            </div>
+            <Avatar className="w-12 h-12 flex-shrink-0">
+              <AvatarImage src={imageSrc} alt={doctorName} />
+              <AvatarFallback className="bg-primary text-white">{initials}</AvatarFallback>
+            </Avatar>
             
             <div className="flex-1">
               <h3 className="font-semibold text-sm">{doctorName}</h3>

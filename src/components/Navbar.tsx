@@ -45,7 +45,7 @@ export function Navbar() {
 
   return (
     <header className={`py-2 px-2 md:px-6 sticky top-0 z-30 ${scrolled ? 'glass-header' : 'bg-white border-b'}`}>
-      <div className="container flex items-center justify-between">
+      <div className="max-w-6xl mx-auto px-4 flex items-center justify-between">
         <div className="flex items-center gap-1">
           <Link to="/" className="flex items-center">
             <img 

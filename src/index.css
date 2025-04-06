@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -81,6 +82,10 @@
 }
 
 @layer components {
+  .container-width {
+    @apply max-w-6xl mx-auto px-4 w-full;
+  }
+  
   .sky-gradient {
     @apply bg-gradient-to-r from-[#33C3F0] to-[#38B6FF];
   }

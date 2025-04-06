@@ -16,7 +16,9 @@ export function AppLayout({ children }: AppLayoutProps) {
     <div className="min-h-screen bg-[#F8F9FC] flex flex-col">
       <Navbar />
       <main className={`pb-${isMobile ? '20' : '6'} flex-grow`}>
-        {children}
+        <div className="max-w-6xl mx-auto px-4 w-full">
+          {children}
+        </div>
       </main>
       <Footer />
       <MobileNavigation />

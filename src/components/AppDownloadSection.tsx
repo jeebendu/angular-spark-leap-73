@@ -16,9 +16,14 @@ export function AppDownloadSection() {
               viewport={{ once: true }}
               className="text-white pr-0 md:pr-8"
             >
-              <h3 className="text-2xl md:text-3xl font-bold mb-4">
-                Download the ClinicHub App
-              </h3>
+              <div className="flex items-center mb-4">
+                <img 
+                  src="https://res.cloudinary.com/dzxuxfagt/image/upload/h_100/assets/logo.png" 
+                  alt="ClinicHub Logo" 
+                  className="h-8 w-auto object-contain mr-2 bg-white/20 backdrop-blur-sm p-1 rounded"
+                />
+                <h3 className="text-2xl md:text-3xl font-bold">App</h3>
+              </div>
               <p className="text-white/90 mb-6 text-base md:text-lg">
                 Book appointments, track health records, and get medication reminders all in one place.
               </p>

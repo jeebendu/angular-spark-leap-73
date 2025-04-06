@@ -62,7 +62,6 @@ const Index = () => {
 
   return (
     <AppLayout>
-      <div className="container px-4 md:px-6 py-6 mx-auto">
         {/* Hero Section */}
         <motion.section 
           className="mb-8"
@@ -82,7 +81,7 @@ const Index = () => {
               </p>
             </motion.div>
             
-            <div className="py-5">
+            <div className="py-8">
               <SearchBar />
             </div>
           </div>
@@ -211,7 +210,6 @@ const Index = () => {
         >
           <AppDownloadSection />
         </motion.section>
-      </div>
     </AppLayout>
   );
 };

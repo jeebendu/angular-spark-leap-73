@@ -92,13 +92,7 @@ export function PaymentStep({ paymentMethod, setPaymentMethod }: PaymentStepProp
           </div>
         </RadioGroup>
         
-        <div className="mt-6 flex flex-col items-center">
-          <Label className="mb-3">Appointment QR Code</Label>
-          <div className="w-40 h-40 bg-white border p-2 flex items-center justify-center">
-            <QrCode className="w-32 h-32 text-primary" strokeWidth={1} />
-          </div>
-          <p className="text-xs text-gray-500 mt-2">Show this QR code at the clinic</p>
-        </div>
+        
       </div>
     </div>
   );

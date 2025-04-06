@@ -1,4 +1,4 @@
-
+import { useEffect } from "react";
 import { Building, MapPin, Navigation } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -18,19 +18,21 @@ export function ClinicSelectionStep({
   // Find primary clinic (first in the list) and other locations
   const primaryClinic = clinics[0];
   const otherClinics = clinics.slice(1);
-  
+
+  // Auto-select the primary clinic on component load
+  useEffect(() => {
+    if (primaryClinic && !selectedClinic) {
+      setSelectedClinic(primaryClinic.id);
+    }
+  }, [primaryClinic, selectedClinic, setSelectedClinic]);
+
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-medium mb-4 flex items-center">
-          <Building className="mr-2 h-5 w-5" />
-          Select Clinic
-        </h3>
-        
         {primaryClinic && (
           <>
             <div className="mb-4">
-              <h4 className="text-sm font-medium text-gray-700 mb-2">Primary Location</h4>
+              <h4 className="text-sm font-medium text-gray-700 mb-2">Selected Location</h4>
               <RadioGroup 
                 value={selectedClinic} 
                 onValueChange={setSelectedClinic}

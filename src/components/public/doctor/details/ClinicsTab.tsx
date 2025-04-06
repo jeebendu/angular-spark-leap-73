@@ -91,7 +91,7 @@ export const ClinicsTab = ({ clinics, doctor }: ClinicsTabProps) => {
         <h3 className="text-lg font-medium mb-4">Select Appointment Date & Time</h3>
         
         <div className="flex flex-col md:flex-row gap-4">
-          <div className="md:w-1/2">
+          <div className="md:w-1/3 items-center justify-center flex">
             <Calendar
               mode="single"
               selected={date}
@@ -101,7 +101,7 @@ export const ClinicsTab = ({ clinics, doctor }: ClinicsTabProps) => {
             />
           </div>
           
-          <div className="md:w-1/2">
+          <div className="w-full md:w-2/3">
             <div className="bg-white rounded-lg border h-full p-4">
               {date ? (
                 <div className="space-y-3">

@@ -1,5 +1,5 @@
-
 import React from "react";
+import QRCode from "qrcode.react"; // Import the QRCode component
 import { 
   AlertDialog, 
   AlertDialogAction, 
@@ -33,7 +33,8 @@ export function BookingSuccessDialog({
 }: BookingSuccessDialogProps) {
   const doctor = doctors.find(d => d.name === selectedDoctor);
   const clinic = doctor?.clinics.find(c => c.id === selectedClinic);
-  
+  const appointmentId = "APT123456"; // Replace with dynamic ID if available
+
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent className="bg-white max-w-md mx-auto pointer-events-auto">
@@ -51,7 +52,7 @@ export function BookingSuccessDialog({
           <div className="bg-gray-50 p-4 rounded-lg w-full max-w-sm mx-auto">
             <div className="flex justify-between mb-1">
               <span className="text-sm text-muted-foreground">Appointment ID</span>
-              <span className="text-sm font-medium">APT123456</span>
+              <span className="text-sm font-medium">{appointmentId}</span>
             </div>
             <div className="flex justify-between mb-1">
               <span className="text-sm text-muted-foreground">Doctor</span>
@@ -68,7 +69,14 @@ export function BookingSuccessDialog({
           </div>
           
           <div className="my-4 bg-white p-2 border rounded-lg">
-            <img src="https://placehold.co/200/eaf7fc/33C3F0?text=QR+Code&font=montserrat" alt="Appointment QR Code" className="w-32 h-32 mx-auto" />
+            {/* Generate QR Code dynamically */}
+            <QRCode 
+              value={appointmentId} // The value to encode in the QR code
+              size={128} // Size of the QR code
+              bgColor="#ffffff" // Background color
+              fgColor="#000000" // Foreground color
+              className="mx-auto"
+            />
           </div>
           
           <p className="text-sm text-center text-muted-foreground">

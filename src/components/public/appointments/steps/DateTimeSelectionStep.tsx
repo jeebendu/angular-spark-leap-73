@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { Calendar as CalendarIcon, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
@@ -38,6 +38,10 @@ export function DateTimeSelectionStep({
     }
   };
 
+  // Group time slots for better display
+  const morningSlots = availableTimes.filter(time => time.includes('AM'));
+  const afternoonSlots = availableTimes.filter(time => time.includes('PM'));
+
   return (
     <div className="space-y-6">
       <div>
@@ -46,51 +50,67 @@ export function DateTimeSelectionStep({
           Select Date and Time
         </h3>
         
-        <div className="grid grid-cols-1 gap-6">
-          <div>
-            <Label>Date</Label>
-            <div className="mt-1">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant={"outline"}
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !date && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {date ? format(date, "PPP") : <span>Pick a date</span>}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 z-50 pointer-events-auto" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={date}
-                    onSelect={handleDateSelect}
-                    initialFocus
-                    className="p-3 pointer-events-auto"
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white p-2 rounded-lg border">
+            <Label className="ml-2">Select Date</Label>
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={handleDateSelect}
+              className="mx-auto"
+            />
           </div>
           
           <div>
-            <Label>Available Time Slots</Label>
-            <div className="grid grid-cols-3 gap-2 mt-1">
-              {availableTimes.map((time) => (
-                <Button
-                  key={time}
-                  variant={selectedTime === time ? "default" : "outline"}
-                  className={`text-xs h-8 ${
-                    selectedTime === time ? "sky-button" : ""
-                  }`}
-                  onClick={() => setSelectedTime(time)}
-                >
-                  {time}
-                </Button>
-              ))}
+            <div className="bg-white p-4 rounded-lg border h-full">
+              <Label className="flex items-center mb-4">
+                <Clock className="mr-2 h-4 w-4" />
+                Available Time Slots
+              </Label>
+              
+              {date ? (
+                <div className="space-y-6">
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-500 mb-2">Morning</h4>
+                    <div className="grid grid-cols-3 gap-2">
+                      {morningSlots.map((time) => (
+                        <Button
+                          key={time}
+                          variant={selectedTime === time ? "default" : "outline"}
+                          className={`text-xs h-9 ${
+                            selectedTime === time ? "sky-button" : ""
+                          }`}
+                          onClick={() => setSelectedTime(time)}
+                        >
+                          {time}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-500 mb-2">Afternoon</h4>
+                    <div className="grid grid-cols-3 gap-2">
+                      {afternoonSlots.map((time) => (
+                        <Button
+                          key={time}
+                          variant={selectedTime === time ? "default" : "outline"}
+                          className={`text-xs h-9 ${
+                            selectedTime === time ? "sky-button" : ""
+                          }`}
+                          onClick={() => setSelectedTime(time)}
+                        >
+                          {time}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="h-full flex items-center justify-center text-gray-400">
+                  <p>Please select a date first</p>
+                </div>
+              )}
             </div>
           </div>
         </div>

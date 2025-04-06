@@ -1,6 +1,7 @@
 
-import { ClipboardCheck } from "lucide-react";
+import { ClipboardCheck, User, Building, Calendar, Clock } from "lucide-react";
 import { getClinicById, getFamilyMemberById, type Clinic, type FamilyMember } from "@/services/appointmentService";
+import { format } from "date-fns";
 
 interface ReviewStepProps {
   doctorName?: string;
@@ -25,6 +26,17 @@ export function ReviewStep({
 }: ReviewStepProps) {
   const clinic = getClinicById(selectedClinic);
   const patient = getFamilyMemberById(selectedMember);
+  
+  // Format date for better display
+  let formattedDate = "";
+  if (selectedDate) {
+    try {
+      const date = new Date(selectedDate);
+      formattedDate = format(date, "EEEE, MMMM d, yyyy");
+    } catch (e) {
+      formattedDate = selectedDate;
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -33,38 +45,61 @@ export function ReviewStep({
         Review Appointment Details
       </h3>
       
-      <div className="bg-gray-50 rounded-lg p-4 space-y-4">
-        <div className="space-y-2">
-          <h4 className="font-medium text-sm">Doctor</h4>
-          <div className="bg-white p-3 rounded-md">
-            <p className="font-medium">{doctorName || "Selected Doctor"}</p>
-            {specialty && <p className="text-sm text-gray-500">{specialty}</p>}
+      <div className="bg-white rounded-lg border p-6 space-y-6">
+        <div className="flex border-b pb-4">
+          <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mr-4">
+            <User className="h-6 w-6 text-blue-600" />
+          </div>
+          <div>
+            <p className="text-sm text-gray-500">Doctor</p>
+            <p className="font-medium text-lg">{doctorName || "Selected Doctor"}</p>
+            {specialty && <p className="text-sm text-primary">{specialty}</p>}
           </div>
         </div>
         
-        <div className="space-y-2">
-          <h4 className="font-medium text-sm">Clinic</h4>
-          <div className="bg-white p-3 rounded-md">
-            <p className="font-medium">{clinic?.name}</p>
-            <p className="text-sm text-gray-500">{clinic?.address}</p>
+        <div className="flex border-b pb-4">
+          <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center mr-4">
+            <Building className="h-6 w-6 text-emerald-600" />
+          </div>
+          <div>
+            <p className="text-sm text-gray-500">Clinic</p>
+            <p className="font-medium text-lg">{clinic?.name}</p>
+            <p className="text-sm">{clinic?.address}</p>
           </div>
         </div>
         
-        <div className="space-y-2">
-          <h4 className="font-medium text-sm">Date & Time</h4>
-          <div className="bg-white p-3 rounded-md">
-            <p className="font-medium">{selectedDate}</p>
-            <p className="text-sm text-gray-500">{selectedTime}</p>
+        <div className="flex border-b pb-4">
+          <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mr-4">
+            <Calendar className="h-6 w-6 text-amber-600" />
+          </div>
+          <div className="flex flex-col md:flex-row md:justify-between w-full">
+            <div>
+              <p className="text-sm text-gray-500">Date</p>
+              <p className="font-medium">{formattedDate}</p>
+            </div>
+            <div className="mt-2 md:mt-0">
+              <p className="text-sm text-gray-500">Time</p>
+              <p className="font-medium">{selectedTime}</p>
+            </div>
           </div>
         </div>
         
-        <div className="space-y-2">
-          <h4 className="font-medium text-sm">Patient</h4>
-          <div className="bg-white p-3 rounded-md">
-            <p className="font-medium">{patient?.name}</p>
-            <p className="text-sm text-gray-500">{patient?.relationship}</p>
+        <div className="flex">
+          <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mr-4">
+            <User className="h-6 w-6 text-purple-600" />
+          </div>
+          <div>
+            <p className="text-sm text-gray-500">Patient</p>
+            <p className="font-medium text-lg">{patient?.name}</p>
+            <p className="text-sm">{patient?.relationship}</p>
           </div>
         </div>
+      </div>
+      
+      <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-100">
+        <p className="text-sm text-blue-700">
+          Please verify all appointment details before proceeding to payment. Rescheduling may be subject to availability.
+        </p>
       </div>
     </div>
   );

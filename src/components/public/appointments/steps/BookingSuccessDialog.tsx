@@ -10,6 +10,7 @@ import {
   AlertDialogHeader, 
   AlertDialogTitle 
 } from "@/components/ui/alert-dialog";
+import { Check, Download } from "lucide-react";
 
 interface BookingSuccessDialogProps {
   open: boolean;
@@ -35,8 +36,11 @@ export function BookingSuccessDialog({
   
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="bg-white modal-background">
+      <AlertDialogContent className="bg-white modal-background max-w-md mx-auto">
         <AlertDialogHeader>
+          <div className="mx-auto rounded-full bg-green-100 p-3 w-16 h-16 flex items-center justify-center mb-4">
+            <Check className="h-8 w-8 text-green-600" strokeWidth={3} />
+          </div>
           <AlertDialogTitle className="text-center text-xl text-green-600">Appointment Confirmed!</AlertDialogTitle>
           <AlertDialogDescription className="text-center">
             Your appointment has been successfully booked
@@ -74,7 +78,10 @@ export function BookingSuccessDialog({
         
         <AlertDialogFooter className="flex flex-col sm:flex-row gap-2">
           <AlertDialogCancel className="sm:mt-0">Close</AlertDialogCancel>
-          <AlertDialogAction className="sky-button">Download Receipt</AlertDialogAction>
+          <AlertDialogAction className="sky-button flex items-center justify-center">
+            <Download className="h-4 w-4 mr-2" />
+            Download Receipt
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

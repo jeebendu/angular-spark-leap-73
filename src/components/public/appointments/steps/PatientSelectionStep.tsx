@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Users, Plus, X } from "lucide-react";
+import { Users, Plus, X, UserCircle } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -72,16 +72,35 @@ export function PatientSelectionStep({
           onValueChange={setSelectedMember}
           className="space-y-3"
         >
-          <div className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-50">
-            <RadioGroupItem value="self" id="self" />
-            <Label htmlFor="self" className="cursor-pointer">Myself</Label>
+          <div 
+            className={`border rounded-lg p-4 transition-colors flex items-center ${
+              selectedMember === "self" ? "border-primary bg-slate-50" : "border-gray-200"
+            }`}
+          >
+            <RadioGroupItem value="self" id="self" className="mr-4" />
+            <Label htmlFor="self" className="cursor-pointer flex items-center">
+              <UserCircle className="h-10 w-10 mr-3 text-gray-400" />
+              <div>
+                <div className="font-medium">Myself</div>
+                <div className="text-xs text-gray-500">Primary Account</div>
+              </div>
+            </Label>
           </div>
           
           {familyMembers.map((member) => (
-            <div key={member.id} className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-50">
-              <RadioGroupItem value={member.id} id={`member-${member.id}`} />
-              <Label htmlFor={`member-${member.id}`} className="cursor-pointer">
-                {member.name} ({member.relationship})
+            <div 
+              key={member.id} 
+              className={`border rounded-lg p-4 transition-colors flex items-center ${
+                selectedMember === member.id ? "border-primary bg-slate-50" : "border-gray-200"
+              }`}
+            >
+              <RadioGroupItem value={member.id} id={`member-${member.id}`} className="mr-4" />
+              <Label htmlFor={`member-${member.id}`} className="cursor-pointer flex items-center">
+                <UserCircle className="h-10 w-10 mr-3 text-gray-400" />
+                <div>
+                  <div className="font-medium">{member.name}</div>
+                  <div className="text-xs text-gray-500">{member.relationship}</div>
+                </div>
               </Label>
             </div>
           ))}
@@ -90,7 +109,7 @@ export function PatientSelectionStep({
         <div className="mt-6">
           <Button
             variant="outline"
-            className="w-full border-dashed flex items-center justify-center"
+            className="w-full border-dashed flex items-center justify-center h-16"
             onClick={() => setIsAddingMember(true)}
           >
             <Plus className="h-4 w-4 mr-2" />

@@ -8,8 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
 import { useEffect, useState } from "react";
-
-// Import the refactored components
+import { X } from "lucide-react";
 
 // Import the appointment service
 import {
@@ -57,6 +56,7 @@ export function BookAppointmentModal({
   const [selectedMember, setSelectedMember] = useState("self");
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const toastObject = useToast();
   
   // Get data from service
@@ -101,51 +101,67 @@ export function BookAppointmentModal({
     if (step === 2 && selectedDate && selectedTime) {
       // Add a small delay to allow user to see their selection before advancing
       const timer = setTimeout(() => {
-        if (validateCurrentStep(step, { 
-          selectedClinic: selectedClinic!, // Use the clinic object, with non-null assertion
-          selectedDate, 
-          selectedTime, 
-          selectedMember, 
-          doctorName, 
-          specialty 
-        }, toastObject)) {
-          setStep(3);
-        }
+        validateCurrentStepWithErrorHandling(true);
       }, 800);
       
       return () => clearTimeout(timer);
     }
-  }, [selectedDate, selectedTime, step, selectedClinic, selectedMember, doctorName, specialty, toastObject]);
+  }, [selectedDate, selectedTime, step]);
   
-  const goToStep = (stepNumber: number) => {
-    if (stepNumber <= step || validateCurrentStep(step, { 
-      selectedClinic: selectedClinic!, // Use the clinic object, with non-null assertion
+  const validateCurrentStepWithErrorHandling = (autoAdvance = false) => {
+    setErrorMessage(null);
+    
+    const isValid = validateCurrentStep(step, { 
+      selectedClinic: selectedClinic!, // Use the clinic object with non-null assertion
       selectedDate, 
       selectedTime, 
       selectedMember, 
       doctorName, 
       specialty 
-    }, toastObject)) {
+    }, toastObject);
+    
+    if (!isValid) {
+      switch (step) {
+        case 1:
+          setErrorMessage("Please select a clinic to proceed");
+          break;
+        case 2:
+          setErrorMessage("Please select both date and time for your appointment");
+          break;
+        case 3:
+          setErrorMessage("Please select a patient for this appointment");
+          break;
+        default:
+          setErrorMessage("Please complete all required fields");
+      }
+      return false;
+    }
+    
+    if (autoAdvance && step < 5) {
+      setStep(step + 1);
+    }
+    
+    return true;
+  };
+  
+  const goToStep = (stepNumber: number) => {
+    if (stepNumber <= step || validateCurrentStepWithErrorHandling()) {
       setStep(stepNumber);
+      setErrorMessage(null);
     }
   };
   
   const nextStep = () => {
-    if (validateCurrentStep(step, { 
-      selectedClinic: selectedClinic!, // Use the clinic object, with non-null assertion
-      selectedDate, 
-      selectedTime, 
-      selectedMember, 
-      doctorName, 
-      specialty 
-    }, toastObject) && step < 5) {
+    if (validateCurrentStepWithErrorHandling() && step < 5) {
       setStep(step + 1);
+      setErrorMessage(null);
     }
   };
   
   const prevStep = () => {
     if (step > 1) {
       setStep(step - 1);
+      setErrorMessage(null);
     }
   };
   
@@ -171,19 +187,37 @@ export function BookAppointmentModal({
     setSelectedTime("");
     setSelectedMember("self");
     setPaymentMethod("card");
+    setErrorMessage(null);
   };
   
   return (
     <>
-      <Dialog open={getOpenState()} onOpenChange={(newOpen) => {
-        setOpenState(newOpen);
-        if (!newOpen) resetForm();
-      }}>
+      <Dialog 
+        open={getOpenState()} 
+        onOpenChange={(newOpen) => {
+          if (!newOpen) {
+            setOpenState(false);
+            resetForm();
+          }
+        }}
+      >
         <DialogTrigger asChild>
           {trigger}
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[800px] p-0 overflow-hidden bg-white modal-background">
+        <DialogContent 
+          className="sm:max-w-[800px] p-0 overflow-hidden bg-white modal-background"
+          onPointerDownOutside={(e) => e.preventDefault()} // Prevent closing on outside click
+          onEscapeKeyDown={(e) => e.preventDefault()} // Prevent closing on escape key
+        >
           <DialogHeader className="p-6 pb-2 sticky top-0 bg-white z-10">
+            <div className="absolute right-4 top-4">
+              <button 
+                onClick={() => setOpenState(false)} 
+                className="h-6 w-6 rounded-full flex items-center justify-center hover:bg-slate-100"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
             <DialogTitle>Book an Appointment</DialogTitle>
           </DialogHeader>
           
@@ -193,20 +227,20 @@ export function BookAppointmentModal({
               <StepIndicator 
                 currentStep={step} 
                 totalSteps={5} 
-                onStepClick={goToStep} 
-                validateCurrentStep={() => validateCurrentStep(step, { 
-                  selectedClinic: selectedClinic!, // Use the clinic object, with non-null assertion
-                  selectedDate, 
-                  selectedTime, 
-                  selectedMember, 
-                  doctorName, 
-                  specialty 
-                }, toastObject)} 
+                onStepClick={goToStep}
+                validateCurrentStep={validateCurrentStepWithErrorHandling}
               />
 
               {/* Step labels */}
               <StepLabels labels={stepLabels} currentStep={step} />
             </div>
+            
+            {/* Error message */}
+            {errorMessage && (
+              <div className="mb-4 p-2 bg-red-50 text-red-600 border border-red-200 rounded text-sm">
+                {errorMessage}
+              </div>
+            )}
             
             {/* Step content - made scrollable */}
             <div className="max-h-[60vh] overflow-y-auto pr-2 pb-16">

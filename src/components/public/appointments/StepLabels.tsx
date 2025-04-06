@@ -8,13 +8,16 @@ interface StepLabelsProps {
 
 export function StepLabels({ labels, currentStep }: StepLabelsProps) {
   return (
-    <div className="flex justify-center mb-6 text-sm">
+    <div className="flex justify-between mb-6 text-xs sm:text-sm px-2">
       {labels.map((label, index) => (
         <div 
           key={index}
-          className={`mx-2 font-medium ${currentStep === index + 1 ? "text-primary" : "text-gray-500"}`}
+          className={`flex flex-col items-center ${currentStep === index + 1 ? "text-primary" : "text-gray-500"}`}
         >
-          {label}
+          <div className="font-medium flex items-center justify-center">
+            <span className="hidden sm:inline">{index + 1}. </span>
+            <span>{label}</span>
+          </div>
         </div>
       ))}
     </div>

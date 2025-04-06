@@ -56,18 +56,18 @@ export function DoctorCard({
         <CardContent className="p-0">
           {isMobile ? (
             <div className="flex">
-              <div className="w-1/3 relative">
+              <div className="w-1/4 relative">
                 <img 
                   src={imageSrc} 
                   alt={name}
-                  className="w-full h-full object-cover min-h-[120px]"
+                  className="w-full h-full object-cover min-h-[100px]"
                 />
-                <div className="absolute top-2 right-2 bg-white/80 backdrop-blur-sm px-1.5 py-0.5 rounded-full text-[10px] font-medium text-primary flex items-center">
+                <div className="absolute top-1 right-1 bg-white/80 backdrop-blur-sm px-1 py-0.5 rounded-full text-[8px] font-medium text-primary flex items-center">
                   <ThumbsUp className="h-2 w-2 mr-0.5 text-primary" />
                   98%
                 </div>
               </div>
-              <div className="w-2/3 p-3">
+              <div className="w-3/4 p-3">
                 <div className="flex justify-between items-start">
                   <div>
                     <h3 className="font-semibold text-sm mb-0.5 line-clamp-1">{name}</h3>

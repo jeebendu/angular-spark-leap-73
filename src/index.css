@@ -115,7 +115,7 @@
   }
 
   .glass-morphism {
-    @apply backdrop-blur-lg bg-white shadow-lg border border-white/20;
+    @apply backdrop-blur-xl bg-white/20 border border-white/30 shadow-lg;
   }
   
   /* Modal background styling */

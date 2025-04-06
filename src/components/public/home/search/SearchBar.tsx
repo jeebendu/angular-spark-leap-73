@@ -21,6 +21,8 @@ export function SearchBar() {
   const [openSuggestions, setOpenSuggestions] = useState(false);
   const [openLocationSelector, setOpenLocationSelector] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [voiceText, setVoiceText] = useState("");
+  const [showVoiceOverlay, setShowVoiceOverlay] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
@@ -82,35 +84,39 @@ export function SearchBar() {
     
     const recognition = new SpeechRecognitionAPI();
     recognition.lang = 'en-US';
-    recognition.interimResults = false;
+    recognition.interimResults = true;
     recognition.maxAlternatives = 1;
     
     setIsListening(true);
+    setShowVoiceOverlay(true);
+    setVoiceText("Listening...");
     
     recognition.start();
     
-    toast({
-      title: "Listening...",
-      description: "Speak now to search for doctors or specialities",
-    });
-    
     recognition.onresult = (event: any) => {
-      const speechResult = event.results[0][0].transcript;
-      setSearchQuery(speechResult);
-      setIsListening(false);
+      const current = event.resultIndex;
+      const transcript = event.results[current][0].transcript;
+      setVoiceText(transcript);
       
-      toast({
-        title: "Voice Recognized",
-        description: `Searching for: "${speechResult}"`,
-      });
-      
-      setTimeout(() => {
-        handleDoctorSearch(speechResult);
-      }, 500);
+      if (event.results[current].isFinal) {
+        setSearchQuery(transcript);
+        setIsListening(false);
+        
+        toast({
+          title: "Voice Recognized",
+          description: `Searching for: "${transcript}"`,
+        });
+        
+        setTimeout(() => {
+          handleDoctorSearch(transcript);
+          setShowVoiceOverlay(false);
+        }, 1000);
+      }
     };
     
     recognition.onerror = (event: any) => {
       setIsListening(false);
+      setShowVoiceOverlay(false);
       toast({
         title: "Voice Search Error",
         description: `Error: ${event.error}`,
@@ -120,6 +126,11 @@ export function SearchBar() {
     
     recognition.onend = () => {
       setIsListening(false);
+      setTimeout(() => {
+        if (showVoiceOverlay) {
+          setShowVoiceOverlay(false);
+        }
+      }, 500);
     };
   };
 
@@ -154,6 +165,31 @@ export function SearchBar() {
 
   return (
     <div ref={searchContainerRef} className="w-full max-w-3xl mx-auto relative">
+      {/* Voice Recognition Overlay */}
+      {showVoiceOverlay && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="glass-morphism p-10 rounded-3xl max-w-md w-full mx-4 text-center">
+            <div className="bg-pink-100 w-32 h-32 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Mic className={cn(
+                "h-16 w-16 transition-all",
+                isListening ? "text-primary animate-pulse" : "text-gray-400"
+              )} />
+            </div>
+            <h2 className="text-2xl font-medium text-gray-700 mb-2">Speak now</h2>
+            <p className="text-gray-600 mb-6 text-lg font-medium animate-pulse">
+              {voiceText}
+            </p>
+            <Button 
+              variant="outline" 
+              onClick={() => setShowVoiceOverlay(false)}
+              className="rounded-full px-6"
+            >
+              Cancel
+            </Button>
+          </div>
+        </div>
+      )}
+
       <div className={searchBarClasses}>
         <div className="relative w-[30%] sm:w-[35%] p-2 sm:p-3 border-r border-gray-200">
           <LocationSelector 
@@ -235,7 +271,7 @@ export function SearchBar() {
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="text-sm h-9"
+                className="text-sm h-9 rounded-full"
                 onClick={() => handleDoctorSearch()}
               >
                 Search Doctors
@@ -243,7 +279,7 @@ export function SearchBar() {
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="text-sm h-9"
+                className="text-sm h-9 rounded-full"
               >
                 Book an Appointment
               </Button>

@@ -1,8 +1,5 @@
 
-import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { Building, User } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,6 +8,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Building, Menu, User } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export function MobileMenu() {
   return (

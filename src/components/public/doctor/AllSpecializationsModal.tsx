@@ -1,10 +1,9 @@
 
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Search, X } from "lucide-react";
 import * as Icons from "lucide-react"; // Import all icons dynamically
+import { Search } from "lucide-react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 type Specialization = {

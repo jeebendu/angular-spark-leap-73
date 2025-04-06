@@ -1,12 +1,13 @@
 
-import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
-import { MapPin, CalendarDays, Clock, CheckCircle2 } from "lucide-react";
-import { BookAppointmentModal } from "@/components/BookAppointmentModal";
+import { Card, CardContent } from "@/components/ui/card";
 import { Clinic } from "@/models/Clinic";
 import { Doctor } from "@/models/Doctor";
+import { CalendarDays, CheckCircle2, Clock, MapPin } from "lucide-react";
+import { useState } from "react";
+import { BookAppointmentModal } from "../appointments/BookAppointmentModal";
 
 
 interface ClinicsTabProps {

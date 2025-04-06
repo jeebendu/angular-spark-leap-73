@@ -1,6 +1,6 @@
-import { Phone, Mail } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Education, Language } from "@/models/Doctor";
+import { Mail, Phone } from "lucide-react";
 
 interface AboutTabProps {
   education: Education[];

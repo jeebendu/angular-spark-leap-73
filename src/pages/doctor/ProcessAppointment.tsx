@@ -1,14 +1,12 @@
-import React, { useState } from "react";
-import { DoctorLayout } from "@/components/DoctorLayout";
+import { DoctorLayout } from "@/components/doctor/DoctorLayout";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useForm } from "react-hook-form";
 import { useToast } from "@/components/ui/use-toast";
 import { Clock, Save } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 const ProcessAppointment = () => {
   const [timeLeft, setTimeLeft] = useState("08m:00s");

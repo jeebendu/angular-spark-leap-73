@@ -1,16 +1,16 @@
 
-import React, { useState, useRef, useEffect } from "react";
-import { Search, Filter, Rows, LayoutList, SlidersHorizontal, X, Mic } from "lucide-react";
-import { Input } from "@/components/ui/input";
+
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { MobileDoctorFilters } from "@/components/doctor/MobileDoctorFilters";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { Dispatch, SetStateAction } from "react";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
+import { Filter, LayoutList, Mic, Rows, Search, X } from "lucide-react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { MobileDoctorFilters } from "../MobileDoctorFilters";
 
 interface DoctorSearchBarProps {
   searchTerm: string;

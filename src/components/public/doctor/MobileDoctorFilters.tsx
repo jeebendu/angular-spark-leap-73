@@ -1,16 +1,16 @@
 
-import { 
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogClose,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Star, X, Search, Filter } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { Dispatch, SetStateAction, useState } from "react";
 
 interface MobileDoctorFiltersProps {

@@ -1,7 +1,6 @@
 
-import React from "react";
-import { MapPin } from "lucide-react";
 import { useLocation } from "@/contexts/LocationContext";
+import { MapPin } from "lucide-react";
 
 export function DoctorSearchHeader() {
   const { location } = useLocation();

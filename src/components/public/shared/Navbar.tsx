@@ -3,14 +3,14 @@ import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { CitySelector } from "@/components/navbar/CitySelector";
-import { NavbarUserMenu } from "@/components/navbar/NavbarUserMenu";
-import { LoginDialog } from "@/components/navbar/LoginDialog";
-import { MobileMenu } from "@/components/navbar/MobileMenu";
-import { DesktopNav } from "@/components/navbar/DesktopNav";
-import { NotificationBell } from "@/components/navbar/NotificationBell";
+import { CitySelector } from "@/components/public/shared/navbar/CitySelector";
+import { NavbarUserMenu } from "@/components/public/shared/navbar/NavbarUserMenu";
+import { LoginDialog } from "@/components/public/shared/navbar/LoginDialog";
+import { MobileMenu } from "@/components/public/shared/navbar/MobileMenu";
+import { DesktopNav } from "@/components/public/shared/navbar/DesktopNav";
+import { NotificationBell } from "@/components/public/shared/navbar/NotificationBell";
 import authService from "@/services/authService";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 export function Navbar() {
   const { t } = useTranslation();

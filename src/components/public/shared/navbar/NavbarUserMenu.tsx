@@ -1,8 +1,4 @@
 
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { Calendar, LogOut, User } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -12,8 +8,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import authService from "@/services/authService";
 import { toast } from "@/hooks/use-toast";
+import authService from "@/services/authService";
+import { Calendar, LogOut, User } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 export function NavbarUserMenu() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

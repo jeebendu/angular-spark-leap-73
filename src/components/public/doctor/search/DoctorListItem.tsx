@@ -1,10 +1,9 @@
 
-import React from "react";
-import { motion } from "framer-motion";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Star, Heart, MapPin, Clock, Languages, Building } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { motion } from "framer-motion";
+import { Building, Clock, Heart, Languages, MapPin, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface DoctorClinic {

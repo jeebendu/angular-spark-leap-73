@@ -1,8 +1,8 @@
 
-import { useState } from "react";
-import { DoctorLayout } from "@/components/DoctorLayout";
 import { AppointmentList } from "@/components/doctor/AppointmentList";
-import { AppointmentDetails, ClinicReference } from "@/models/Appointment";
+import { DoctorLayout } from "@/components/doctor/DoctorLayout";
+import { AppointmentDetails } from "@/models/Appointment";
+import { useState } from "react";
 
 // Sample appointment data
 const sampleAppointments: AppointmentDetails[] = [

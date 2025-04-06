@@ -1,12 +1,8 @@
-import { useState, useEffect, useRef } from "react";
-import { useLocation } from "react-router-dom"; // Import useLocation for reading URL params
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { X, HelpCircle, Search } from "lucide-react";
-import { Dispatch, SetStateAction } from "react";
 import {
   Tooltip,
   TooltipContent,
@@ -14,6 +10,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { fetchAllSpecializations, fetchLanguageList } from "@/services/SpecializationService";
+import { HelpCircle, Search, X } from "lucide-react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom"; // Import useLocation for reading URL params
 
 interface DoctorFiltersProps {
   selectedSpecialties: string[];

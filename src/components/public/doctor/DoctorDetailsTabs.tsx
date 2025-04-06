@@ -1,10 +1,10 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ClinicsTab } from "./ClinicsTab";
-import { AboutTab } from "./AboutTab";
-import { ServicesTab } from "./ServicesTab";
-import { ReviewsTab } from "./ReviewsTab";
 import { Doctor } from "@/models/Doctor";
+import { AboutTab } from "./AboutTab";
+import { ClinicsTab } from "./ClinicsTab";
+import { ReviewsTab } from "./ReviewsTab";
+import { ServicesTab } from "./ServicesTab";
 
 
 interface DoctorDetailsTabsProps { doctor: Doctor }

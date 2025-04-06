@@ -1,6 +1,4 @@
 
-import { Link } from "react-router-dom";
-import { Building, User } from "lucide-react";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -9,6 +7,8 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import { Building, User } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export function DesktopNav() {
   return (

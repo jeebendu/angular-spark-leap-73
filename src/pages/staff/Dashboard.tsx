@@ -1,18 +1,14 @@
 
-import React from "react";
-import { StaffLayout } from "@/components/StaffLayout";
-import { 
-  BarChart3, 
-  Users, 
-  CalendarRange, 
-  FileText,
-  TrendingUp,
-  Calendar,
-  PlusCircle,
-} from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+import { StaffLayout } from "@/components/staff/StaffLayout";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Calendar,
+  FileText,
+  PlusCircle,
+  Users
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const StaffDashboard = () => {

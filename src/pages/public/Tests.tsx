@@ -1,10 +1,9 @@
 
 import { AppLayout } from "@/components/AppLayout";
+import { SearchBar } from "@/components/public/home/SearchBar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { CalendarDays, ChevronRight, Clock, Beaker, Heart, Syringe, SearchIcon, TestTubes, Thermometer } from "lucide-react";
-import { SearchBar } from "@/components/SearchBar";
+import { Beaker, CalendarDays, ChevronRight, Clock, Heart, Syringe, TestTubes, Thermometer } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 
 export default function Tests() {

@@ -1,12 +1,12 @@
 
-import { useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AppointmentCard } from "@/components/AppointmentCard";
-import { Calendar, Search } from "lucide-react";
+import { AppointmentCard } from "@/components/public/appointments/AppointmentCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion } from "framer-motion";
+import { Calendar, Search } from "lucide-react";
+import { useState } from "react";
 
 const Appointments = () => {
   const [searchTerm, setSearchTerm] = useState("");

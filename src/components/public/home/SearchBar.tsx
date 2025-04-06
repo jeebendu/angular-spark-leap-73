@@ -1,12 +1,13 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Search, Clock, X, Mic } from "lucide-react";
-import { Input } from "@/components/ui/input";
+
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { LocationSelector } from "@/components/LocationSelector";
-import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
+import { Clock, Mic, Search, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { LocationSelector } from "../shared/LocationSelector";
 
 declare global {
   interface Window {

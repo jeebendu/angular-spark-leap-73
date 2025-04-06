@@ -1,10 +1,10 @@
+import { Button } from "@/components/ui/button";
+import { fetchAllSpecializations } from "@/services/SpecializationService";
+import { motion } from "framer-motion";
+import * as Icons from "lucide-react"; // Import all icons dynamically
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import * as Icons from "lucide-react"; // Import all icons dynamically
-import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
-import { fetchAllSpecializations } from "@/services/SpecializationService";
-import { AllSpecializationsModal } from "./AllSpecializationsModal";
+import { AllSpecializationsModal } from "../AllSpecializationsModal";
 
 export function Specializations() {
   const [isModalOpen, setIsModalOpen] = useState(false);

@@ -1,17 +1,16 @@
 
-import React from "react";
-import { DoctorLayout } from "@/components/DoctorLayout";
-import { 
-  BarChart3, 
-  Users, 
-  CalendarRange, 
+import { DoctorLayout } from "@/components/doctor/DoctorLayout";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import {
+  BarChart3,
+  Calendar,
+  CalendarRange,
   FileText,
   TrendingUp,
-  Calendar
+  Users
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 
 const DashboardPage = () => {
   return (

@@ -1,6 +1,5 @@
 
 import { useState } from "react";
-import { DoctorLayout } from "@/components/DoctorLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,6 +10,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { cn } from "@/lib/utils";
 import { DayAvailability, TimeSlot } from "@/models/Availability";
 import { useToast } from "@/hooks/use-toast";
+import { DoctorLayout } from "@/components/doctor/DoctorLayout";
 
 const DAYS_OF_WEEK = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 

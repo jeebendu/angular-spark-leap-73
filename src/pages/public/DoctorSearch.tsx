@@ -1,13 +1,13 @@
-import { useState, useEffect, useRef, useCallback } from "react";
-import { useSearchParams } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
+import { BookingModal } from "@/components/public/appointments/BookingModal";
+import { BookingSuccessDialog } from "@/components/public/appointments/BookingSuccessDialog";
+import { DoctorFilters } from "@/components/public/doctor/DoctorFilters";
+import { DoctorSearchBar } from "@/components/public/doctor/search/DoctorSearchBar";
+import { DoctorsList } from "@/components/public/doctor/search/DoctorsList";
 import { useToast } from "@/components/ui/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { DoctorFilters } from "@/components/doctor/DoctorFilters";
-import { DoctorSearchBar } from "@/components/doctor/search/DoctorSearchBar";
-import { DoctorsList } from "@/components/doctor/search/DoctorsList";
-import { BookingModal } from "@/components/doctor/search/BookingModal";
-import { BookingSuccessDialog } from "@/components/doctor/search/BookingSuccessDialog";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 const DoctorSearch = () => {
   const [searchParams] = useSearchParams();

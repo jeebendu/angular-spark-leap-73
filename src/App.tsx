@@ -5,26 +5,26 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { LocationProvider } from "./contexts/LocationContext";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 
 // Pages
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import Tests from "./pages/Tests";
-import Reports from "./pages/Reports";
-import Chat from "./pages/Chat";
-import Account from "./pages/Account";
-import Appointments from "./pages/Appointments";
-import DoctorSearch from "./pages/DoctorSearch";
-import DoctorDetails from "./pages/DoctorDetails";
 import DashboardPage from "./pages/doctor/Dashboard";
 import DoctorAppointmentsPage from "./pages/doctor/Appointments";
 import ProcessAppointment from "./pages/doctor/ProcessAppointment";
 import DoctorOnboardingPage from "./pages/doctor/Onboarding";
 import { DoctorSchedulePage } from "./pages/doctor/Schedule";
-import ClinicManagementLanding from "./pages/ClinicManagementLanding";
 import StaffDashboard from "./pages/staff/Dashboard";
 import AddPatient from "./pages/staff/AddPatient";
+import DoctorSearch from "./pages/public/DoctorSearch";
+import DoctorDetails from "./pages/public/DoctorDetails";
+import Reports from "./pages/public/Reports";
+import Tests from "./pages/public/Tests";
+import Account from "./pages/public/Account";
+import Chat from "./pages/public/Chat";
+import Appointments from "./pages/public/Appointments";
+import ClinichubLanding from "./pages/public/ClinichubLanding";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -64,7 +64,7 @@ function App() {
               <Route path="/tests" element={<Tests />} />
               <Route path="/account" element={<Account />} />
               <Route path="/chat" element={<Chat />} />
-              <Route path="/clinic-management" element={<ClinicManagementLanding />} />
+              <Route path="/clinic-management" element={<ClinichubLanding />} />
               
               {/* Doctor Routes */}
               <Route path="/doctor" element={<DashboardPage />} />

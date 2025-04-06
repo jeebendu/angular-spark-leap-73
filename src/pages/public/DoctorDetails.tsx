@@ -1,11 +1,11 @@
-import { Link, useParams, useLocation } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
 import { ArrowLeft } from "lucide-react";
-import { DoctorHeader } from "@/components/doctor/DoctorHeader";
-import { DoctorDetailsTabs } from "@/components/doctor/DoctorDetailsTabs";
-import { SimilarDoctors } from "@/components/doctor/SimilarDoctors";
 import { useEffect, useState } from "react";
+import { Link, useLocation, useParams } from "react-router-dom";
 
+import { DoctorDetailsTabs } from "@/components/public/doctor/DoctorDetailsTabs";
+import { DoctorHeader } from "@/components/public/doctor/DoctorHeader";
+import { SimilarDoctors } from "@/components/public/doctor/SimilarDoctors";
 import { Doctor } from "@/models/Doctor";
 import { fetchDoctorById } from "@/services/DoctorService"; // Import the service function
 

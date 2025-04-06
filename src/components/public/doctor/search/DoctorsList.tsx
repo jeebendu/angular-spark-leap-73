@@ -1,5 +1,4 @@
 
-import React from "react";
 import { DoctorGridItem } from "./DoctorGridItem";
 import { DoctorListItem } from "./DoctorListItem";
 

@@ -1,5 +1,4 @@
 
-import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -8,28 +7,27 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
+import { useEffect, useState } from "react";
 
 // Import the refactored components
-import { StepIndicator } from "@/components/appointment/StepIndicator";
-import { StepLabels } from "@/components/appointment/StepLabels";
-import { ClinicSelectionStep } from "@/components/appointment/steps/ClinicSelectionStep";
-import { DateTimeSelectionStep } from "@/components/appointment/steps/DateTimeSelectionStep";
-import { PatientSelectionStep } from "@/components/appointment/steps/PatientSelectionStep";
-import { ReviewStep } from "@/components/appointment/steps/ReviewStep";
-import { PaymentStep } from "@/components/appointment/steps/PaymentStep";
-import { NavigationButtons } from "@/components/appointment/NavigationButtons";
 
 // Import the appointment service
-import { 
-  validateCurrentStep, 
-  bookAppointment, 
-  getClinics, 
-  getAvailableTimes, 
-  getFamilyMembers,
+import {
+  bookAppointment,
+  getAvailableTimes,
   getClinicById,
-  getFamilyMemberById,
-  type Clinic // Import the Clinic type explicitly
+  getClinics,
+  getFamilyMembers,
+  validateCurrentStep
 } from "@/services/appointmentService";
+import { StepIndicator } from "./StepIndicator";
+import { StepLabels } from "./StepLabels";
+import { DateTimeSelectionStep } from "./steps/DateTimeSelectionStep";
+import { ClinicSelectionStep } from "./steps/ClinicSelectionStep";
+import { PatientSelectionStep } from "./steps/PatientSelectionStep";
+import { ReviewStep } from "./steps/ReviewStep";
+import { PaymentStep } from "./steps/PaymentStep";
+import { NavigationButtons } from "./NavigationButtons";
 
 interface BookAppointmentModalProps {
   doctorName?: string;

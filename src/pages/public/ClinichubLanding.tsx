@@ -1,28 +1,24 @@
 
-import React, { useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import { 
-  BuildingIcon, 
-  Calendar, 
-  Clock, 
-  Users, 
-  FileText, 
-  Shield, 
-  LineChart, 
-  CheckCircle2,
-  ArrowRight,
-  Mail
-} from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import { motion } from "framer-motion";
+import {
+  ArrowRight,
+  Calendar,
+  CheckCircle2,
+  Clock,
+  FileText,
+  LineChart,
+  Shield,
+  Users
+} from "lucide-react";
+import React, { useState } from "react";
 
-const ClinicManagementLanding = () => {
+const ClinichubLanding = () => {
   const [subdomain, setSubdomain] = useState("");
   const [email, setEmail] = useState("");
   const [clinicName, setClinicName] = useState("");
@@ -427,4 +423,4 @@ const ClinicManagementLanding = () => {
   );
 };
 
-export default ClinicManagementLanding;
+export default ClinichubLanding;

@@ -1,8 +1,8 @@
 
 import { Navbar } from "@/components/public/shared/Navbar";
 import { Footer } from "@/components/public/shared/Footer";
-import { MobileNavigation } from "./MobileNavigation";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { MobileNavigation } from "./public/shared/MobileNavigation";
 
 interface AppLayoutProps {
   children: React.ReactNode;

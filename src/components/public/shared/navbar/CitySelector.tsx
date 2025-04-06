@@ -1,17 +1,16 @@
 
-import { useState } from "react";
-import { MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-  DialogClose
+  DialogTrigger
 } from "@/components/ui/dialog";
-import { X } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { MapPin, X } from "lucide-react";
+import { useState } from "react";
 
 interface CitySelectorProps {
   selectedCity: string;

@@ -1,17 +1,17 @@
 
-import { Calendar, Star, Award, ThumbsUp, Clock, ChevronRight, Phone, Laptop, Users, LockKeyhole } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
-import { SearchBar } from "@/components/public/doctor-search/SearchBar";
-import { Button } from "@/components/ui/button";
-import { Specializations } from "@/components/Specializations";
-import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { useNavigate } from "react-router-dom";
-import { AppointmentCard } from "@/components/AppointmentCard";
-import { PromotionalBanner } from "@/components/PromotionalBanner";
+import { AppointmentCard } from "@/components/public/appointments/AppointmentCard";
+import { Specializations } from "@/components/public/doctor/specialization/Specializations";
 import { AppDownloadSection } from "@/components/public/home/AppDownloadSection";
+import { PromotionalBanner } from "@/components/public/home/PromotionalBanner";
+import { SearchBar } from "@/components/public/home/SearchBar";
+import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
 import authService from "@/services/authService";
+import { motion } from "framer-motion";
+import { Calendar, ChevronRight, Clock, LockKeyhole, Users } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // Mock upcoming appointments data
 const upcomingAppointments = [

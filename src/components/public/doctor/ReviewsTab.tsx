@@ -1,7 +1,6 @@
 
-import { useState } from "react";
-import { Star, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Star, User } from "lucide-react";
 
 interface ReviewsTabProps {
   rating: number;

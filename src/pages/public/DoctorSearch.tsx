@@ -1,5 +1,5 @@
 import { AppLayout } from "@/components/AppLayout";
-import { BookingModal } from "@/components/public/appointments/BookingModal";
+import { BookAppointmentModal } from "@/components/public/appointments/BookAppointmentModal";
 import { BookingSuccessDialog } from "@/components/public/appointments/BookingSuccessDialog";
 import { DoctorFilters } from "@/components/public/doctor/search/DoctorFilters";
 import { DoctorSearchBar } from "@/components/public/doctor/search/DoctorSearchBar";
@@ -27,28 +27,21 @@ const DoctorSearch = () => {
   const [selectedExperience, setSelectedExperience] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   const [sortBy, setSortBy] = useState("relevance");
-  const [bookingOpen, setBookingOpen] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState<string | null>(null);
-  const [bookingStep, setBookingStep] = useState(1);
-  const [date, setDate] = useState<Date | undefined>(new Date());
-  const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
-  const [successDialogOpen, setSuccessDialogOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedTime, setSelectedTime] = useState("");
+  const [selectedMember, setSelectedMember] = useState("self");
   const [selectedClinic, setSelectedClinic] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [doctors, setDoctors] = useState<any[]>([]);
   const [showNoMoreDoctors, setShowNoMoreDoctors] = useState(false);
+  const [bookAppointmentOpen, setBookAppointmentOpen] = useState(false);
+  const [initialStep, setInitialStep] = useState(1);
   
   const observer = useRef<IntersectionObserver>();
   const { toast } = useToast();
-  
-  const timeSlots = [
-    "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", 
-    "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM",
-    "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM", 
-    "04:00 PM", "04:30 PM", "05:00 PM", "05:30 PM"
-  ];
 
   const doctorClinics = [
     [
@@ -216,34 +209,17 @@ const DoctorSearch = () => {
   
   const handleBookAppointment = (doctorName: string, clinicId?: string) => {
     setSelectedDoctor(doctorName);
-    setBookingOpen(true);
-    setBookingStep(1);
+    setBookAppointmentOpen(true);
+    setInitialStep(1);
     
     if (clinicId) {
       setSelectedClinic(clinicId);
-      setBookingStep(2);
-    }
-  };
-  
-  const handleSlotSelection = (slot: string) => {
-    setSelectedSlot(slot);
-  };
-  
-  const nextStep = () => {
-    if (bookingStep < 4) {
-      setBookingStep(bookingStep + 1);
+      setInitialStep(2);
     } else {
-      setBookingOpen(false);
-      setSuccessDialogOpen(true);
+      setSelectedClinic(null);
     }
   };
   
-  const prevStep = () => {
-    if (bookingStep > 1) {
-      setBookingStep(bookingStep - 1);
-    }
-  };
-
   const applyFilters = () => {
     if (isMobile) {
       setFilterOpen(false);
@@ -310,31 +286,13 @@ const DoctorSearch = () => {
           </div>
         </div>
         
-        <BookingModal
-          open={bookingOpen}
-          onOpenChange={setBookingOpen}
-          bookingStep={bookingStep}
-          selectedDoctor={selectedDoctor}
-          selectedClinic={selectedClinic}
-          date={date}
-          selectedSlot={selectedSlot}
-          timeSlots={timeSlots}
-          doctors={doctors}
-          setSelectedClinic={setSelectedClinic}
-          setDate={setDate}
-          handleSlotSelection={handleSlotSelection}
-          nextStep={nextStep}
-          prevStep={prevStep}
-        />
-        
-        <BookingSuccessDialog
-          open={successDialogOpen}
-          onOpenChange={setSuccessDialogOpen}
-          selectedDoctor={selectedDoctor}
-          selectedClinic={selectedClinic}
-          date={date}
-          selectedSlot={selectedSlot}
-          doctors={doctors}
+        <BookAppointmentModal
+          doctorName={selectedDoctor || undefined}
+          initialClinicId={selectedClinic || undefined}
+          initialStep={initialStep}
+          trigger={<></>}
+          open={bookAppointmentOpen}
+          onOpenChange={setBookAppointmentOpen}
         />
       </div>
     </AppLayout>

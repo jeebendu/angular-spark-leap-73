@@ -18,7 +18,7 @@ interface AllSpecializationsModalProps {
   specializations: Specialization[];
 }
 
-export function AllSpecializationsModal({ isOpen, onClose, specializations }: AllSpecializationsModalProps) {
+export function SpecializationsModal({ isOpen, onClose, specializations }: AllSpecializationsModalProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 

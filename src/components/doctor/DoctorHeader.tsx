@@ -99,17 +99,17 @@ export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
             <p className="text-gray-700 text-sm md:text-base">{doctor.bio}</p>
           </div>
           
-          <div className="flex items-center justify-between mt-6">
-            <div>
+          <div className="mt-6 flex flex-col md:flex-row items-start md:items-center md:justify-between">
+            <div className="mb-4 md:mb-0">
               <p className="text-gray-500 text-sm">Consultation Fee</p>
-              <p className="text-xl font-bold text-primary">{doctor.consultationFee}</p>
+              <p className="text-2xl font-bold text-primary">{doctor.consultationFee}</p>
             </div>
             
             <BookAppointmentModal 
               doctorName={doctor.name}
               specialty={doctor.specialty}
               trigger={
-                <Button className="sky-button rounded-full">Book Appointment</Button>
+                <Button className="sky-button rounded-full px-8 py-2 text-base w-full md:w-auto">Book Appointment</Button>
               }
             />
           </div>

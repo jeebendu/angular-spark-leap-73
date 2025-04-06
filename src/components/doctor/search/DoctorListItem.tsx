@@ -59,6 +59,7 @@ export function DoctorListItem({ doctor, index, isLastItem, lastDoctorElementRef
                     src={doctor.imageSrc}
                     alt={doctor.name}
                     className="w-full h-full object-cover min-h-[100px]"
+                    onClick={handleViewProfile}
                   />
                   <div className="absolute top-1 right-1 bg-white/80 backdrop-blur-sm px-1 py-0.5 rounded-full text-[8px] font-medium text-primary flex items-center">
                     <Heart className="h-2 w-2 fill-red-500 text-red-500" />
@@ -68,7 +69,7 @@ export function DoctorListItem({ doctor, index, isLastItem, lastDoctorElementRef
                 <div className="w-4/5 p-3">
                   <div className="flex flex-wrap items-start justify-between">
                     <div>
-                      <h3 className="font-semibold text-sm line-clamp-1">{doctor.name}</h3>
+                      <h3 className="font-semibold text-sm line-clamp-1 cursor-pointer" onClick={handleViewProfile}>{doctor.name}</h3>
                       <p className="text-muted-foreground text-xs">{doctor.specialty}</p>
                       
                       <div className="flex items-center gap-1 mt-1">
@@ -96,9 +97,9 @@ export function DoctorListItem({ doctor, index, isLastItem, lastDoctorElementRef
                         size="sm" 
                         variant="outline"
                         className="rounded-full border-primary text-primary text-xs h-6 px-2"
-                        onClick={() => window.location.href = `/doctor/${doctor.id}`}
+                        onClick={handleViewProfile}
                       >
-                        Profile
+                        View Profile
                       </Button>
                       <Button 
                         size="sm" 
@@ -159,20 +160,22 @@ export function DoctorListItem({ doctor, index, isLastItem, lastDoctorElementRef
                     
                     <div className="flex flex-col items-end gap-2">
                       <div className="text-lg font-semibold mb-2">₹{doctor.price}</div>
-                      <Button 
-                        size="sm"
-                        variant="outline"
-                        className="w-28 rounded-full border-primary text-primary"
-                        onClick={handleViewProfile}
-                      >
-                        View Profile
-                      </Button>
-                      <Button 
-                        className="w-28 sky-button rounded-full"
-                        onClick={() => handleBookAppointment(doctor.name)}
-                      >
-                        Book Now
-                      </Button>
+                      <div className="flex space-x-2">
+                        <Button 
+                          size="sm"
+                          variant="outline"
+                          className="rounded-full border-primary text-primary"
+                          onClick={handleViewProfile}
+                        >
+                          View Profile
+                        </Button>
+                        <Button 
+                          className="sky-button rounded-full"
+                          onClick={() => handleBookAppointment(doctor.name)}
+                        >
+                          Book Now
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>

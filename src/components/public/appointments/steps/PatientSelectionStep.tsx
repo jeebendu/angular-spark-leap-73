@@ -63,7 +63,7 @@ export function PatientSelectionStep({
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <RadioGroup value={selectedMember} onValueChange={setSelectedMember} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {allPatients.map((member) => (
           <div 
             key={member.id} 
@@ -77,7 +77,6 @@ export function PatientSelectionStep({
               id={`member-${member.id}`} 
               className="mr-3" 
               checked={selectedMember === member.id}
-              onCheckedChange={() => setSelectedMember(member.id)}
             />
             <Label htmlFor={`member-${member.id}`} className="cursor-pointer flex-1">
               <div className="flex items-center">
@@ -90,7 +89,7 @@ export function PatientSelectionStep({
             </Label>
           </div>
         ))}
-      </div>
+      </RadioGroup>
       
       <div className="mt-4">
         <Button

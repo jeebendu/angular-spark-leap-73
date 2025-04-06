@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -7,17 +6,13 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { X, HelpCircle, Search } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
-import { 
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { 
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { fetchAllSpecializations } from "@/services/SpecializationService";
 
 interface DoctorFiltersProps {
   selectedSpecialties: string[];
@@ -44,50 +39,43 @@ export const DoctorFilters = ({
   toggleLanguage,
   toggleExperience,
   setPriceRange,
-  applyFilters
+  applyFilters,
 }: DoctorFiltersProps) => {
-  const specialties = [
-    "All Specialties",
-    "Cardiology",
-    "Neurology",
-    "Orthopedics",
-    "Dermatology",
-    "Pediatrics",
-    "Internal Medicine",
-    "Ophthalmology",
-    "Dentistry",
-    "Gynecology",
-    "ENT Specialist",
-    "Psychiatry",
-    "Urology",
-    "Gastroenterology",
-    "Endocrinology",
-    "Nephrology",
-    "Oncology",
-    "Pulmonology",
-    "Rheumatology",
-    "General Surgery"
-  ];
-
   const genders = ["Male", "Female"];
   const languages = ["English", "Hindi", "Tamil", "Telugu", "Kannada", "Malayalam"];
   const experienceRanges = ["0-5 years", "5-10 years", "10-15 years", "15+ years"];
-  const [showAllSpecialties, setShowAllSpecialties] = useState(false);
+  const [specializations, setSpecializations] = useState<{ id: number; name: string }[]>([]);
   const [specialtySearch, setSpecialtySearch] = useState("");
+  const [showAllSpecialties, setShowAllSpecialties] = useState(false);
 
-  const visibleSpecialties = specialties
-    .filter(specialty => specialty.toLowerCase().includes(specialtySearch.toLowerCase()))
-    .slice(0, showAllSpecialties ? undefined : 10);
+  useEffect(() => {
+    const fetchSpecialties = async () => {
+      try {
+        const response = await fetchAllSpecializations(); // Call the API
+        setSpecializations(response.data); // Assuming the API response has a `data` field with objects containing `id` and `name`
+      } catch (error) {
+        console.error("Failed to fetch specializations:", error);
+      }
+    };
+
+    fetchSpecialties();
+  }, []);
+
+  const visibleSpecialties = specializations
+    .filter((specialty) =>
+      specialty.name.toLowerCase().includes(specialtySearch.toLowerCase())
+    )
+    .slice(0, showAllSpecialties ? undefined : 5);
 
   const getFilterHelp = (filterType: string) => {
     switch (filterType) {
-      case 'specialty':
+      case "specialty":
         return "Select specialties to find doctors with specific expertise";
-      case 'gender':
+      case "gender":
         return "Filter doctors by gender preference";
-      case 'experience':
+      case "experience":
         return "Find doctors with your preferred years of medical experience";
-      case 'languages':
+      case "languages":
         return "Filter doctors who speak specific languages";
       default:
         return "Apply filters to refine your search";
@@ -110,9 +98,10 @@ export const DoctorFilters = ({
             </Tooltip>
           </TooltipProvider>
         </h3>
-        
+
         <ScrollArea className="h-[calc(100vh-250px)] pr-4">
           <div className="space-y-6">
+            {/* Specialty Filter */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <h4 className="font-medium">Specialty</h4>
@@ -122,43 +111,43 @@ export const DoctorFilters = ({
                       <HelpCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p className="w-64 text-xs">{getFilterHelp('specialty')}</p>
+                      <p className="w-64 text-xs">{getFilterHelp("specialty")}</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               </div>
-              
+
               <div className="relative mb-2">
                 <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input 
-                  placeholder="Search specialties" 
+                <Input
+                  placeholder="Search specialties"
                   value={specialtySearch}
                   onChange={(e) => setSpecialtySearch(e.target.value)}
                   className="pl-8 py-1 h-8"
                 />
               </div>
-              
+
               <div className="space-y-2">
                 {visibleSpecialties.map((specialty) => (
-                  <div key={specialty} className="flex items-center space-x-2">
-                    <Checkbox 
-                      id={`specialty-${specialty}`} 
-                      checked={selectedSpecialties.includes(specialty)}
-                      onCheckedChange={() => toggleSpecialty(specialty)}
+                  <div key={specialty.id} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`specialty-${specialty.id}`}
+                      checked={selectedSpecialties.includes(specialty.name)}
+                      onCheckedChange={() => toggleSpecialty(specialty.name)}
                     />
-                    <label 
-                      htmlFor={`specialty-${specialty}`}
+                    <label
+                      htmlFor={`specialty-${specialty.id}`}
                       className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
-                      {specialty}
+                      {specialty.name}
                     </label>
                   </div>
                 ))}
               </div>
-              
-              {specialties.length > 10 && specialtySearch === "" && (
-                <Button 
-                  variant="link" 
+
+              {specializations.length > 5 && specialtySearch === "" && (
+                <Button
+                  variant="link"
                   className="text-xs p-0 h-auto text-[#0ABAB5]"
                   onClick={() => setShowAllSpecialties(!showAllSpecialties)}
                 >
@@ -166,7 +155,8 @@ export const DoctorFilters = ({
                 </Button>
               )}
             </div>
-            
+
+            {/* Gender Filter */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <h4 className="font-medium">Gender</h4>
@@ -176,7 +166,7 @@ export const DoctorFilters = ({
                       <HelpCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p className="w-64 text-xs">{getFilterHelp('gender')}</p>
+                      <p className="w-64 text-xs">{getFilterHelp("gender")}</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -187,18 +177,19 @@ export const DoctorFilters = ({
                     key={gender}
                     variant={selectedGenders.includes(gender) ? "default" : "outline"}
                     size="sm"
-                    className={`rounded-full text-xs ${selectedGenders.includes(gender) ? 'bg-[#0ABAB5] text-white' : 'bg-white'}`}
+                    className={`rounded-full text-xs ${
+                      selectedGenders.includes(gender) ? "bg-[#0ABAB5] text-white" : "bg-white"
+                    }`}
                     onClick={() => toggleGender(gender)}
                   >
                     {gender}
-                    {selectedGenders.includes(gender) && (
-                      <X className="ml-1 h-3 w-3" />
-                    )}
+                    {selectedGenders.includes(gender) && <X className="ml-1 h-3 w-3" />}
                   </Button>
                 ))}
               </div>
             </div>
-            
+
+            {/* Experience Filter */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <h4 className="font-medium">Experience</h4>
@@ -208,7 +199,7 @@ export const DoctorFilters = ({
                       <HelpCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p className="w-64 text-xs">{getFilterHelp('experience')}</p>
+                      <p className="w-64 text-xs">{getFilterHelp("experience")}</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -219,18 +210,19 @@ export const DoctorFilters = ({
                     key={experience}
                     variant={selectedExperience.includes(experience) ? "default" : "outline"}
                     size="sm"
-                    className={`rounded-full text-xs ${selectedExperience.includes(experience) ? 'bg-[#0ABAB5] text-white' : 'bg-white'}`}
+                    className={`rounded-full text-xs ${
+                      selectedExperience.includes(experience) ? "bg-[#0ABAB5] text-white" : "bg-white"
+                    }`}
                     onClick={() => toggleExperience(experience)}
                   >
                     {experience}
-                    {selectedExperience.includes(experience) && (
-                      <X className="ml-1 h-3 w-3" />
-                    )}
+                    {selectedExperience.includes(experience) && <X className="ml-1 h-3 w-3" />}
                   </Button>
                 ))}
               </div>
             </div>
-            
+
+            {/* Languages Filter */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <h4 className="font-medium">Languages</h4>
@@ -240,7 +232,7 @@ export const DoctorFilters = ({
                       <HelpCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p className="w-64 text-xs">{getFilterHelp('languages')}</p>
+                      <p className="w-64 text-xs">{getFilterHelp("languages")}</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -251,21 +243,25 @@ export const DoctorFilters = ({
                     key={language}
                     variant={selectedLanguages.includes(language) ? "default" : "outline"}
                     size="sm"
-                    className={`rounded-full text-xs ${selectedLanguages.includes(language) ? 'bg-[#0ABAB5] text-white' : 'bg-white'}`}
+                    className={`rounded-full text-xs ${
+                      selectedLanguages.includes(language) ? "bg-[#0ABAB5] text-white" : "bg-white"
+                    }`}
                     onClick={() => toggleLanguage(language)}
                   >
                     {language}
-                    {selectedLanguages.includes(language) && (
-                      <X className="ml-1 h-3 w-3" />
-                    )}
+                    {selectedLanguages.includes(language) && <X className="ml-1 h-3 w-3" />}
                   </Button>
                 ))}
               </div>
             </div>
-            
-            <Button className="w-full bg-[#0ABAB5] hover:bg-[#09a09b] text-white" onClick={applyFilters}>Apply Filters</Button>
           </div>
         </ScrollArea>
+        <Button
+          className="w-full bg-[#0ABAB5] hover:bg-[#09a09b] text-white"
+          onClick={applyFilters}
+        >
+          Apply Filters
+        </Button>
       </CardContent>
     </Card>
   );

@@ -33,7 +33,7 @@ export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
       <div className="md:flex">
         <div className="md:w-1/3 relative">
           <img 
-            src={`https://placehold.co/600x400/eaf7fc/33C3F0?text=Dr.+Emily&font=montserrat`}
+            src={`https://res.cloudinary.com/dzxuxfagt/image/upload/w_500,h_500,c_thumb,g_face/assets/doctor_placeholder.png`}
             alt={doctor.name}
             className="w-full h-full object-cover object-center"
           />

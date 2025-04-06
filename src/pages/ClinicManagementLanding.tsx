@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -79,7 +80,7 @@ const ClinicManagementLanding = () => {
           transition={{ duration: 0.5 }}
           className="flex flex-col lg:flex-row items-center gap-8 mb-16"
         >
-          <div className="lg:w-7/12">
+          <div className="lg:w-1/2">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
               Streamline Your Clinic Management
             </h1>
@@ -95,7 +96,7 @@ const ClinicManagementLanding = () => {
               </Button>
             </div>
           </div>
-          <div className="lg:w-5/12 rounded-lg shadow-lg overflow-hidden">
+          <div className="lg:w-1/2 rounded-lg shadow-lg overflow-hidden">
             <Tabs defaultValue="login" className="w-full">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="login">Access Portal</TabsTrigger>
@@ -276,8 +277,8 @@ const ClinicManagementLanding = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               <Card className="border-none card-shadow">
                 <CardContent className="p-6 flex flex-col items-center text-center">
-                  <div className="w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center mb-4">
-                    <Calendar className="h-6 w-6" />
+                  <div className="w-14 h-14 rounded-full sky-gradient flex items-center justify-center mb-4">
+                    <Calendar className="h-6 w-6 text-white" />
                   </div>
                   <h3 className="text-xl font-semibold mb-2">Smart Appointment Scheduling</h3>
                   <p className="text-gray-600">
@@ -288,8 +289,8 @@ const ClinicManagementLanding = () => {
 
               <Card className="border-none card-shadow">
                 <CardContent className="p-6 flex flex-col items-center text-center">
-                  <div className="w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center mb-4">
-                    <Users className="h-6 w-6" />
+                  <div className="w-14 h-14 rounded-full sky-gradient flex items-center justify-center mb-4">
+                    <Users className="h-6 w-6 text-white" />
                   </div>
                   <h3 className="text-xl font-semibold mb-2">Patient Management</h3>
                   <p className="text-gray-600">
@@ -300,8 +301,8 @@ const ClinicManagementLanding = () => {
 
               <Card className="border-none card-shadow">
                 <CardContent className="p-6 flex flex-col items-center text-center">
-                  <div className="w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center mb-4">
-                    <FileText className="h-6 w-6" />
+                  <div className="w-14 h-14 rounded-full sky-gradient flex items-center justify-center mb-4">
+                    <FileText className="h-6 w-6 text-white" />
                   </div>
                   <h3 className="text-xl font-semibold mb-2">Electronic Health Records</h3>
                   <p className="text-gray-600">
@@ -312,8 +313,8 @@ const ClinicManagementLanding = () => {
 
               <Card className="border-none card-shadow">
                 <CardContent className="p-6 flex flex-col items-center text-center">
-                  <div className="w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center mb-4">
-                    <LineChart className="h-6 w-6" />
+                  <div className="w-14 h-14 rounded-full sky-gradient flex items-center justify-center mb-4">
+                    <LineChart className="h-6 w-6 text-white" />
                   </div>
                   <h3 className="text-xl font-semibold mb-2">Advanced Analytics</h3>
                   <p className="text-gray-600">
@@ -324,8 +325,8 @@ const ClinicManagementLanding = () => {
 
               <Card className="border-none card-shadow">
                 <CardContent className="p-6 flex flex-col items-center text-center">
-                  <div className="w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center mb-4">
-                    <Clock className="h-6 w-6" />
+                  <div className="w-14 h-14 rounded-full sky-gradient flex items-center justify-center mb-4">
+                    <Clock className="h-6 w-6 text-white" />
                   </div>
                   <h3 className="text-xl font-semibold mb-2">Billing & Payments</h3>
                   <p className="text-gray-600">
@@ -336,8 +337,8 @@ const ClinicManagementLanding = () => {
 
               <Card className="border-none card-shadow">
                 <CardContent className="p-6 flex flex-col items-center text-center">
-                  <div className="w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center mb-4">
-                    <Shield className="h-6 w-6" />
+                  <div className="w-14 h-14 rounded-full sky-gradient flex items-center justify-center mb-4">
+                    <Shield className="h-6 w-6 text-white" />
                   </div>
                   <h3 className="text-xl font-semibold mb-2">Compliance & Security</h3>
                   <p className="text-gray-600">

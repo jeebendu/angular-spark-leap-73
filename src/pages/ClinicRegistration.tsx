@@ -100,7 +100,7 @@ const ClinicRegistration = () => {
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8">
           {/* Left side - SaaS Product Info */}
-          <div className="md:col-span-8 lg:col-span-7">
+          <div className="md:col-span-7">
             <div className="mb-8">
               <img 
                 src="https://res.cloudinary.com/dzxuxfagt/image/upload/h_100/assets/logo.png" 
@@ -175,7 +175,7 @@ const ClinicRegistration = () => {
           </div>
           
           {/* Right side - Registration/Access Form */}
-          <div className="md:col-span-4 lg:col-span-5">
+          <div className="md:col-span-5">
             <Card className="shadow-lg">
               <CardContent className="p-8">
                 <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "register" | "access")}>
@@ -184,7 +184,7 @@ const ClinicRegistration = () => {
                     <TabsTrigger value="access">Access Existing Clinic</TabsTrigger>
                   </TabsList>
                   
-                  <TabsContent value="register" className="h-auto">
+                  <TabsContent value="register">
                     <Form {...registrationForm}>
                       <form onSubmit={registrationForm.handleSubmit(onSubmitRegistration)} className="space-y-6">
                         <div className="space-y-4">

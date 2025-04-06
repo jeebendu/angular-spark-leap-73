@@ -7,9 +7,7 @@ export function MobileNavigation() {
   const isMobile = useIsMobile();
   const location = useLocation();
   
-  // Hide navigation on specific pages
-  const hideOnPaths = ['/clinic-management', '/clinic-registration'];
-  if (!isMobile || hideOnPaths.some(path => location.pathname.includes(path))) return null;
+  if (!isMobile) return null;
   
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t py-2 md:hidden shadow-lg">

@@ -1,3 +1,4 @@
+
 import { Link, useParams, useLocation } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
 import { ArrowLeft } from "lucide-react";
@@ -5,6 +6,7 @@ import { DoctorHeader } from "@/components/doctor/DoctorHeader";
 import { DoctorDetailsTabs } from "@/components/doctor/DoctorDetailsTabs";
 import { SimilarDoctors } from "@/components/doctor/SimilarDoctors";
 import { useEffect, useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 
 // Type for doctor
 interface Doctor {
@@ -112,7 +114,16 @@ const DoctorDetails = () => {
         </Link>
         
         {/* Doctor Header */}
-        <DoctorHeader doctor={doctor} />
+        <div className="relative">
+          <DoctorHeader doctor={doctor} />
+          
+          {/* Bio card that overlaps */}
+          <Card className="mx-4 -mt-6 mb-6 relative z-10 shadow-md">
+            <CardContent className="p-4 text-gray-700 text-sm leading-relaxed">
+              {doctor.bio}
+            </CardContent>
+          </Card>
+        </div>
         
         {/* Doctor Details Tabs */}
         <DoctorDetailsTabs doctor={doctor} />

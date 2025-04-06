@@ -32,8 +32,8 @@ export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
       <div className="flex flex-col">
         {/* Header with image and basic info */}
         <div className="flex">
-          {/* Doctor Image */}
-          <div className="w-1/4 md:w-1/5">
+          {/* Doctor Image - made smaller */}
+          <div className="w-1/5 md:w-1/6">
             <img 
               src={`https://placehold.co/600x400/eaf7fc/33C3F0?text=Dr.+Emily&font=montserrat`}
               alt={doctor.name}
@@ -42,7 +42,7 @@ export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
           </div>
           
           {/* Basic Doctor Info */}
-          <div className="p-4 w-3/4 md:w-4/5">
+          <div className="p-4 w-4/5 md:w-5/6">
             <div className="flex items-start justify-between">
               <div>
                 <h1 className="text-xl md:text-2xl font-bold text-gray-900">{doctor.name}</h1>
@@ -72,7 +72,7 @@ export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
                     <span>{doctor.languages.join(", ")}</span>
                   </Badge>
                   <Badge variant="outline" className="flex items-center gap-1 rounded-full px-3 py-1 text-xs">
-                    <Building className="h-3 w-3" />
+                    <Award className="h-3 w-3" />
                     <span>{doctor.clinics.length} Clinics</span>
                   </Badge>
                 </div>
@@ -88,18 +88,18 @@ export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
               </div>
             </div>
             
-            {/* Consultation Fee and Book Appointment */}
-            <div className="flex items-center justify-between mt-3">
+            {/* Consultation Fee and Book Appointment - reverted to previous style with larger fee font */}
+            <div className="flex items-center justify-between mt-4">
               <div>
-                <p className="text-gray-500 text-xs">Consultation Fee</p>
-                <p className="text-lg font-bold text-primary">₹{doctor.consultationFee.replace('₹', '')}</p>
+                <p className="text-gray-500 text-sm">Consultation Fee</p>
+                <p className="text-lg md:text-xl font-bold text-primary">₹{doctor.consultationFee.replace('₹', '')}</p>
               </div>
               
               <BookAppointmentModal 
                 doctorName={doctor.name}
                 specialty={doctor.specialty}
                 trigger={
-                  <Button className="sky-button rounded-full px-6 py-1 h-auto">Book Appointment</Button>
+                  <Button className="bg-primary hover:bg-primary/90 text-white rounded-full px-6 py-2">Book Appointment</Button>
                 }
               />
             </div>

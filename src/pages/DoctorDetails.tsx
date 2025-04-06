@@ -1,4 +1,3 @@
-
 import { Link, useParams, useLocation } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
 import { ArrowLeft } from "lucide-react";

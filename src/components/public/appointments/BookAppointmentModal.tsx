@@ -32,13 +32,21 @@ import { NavigationButtons } from "./NavigationButtons";
 interface BookAppointmentModalProps {
   doctorName?: string;
   specialty?: string;
+  initialClinicId?: string;
+  initialStep?: number;
   trigger: React.ReactNode;
 }
 
-export function BookAppointmentModal({ doctorName, specialty, trigger }: BookAppointmentModalProps) {
-  const [step, setStep] = useState(1);
+export function BookAppointmentModal({ 
+  doctorName, 
+  specialty, 
+  initialClinicId, 
+  initialStep = 1,
+  trigger 
+}: BookAppointmentModalProps) {
+  const [step, setStep] = useState(initialStep);
   const [open, setOpen] = useState(false);
-  const [selectedClinicId, setSelectedClinicId] = useState(""); // Store clinic ID instead of clinic object
+  const [selectedClinicId, setSelectedClinicId] = useState(initialClinicId || ""); // Store clinic ID
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedMember, setSelectedMember] = useState("self");
@@ -54,6 +62,13 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
   const selectedClinic = getClinicById(selectedClinicId);
   
   const stepLabels = ["Clinic", "Date & Time", "Patient", "Review", "Payment"];
+  
+  // Set initial clinic when modal opens if provided
+  useEffect(() => {
+    if (open && initialClinicId && !selectedClinicId) {
+      setSelectedClinicId(initialClinicId);
+    }
+  }, [open, initialClinicId, selectedClinicId]);
   
   // Auto-advance to next step when date and time are selected
   useEffect(() => {
@@ -124,8 +139,8 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
   };
   
   const resetForm = () => {
-    setStep(1);
-    setSelectedClinicId("");
+    setStep(initialStep);
+    setSelectedClinicId(initialClinicId || "");
     setSelectedDate("");
     setSelectedTime("");
     setSelectedMember("self");
@@ -141,85 +156,91 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
         {trigger}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[800px] p-0 overflow-hidden bg-white modal-background">
-        <DialogHeader className="p-6 pb-2">
+        <DialogHeader className="p-6 pb-2 sticky top-0 bg-white z-10">
           <DialogTitle>Book an Appointment</DialogTitle>
         </DialogHeader>
         
         <div className="px-6 pt-2 pb-6">
           {/* Step indicator */}
-          <StepIndicator 
-            currentStep={step} 
-            totalSteps={5} 
-            onStepClick={goToStep} 
-            validateCurrentStep={() => validateCurrentStep(step, { 
-              selectedClinic: selectedClinic!, // Use the clinic object, with non-null assertion
-              selectedDate, 
-              selectedTime, 
-              selectedMember, 
-              doctorName, 
-              specialty 
-            }, toastObject)} 
-          />
+          <div className="sticky top-14 bg-white z-10 pt-2 pb-4">
+            <StepIndicator 
+              currentStep={step} 
+              totalSteps={5} 
+              onStepClick={goToStep} 
+              validateCurrentStep={() => validateCurrentStep(step, { 
+                selectedClinic: selectedClinic!, // Use the clinic object, with non-null assertion
+                selectedDate, 
+                selectedTime, 
+                selectedMember, 
+                doctorName, 
+                specialty 
+              }, toastObject)} 
+            />
 
-          {/* Step labels */}
-          <StepLabels labels={stepLabels} currentStep={step} />
+            {/* Step labels */}
+            <StepLabels labels={stepLabels} currentStep={step} />
+          </div>
           
-          {/* Step content */}
-          {step === 1 && (
-            <ClinicSelectionStep 
-              selectedClinic={selectedClinicId}
-              setSelectedClinic={setSelectedClinicId}
-              clinics={clinics}
-            />
-          )}
-          
-          {step === 2 && (
-            <DateTimeSelectionStep 
-              selectedDate={selectedDate}
-              setSelectedDate={setSelectedDate}
-              selectedTime={selectedTime}
-              setSelectedTime={setSelectedTime}
-              availableTimes={availableTimes}
-            />
-          )}
-          
-          {step === 3 && (
-            <PatientSelectionStep 
-              selectedMember={selectedMember}
-              setSelectedMember={setSelectedMember}
-              familyMembers={familyMembers}
-            />
-          )}
-          
-          {step === 4 && (
-            <ReviewStep 
-              doctorName={doctorName}
-              specialty={specialty}
-              selectedClinic={selectedClinicId}
-              clinics={clinics}
-              selectedDate={selectedDate}
-              selectedTime={selectedTime}
-              selectedMember={selectedMember}
-              familyMembers={familyMembers}
-            />
-          )}
-          
-          {step === 5 && (
-            <PaymentStep 
-              paymentMethod={paymentMethod}
-              setPaymentMethod={setPaymentMethod}
-            />
-          )}
+          {/* Step content - made scrollable */}
+          <div className="max-h-[60vh] overflow-y-auto pr-2 pb-16">
+            {step === 1 && (
+              <ClinicSelectionStep 
+                selectedClinic={selectedClinicId}
+                setSelectedClinic={setSelectedClinicId}
+                clinics={clinics}
+              />
+            )}
+            
+            {step === 2 && (
+              <DateTimeSelectionStep 
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}
+                selectedTime={selectedTime}
+                setSelectedTime={setSelectedTime}
+                availableTimes={availableTimes}
+              />
+            )}
+            
+            {step === 3 && (
+              <PatientSelectionStep 
+                selectedMember={selectedMember}
+                setSelectedMember={setSelectedMember}
+                familyMembers={familyMembers}
+              />
+            )}
+            
+            {step === 4 && (
+              <ReviewStep 
+                doctorName={doctorName}
+                specialty={specialty}
+                selectedClinic={selectedClinicId}
+                clinics={clinics}
+                selectedDate={selectedDate}
+                selectedTime={selectedTime}
+                selectedMember={selectedMember}
+                familyMembers={familyMembers}
+              />
+            )}
+            
+            {step === 5 && (
+              <PaymentStep 
+                paymentMethod={paymentMethod}
+                setPaymentMethod={setPaymentMethod}
+              />
+            )}
+          </div>
         </div>
         
-        {/* Navigation Buttons */}
-        <NavigationButtons 
-          step={step}
-          totalSteps={5}
-          onNext={nextStep}
-          onPrev={prevStep}
-          onConfirm={handleBookAppointment}
-        />
+        {/* Navigation Buttons - fixed at bottom */}
+        <div className="sticky bottom-0 bg-white z-10">
+          <NavigationButtons 
+            step={step}
+            totalSteps={5}
+            onNext={nextStep}
+            onPrev={prevStep}
+            onConfirm={handleBookAppointment}
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );

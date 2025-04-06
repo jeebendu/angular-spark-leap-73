@@ -1,3 +1,4 @@
+
 import { AppLayout } from "@/components/AppLayout";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -7,6 +8,7 @@ import { fetchDoctorById } from "@/services/DoctorService"; // Import the servic
 import { DoctorHeader } from "@/components/public/doctor/details/DoctorHeader";
 import { DoctorDetailsTabs } from "@/components/public/doctor/details/DoctorDetailsTabs";
 import { SimilarDoctors } from "@/components/public/doctor/details/SimilarDoctors";
+import { setPageTitle, updateMetaTags } from "@/utils/seoUtils";
 
 const DoctorDetails = () => {
   const { doctorId } = useParams(); // Get the doctor ID from the URL
@@ -22,8 +24,24 @@ const DoctorDetails = () => {
           setLoading(true); // Set loading to true before fetching
           const response = await fetchDoctorById(doctorId); // Fetch doctor data
           setDoctor(response.data); // Update state with fetched data
+          
+          // Set SEO tags once doctor data is loaded
+          if (response.data) {
+            const doctorName = response.data.name;
+            const specialty = response.data.specializationList[0]?.name || '';
+            setPageTitle(`${doctorName} - ${specialty} | ClinicHub.care`);
+            updateMetaTags(
+              `Book an appointment with ${doctorName}, ${specialty} with ${response.data.expYear} years of experience. View doctor details, clinics, and available time slots.`,
+              `doctor, ${specialty}, medical appointment, healthcare, clinichub`
+            );
+          }
         } catch (error) {
           console.error("Failed to fetch doctor details:", error);
+          setPageTitle("Doctor Details | ClinicHub.care");
+          updateMetaTags(
+            "Doctor profile not found. Browse other doctors or specialists available on ClinicHub.",
+            "doctor not found, healthcare, clinichub"
+          );
         } finally {
           setLoading(false); // Set loading to false after fetching
         }

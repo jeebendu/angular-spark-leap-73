@@ -19,7 +19,7 @@ export function NavigationButtons({
   onConfirm 
 }: NavigationButtonsProps) {
   return (
-    <div className="p-6 border-t flex justify-between">
+    <div className="p-6 border-t flex justify-between w-full bg-white shadow-md">
       {step > 1 ? (
         <Button 
           variant="outline" 

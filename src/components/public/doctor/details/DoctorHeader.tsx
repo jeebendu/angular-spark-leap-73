@@ -9,6 +9,9 @@ import { BookAppointmentModal } from "../../appointments/BookAppointmentModal";
 interface DoctorHeaderProps { doctor: Doctor }
 
 export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
+  // Get the first clinic if available for pre-selection
+  const firstClinic = doctor.clinics && doctor.clinics.length > 0 ? doctor.clinics[0] : null;
+  
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden mb-6">
       <div className="md:flex">
@@ -97,6 +100,8 @@ export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
             <BookAppointmentModal 
               doctorName={doctor.name}
               specialty={doctor.specializationList[0]?.name || "Specialty Not Available"}
+              initialClinicId={firstClinic ? firstClinic.id : undefined}
+              initialStep={firstClinic ? 2 : 1}
               trigger={
                 <Button className="sky-button rounded-full px-8 py-2">Book Appointment</Button>
               }

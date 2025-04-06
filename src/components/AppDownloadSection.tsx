@@ -16,14 +16,9 @@ export function AppDownloadSection() {
               viewport={{ once: true }}
               className="text-white pr-0 md:pr-8"
             >
-              <div className="flex items-center mb-4">
-                <img 
-                  src="https://res.cloudinary.com/dzxuxfagt/image/upload/h_100/assets/logo.png" 
-                  alt="ClinicHub Logo" 
-                  className="h-8 w-auto object-contain mr-2 bg-white/20 backdrop-blur-sm p-1 rounded"
-                />
-                <h3 className="text-2xl md:text-3xl font-bold">App</h3>
-              </div>
+              <h3 className="text-2xl md:text-3xl font-bold mb-4">
+                Download the ClinicHub App
+              </h3>
               <p className="text-white/90 mb-6 text-base md:text-lg">
                 Book appointments, track health records, and get medication reminders all in one place.
               </p>
@@ -80,7 +75,7 @@ export function AppDownloadSection() {
               <div className="relative w-48 md:w-64 h-auto">
                 <div className="absolute inset-0 bg-gradient-to-t from-primary via-transparent to-transparent rounded-2xl"></div>
                 <img 
-                  src="https://preview--appointify-platform-67.lovable.app/lovable-uploads/d82a74cb-0b37-4b2c-8189-2b22f05c214a.png" 
+                  src="https://res.cloudinary.com/dzxuxfagt/image/upload/h_100/assets/logo.png" 
                   alt="ClinicHub App"
                   className="mx-auto z-10 relative"
                 />

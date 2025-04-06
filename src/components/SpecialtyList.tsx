@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+
+import { Heart, Brain, Eye, Stethoscope, Bone, Baby, Activity, Scissors } from "lucide-react";
 import { motion } from "framer-motion";
-import * as Icons from "lucide-react"; // Import all icons dynamically
-import { fetchAllSpecializations } from "@/services/SpecializationService";
 
 interface SpecialtyItemProps {
   icon: React.ReactNode;
@@ -23,35 +22,26 @@ const SpecialtyItem = ({ icon, name }: SpecialtyItemProps) => (
 );
 
 export function SpecialtyList() {
-  const [specialties, setSpecialties] = useState<any[]>([]);
-
-  // Fetch specialties from the API
-  useEffect(() => {
-    const fetchSpecialties = async () => {
-      try {
-        const response = await fetchAllSpecializations(); // Call the API
-        setSpecialties(response.data); // Assuming the API response has a `data` field
-      } catch (error) {
-        console.error("Failed to fetch specialties:", error);
-      }
-    };
-
-    fetchSpecialties();
-  }, []);
-
+  const specialties = [
+    { name: "Cardiology", icon: <Heart className="h-5 w-5" /> },
+    { name: "Neurology", icon: <Brain className="h-5 w-5" /> },
+    { name: "Ophthalmology", icon: <Eye className="h-5 w-5" /> },
+    { name: "Internal Medicine", icon: <Stethoscope className="h-5 w-5" /> },
+    { name: "Orthopedics", icon: <Bone className="h-5 w-5" /> },
+    { name: "Pediatrics", icon: <Baby className="h-5 w-5" /> },
+    { name: "Dentistry", icon: <Scissors className="h-5 w-5" /> },
+    { name: "General Health", icon: <Activity className="h-5 w-5" /> }
+  ];
+  
   return (
     <div className="grid grid-cols-4 md:grid-cols-8 gap-2 md:gap-4">
-      {specialties.map((specialty) => {
-        // Dynamically get the icon component from the imported Icons
-        const IconComponent = (Icons as unknown as Record<string, React.ElementType>)[specialty.icon];
-        return (
-          <SpecialtyItem
-            key={specialty.id} // Assuming each specialty has a unique `id`
-            icon={IconComponent ? <IconComponent className="h-5 w-5" /> : null}
-            name={specialty.name}
-          />
-        );
-      })}
+      {specialties.map((specialty, index) => (
+        <SpecialtyItem 
+          key={specialty.name}
+          icon={specialty.icon}
+          name={specialty.name}
+        />
+      ))}
     </div>
   );
 }

@@ -37,7 +37,7 @@ export function DesktopNav() {
                       className="flex items-center p-2 hover:bg-slate-100 rounded-md"
                     >
                       <User className="mr-2 h-4 w-4" />
-                      <span>Doctors</span>
+                      <span>Doctor Dashboard</span>
                     </Link>
                   </NavigationMenuLink>
                 </li>

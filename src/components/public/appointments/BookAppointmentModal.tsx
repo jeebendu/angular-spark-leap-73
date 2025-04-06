@@ -1,4 +1,3 @@
-
 import {
   Dialog,
   DialogContent,
@@ -18,8 +17,7 @@ import {
   getFamilyMembers,
   validateCurrentStep
 } from "@/services/appointmentService";
-import { StepIndicator } from "./StepIndicator";
-import { StepLabels } from "./StepLabels";
+import { CombinedStepIndicator } from "./CombinedStepIndicator";
 import { DateTimeSelectionStep } from "./steps/DateTimeSelectionStep";
 import { ClinicSelectionStep } from "./steps/ClinicSelectionStep";
 import { PatientSelectionStep } from "./steps/PatientSelectionStep";
@@ -273,7 +271,7 @@ export function BookAppointmentModal({
           {trigger}
         </DialogTrigger>
         <DialogContent 
-          className="sm:max-w-[800px] p-0 overflow-hidden bg-white"
+          className="sm:max-w-[800px] p-0 overflow-hidden bg-white pointer-events-auto"
           onPointerDownOutside={(e) => e.preventDefault()} // Prevent closing on outside click
           onEscapeKeyDown={(e) => e.preventDefault()} // Prevent closing on escape key
         >
@@ -291,17 +289,15 @@ export function BookAppointmentModal({
           </DialogHeader>
           
           <div className="px-6 pt-4 pb-0">
-            {/* Step indicator */}
+            {/* Combined step indicator */}
             <div className="sticky top-16 bg-white z-10 pb-4">
-              <StepIndicator 
+              <CombinedStepIndicator
                 currentStep={step} 
-                totalSteps={5} 
+                totalSteps={5}
+                stepLabels={stepLabels}
                 onStepClick={goToStep}
                 validateCurrentStep={validateCurrentStepWithErrorHandling}
               />
-
-              {/* Step labels */}
-              <StepLabels labels={stepLabels} currentStep={step} />
             </div>
             
             {/* Error message */}
@@ -313,7 +309,7 @@ export function BookAppointmentModal({
           </div>
           
           {/* Step content - made scrollable with padding to prevent content being hidden by buttons */}
-          <div className="px-6 pb-24 max-h-[60vh] overflow-y-auto">
+          <div className="px-6 pb-28 max-h-[60vh] overflow-y-auto">
             {renderStepContent()}
           </div>
           

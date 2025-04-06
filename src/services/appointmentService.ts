@@ -1,3 +1,4 @@
+
 import { Appointment, ClinicReference } from "@/models/appointment/Appointment";
 import { Clinic } from "@/models/clinic/Clinic";
 import { FamilyMember } from "@/models/patient/Patient";
@@ -63,10 +64,11 @@ export const getClinics = (): Clinic[] => [
   }
 ];
 
-// Available times
+// Available times - Updated to include more slots and match the image
 export const getAvailableTimes = (): string[] => [
-  "09:00 AM", "10:00 AM", "11:00 AM", 
-  "01:00 PM", "02:00 PM", "03:00 PM", "04:00 PM"
+  "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM", 
+  "12:00 PM", "12:30 PM", "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM", 
+  "04:00 PM", "04:30 PM", "05:00 PM", "05:30 PM"
 ];
 
 // Updated validation function to accept ClinicReference instead of Clinic

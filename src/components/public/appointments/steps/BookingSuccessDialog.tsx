@@ -36,7 +36,7 @@ export function BookingSuccessDialog({
   
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="bg-white modal-background max-w-md mx-auto">
+      <AlertDialogContent className="bg-white max-w-md mx-auto pointer-events-auto">
         <AlertDialogHeader>
           <div className="mx-auto rounded-full bg-green-100 p-3 w-16 h-16 flex items-center justify-center mb-4">
             <Check className="h-8 w-8 text-green-600" strokeWidth={3} />

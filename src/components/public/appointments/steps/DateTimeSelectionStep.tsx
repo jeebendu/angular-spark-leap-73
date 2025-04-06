@@ -33,8 +33,15 @@ export function DateTimeSelectionStep({
   };
 
   // Group time slots for better display
-  const morningSlots = availableTimes.filter(time => time.includes('AM'));
-  const afternoonSlots = availableTimes.filter(time => time.includes('PM'));
+  const morningSlots = availableTimes.filter(time => 
+    time.includes('AM') || time === "12:00 PM" || time === "12:30 PM"
+  );
+  const afternoonSlots = availableTimes.filter(time => 
+    time.includes('PM') && !time.includes('12:') && !time.includes('05:')
+  );
+  const eveningSlots = availableTimes.filter(time => 
+    time.includes('05:') && time.includes('PM')
+  );
 
   return (
     <div className="space-y-4">
@@ -52,42 +59,68 @@ export function DateTimeSelectionStep({
         <div>
           <div className="bg-white rounded-lg border h-full p-4">
             {date ? (
-              <div className="space-y-6">
-                <div className="mb-4">
-                  <h4 className="text-sm font-medium text-gray-500 mb-3">Morning</h4>
-                  <div className="grid grid-cols-3 gap-2">
-                    {morningSlots.map((time) => (
-                      <Button
-                        key={time}
-                        variant="outline"
-                        className={`text-sm h-10 ${
-                          selectedTime === time ? "bg-primary text-white border-primary hover:bg-primary/90 hover:text-white" : ""
-                        }`}
-                        onClick={() => setSelectedTime(time)}
-                      >
-                        {time}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium mb-2">Available Slots</h3>
                 
-                <div>
-                  <h4 className="text-sm font-medium text-gray-500 mb-3">Afternoon</h4>
-                  <div className="grid grid-cols-3 gap-2">
-                    {afternoonSlots.map((time) => (
-                      <Button
-                        key={time}
-                        variant="outline"
-                        className={`text-sm h-10 ${
-                          selectedTime === time ? "bg-primary text-white border-primary hover:bg-primary/90 hover:text-white" : ""
-                        }`}
-                        onClick={() => setSelectedTime(time)}
-                      >
-                        {time}
-                      </Button>
-                    ))}
+                {morningSlots.length > 0 && (
+                  <div className="mb-3">
+                    <h4 className="text-sm font-medium text-gray-500 mb-2">Morning</h4>
+                    <div className="grid grid-cols-3 gap-2">
+                      {morningSlots.map((time) => (
+                        <Button
+                          key={time}
+                          variant="outline"
+                          className={`text-sm h-10 ${
+                            selectedTime === time ? "bg-primary text-white border-primary hover:bg-primary/90 hover:text-white" : ""
+                          }`}
+                          onClick={() => setSelectedTime(time)}
+                        >
+                          {time}
+                        </Button>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
+                
+                {afternoonSlots.length > 0 && (
+                  <div className="mb-3">
+                    <h4 className="text-sm font-medium text-gray-500 mb-2">Afternoon</h4>
+                    <div className="grid grid-cols-3 gap-2">
+                      {afternoonSlots.map((time) => (
+                        <Button
+                          key={time}
+                          variant="outline"
+                          className={`text-sm h-10 ${
+                            selectedTime === time ? "bg-primary text-white border-primary hover:bg-primary/90 hover:text-white" : ""
+                          }`}
+                          onClick={() => setSelectedTime(time)}
+                        >
+                          {time}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {eveningSlots.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-500 mb-2">Evening</h4>
+                    <div className="grid grid-cols-3 gap-2">
+                      {eveningSlots.map((time) => (
+                        <Button
+                          key={time}
+                          variant="outline"
+                          className={`text-sm h-10 ${
+                            selectedTime === time ? "bg-primary text-white border-primary hover:bg-primary/90 hover:text-white" : ""
+                          }`}
+                          onClick={() => setSelectedTime(time)}
+                        >
+                          {time}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="h-full flex items-center justify-center text-gray-400">

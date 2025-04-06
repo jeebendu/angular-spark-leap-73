@@ -1,11 +1,9 @@
-
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
 import { useToast } from "@/components/ui/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { DoctorFilters } from "@/components/doctor/DoctorFilters";
-import { DoctorSearchHeader } from "@/components/doctor/search/DoctorSearchHeader";
 import { DoctorSearchBar } from "@/components/doctor/search/DoctorSearchBar";
 import { DoctorsList } from "@/components/doctor/search/DoctorsList";
 import { BookingModal } from "@/components/doctor/search/BookingModal";
@@ -18,7 +16,8 @@ const DoctorSearch = () => {
   
   const [searchTerm, setSearchTerm] = useState(initialQuery);
   const [priceRange, setPriceRange] = useState<[number, number]>([500, 2000]);
-  const [filterOpen, setFilterOpen] = useState(true);
+  const isMobile = useIsMobile();
+  const [filterOpen, setFilterOpen] = useState(!isMobile);
   const [selectedSpecialties, setSelectedSpecialties] = useState<string[]>(
     initialSpecialty ? [initialSpecialty] : []
   );
@@ -41,7 +40,6 @@ const DoctorSearch = () => {
   const [showNoMoreDoctors, setShowNoMoreDoctors] = useState(false);
   
   const observer = useRef<IntersectionObserver>();
-  const isMobile = useIsMobile();
   const { toast } = useToast();
   
   const specialties = [
@@ -258,8 +256,6 @@ const DoctorSearch = () => {
   return (
     <AppLayout>
       <div className="container px-4 py-6">
-        <DoctorSearchHeader />
-        
         <DoctorSearchBar
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}

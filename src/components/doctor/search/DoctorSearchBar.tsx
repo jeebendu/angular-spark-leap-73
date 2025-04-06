@@ -93,7 +93,7 @@ export function DoctorSearchBar({
         {!isMobile && (
           <Button 
             variant={filterOpen ? "default" : "outline"}
-            className={`flex items-center gap-2 ${filterOpen ? 'bg-primary text-white' : 'border border-gray-200 bg-white'}`}
+            className={`flex items-center gap-2 ${filterOpen ? 'bg-[#0ABAB5] text-white' : 'border border-gray-200 bg-white'}`}
             onClick={() => setFilterOpen(!filterOpen)}
           >
             <SlidersHorizontal className="h-4 w-4" />

@@ -1,13 +1,11 @@
 
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Star, X, HelpCircle, Search } from "lucide-react";
+import { X, HelpCircle, Search } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
 import { 
   Tooltip,
@@ -91,12 +89,6 @@ export const DoctorFilters = ({
         return "Find doctors with your preferred years of medical experience";
       case 'languages':
         return "Filter doctors who speak specific languages";
-      case 'price':
-        return "Set your budget range for consultation fees";
-      case 'availability':
-        return "Find doctors with appointments available soon";
-      case 'rating':
-        return "Filter by patient satisfaction ratings";
       default:
         return "Apply filters to refine your search";
     }
@@ -167,7 +159,7 @@ export const DoctorFilters = ({
               {specialties.length > 10 && specialtySearch === "" && (
                 <Button 
                   variant="link" 
-                  className="text-xs p-0 h-auto text-primary"
+                  className="text-xs p-0 h-auto text-[#0ABAB5]"
                   onClick={() => setShowAllSpecialties(!showAllSpecialties)}
                 >
                   {showAllSpecialties ? "Show fewer specialties" : "See more specialties"}
@@ -195,7 +187,7 @@ export const DoctorFilters = ({
                     key={gender}
                     variant={selectedGenders.includes(gender) ? "default" : "outline"}
                     size="sm"
-                    className={`rounded-full text-xs ${selectedGenders.includes(gender) ? 'bg-primary text-white' : 'bg-white'}`}
+                    className={`rounded-full text-xs ${selectedGenders.includes(gender) ? 'bg-[#0ABAB5] text-white' : 'bg-white'}`}
                     onClick={() => toggleGender(gender)}
                   >
                     {gender}
@@ -227,7 +219,7 @@ export const DoctorFilters = ({
                     key={experience}
                     variant={selectedExperience.includes(experience) ? "default" : "outline"}
                     size="sm"
-                    className={`rounded-full text-xs ${selectedExperience.includes(experience) ? 'bg-primary text-white' : 'bg-white'}`}
+                    className={`rounded-full text-xs ${selectedExperience.includes(experience) ? 'bg-[#0ABAB5] text-white' : 'bg-white'}`}
                     onClick={() => toggleExperience(experience)}
                   >
                     {experience}
@@ -259,7 +251,7 @@ export const DoctorFilters = ({
                     key={language}
                     variant={selectedLanguages.includes(language) ? "default" : "outline"}
                     size="sm"
-                    className={`rounded-full text-xs ${selectedLanguages.includes(language) ? 'bg-primary text-white' : 'bg-white'}`}
+                    className={`rounded-full text-xs ${selectedLanguages.includes(language) ? 'bg-[#0ABAB5] text-white' : 'bg-white'}`}
                     onClick={() => toggleLanguage(language)}
                   >
                     {language}
@@ -271,98 +263,7 @@ export const DoctorFilters = ({
               </div>
             </div>
             
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <h4 className="font-medium">Price Range</h4>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <HelpCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="w-64 text-xs">{getFilterHelp('price')}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-              <div className="px-2">
-                <Slider
-                  defaultValue={[500, 2000]}
-                  max={5000}
-                  step={100}
-                  value={priceRange}
-                  onValueChange={(value) => setPriceRange(value as [number, number])}
-                />
-                <div className="flex justify-between mt-2 text-sm">
-                  <span>₹{priceRange[0]}</span>
-                  <span>₹{priceRange[1]}</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <h4 className="font-medium">Availability</h4>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <HelpCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="w-64 text-xs">{getFilterHelp('availability')}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center">
-                  <Switch id="desktop-available-today" className="mr-2" />
-                  <label htmlFor="desktop-available-today" className="text-sm">
-                    Available Today
-                  </label>
-                </div>
-                <div className="flex items-center">
-                  <Switch id="desktop-available-week" className="mr-2" />
-                  <label htmlFor="desktop-available-week" className="text-sm">
-                    Available This Week
-                  </label>
-                </div>
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <h4 className="font-medium">Rating</h4>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <HelpCircle className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="w-64 text-xs">{getFilterHelp('rating')}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center">
-                  <Switch id="desktop-rating-4-plus" className="mr-2" />
-                  <label htmlFor="desktop-rating-4-plus" className="text-sm flex items-center">
-                    <span>4+</span>
-                    <Star className="h-3 w-3 fill-yellow-400 text-yellow-400 ml-1" />
-                  </label>
-                </div>
-                <div className="flex items-center">
-                  <Switch id="desktop-rating-3-plus" className="mr-2" />
-                  <label htmlFor="desktop-rating-3-plus" className="text-sm flex items-center">
-                    <span>3+</span>
-                    <Star className="h-3 w-3 fill-yellow-400 text-yellow-400 ml-1" />
-                  </label>
-                </div>
-              </div>
-            </div>
-            
-            <Button className="w-full sky-button" onClick={applyFilters}>Apply Filters</Button>
+            <Button className="w-full bg-[#0ABAB5] hover:bg-[#09a09b] text-white" onClick={applyFilters}>Apply Filters</Button>
           </div>
         </ScrollArea>
       </CardContent>

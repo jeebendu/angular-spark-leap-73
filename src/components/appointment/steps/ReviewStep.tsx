@@ -27,7 +27,7 @@ export function ReviewStep({
   const patient = getFamilyMemberById(selectedMember);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-2">
       <h3 className="text-lg font-medium mb-4 flex items-center">
         <ClipboardCheck className="mr-2 h-5 w-5" />
         Review Appointment Details

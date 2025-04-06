@@ -7,6 +7,7 @@ import { Clinic } from "@/models/clinic/Clinic";
 import { Doctor } from "@/models/doctor/Doctor";
 import { CalendarDays, CheckCircle2, Clock, MapPin } from "lucide-react";
 import { BookAppointmentModal } from "../../appointments/BookAppointmentModal";
+import { format } from "date-fns";
 
 interface ClinicsTabProps {
   clinics: Clinic[];
@@ -90,26 +91,28 @@ export const ClinicsTab = ({ clinics, doctor }: ClinicsTabProps) => {
         <h3 className="text-lg font-medium mb-4">Select Appointment Date & Time</h3>
         
         <div className="flex flex-col md:flex-row gap-4">
-          <div className="md:w-2/5 lg:w-1/3">
+          <div className="md:w-1/2">
             <Calendar
               mode="single"
               selected={date}
               onSelect={setDate}
-              className="rounded-md border bg-white"
+              className="rounded-md border bg-white w-full max-w-full shadow-sm"
               disabled={(date) => date < new Date(new Date().setHours(0,0,0,0))}
             />
           </div>
           
-          <div className="md:w-3/5 lg:w-2/3">
+          <div className="md:w-1/2">
             <div className="bg-white rounded-lg border h-full p-4">
               {date ? (
-                <div className="space-y-4">
-                  <h4 className="text-md font-medium mb-2">Available Slots</h4>
+                <div className="space-y-3">
+                  <h4 className="text-md font-medium mb-1">
+                    Available Slots for {format(date, "EEEE, MMMM d")}
+                  </h4>
                   
                   {morningSlots.length > 0 && (
-                    <div className="mb-3">
+                    <div className="mb-2">
                       <h5 className="text-sm font-medium text-gray-500 mb-2">Morning</h5>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                         {morningSlots.map((time) => (
                           <Button
                             key={time}
@@ -127,9 +130,9 @@ export const ClinicsTab = ({ clinics, doctor }: ClinicsTabProps) => {
                   )}
                   
                   {afternoonSlots.length > 0 && (
-                    <div className="mb-3">
+                    <div className="mb-2">
                       <h5 className="text-sm font-medium text-gray-500 mb-2">Afternoon</h5>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                         {afternoonSlots.map((time) => (
                           <Button
                             key={time}
@@ -149,7 +152,7 @@ export const ClinicsTab = ({ clinics, doctor }: ClinicsTabProps) => {
                   {eveningSlots.length > 0 && (
                     <div>
                       <h5 className="text-sm font-medium text-gray-500 mb-2">Evening</h5>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                         {eveningSlots.map((time) => (
                           <Button
                             key={time}
@@ -185,9 +188,7 @@ export const ClinicsTab = ({ clinics, doctor }: ClinicsTabProps) => {
           initialStep={3}
           open={isModalOpen}
           onOpenChange={setIsModalOpen}
-          trigger={
-            <Button className="hidden">Hidden Trigger</Button>
-          }
+          trigger={<div className="hidden" />}
         />
       )}
     </div>

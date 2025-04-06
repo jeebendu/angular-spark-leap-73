@@ -12,7 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Star, X, Search } from "lucide-react";
+import { Star, X, Search, Filter } from "lucide-react";
 import { Dispatch, SetStateAction, useState } from "react";
 
 interface MobileDoctorFiltersProps {

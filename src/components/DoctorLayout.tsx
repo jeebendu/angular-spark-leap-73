@@ -216,9 +216,7 @@ export function DoctorLayout({ children }: DoctorLayoutProps) {
         sidebarOpen ? (iconOnly ? "md:ml-16" : "md:ml-64") : "ml-0"
       )}>
         <main className="min-h-screen">
-          <div className="container-width py-6">
-            {children}
-          </div>
+          {children}
         </main>
       </div>
     </div>

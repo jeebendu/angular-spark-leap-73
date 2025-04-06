@@ -83,7 +83,7 @@
 
 @layer components {
   .container-width {
-    @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full;
+    @apply max-w-6xl mx-auto px-4 w-full;
   }
   
   .sky-gradient {

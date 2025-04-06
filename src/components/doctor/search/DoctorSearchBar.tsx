@@ -55,8 +55,8 @@ export function DoctorSearchBar({
   const isMobile = useIsMobile();
 
   return (
-    <div className="flex flex-col md:flex-row items-center gap-2 mb-6">
-      <div className="relative flex-1 w-full">
+    <div className="flex items-center gap-2 mb-4">
+      <div className="relative flex-1">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
         <Input
           type="text"
@@ -67,19 +67,17 @@ export function DoctorSearchBar({
         />
       </div>
       
-      {isMobile && (
-        <Button 
-          variant="outline"
-          className="flex items-center gap-2 border border-gray-200 bg-white h-10 w-10 p-0 rounded-full"
-          onClick={() => setFilterOpen(true)}
-        >
-          <Filter className="h-4 w-4" />
-        </Button>
-      )}
+      <Button 
+        variant="outline"
+        className="flex items-center gap-2 border border-gray-200 bg-white h-10 w-10 p-0 rounded-full"
+        onClick={() => setFilterOpen(true)}
+      >
+        <Filter className="h-4 w-4" />
+      </Button>
       
-      <div className="flex gap-2 mt-2 md:mt-0">
+      <div className="md:flex hidden gap-2">
         <Select value={sortBy} onValueChange={setSortBy}>
-          <SelectTrigger className="w-[160px] md:flex hidden">
+          <SelectTrigger className="w-[160px]">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>
@@ -92,43 +90,31 @@ export function DoctorSearchBar({
         </Select>
         
         <ToggleGroup type="single" value={viewMode} onValueChange={(value) => value && setViewMode(value as "grid" | "list")}>
-          <ToggleGroupItem value="grid" aria-label="Grid view" className="md:flex hidden">
+          <ToggleGroupItem value="grid" aria-label="Grid view">
             <LayoutList className="h-4 w-4" />
           </ToggleGroupItem>
-          <ToggleGroupItem value="list" aria-label="List view" className="md:flex hidden">
+          <ToggleGroupItem value="list" aria-label="List view">
             <Rows className="h-4 w-4" />
           </ToggleGroupItem>
         </ToggleGroup>
-        
-        {!isMobile && (
-          <Button 
-            variant={filterOpen ? "default" : "outline"}
-            className={`flex items-center gap-2 ${filterOpen ? 'bg-[#0ABAB5] text-white' : 'border border-gray-200 bg-white'}`}
-            onClick={() => setFilterOpen(!filterOpen)}
-          >
-            <SlidersHorizontal className="h-4 w-4" />
-            <span>Filters</span>
-          </Button>
-        )}
       </div>
       
-      {isMobile && (
-        <MobileDoctorFilters 
-          open={filterOpen}
-          onOpenChange={setFilterOpen}
-          selectedSpecialties={selectedSpecialties}
-          selectedGenders={selectedGenders}
-          selectedLanguages={selectedLanguages}
-          selectedExperience={selectedExperience}
-          priceRange={priceRange}
-          toggleSpecialty={toggleSpecialty}
-          toggleGender={toggleGender}
-          toggleLanguage={toggleLanguage}
-          toggleExperience={toggleExperience}
-          setPriceRange={setPriceRange}
-          applyFilters={applyFilters}
-        />
-      )}
+      {/* Mobile Doctor Filters */}
+      <MobileDoctorFilters 
+        open={filterOpen}
+        onOpenChange={setFilterOpen}
+        selectedSpecialties={selectedSpecialties}
+        selectedGenders={selectedGenders}
+        selectedLanguages={selectedLanguages}
+        selectedExperience={selectedExperience}
+        priceRange={priceRange}
+        toggleSpecialty={toggleSpecialty}
+        toggleGender={toggleGender}
+        toggleLanguage={toggleLanguage}
+        toggleExperience={toggleExperience}
+        setPriceRange={setPriceRange}
+        applyFilters={applyFilters}
+      />
     </div>
   );
 }

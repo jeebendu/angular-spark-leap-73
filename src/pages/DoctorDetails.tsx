@@ -50,7 +50,7 @@ const DoctorDetails = () => {
       experience: "12+ years",
       rating: 4.8,
       reviewCount: 235,
-      consultationFee: "₹1,200",
+      consultationFee: "1,200",
       bio: "Dr. Emily Johnson is a highly skilled cardiologist with over 12 years of experience in diagnosing and treating heart diseases. She specializes in interventional cardiology and has performed more than 1,000 cardiac procedures.",
       languages: ["English", "Hindi", "Tamil"],
       education: [

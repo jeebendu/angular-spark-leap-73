@@ -70,8 +70,8 @@ export const getAvailableTimes = (): string[] => [
   "01:00 PM", "02:00 PM", "03:00 PM", "04:00 PM"
 ];
 
-// Validation functions
-export const validateClinicSelection = (selectedClinic: Clinic, toastHelpers: ToastHelpers): boolean => {
+// Updated validation function to accept ClinicReference instead of Clinic
+export const validateClinicSelection = (selectedClinic: ClinicReference | string, toastHelpers: ToastHelpers): boolean => {
   if (!selectedClinic) {
     toastHelpers.toast({
       title: "Please select a clinic",
@@ -103,7 +103,7 @@ export const validateDateTimeSelection = (
 export const validatePatientSelection = (): boolean => true;
 export const validateReviewStep = (): boolean => true;
 
-// Validate current step based on step number
+// Validate current step based on step number - Updated to handle ClinicReference
 export const validateCurrentStep = (
   step: number,
   appointment: Appointment,

@@ -6,6 +6,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { LocationProvider } from "./contexts/LocationContext";
 import { useState, useEffect } from "react";
+
+// Pages
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Tests from "./pages/Tests";
@@ -53,6 +55,7 @@ function App() {
           <BrowserRouter>
             <ScrollToTop />
             <Routes>
+              {/* Patient/User Routes */}
               <Route path="/" element={<Index />} />
               <Route path="/doctor-search" element={<DoctorSearch />} />
               <Route path="/doctor/:doctorId" element={<DoctorDetails />} />
@@ -62,7 +65,6 @@ function App() {
               <Route path="/account" element={<Account />} />
               <Route path="/chat" element={<Chat />} />
               <Route path="/clinic-management" element={<ClinicManagementLanding />} />
-              <Route path="*" element={<NotFound />} />
               
               {/* Doctor Routes */}
               <Route path="/doctor" element={<DashboardPage />} />
@@ -75,6 +77,9 @@ function App() {
               {/* Staff Routes */}
               <Route path="/staff" element={<StaffDashboard />} />
               <Route path="/staff/add-patient" element={<AddPatient />} />
+              
+              {/* 404 Route */}
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
         </LocationProvider>

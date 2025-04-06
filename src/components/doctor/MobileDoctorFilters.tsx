@@ -94,7 +94,7 @@ export const MobileDoctorFilters = ({
           
           <ScrollArea className="max-h-[70vh] px-4">
             <div className="space-y-4 py-4">
-              {/* Mobile filters */}
+              {/* Specialties section */}
               <div className="space-y-2">
                 <h3 className="font-medium">Specialty</h3>
                 <div className="relative mb-2">
@@ -136,6 +136,7 @@ export const MobileDoctorFilters = ({
                 )}
               </div>
               
+              {/* Gender section */}
               <div className="space-y-2">
                 <h3 className="font-medium">Gender</h3>
                 <div className="flex flex-wrap gap-2">
@@ -156,6 +157,7 @@ export const MobileDoctorFilters = ({
                 </div>
               </div>
               
+              {/* Experience section */}
               <div className="space-y-2">
                 <h3 className="font-medium">Experience</h3>
                 <div className="flex flex-wrap gap-2">
@@ -176,6 +178,7 @@ export const MobileDoctorFilters = ({
                 </div>
               </div>
               
+              {/* Languages section */}
               <div className="space-y-2 pb-20">
                 <h3 className="font-medium">Languages</h3>
                 <div className="flex flex-wrap gap-2">

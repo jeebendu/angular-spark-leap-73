@@ -17,7 +17,7 @@ const DoctorSearch = () => {
   const [searchTerm, setSearchTerm] = useState(initialQuery);
   const [priceRange, setPriceRange] = useState<[number, number]>([500, 2000]);
   const isMobile = useIsMobile();
-  const [filterOpen, setFilterOpen] = useState(!isMobile ? true : false);
+  const [filterOpen, setFilterOpen] = useState(false);
   const [selectedSpecialties, setSelectedSpecialties] = useState<string[]>(
     initialSpecialty ? [initialSpecialty] : []
   );
@@ -247,7 +247,7 @@ const DoctorSearch = () => {
   };
 
   const applyFilters = () => {
-    // Removed toast notification on filter selection
+    // No toast notification for filter selection
   };
   
   return (

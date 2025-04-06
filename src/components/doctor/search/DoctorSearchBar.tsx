@@ -55,8 +55,8 @@ export function DoctorSearchBar({
   const isMobile = useIsMobile();
 
   return (
-    <div className="flex items-center gap-2 mb-6">
-      <div className="relative flex-1">
+    <div className="flex flex-col md:flex-row items-center gap-2 mb-6">
+      <div className="relative flex-1 w-full">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
         <Input
           type="text"
@@ -67,7 +67,17 @@ export function DoctorSearchBar({
         />
       </div>
       
-      <div className="flex gap-2">
+      {isMobile && (
+        <Button 
+          variant="outline"
+          className="flex items-center gap-2 border border-gray-200 bg-white h-10 w-10 p-0 rounded-full"
+          onClick={() => setFilterOpen(true)}
+        >
+          <Filter className="h-4 w-4" />
+        </Button>
+      )}
+      
+      <div className="flex gap-2 mt-2 md:mt-0">
         <Select value={sortBy} onValueChange={setSortBy}>
           <SelectTrigger className="w-[160px] md:flex hidden">
             <SelectValue placeholder="Sort by" />
@@ -100,25 +110,25 @@ export function DoctorSearchBar({
             <span>Filters</span>
           </Button>
         )}
-
-        {isMobile && (
-          <MobileDoctorFilters 
-            open={filterOpen}
-            onOpenChange={setFilterOpen}
-            selectedSpecialties={selectedSpecialties}
-            selectedGenders={selectedGenders}
-            selectedLanguages={selectedLanguages}
-            selectedExperience={selectedExperience}
-            priceRange={priceRange}
-            toggleSpecialty={toggleSpecialty}
-            toggleGender={toggleGender}
-            toggleLanguage={toggleLanguage}
-            toggleExperience={toggleExperience}
-            setPriceRange={setPriceRange}
-            applyFilters={applyFilters}
-          />
-        )}
       </div>
+      
+      {isMobile && (
+        <MobileDoctorFilters 
+          open={filterOpen}
+          onOpenChange={setFilterOpen}
+          selectedSpecialties={selectedSpecialties}
+          selectedGenders={selectedGenders}
+          selectedLanguages={selectedLanguages}
+          selectedExperience={selectedExperience}
+          priceRange={priceRange}
+          toggleSpecialty={toggleSpecialty}
+          toggleGender={toggleGender}
+          toggleLanguage={toggleLanguage}
+          toggleExperience={toggleExperience}
+          setPriceRange={setPriceRange}
+          applyFilters={applyFilters}
+        />
+      )}
     </div>
   );
 }

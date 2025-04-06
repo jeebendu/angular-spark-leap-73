@@ -93,10 +93,6 @@ export function AppointmentCard({
             {(status === "upcoming" || status === "confirmed") && (
               <div className="flex gap-2">
                 <Button size="sm" variant="outline" className="text-xs h-8 rounded-full">Reschedule</Button>
-                <Button size="sm" className="text-xs h-8 sky-button rounded-full gap-1">
-                  <Video className="h-3 w-3" />
-                  Join
-                </Button>
               </div>
             )}
           </div>

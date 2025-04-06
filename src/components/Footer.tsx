@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { 
   Phone, 
@@ -19,7 +18,13 @@ export function Footer() {
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-1">
-            <h3 className="font-bold text-lg mb-4 text-[#0ABAB5]">ClinicHub</h3>
+            <Link to="/" className="inline-block mb-4">
+              <img 
+                src="https://res.cloudinary.com/dzxuxfagt/image/upload/h_100/assets/logo.png" 
+                alt="ClinicHub Logo" 
+                className="h-8 w-auto object-contain"
+              />
+            </Link>
             <p className="text-gray-600 mb-4">
               Your trusted healthcare companion for finding and booking appointments with top medical professionals.
             </p>

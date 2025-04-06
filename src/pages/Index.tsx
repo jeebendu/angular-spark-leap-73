@@ -1,4 +1,3 @@
-
 import { Calendar, Star, Award, ThumbsUp, Clock, ChevronRight, Phone, Laptop, Users, LockKeyhole } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import { SearchBar } from "@/components/SearchBar";
@@ -64,7 +63,7 @@ const Index = () => {
     <AppLayout>
         {/* Hero Section */}
         <motion.section 
-          className="mb-8"
+          className="mb-8 mt-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}

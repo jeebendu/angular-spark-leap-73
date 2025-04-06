@@ -169,6 +169,23 @@
       @apply px-2;
     }
   }
+
+  /* Doctor search page specific styles */
+  .filter-checkbox-container {
+    @apply max-h-[300px] overflow-y-auto pr-2;
+  }
+  
+  .specialty-checkbox-item {
+    @apply flex items-center space-x-2 py-1;
+  }
+  
+  .specialty-checkbox-label {
+    @apply text-sm leading-none;
+  }
+  
+  .mobile-filter-button {
+    @apply fixed bottom-4 left-1/2 transform -translate-x-1/2 z-40 px-6 py-2 rounded-full bg-primary text-white shadow-lg;
+  }
 }
 
 /* Animation classes */

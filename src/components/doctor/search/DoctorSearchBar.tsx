@@ -90,41 +90,33 @@ export function DoctorSearchBar({
           </ToggleGroupItem>
         </ToggleGroup>
         
-        {isMobile ? (
-          <>
-            <Button 
-              variant="outline" 
-              className="flex items-center gap-2 border border-gray-200 bg-white"
-              onClick={() => setFilterOpen(true)}
-            >
-              <Filter className="h-4 w-4" />
-              <span>Filters</span>
-            </Button>
-            <MobileDoctorFilters 
-              open={filterOpen}
-              onOpenChange={setFilterOpen}
-              selectedSpecialties={selectedSpecialties}
-              selectedGenders={selectedGenders}
-              selectedLanguages={selectedLanguages}
-              selectedExperience={selectedExperience}
-              priceRange={priceRange}
-              toggleSpecialty={toggleSpecialty}
-              toggleGender={toggleGender}
-              toggleLanguage={toggleLanguage}
-              toggleExperience={toggleExperience}
-              setPriceRange={setPriceRange}
-              applyFilters={applyFilters}
-            />
-          </>
-        ) : (
+        {!isMobile && (
           <Button 
             variant={filterOpen ? "default" : "outline"}
-            className="flex items-center gap-2 border border-gray-200 bg-white"
+            className={`flex items-center gap-2 ${filterOpen ? 'bg-primary text-white' : 'border border-gray-200 bg-white'}`}
             onClick={() => setFilterOpen(!filterOpen)}
           >
             <SlidersHorizontal className="h-4 w-4" />
             <span>Filters</span>
           </Button>
+        )}
+
+        {isMobile && (
+          <MobileDoctorFilters 
+            open={filterOpen}
+            onOpenChange={setFilterOpen}
+            selectedSpecialties={selectedSpecialties}
+            selectedGenders={selectedGenders}
+            selectedLanguages={selectedLanguages}
+            selectedExperience={selectedExperience}
+            priceRange={priceRange}
+            toggleSpecialty={toggleSpecialty}
+            toggleGender={toggleGender}
+            toggleLanguage={toggleLanguage}
+            toggleExperience={toggleExperience}
+            setPriceRange={setPriceRange}
+            applyFilters={applyFilters}
+          />
         )}
       </div>
     </div>

@@ -2,8 +2,15 @@
 import { Branch } from "./Branch";
 import { Clinic } from "./Clinic";
 
+// Define a simplified clinic reference for appointments
+export interface ClinicReference {
+  id: string;
+  name: string;
+  address: string;
+}
+
 export interface Appointment {
-  selectedClinic: Clinic;
+  selectedClinic: ClinicReference; // Changed from Clinic to ClinicReference
   selectedDate: string;
   selectedTime: string;
   selectedMember: string;

@@ -1,5 +1,5 @@
 
-import { Appointment } from "@/models/Appointment";
+import { Appointment, ClinicReference } from "@/models/Appointment";
 import { Clinic } from "@/models/Clinic";
 import { FamilyMember } from "@/models/Patient";
 
@@ -15,7 +15,7 @@ interface ToasterToast {
 }
 
 // Export the types needed by other components
-export type { Clinic, FamilyMember };
+export type { Clinic, FamilyMember, ClinicReference };
 
 export interface ToastHelpers {
   toast: (props: any) => { id: string; dismiss: () => void; update: (props: ToasterToast) => void };
@@ -30,8 +30,39 @@ export const getFamilyMembers = (): FamilyMember[] => [
   { id: "3", name: "Jane Smith", relationship: "Parent" }
 ];
 
-// Mock data for clinics
-export const getClinics = (): Clinic[] => [];
+// Mock data for clinics - Now returning proper Clinic objects
+export const getClinics = (): Clinic[] => [
+  {
+    id: "1",
+    name: "Main Clinic",
+    email: "main@clinic.com",
+    contact: "+1 123 456 7890",
+    address: "123 Main St",
+    branchList: [],
+    days: "Mon-Fri",
+    timings: "9:00 AM - 5:00 PM"
+  },
+  {
+    id: "2",
+    name: "Downtown Clinic",
+    email: "downtown@clinic.com",
+    contact: "+1 123 456 7891",
+    address: "456 Central Ave",
+    branchList: [],
+    days: "Mon-Sat",
+    timings: "8:00 AM - 7:00 PM"
+  },
+  {
+    id: "3",
+    name: "East Side Clinic",
+    email: "eastside@clinic.com",
+    contact: "+1 123 456 7892",
+    address: "789 East Blvd",
+    branchList: [],
+    days: "Mon-Sun",
+    timings: "24/7"
+  }
+];
 
 // Available times
 export const getAvailableTimes = (): string[] => [

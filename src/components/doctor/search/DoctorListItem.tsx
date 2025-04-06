@@ -122,7 +122,7 @@ export function DoctorListItem({ doctor, index, isLastItem, lastDoctorElementRef
                   />
                 </div>
                 
-                <div className="flex-1 p-4 flex flex-col justify-between">
+                <div className="flex-1 p-3 flex flex-col justify-between">
                   <div className="flex justify-between">
                     <div>
                       <div className="flex items-center gap-2">
@@ -159,7 +159,7 @@ export function DoctorListItem({ doctor, index, isLastItem, lastDoctorElementRef
                     </div>
                     
                     <div className="flex flex-col items-end gap-2">
-                      <div className="text-lg font-semibold mb-2">₹{doctor.price}</div>
+                      <div className="text-lg font-semibold">₹{doctor.price}</div>
                       <div className="flex space-x-2">
                         <Button 
                           size="sm"

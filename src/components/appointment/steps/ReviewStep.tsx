@@ -1,11 +1,11 @@
 
 import { ClipboardCheck } from "lucide-react";
-import { getClinicById, getFamilyMemberById, Clinic, FamilyMember } from "@/services/appointmentService";
+import { getClinicById, getFamilyMemberById, type Clinic, type FamilyMember } from "@/services/appointmentService";
 
 interface ReviewStepProps {
   doctorName?: string;
   specialty?: string;
-  selectedClinic: string;
+  selectedClinic: string; // This is now a clinic ID, not a Clinic object
   clinics: Clinic[];
   selectedDate: string;
   selectedTime: string;

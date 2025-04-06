@@ -2,15 +2,10 @@
 import { Building } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-
-interface Clinic {
-  id: string;
-  name: string;
-  address: string;
-}
+import { type Clinic } from "@/services/appointmentService";
 
 interface ClinicSelectionStepProps {
-  selectedClinic: string;
+  selectedClinic: string; // This is a clinic ID now
   setSelectedClinic: (clinicId: string) => void;
   clinics: Clinic[];
 }

@@ -38,6 +38,14 @@ export interface Appointment {
   };
 }
 
+// Add the AppointmentDetails interface that many components depend on
+export interface AppointmentDetails extends Appointment {
+  id: string; // Make id required for AppointmentDetails
+  appointmentNumber: string;
+  patientName: string;
+  status: "upcoming" | "completed" | "cancelled";
+}
+
 export interface FilterOption {
   label: string;
   value: string;

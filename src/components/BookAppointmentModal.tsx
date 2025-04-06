@@ -27,7 +27,8 @@ import {
   getAvailableTimes, 
   getFamilyMembers,
   getClinicById,
-  getFamilyMemberById
+  getFamilyMemberById,
+  type Clinic // Import the Clinic type explicitly
 } from "@/services/appointmentService";
 
 interface BookAppointmentModalProps {
@@ -39,7 +40,7 @@ interface BookAppointmentModalProps {
 export function BookAppointmentModal({ doctorName, specialty, trigger }: BookAppointmentModalProps) {
   const [step, setStep] = useState(1);
   const [open, setOpen] = useState(false);
-  const [selectedClinic, setSelectedClinic] = useState("");
+  const [selectedClinicId, setSelectedClinicId] = useState(""); // Store clinic ID instead of clinic object
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedMember, setSelectedMember] = useState("self");
@@ -51,6 +52,9 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
   const familyMembers = getFamilyMembers();
   const availableTimes = getAvailableTimes();
   
+  // Get the selected clinic object based on ID
+  const selectedClinic = getClinicById(selectedClinicId);
+  
   const stepLabels = ["Clinic", "Date & Time", "Patient", "Review", "Payment"];
   
   // Auto-advance to next step when date and time are selected
@@ -59,7 +63,12 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
       // Add a small delay to allow user to see their selection before advancing
       const timer = setTimeout(() => {
         if (validateCurrentStep(step, { 
-          selectedClinic, selectedDate, selectedTime, selectedMember, doctorName, specialty 
+          selectedClinic: selectedClinic!, // Use the clinic object, with non-null assertion
+          selectedDate, 
+          selectedTime, 
+          selectedMember, 
+          doctorName, 
+          specialty 
         }, toastObject)) {
           setStep(3);
         }
@@ -71,7 +80,12 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
   
   const goToStep = (stepNumber: number) => {
     if (stepNumber <= step || validateCurrentStep(step, { 
-      selectedClinic, selectedDate, selectedTime, selectedMember, doctorName, specialty 
+      selectedClinic: selectedClinic!, // Use the clinic object, with non-null assertion
+      selectedDate, 
+      selectedTime, 
+      selectedMember, 
+      doctorName, 
+      specialty 
     }, toastObject)) {
       setStep(stepNumber);
     }
@@ -79,7 +93,12 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
   
   const nextStep = () => {
     if (validateCurrentStep(step, { 
-      selectedClinic, selectedDate, selectedTime, selectedMember, doctorName, specialty 
+      selectedClinic: selectedClinic!, // Use the clinic object, with non-null assertion
+      selectedDate, 
+      selectedTime, 
+      selectedMember, 
+      doctorName, 
+      specialty 
     }, toastObject) && step < 5) {
       setStep(step + 1);
     }
@@ -93,7 +112,7 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
   
   const handleBookAppointment = () => {
     bookAppointment({
-      selectedClinic,
+      selectedClinic: selectedClinic!, // Use the clinic object, with non-null assertion
       selectedDate,
       selectedTime,
       selectedMember,
@@ -108,7 +127,7 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
   
   const resetForm = () => {
     setStep(1);
-    setSelectedClinic("");
+    setSelectedClinicId("");
     setSelectedDate("");
     setSelectedTime("");
     setSelectedMember("self");
@@ -135,7 +154,12 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
             totalSteps={5} 
             onStepClick={goToStep} 
             validateCurrentStep={() => validateCurrentStep(step, { 
-              selectedClinic, selectedDate, selectedTime, selectedMember, doctorName, specialty 
+              selectedClinic: selectedClinic!, // Use the clinic object, with non-null assertion
+              selectedDate, 
+              selectedTime, 
+              selectedMember, 
+              doctorName, 
+              specialty 
             }, toastObject)} 
           />
 
@@ -145,8 +169,8 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
           {/* Step content */}
           {step === 1 && (
             <ClinicSelectionStep 
-              selectedClinic={selectedClinic}
-              setSelectedClinic={setSelectedClinic}
+              selectedClinic={selectedClinicId}
+              setSelectedClinic={setSelectedClinicId}
               clinics={clinics}
             />
           )}
@@ -173,7 +197,7 @@ export function BookAppointmentModal({ doctorName, specialty, trigger }: BookApp
             <ReviewStep 
               doctorName={doctorName}
               specialty={specialty}
-              selectedClinic={selectedClinic}
+              selectedClinic={selectedClinicId}
               clinics={clinics}
               selectedDate={selectedDate}
               selectedTime={selectedTime}

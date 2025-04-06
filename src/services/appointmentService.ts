@@ -1,3 +1,4 @@
+
 import { Appointment } from "@/models/Appointment";
 import { Clinic } from "@/models/Clinic";
 import { FamilyMember } from "@/models/Patient";
@@ -13,6 +14,8 @@ interface ToasterToast {
   dismiss?: () => void;
 }
 
+// Export the types needed by other components
+export type { Clinic, FamilyMember };
 
 export interface ToastHelpers {
   toast: (props: any) => { id: string; dismiss: () => void; update: (props: ToasterToast) => void };

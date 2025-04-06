@@ -1,5 +1,5 @@
 import { Clinic } from "@/services/appointmentService";
-import { BaseModel } from "../shared/BaseModel";
+import { BaseModel, Pageable, Sort } from "../shared/BaseModel";
 import { Branch } from "../shared/Branch";
 import { Patient } from "../patient/Patient";
 
@@ -33,6 +33,20 @@ export interface Doctor {
     services: string[];
     profileImageUrl: string;
     
+  }
+
+  export interface DoctorPageble {
+    content: Doctor[]; 
+    pageable: Pageable;
+    last: boolean;
+    totalPages: number;
+    totalElements: number;
+    size: number;
+    number: number;
+    sort: Sort;
+    numberOfElements: number;
+    first: boolean;
+    empty: boolean;
   }
 
   export interface Education extends BaseModel {

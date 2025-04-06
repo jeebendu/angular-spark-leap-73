@@ -1,5 +1,5 @@
 import http from "@/lib/JwtInterceptor";
-import { Doctor } from "@/models/doctor/Doctor";
+import { Doctor, DoctorPageble } from "@/models/doctor/Doctor";
 
 export const fetchDoctorDetailsById = async (id: any) => {
   return await http.get<Doctor>(`/v1/doctor/id/${id}`);
@@ -18,7 +18,7 @@ export const fetchDoctorClinicByDoctorAndBranch = async (doctorId: any, branchId
 };
 
 export const fetchAllDoctorClinics = async (params: any) => {
-  return await http.post(`/v1/public/doctor-clinic/search`, params);
+  return await http.post<DoctorPageble>(`/v1/public/doctor-clinic/search`, params);
 };
 
 export const fetchSimilarDoctors = async (params: any) => {

@@ -128,20 +128,8 @@ export function LoginDialog() {
                         <SelectContent>
                           <SelectItem value="+91">
                             <div className="flex items-center">
-                              <img src="https://preview--appointify-platform-67.lovable.app/lovable-uploads/8ecf0148-aeef-4d33-acd7-b29efebedf9d.png" alt="India" className="h-4 w-6 mr-2" />
+                            <span className="w-6 mr-2">IN</span>
                               +91
-                            </div>
-                          </SelectItem>
-                          <SelectItem value="+1">
-                            <div className="flex items-center">
-                              <span className="w-6 mr-2">🇺🇸</span>
-                              +1
-                            </div>
-                          </SelectItem>
-                          <SelectItem value="+44">
-                            <div className="flex items-center">
-                              <span className="w-6 mr-2">🇬🇧</span>
-                              +44
                             </div>
                           </SelectItem>
                         </SelectContent>
@@ -239,20 +227,7 @@ export function LoginDialog() {
                     <SelectContent>
                       <SelectItem value="+91">
                         <div className="flex items-center">
-                          <img src="https://preview--appointify-platform-67.lovable.app/lovable-uploads/8ecf0148-aeef-4d33-acd7-b29efebedf9d.png" alt="India" className="h-4 w-6 mr-2" />
-                          +91
-                        </div>
-                      </SelectItem>
-                      <SelectItem value="+1">
-                        <div className="flex items-center">
-                          <span className="w-6 mr-2">🇺🇸</span>
-                          +1
-                        </div>
-                      </SelectItem>
-                      <SelectItem value="+44">
-                        <div className="flex items-center">
-                          <span className="w-6 mr-2">🇬🇧</span>
-                          +44
+                        <span className="w-6 mr-2">IN</span> +91
                         </div>
                       </SelectItem>
                     </SelectContent>

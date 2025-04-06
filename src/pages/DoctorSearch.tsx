@@ -115,7 +115,7 @@ const DoctorSearch = () => {
         rating: 4 + (index % 10) / 10,
         reviewCount: 80 + index * 5,
         price: 900 + index * 100,
-        imageSrc: `https://placehold.co/400x300/eaf7fc/33C3F0?text=Dr.+${index+1}&font=montserrat`,
+        imageSrc: `https://res.cloudinary.com/dzxuxfagt/image/upload/w_150,h_150,c_thumb,g_face/assets/doctor_placeholder.png`,
         experience: `${8 + (index % 15)}+ years`,
         languages: index % 3 === 0 ? ["English", "Hindi", "Tamil"] : ["English", "Hindi"],
         clinics: doctorClinics[index % doctorClinics.length]

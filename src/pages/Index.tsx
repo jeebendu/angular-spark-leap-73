@@ -1,4 +1,5 @@
-import { Calendar, Star, Award, ThumbsUp, Clock, ChevronRight } from "lucide-react";
+
+import { Calendar, Star, Award, ThumbsUp, Clock, ChevronRight, Phone, Laptop, Users, LockKeyhole } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import { SearchBar } from "@/components/SearchBar";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
 import { AppointmentCard } from "@/components/AppointmentCard";
 import { PromotionalBanner } from "@/components/PromotionalBanner";
+import { AppDownloadSection } from "@/components/AppDownloadSection";
 import authService from "@/services/authService";
 
 // Mock upcoming appointments data
@@ -60,7 +62,7 @@ const Index = () => {
 
   return (
     <AppLayout>
-      <div className="container px-4 md:px-6 py-6 max-w-[1120px] mx-auto">
+      <div className="container px-4 md:px-6 py-6 mx-auto">
         {/* Hero Section */}
         <motion.section 
           className="mb-8"
@@ -80,7 +82,9 @@ const Index = () => {
               </p>
             </motion.div>
             
-            <SearchBar />
+            <div className="py-5">
+              <SearchBar />
+            </div>
           </div>
         </motion.section>
 
@@ -138,6 +142,74 @@ const Index = () => {
           className="mb-10"
         >
           <Specializations />
+        </motion.section>
+        
+        {/* Why Choose ClinicHub Section */}
+        <motion.section
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.7, duration: 0.5 }}
+          className="mb-10 bg-white rounded-xl shadow-sm py-12 px-6"
+        >
+          <div className="text-center mb-10">
+            <h2 className="text-primary font-semibold text-sm uppercase tracking-wide">WHY CHOOSE US</h2>
+            <h3 className="text-2xl font-bold mt-2">Why ClinicHub is Right for You</h3>
+            <p className="text-gray-600 mt-2 max-w-2xl mx-auto">
+              We're committed to providing you with the best healthcare experience possible.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="flex flex-col items-center text-center p-4 hover:bg-gray-50 rounded-lg transition-all">
+              <div className="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mb-4">
+                <Users className="w-7 h-7 text-primary" />
+              </div>
+              <h4 className="font-semibold text-lg mb-2">Verified Doctors</h4>
+              <p className="text-gray-500 text-sm">
+                All our doctors are verified and have undergone strict quality checks
+              </p>
+            </div>
+            
+            <div className="flex flex-col items-center text-center p-4 hover:bg-gray-50 rounded-lg transition-all">
+              <div className="w-16 h-16 rounded-full bg-green-50 flex items-center justify-center mb-4">
+                <Calendar className="w-7 h-7 text-primary" />
+              </div>
+              <h4 className="font-semibold text-lg mb-2">Easy Scheduling</h4>
+              <p className="text-gray-500 text-sm">
+                Book appointments with just a few clicks and manage them effortlessly
+              </p>
+            </div>
+            
+            <div className="flex flex-col items-center text-center p-4 hover:bg-gray-50 rounded-lg transition-all">
+              <div className="w-16 h-16 rounded-full bg-orange-50 flex items-center justify-center mb-4">
+                <Clock className="w-7 h-7 text-primary" />
+              </div>
+              <h4 className="font-semibold text-lg mb-2">Save Time</h4>
+              <p className="text-gray-500 text-sm">
+                No more waiting in lines. Online booking saves your valuable time
+              </p>
+            </div>
+            
+            <div className="flex flex-col items-center text-center p-4 hover:bg-gray-50 rounded-lg transition-all">
+              <div className="w-16 h-16 rounded-full bg-purple-50 flex items-center justify-center mb-4">
+                <LockKeyhole className="w-7 h-7 text-primary" />
+              </div>
+              <h4 className="font-semibold text-lg mb-2">100% Privacy</h4>
+              <p className="text-gray-500 text-sm">
+                Your medical information is secure and private with our advanced protection
+              </p>
+            </div>
+          </div>
+        </motion.section>
+        
+        {/* App Download Section */}
+        <motion.section
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8, duration: 0.5 }}
+          className="mb-10"
+        >
+          <AppDownloadSection />
         </motion.section>
       </div>
     </AppLayout>

@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { Search, Clock, X, Mic } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -9,7 +8,6 @@ import { LocationSelector } from "@/components/LocationSelector";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
 
-// Add TypeScript declarations for Web Speech API
 declare global {
   interface Window {
     SpeechRecognition: any;
@@ -28,15 +26,14 @@ export function SearchBar() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Mock suggestions - in a real app, these would come from an API
   const suggestions = [
-    { text: "Cardiologist", type: "specialty", icon: <Clock className="h-4 w-4 text-gray-400" /> },
-    { text: "Neurologist", type: "specialty", icon: <Clock className="h-4 w-4 text-gray-400" /> },
-    { text: "Dermatologist", type: "specialty", icon: <Clock className="h-4 w-4 text-gray-400" /> },
-    { text: "Pediatrician", type: "specialty", icon: <Clock className="h-4 w-4 text-gray-400" /> },
-    { text: "Dr. Sarah Johnson", type: "doctor", icon: <Search className="h-4 w-4 text-gray-400" /> },
-    { text: "Heart disease specialist", type: "keyword", icon: <Search className="h-4 w-4 text-gray-400" /> },
-    { text: "Skin problems", type: "keyword", icon: <Search className="h-4 w-4 text-gray-400" /> }
+    { text: "Cardiologist", type: "specialty", icon: <Clock className="h-5 w-5 text-gray-400" /> },
+    { text: "Neurologist", type: "specialty", icon: <Clock className="h-5 w-5 text-gray-400" /> },
+    { text: "Dermatologist", type: "specialty", icon: <Clock className="h-5 w-5 text-gray-400" /> },
+    { text: "Pediatrician", type: "specialty", icon: <Clock className="h-5 w-5 text-gray-400" /> },
+    { text: "Dr. Sarah Johnson", type: "doctor", icon: <Search className="h-5 w-5 text-gray-400" /> },
+    { text: "Heart disease specialist", type: "keyword", icon: <Search className="h-5 w-5 text-gray-400" /> },
+    { text: "Skin problems", type: "keyword", icon: <Search className="h-5 w-5 text-gray-400" /> }
   ];
 
   const filteredSuggestions = suggestions.filter(
@@ -62,7 +59,6 @@ export function SearchBar() {
   };
 
   const handleVoiceSearch = () => {
-    // Check if browser supports the Web Speech API
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
       toast({
         title: "Voice Search Unavailable",
@@ -72,7 +68,6 @@ export function SearchBar() {
       return;
     }
 
-    // Use the appropriate constructor based on browser support
     const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
     
     if (!SpeechRecognitionAPI) {
@@ -93,7 +88,6 @@ export function SearchBar() {
     
     recognition.start();
     
-    // Show toast to indicate listening started
     toast({
       title: "Listening...",
       description: "Speak now to search for doctors or specialities",
@@ -104,13 +98,11 @@ export function SearchBar() {
       setSearchQuery(speechResult);
       setIsListening(false);
       
-      // Show toast with recognized text
       toast({
         title: "Voice Recognized",
         description: `Searching for: "${speechResult}"`,
       });
       
-      // Automatically search after a short delay
       setTimeout(() => {
         handleDoctorSearch(speechResult);
       }, 500);
@@ -130,7 +122,6 @@ export function SearchBar() {
     };
   };
 
-  // Close suggestions on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -148,14 +139,12 @@ export function SearchBar() {
     };
   }, []);
 
-  // Ensure only one type of suggestion is shown at a time
   useEffect(() => {
     if (openLocationSelector) {
       setOpenSuggestions(false);
     }
   }, [openLocationSelector]);
 
-  // Mobile layout needs extra handling
   const searchBarClasses = cn(
     "flex items-center w-full max-w-3xl mx-auto relative rounded-[30px] shadow-lg",
     openSuggestions ? "rounded-b-none shadow-lg" : "shadow-md",
@@ -165,7 +154,6 @@ export function SearchBar() {
   return (
     <div ref={searchContainerRef} className="w-full max-w-3xl mx-auto relative">
       <div className={searchBarClasses}>
-        {/* Location field */}
         <div className="relative w-[30%] sm:w-[35%] p-2 sm:p-3 border-r border-gray-200">
           <LocationSelector 
             onOpenChange={(open) => {
@@ -175,15 +163,14 @@ export function SearchBar() {
           />
         </div>
         
-        {/* Search doctors field */}
         <div className="relative w-[70%] sm:w-[65%] pl-2 sm:pl-3 pr-2 flex items-center h-12 sm:h-14">
           <div className="relative w-full flex items-center">
-            <Search className="h-4 w-4 text-muted-foreground absolute left-2 top-1/2 transform -translate-y-1/2" />
+            <Search className="h-5 w-5 text-muted-foreground absolute left-2 top-1/2 transform -translate-y-1/2" />
             <Input 
               ref={searchInputRef}
               type="text" 
               placeholder="Search doctors, specialties..." 
-              className="border-0 px-0 py-0 h-10 focus-visible:ring-0 placeholder:text-muted-foreground pl-10 pr-16 bg-transparent w-full"
+              className="border-0 px-0 py-0 h-10 focus-visible:ring-0 placeholder:text-muted-foreground pl-10 pr-16 bg-transparent w-full text-base"
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
@@ -206,7 +193,7 @@ export function SearchBar() {
                   onClick={clearSearch}
                   className="p-1 mr-1"
                 >
-                  <X className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                  <X className="h-5 w-5 text-gray-400 hover:text-gray-600" />
                 </button>
               )}
               <button 
@@ -215,22 +202,21 @@ export function SearchBar() {
                 disabled={isListening}
               >
                 <Mic className={cn(
-                  "h-5 w-5 transition-colors", 
+                  "h-6 w-6 transition-colors", 
                   isListening ? "text-primary animate-pulse" : "text-gray-400 hover:text-primary"
                 )} />
               </button>
               <Button 
-                className="rounded-full h-8 w-8 p-0 flex items-center justify-center text-white bg-primary hover:bg-primary/90"
+                className="rounded-full h-9 w-9 p-0 flex items-center justify-center text-white bg-primary hover:bg-primary/90"
                 onClick={() => handleDoctorSearch()}
               >
-                <Search className="h-4 w-4" />
+                <Search className="h-5 w-5" />
               </Button>
             </div>
           </div>
         </div>
       </div>
       
-      {/* Suggestions dropdown (Google-style) */}
       {openSuggestions && filteredSuggestions.length > 0 && (
         <div className="absolute top-full left-0 right-0 bg-white border-x border-b border-gray-200 rounded-b-[30px] shadow-lg z-50 max-h-[60vh] overflow-y-auto">
           <div className="py-2">
@@ -241,14 +227,14 @@ export function SearchBar() {
                 onClick={() => handleSuggestionClick(suggestion.text)}
               >
                 {suggestion.icon}
-                <span className="ml-3 text-sm text-gray-700">{suggestion.text}</span>
+                <span className="ml-3 text-base text-gray-700">{suggestion.text}</span>
               </div>
             ))}
             <div className="flex justify-center gap-2 p-3 border-t mt-1">
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="text-xs h-8"
+                className="text-sm h-9"
                 onClick={() => handleDoctorSearch()}
               >
                 Search Doctors
@@ -256,7 +242,7 @@ export function SearchBar() {
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="text-xs h-8"
+                className="text-sm h-9"
               >
                 Book an Appointment
               </Button>

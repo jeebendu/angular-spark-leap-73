@@ -122,70 +122,71 @@ export function LocationSelector({ onOpenChange }: LocationSelectorProps) {
             </span>
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[320px] p-3 bg-white shadow-lg border border-gray-200" align="start">
-          <div className="space-y-3">
-            <h3 className="font-medium flex items-center text-sm">
-              <MapPin className="h-3.5 w-3.5 mr-1.5 text-primary" />
+        <PopoverContent className="w-[320px] p-0 bg-white shadow-lg border-0 rounded-lg overflow-hidden" align="start">
+          <div className="border-b p-3">
+            <h3 className="font-medium text-sm mb-2">
               Select Your Location
             </h3>
-            
             <div className="relative">
               <Input 
                 type="text" 
-                placeholder="Enter locality or PIN code" 
-                className="border border-gray-300 pl-8 pr-2 py-2 w-full bg-transparent h-9 text-sm"
+                placeholder="Search for area, street name..." 
+                className="border border-gray-300 pl-10 pr-2 py-2 w-full bg-transparent h-10 text-sm focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-0"
                 value={locationInput}
                 onChange={(e) => setLocationInput(e.target.value)}
+                autoFocus
               />
-              <MapPin className="h-3.5 w-3.5 text-gray-400 absolute left-2.5 top-1/2 transform -translate-y-1/2" />
-              
-              {locationSuggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-50 max-h-60 overflow-y-auto">
-                  {locationSuggestions.map((suggestion, index) => (
-                    <div 
-                      key={index}
-                      className="px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm flex items-center"
-                      onClick={() => handleLocationSuggestionClick(suggestion)}
-                    >
-                      <Clock className="h-3.5 w-3.5 text-gray-400 mr-2" />
-                      <span>{suggestion}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <MapPin className="h-4 w-4 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
             </div>
-            
+          </div>
+          
+          {locationSuggestions.length > 0 && (
+            <div className="max-h-[220px] overflow-y-auto py-1">
+              {locationSuggestions.map((suggestion, index) => (
+                <div 
+                  key={index}
+                  className="px-4 py-2.5 hover:bg-gray-50 cursor-pointer text-sm flex items-center"
+                  onClick={() => handleLocationSuggestionClick(suggestion)}
+                >
+                  <Clock className="h-4 w-4 text-gray-400 mr-3" />
+                  <span>{suggestion}</span>
+                </div>
+              ))}
+            </div>
+          )}
+          
+          <div className="border-t p-3">
             <Button 
               variant="outline" 
-              className="w-full flex items-center justify-center gap-1.5 h-9 text-sm"
+              className="w-full flex items-center justify-center gap-2 h-10 text-sm border-blue-500 text-blue-500 hover:bg-blue-50"
               onClick={detectCurrentLocation}
               disabled={isLoadingLocation}
             >
-              <Navigation className="h-3.5 w-3.5 text-primary" />
-              {isLoadingLocation ? "Detecting..." : "Use current location"}
+              <Navigation className="h-4 w-4" />
+              {isLoadingLocation ? "Detecting..." : "Use my current location"}
             </Button>
-            
-            <div className="pt-1">
-              <h4 className="font-medium text-xs mb-2 text-gray-500">POPULAR LOCATIONS</h4>
-              <div className="grid grid-cols-1 gap-y-0.5">
-                {["Koramangala, Bangalore", "Indiranagar, Bangalore", 
-                  "HSR Layout, Bangalore", "Whitefield, Bangalore"].map((city, index) => (
-                  <button 
-                    key={index}
-                    className="text-left px-2 py-1.5 rounded-md hover:bg-gray-100 text-sm hover:text-primary flex items-center"
-                    onClick={() => {
-                      setLocation({
-                        locality: city,
-                        coordinates: { latitude: 12.9352 + (index * 0.01), longitude: 77.6245 + (index * 0.01) }
-                      });
-                      setIsOpen(false);
-                    }}
-                  >
-                    <MapPin className="h-3 w-3 mr-2 text-gray-500" />
-                    {city}
-                  </button>
-                ))}
-              </div>
+          </div>
+          
+          <div className="bg-gray-50 py-3 px-4">
+            <h4 className="font-medium text-xs mb-2 text-gray-500">POPULAR LOCATIONS</h4>
+            <div className="grid grid-cols-1 gap-1">
+              {["Koramangala, Bangalore", "Indiranagar, Bangalore", 
+                "HSR Layout, Bangalore", "Whitefield, Bangalore"].map((city, index) => (
+                <button 
+                  key={index}
+                  className="text-left px-2 py-1.5 rounded-md hover:bg-gray-100 text-sm hover:text-primary flex items-center"
+                  onClick={() => {
+                    setLocation({
+                      locality: city,
+                      coordinates: { latitude: 12.9352 + (index * 0.01), longitude: 77.6245 + (index * 0.01) }
+                    });
+                    setIsOpen(false);
+                  }}
+                >
+                  <MapPin className="h-3 w-3 mr-2 text-gray-500" />
+                  {city}
+                </button>
+              ))}
             </div>
           </div>
         </PopoverContent>

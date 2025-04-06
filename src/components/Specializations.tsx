@@ -115,7 +115,7 @@ export function Specializations() {
 
   return (
     <>
-      <div className="py-8 bg-accent rounded-xl">
+      <div className="py-8 bg-white rounded-xl shadow-sm">
         <div className="text-center mb-8">
           <h2 className="text-primary font-semibold text-sm uppercase tracking-wide">SPECIALIZATIONS</h2>
           <h3 className="text-2xl font-bold mt-2">Find specialized medical care</h3>

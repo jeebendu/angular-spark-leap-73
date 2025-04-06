@@ -56,7 +56,7 @@ export function DoctorCard({
         <CardContent className="p-0">
           {isMobile ? (
             <div className="flex">
-              <div className="w-1/4 relative">
+              <div className="w-1/5 relative">
                 <img 
                   src={imageSrc} 
                   alt={name}
@@ -67,7 +67,7 @@ export function DoctorCard({
                   98%
                 </div>
               </div>
-              <div className="w-3/4 p-3">
+              <div className="w-4/5 p-3">
                 <div className="flex justify-between items-start">
                   <div>
                     <h3 className="font-semibold text-sm mb-0.5 line-clamp-1">{name}</h3>

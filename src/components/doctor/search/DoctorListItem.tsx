@@ -1,4 +1,3 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
@@ -51,7 +50,7 @@ export function DoctorListItem({ doctor, index, isLastItem, lastDoctorElementRef
           <div className="flex flex-col md:flex-row">
             {isMobile ? (
               <div className="flex">
-                <div className="w-1/4 relative">
+                <div className="w-1/5 relative">
                   <img 
                     src={doctor.imageSrc}
                     alt={doctor.name}
@@ -62,7 +61,7 @@ export function DoctorListItem({ doctor, index, isLastItem, lastDoctorElementRef
                   </div>
                 </div>
                 
-                <div className="w-3/4 p-3">
+                <div className="w-4/5 p-3">
                   <div className="flex flex-wrap items-start justify-between">
                     <div>
                       <h3 className="font-semibold text-sm line-clamp-1">{doctor.name}</h3>

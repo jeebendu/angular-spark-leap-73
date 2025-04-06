@@ -1,4 +1,3 @@
-
-import { BaseModel } from "./BaseModel";
+import { BaseModel } from "../shared/BaseModel";
 
 export interface Specialization extends BaseModel {}

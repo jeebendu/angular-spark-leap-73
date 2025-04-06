@@ -1,6 +1,7 @@
-import { Branch } from "./Branch";
-import { User } from "./User";
-import { Country, District, State } from "./Address";
+import { Country, District, State } from "../shared/Address";
+import { Branch } from "../shared/Branch";
+import { User } from "../user/User";
+
 
 export class Patient {
   id: number;

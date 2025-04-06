@@ -7,14 +7,14 @@ import {
   TabsTrigger 
 } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { AppointmentDetails } from "@/models/Appointment";
 import { format } from "date-fns";
 import { AppointmentFilters } from "./AppointmentFilters";
 import { AppointmentRenderer } from "./AppointmentRenderer";
 import { AppointmentDetailsDialog } from "./AppointmentDetailsDialog";
-import { AppointmentFilterState, defaultFilters } from "@/models/AppointmentFilters";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
+import { AppointmentDetails } from "@/models/appointment/Appointment";
+import { AppointmentFilterState, defaultFilters } from "@/models/appointment/AppointmentFilters";
 
 interface AppointmentListProps {
   appointments: AppointmentDetails[];

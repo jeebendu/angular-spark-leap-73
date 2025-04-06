@@ -1,7 +1,7 @@
-import { Branch } from "./Branch";
-import { Clinic } from "./Clinic";
-import { BaseModel } from "./BaseModel";
-import { Patient } from "./Patient";
+import { Clinic } from "@/services/appointmentService";
+import { BaseModel } from "../shared/BaseModel";
+import { Branch } from "../shared/Branch";
+import { Patient } from "../patient/Patient";
 
 export interface Doctor {
     id: number;

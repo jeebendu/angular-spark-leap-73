@@ -1,6 +1,4 @@
 
-import { Branch } from "./Branch";
-import { Clinic } from "./Clinic";
 
 // Define a simplified clinic reference for appointments
 export interface ClinicReference {
@@ -71,3 +69,5 @@ export const statusOptions: FilterOption[] = [
   { label: "Completed", value: "completed" },
   { label: "Cancelled", value: "cancelled" },
 ];
+
+

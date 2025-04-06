@@ -1,5 +1,4 @@
 
-import { FilterOption } from "./Appointment";
 
 export interface AppointmentFilterState {
   searchQuery: string;

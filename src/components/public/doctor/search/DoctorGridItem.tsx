@@ -1,3 +1,4 @@
+
 import { DoctorSearchView } from "@/models/doctor/Doctor";
 import { motion } from "framer-motion";
 import { DoctorCard } from "./DoctorCard";
@@ -23,7 +24,7 @@ export function DoctorGridItem({ doctor, index, isLastItem, lastDoctorElementRef
         id={doctor.doctorId}
         name={doctor.doctorName}
         specialty={doctor.specialties}
-        rating={doctor.averageRating}
+        rating={Number(doctor.averageRating)} // Convert string to number
         reviewCount={doctor.reviewCount}
         price={`₹${doctor.price}`}
         imageSrc={doctor.imageSrc}

@@ -1,4 +1,3 @@
-
 import { Appointment, ClinicReference } from "@/models/appointment/Appointment";
 import { Clinic } from "@/models/clinic/Clinic";
 import { FamilyMember } from "@/models/patient/Patient";
@@ -26,9 +25,33 @@ export interface ToastHelpers {
 
 // Mock data for family members
 export const getFamilyMembers = (): FamilyMember[] => [
-  { id: "1", name: "Sarah Smith", relationship: "Spouse" },
-  { id: "2", name: "Alex Smith", relationship: "Child" },
-  { id: "3", name: "Jane Smith", relationship: "Parent" }
+  { 
+    id: "1", 
+    firstname: "Sarah", 
+    lastname: "Smith", 
+    dob: new Date("1990-05-15"), 
+    gender: "Female", 
+    relationship: "Spouse", 
+    phoneNumber: "+1 123 456 7890" 
+  },
+  { 
+    id: "2", 
+    firstname: "Alex", 
+    lastname: "Smith", 
+    dob: new Date("2015-10-25"), 
+    gender: "Male", 
+    relationship: "Child", 
+    phoneNumber: "+1 123 456 7891" 
+  },
+  { 
+    id: "3", 
+    firstname: "Jane", 
+    lastname: "Smith", 
+    dob: new Date("1965-03-18"), 
+    gender: "Female", 
+    relationship: "Parent", 
+    phoneNumber: "+1 123 456 7892" 
+  }
 ];
 
 // Mock data for clinics - Now returning proper Clinic objects
@@ -149,7 +172,15 @@ export const getClinicById = (clinicId: string): Clinic | undefined => {
 export const getFamilyMemberById = (memberId: string): FamilyMember | undefined => {
   // Handle the "self" case
   if (memberId === "self") {
-    return { id: "self", name: "Yourself", relationship: "Self" };
+    return { 
+      id: "self", 
+      firstname: "Yourself", 
+      lastname: "", 
+      dob: new Date(),
+      gender: "",
+      relationship: "Self", 
+      phoneNumber: "" 
+    };
   }
   return getFamilyMembers().find(member => member.id === memberId);
 };
@@ -168,9 +199,6 @@ export const calculateAppointmentCost = (): { consultationFee: number, platformF
     total
   };
 };
-
-
-
 
 export const saveAppointment = async (appointment: Appointment) => {
   return await http.post(`/v1/appointments/saveOrUpdate`, appointment);

@@ -9,6 +9,7 @@ interface ServicesTabProps {
 export const ServicesTab = ({ services }: ServicesTabProps) => {
   // Group services by category for better organization
   const groupedServices = services?.reduce((acc, service) => {
+    // Use optional chaining with a fallback value when service.category is undefined
     const category = service.category || 'General';
     if (!acc[category]) {
       acc[category] = [];

@@ -32,4 +32,9 @@ export class FamilyMember {
   relationship: string;
   phoneNumber: string;
   profileImage?: string;
+  
+  // Adding the name property as a getter to maintain compatibility
+  get name(): string {
+    return `${this.firstname} ${this.lastname}`;
+  }
 }

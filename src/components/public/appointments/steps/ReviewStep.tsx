@@ -55,8 +55,10 @@ export function ReviewStep({
             <User className="h-4 w-4 text-purple-500 mr-2" />
             <h4 className="font-medium">Patient</h4>
           </div>
-          <p className="font-medium text-base pl-6">{patient?.name}</p>
-          <p className="text-sm text-gray-600 pl-6">{patient?.relationship}</p>
+          <p className="font-medium text-base pl-6">
+            {patient ? `${patient.firstname} ${patient.lastname}`.trim() : "Selected Patient"}
+          </p>
+          <p className="text-sm text-gray-600 pl-6">{patient?.relationship || ""}</p>
         </div>
         
         <div className="bg-white rounded-lg border p-4 space-y-2">

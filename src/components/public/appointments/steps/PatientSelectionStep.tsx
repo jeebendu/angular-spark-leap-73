@@ -13,12 +13,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-
-interface FamilyMember {
-  id: string;
-  name: string;
-  relationship: string;
-}
+import { FamilyMember } from "@/models/patient/Patient";
 
 interface PatientSelectionStepProps {
   selectedMember: string;
@@ -32,7 +27,8 @@ export function PatientSelectionStep({
   familyMembers 
 }: PatientSelectionStepProps) {
   const [isAddingMember, setIsAddingMember] = useState(false);
-  const [newMemberName, setNewMemberName] = useState("");
+  const [newMemberFirstname, setNewMemberFirstname] = useState("");
+  const [newMemberLastname, setNewMemberLastname] = useState("");
   const [newMemberRelationship, setNewMemberRelationship] = useState("");
   const [formError, setFormError] = useState("");
   const { toast } = useToast();
@@ -41,14 +37,15 @@ export function PatientSelectionStep({
     // Clear previous errors
     setFormError("");
     
-    if (newMemberName && newMemberRelationship) {
+    if (newMemberFirstname && newMemberRelationship) {
       toast({
         title: "Family member added",
-        description: `${newMemberName} (${newMemberRelationship}) has been added to your family members.`
+        description: `${newMemberFirstname} ${newMemberLastname} (${newMemberRelationship}) has been added to your family members.`
       });
       
       setIsAddingMember(false);
-      setNewMemberName("");
+      setNewMemberFirstname("");
+      setNewMemberLastname("");
       setNewMemberRelationship("");
     } else {
       setFormError("Both name and relationship are required.");
@@ -57,7 +54,7 @@ export function PatientSelectionStep({
 
   // Prepare family members to display, including self
   const allPatients = [
-    { id: "self", name: "Myself", relationship: "Primary Account" },
+    { id: "self", firstname: "Myself", lastname: "", relationship: "Primary Account", dob: new Date(), gender: "", phoneNumber: "" },
     ...familyMembers
   ];
 
@@ -82,7 +79,7 @@ export function PatientSelectionStep({
               <div className="flex items-center">
                 <UserCircle className="h-8 w-8 mr-2 text-gray-400" />
                 <div>
-                  <div className="font-medium">{member.name}</div>
+                  <div className="font-medium">{`${member.firstname} ${member.lastname}`.trim()}</div>
                   <div className="text-xs text-gray-500">{member.relationship}</div>
                 </div>
               </div>
@@ -116,13 +113,24 @@ export function PatientSelectionStep({
           
           <div className="grid gap-4 py-2">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
-                Name
+              <Label htmlFor="firstname" className="text-right">
+                First Name
               </Label>
               <Input
-                id="name"
-                value={newMemberName}
-                onChange={(e) => setNewMemberName(e.target.value)}
+                id="firstname"
+                value={newMemberFirstname}
+                onChange={(e) => setNewMemberFirstname(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="lastname" className="text-right">
+                Last Name
+              </Label>
+              <Input
+                id="lastname"
+                value={newMemberLastname}
+                onChange={(e) => setNewMemberLastname(e.target.value)}
                 className="col-span-3"
               />
             </div>

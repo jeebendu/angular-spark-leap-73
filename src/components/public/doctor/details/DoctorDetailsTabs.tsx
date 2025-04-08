@@ -5,7 +5,7 @@ import { ClinicsTab } from "./ClinicsTab";
 import { AboutTab } from "./AboutTab";
 import { ServicesTab } from "./ServicesTab";
 import { ReviewsTab } from "./ReviewsTab";
-
+import { Building, User, ClipboardList, MessageSquare } from "lucide-react";
 
 interface DoctorDetailsTabsProps { doctor: Doctor }
 
@@ -14,10 +14,22 @@ export const DoctorDetailsTabs = ({ doctor }: DoctorDetailsTabsProps) => {
     <div className="bg-white rounded-xl shadow-md overflow-hidden mb-6">
       <Tabs defaultValue="clinics">
         <TabsList className="w-full border-b">
-          <TabsTrigger value="clinics" className="flex-1">Clinics</TabsTrigger>
-          <TabsTrigger value="about" className="flex-1">About</TabsTrigger>
-          <TabsTrigger value="services" className="flex-1">Services</TabsTrigger>
-          <TabsTrigger value="reviews" className="flex-1">Reviews</TabsTrigger>
+          <TabsTrigger value="clinics" className="flex-1 flex items-center justify-center">
+            <Building className="h-4 w-4 mr-2" />
+            Clinics
+          </TabsTrigger>
+          <TabsTrigger value="about" className="flex-1 flex items-center justify-center">
+            <User className="h-4 w-4 mr-2" />
+            About
+          </TabsTrigger>
+          <TabsTrigger value="services" className="flex-1 flex items-center justify-center">
+            <ClipboardList className="h-4 w-4 mr-2" />
+            Services
+          </TabsTrigger>
+          <TabsTrigger value="reviews" className="flex-1 flex items-center justify-center">
+            <MessageSquare className="h-4 w-4 mr-2" />
+            Reviews
+          </TabsTrigger>
         </TabsList>
         
         <TabsContent value="clinics">
@@ -29,8 +41,8 @@ export const DoctorDetailsTabs = ({ doctor }: DoctorDetailsTabsProps) => {
         
         <TabsContent value="about">
           <AboutTab 
-          doctor={doctor}
-            education={doctor.education}
+            doctor={doctor}
+            education={doctor.education || []}
             languages={doctor.languageList}
           />
         </TabsContent>
@@ -41,8 +53,6 @@ export const DoctorDetailsTabs = ({ doctor }: DoctorDetailsTabsProps) => {
         
         <TabsContent value="reviews">
           <ReviewsTab 
-            // rating={doctor.rating}
-            // reviewCount={doctor.reviewCount}
             doctorId={doctor.id}
           />
         </TabsContent>

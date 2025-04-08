@@ -1,3 +1,4 @@
+
 import { Clinic } from "@/services/appointmentService";
 import { BaseModel, Pageable, Sort } from "../shared/BaseModel";
 import { Branch } from "../shared/Branch";
@@ -33,6 +34,7 @@ export interface Doctor {
   district: District;
   state: State;
   country: Country;
+  education?: Education[]; // Added as optional
 
   //temp
   consultationFee: any;

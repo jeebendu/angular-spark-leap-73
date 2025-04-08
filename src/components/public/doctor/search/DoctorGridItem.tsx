@@ -25,7 +25,7 @@ export function DoctorGridItem({ doctor, index, isLastItem, lastDoctorElementRef
         name={doctor.doctorName}
         specialty={doctor.specialties}
         rating={Number(doctor.averageRating)} // Convert string to number
-        reviewCount={doctor.reviewCount}
+        reviewCount={Number(doctor.reviewCount)} // Convert string to number
         price={`₹${doctor.price}`}
         imageSrc={doctor.imageSrc}
         experience={doctor.experienceYears}

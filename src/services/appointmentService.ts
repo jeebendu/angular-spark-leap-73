@@ -1,3 +1,4 @@
+
 import { Appointment, ClinicReference } from "@/models/appointment/Appointment";
 import { Clinic } from "@/models/clinic/Clinic";
 import { FamilyMember } from "@/models/patient/Patient";

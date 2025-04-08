@@ -54,7 +54,15 @@ export function PatientSelectionStep({
 
   // Prepare family members to display, including self
   const allPatients = [
-    { id: "self", firstname: "Myself", lastname: "", relationship: "Primary Account", dob: new Date(), gender: "", phoneNumber: "" },
+    { 
+      id: "self", 
+      firstname: "Myself", 
+      lastname: "", 
+      relationship: "Primary Account", 
+      dob: new Date(), 
+      gender: "", 
+      phoneNumber: "" 
+    },
     ...familyMembers
   ];
 

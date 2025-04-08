@@ -53,16 +53,17 @@ export function PatientSelectionStep({
   };
 
   // Prepare family members to display, including self
+  const selfMember = new FamilyMember();
+  selfMember.id = "self";
+  selfMember.firstname = "Myself";
+  selfMember.lastname = "";
+  selfMember.relationship = "Primary Account";
+  selfMember.dob = new Date();
+  selfMember.gender = "";
+  selfMember.phoneNumber = "";
+  
   const allPatients = [
-    { 
-      id: "self", 
-      firstname: "Myself", 
-      lastname: "", 
-      relationship: "Primary Account", 
-      dob: new Date(), 
-      gender: "", 
-      phoneNumber: "" 
-    },
+    selfMember,
     ...familyMembers
   ];
 

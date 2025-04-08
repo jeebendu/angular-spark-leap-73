@@ -1,4 +1,3 @@
-
 import { Appointment, ClinicReference } from "@/models/appointment/Appointment";
 import { Clinic } from "@/models/clinic/Clinic";
 import { FamilyMember } from "@/models/patient/Patient";
@@ -25,35 +24,36 @@ export interface ToastHelpers {
 }
 
 // Mock data for family members
-export const getFamilyMembers = (): FamilyMember[] => [
-  { 
-    id: "1", 
-    firstname: "Sarah", 
-    lastname: "Smith", 
-    dob: new Date("1990-05-15"), 
-    gender: "Female", 
-    relationship: "Spouse", 
-    phoneNumber: "+1 123 456 7890" 
-  },
-  { 
-    id: "2", 
-    firstname: "Alex", 
-    lastname: "Smith", 
-    dob: new Date("2015-10-25"), 
-    gender: "Male", 
-    relationship: "Child", 
-    phoneNumber: "+1 123 456 7891" 
-  },
-  { 
-    id: "3", 
-    firstname: "Jane", 
-    lastname: "Smith", 
-    dob: new Date("1965-03-18"), 
-    gender: "Female", 
-    relationship: "Parent", 
-    phoneNumber: "+1 123 456 7892" 
-  }
-];
+export const getFamilyMembers = (): FamilyMember[] => {
+  const member1 = new FamilyMember();
+  member1.id = "1";
+  member1.firstname = "Sarah";
+  member1.lastname = "Smith";
+  member1.dob = new Date("1990-05-15");
+  member1.gender = "Female";
+  member1.relationship = "Spouse";
+  member1.phoneNumber = "+1 123 456 7890";
+
+  const member2 = new FamilyMember();
+  member2.id = "2";
+  member2.firstname = "Alex";
+  member2.lastname = "Smith";
+  member2.dob = new Date("2015-10-25");
+  member2.gender = "Male";
+  member2.relationship = "Child";
+  member2.phoneNumber = "+1 123 456 7891";
+
+  const member3 = new FamilyMember();
+  member3.id = "3";
+  member3.firstname = "Jane";
+  member3.lastname = "Smith";
+  member3.dob = new Date("1965-03-18");
+  member3.gender = "Female";
+  member3.relationship = "Parent";
+  member3.phoneNumber = "+1 123 456 7892";
+
+  return [member1, member2, member3];
+};
 
 // Mock data for clinics - Now returning proper Clinic objects
 export const getClinics = (): Clinic[] => [
@@ -173,15 +173,15 @@ export const getClinicById = (clinicId: string): Clinic | undefined => {
 export const getFamilyMemberById = (memberId: string): FamilyMember | undefined => {
   // Handle the "self" case
   if (memberId === "self") {
-    return { 
-      id: "self", 
-      firstname: "Yourself", 
-      lastname: "", 
-      dob: new Date(),
-      gender: "",
-      relationship: "Self", 
-      phoneNumber: "" 
-    };
+    const selfMember = new FamilyMember();
+    selfMember.id = "self";
+    selfMember.firstname = "Yourself";
+    selfMember.lastname = "";
+    selfMember.dob = new Date();
+    selfMember.gender = "";
+    selfMember.relationship = "Self";
+    selfMember.phoneNumber = "";
+    return selfMember;
   }
   return getFamilyMembers().find(member => member.id === memberId);
 };

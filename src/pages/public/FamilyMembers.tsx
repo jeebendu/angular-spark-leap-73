@@ -31,27 +31,29 @@ export default function FamilyMembers() {
       // In a real implementation, this would use actual data from the API
       // For now, we'll use mock data
       const mockData = [
-        {
-          id: "1",
-          firstname: "Sarah",
-          lastname: "Johnson",
-          dob: new Date("1990-05-15"),
-          gender: "Female",
-          relationship: "Spouse",
-          phoneNumber: "+1234567890",
-          profileImage: ""
-        },
-        {
-          id: "2",
-          firstname: "David",
-          lastname: "Johnson",
-          dob: new Date("2015-10-23"),
-          gender: "Male",
-          relationship: "Child",
-          phoneNumber: "",
-          profileImage: ""
-        }
+        new FamilyMember(),
+        new FamilyMember()
       ];
+
+      // Configure the first mock member
+      mockData[0].id = "1";
+      mockData[0].firstname = "Sarah";
+      mockData[0].lastname = "Johnson";
+      mockData[0].dob = new Date("1990-05-15");
+      mockData[0].gender = "Female";
+      mockData[0].relationship = "Spouse";
+      mockData[0].phoneNumber = "+1234567890";
+      mockData[0].profileImage = "";
+
+      // Configure the second mock member
+      mockData[1].id = "2";
+      mockData[1].firstname = "David";
+      mockData[1].lastname = "Johnson";
+      mockData[1].dob = new Date("2015-10-23");
+      mockData[1].gender = "Male";
+      mockData[1].relationship = "Child";
+      mockData[1].phoneNumber = "";
+      mockData[1].profileImage = "";
       
       // In real implementation: const response = await fetchFamilyMembers();
       // setFamilyMembers(response.data);
@@ -109,10 +111,11 @@ export default function FamilyMembers() {
       );
     } else {
       // Add new member with generated ID
-      const newMember = {
+      const newMember = new FamilyMember();
+      Object.assign(newMember, {
         ...member,
         id: Date.now().toString(),
-      };
+      });
       setFamilyMembers(prev => [...prev, newMember]);
     }
     setIsDialogOpen(false);

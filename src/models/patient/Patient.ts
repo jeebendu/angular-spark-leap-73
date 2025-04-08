@@ -33,8 +33,15 @@ export class FamilyMember {
   phoneNumber: string;
   profileImage?: string;
   
-  // Adding the name property as a getter to maintain compatibility
+  // Add name property as a computed getter
   get name(): string {
-    return `${this.firstname} ${this.lastname}`;
+    return `${this.firstname} ${this.lastname}`.trim();
+  }
+
+  // Add a name setter to maintain compatibility
+  set name(fullName: string) {
+    const parts = fullName.split(' ');
+    this.firstname = parts[0] || '';
+    this.lastname = parts.slice(1).join(' ') || '';
   }
 }

@@ -1,3 +1,4 @@
+
 import { AppLayout } from "@/components/AppLayout";
 import { BookAppointmentModal } from "@/components/public/appointments/BookAppointmentModal";
 import { DoctorFilters } from "@/components/public/doctor/search/DoctorFilters";
@@ -5,10 +6,11 @@ import { DoctorSearchBar } from "@/components/public/doctor/search/DoctorSearchB
 import { DoctorsList } from "@/components/public/doctor/search/DoctorsList";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { DoctorSearchForm, DoctorSearchPageble, DoctorSearchView } from "@/models/doctor/Doctor";
-import { fetchAllDoctorClinics } from "@/services/DoctorService";
+import { searchDoctorClinics } from "@/services/DoctorClinicService";
 import { setPageTitle, updateMetaTags } from "@/utils/seoUtils";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useToast } from "@/components/ui/use-toast";
 
 const DoctorSearch = () => {
   const [searchParams] = useSearchParams();
@@ -32,59 +34,105 @@ const DoctorSearch = () => {
   const [sortBy, setSortBy] = useState("relevance");
   const [selectedDoctor, setSelectedDoctor] = useState<string | null>(null);
   const [selectedClinic, setSelectedClinic] = useState<string | null>(null);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0); // Changed to start from 0 for API pagination
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [doctors, setDoctors] = useState<DoctorSearchView[]>([]);
   const [showNoMoreDoctors, setShowNoMoreDoctors] = useState(false);
   const [bookAppointmentOpen, setBookAppointmentOpen] = useState(false);
   const [initialStep, setInitialStep] = useState(1);
+  const { toast } = useToast();
 
   const observer = useRef<IntersectionObserver>();
+  const isFetching = useRef(false);
 
+  // This is the main function to fetch doctors with filters
+  const fetchDoctorsWithFilters = useCallback(async (pageNumber: number, resetList: boolean = false) => {
+    if (isFetching.current) return;
+    isFetching.current = true;
 
-  const isFetching = useRef(false); // Move this to the top level of the component
+    setLoading(true);
+    try {
+      const searchFilters: DoctorSearchForm = {
+        doctorName: searchTerm || undefined,
+        clinicName: selectedClinic || undefined,
+        gender: selectedGenders.length > 0 ? parseInt(selectedGenders[0], 10) : undefined,
+        expYearFirst: selectedExperience.length > 0 ? parseInt(selectedExperience[0], 10) : undefined,
+        expYearLast: selectedExperience.length > 1 ? parseInt(selectedExperience[1], 10) : undefined,
+        radius: radius || 50,
+        latitude: latitude ? parseFloat(latitude) : undefined,
+        longitude: longitude ? parseFloat(longitude) : undefined,
+      };
 
+      // If specialties are selected, add them to the search filters
+      if (selectedSpecialties.length > 0) {
+        // You may need to modify this based on your API requirements
+        searchFilters.specialtyNames = selectedSpecialties;
+      }
+
+      // If languages are selected, add them to the search filters
+      if (selectedLanguages.length > 0) {
+        searchFilters.languageNames = selectedLanguages;
+      }
+
+      // Apply sorting based on sortBy value
+      if (sortBy !== "relevance") {
+        switch (sortBy) {
+          case "rating":
+            searchFilters.sortBy = "rating";
+            searchFilters.sortDirection = "DESC";
+            break;
+          case "price_low":
+            searchFilters.sortBy = "price";
+            searchFilters.sortDirection = "ASC";
+            break;
+          case "price_high":
+            searchFilters.sortBy = "price";
+            searchFilters.sortDirection = "DESC";
+            break;
+          case "experience":
+            searchFilters.sortBy = "experienceYears";
+            searchFilters.sortDirection = "DESC";
+            break;
+        }
+      }
+
+      const response = await searchDoctorClinics(searchFilters, pageNumber, 10);
+      const data = response.data;
+      
+      if (resetList) {
+        setDoctors(data.content);
+      } else {
+        setDoctors((prev) => [...prev, ...data.content]);
+      }
+      
+      setHasMore(!data.last);
+      setShowNoMoreDoctors(data.content.length === 0 || data.last);
+    } catch (error) {
+      console.error("Error fetching doctor clinics:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load doctors. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+      isFetching.current = false;
+    }
+  }, [searchTerm, selectedClinic, selectedGenders, selectedExperience, selectedSpecialties, selectedLanguages, radius, latitude, longitude, sortBy, toast]);
+
+  // Initial load of doctors
   useEffect(() => {
     setPageTitle("Find Doctors");
     updateMetaTags(
       "Search and find the best doctors near you. Filter by specialty, experience, gender, and more.",
       "doctor search, find specialist, medical professionals, healthcare providers"
     );
+    
+    fetchDoctorsWithFilters(0, true);
+  }, [fetchDoctorsWithFilters]);
 
-    const fetchDoctors = async (pageNumber: number) => {
-      if (isFetching.current) return; // Prevent duplicate calls
-      isFetching.current = true;
-
-      setLoading(true);
-      try {
-        const searchFilters: DoctorSearchForm = {
-          doctorName: searchTerm || undefined,
-          clinicName: selectedClinic || undefined,
-          gender: selectedGenders.length > 0 ? parseInt(selectedGenders[0], 10) : undefined,
-          expYearFirst: selectedExperience.length > 0 ? parseInt(selectedExperience[0], 10) : undefined,
-          expYearLast: selectedExperience.length > 1 ? parseInt(selectedExperience[1], 10) : undefined,
-          radius: radius || 50,
-          latitude: latitude ? parseFloat(latitude) : undefined,
-          longitude: longitude ? parseFloat(longitude) : undefined,
-        };
-
-        const response = await fetchAllDoctorClinics({ ...searchFilters, page: pageNumber, size: 10 });
-        const data: DoctorSearchPageble = response.data;
-        const doctorClinicData = data.content;
-        setDoctors((prev) => [...prev, ...doctorClinicData]);
-        setHasMore(!data.last);
-      } catch (error) {
-        console.error("Error fetching doctor clinics:", error);
-      } finally {
-        setLoading(false);
-        isFetching.current = false; // Reset API call status
-      }
-    };
-
-    fetchDoctors(page);
-  }, [page]);
-
+  // Handle infinite scroll
   const lastDoctorElementRef = useCallback(
     (node: HTMLDivElement | null) => {
       if (loading) return;
@@ -94,14 +142,14 @@ const DoctorSearch = () => {
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && hasMore) {
           setPage((prevPage) => prevPage + 1);
+          fetchDoctorsWithFilters(page + 1);
         }
       });
 
       if (node) observer.current.observe(node);
     },
-    [loading, hasMore]
+    [loading, hasMore, fetchDoctorsWithFilters, page]
   );
-
 
   useEffect(() => {
     if (isMobile) {
@@ -156,10 +204,30 @@ const DoctorSearch = () => {
     }
   };
   
+  // Apply filters when the user clicks Apply
   const applyFilters = () => {
+    // Reset page to 0 when applying new filters
+    setPage(0);
+    // Fetch doctors with the new filters, resetting the list
+    fetchDoctorsWithFilters(0, true);
+    
     if (isMobile) {
       setFilterOpen(false);
     }
+  };
+
+  // Handle search term changes
+  const handleSearchTermChange = (term: string) => {
+    setSearchTerm(term);
+    // Don't trigger API call here, let the user apply filters manually
+  };
+
+  // Handle sort changes
+  const handleSortByChange = (value: string) => {
+    setSortBy(value);
+    // Reset page and fetch with new sort
+    setPage(0);
+    fetchDoctorsWithFilters(0, true);
   };
   
   return (
@@ -167,9 +235,9 @@ const DoctorSearch = () => {
       <div className="container px-2 sm:px-4 py-3 sm:py-6">
         <DoctorSearchBar
           searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
+          setSearchTerm={handleSearchTermChange}
           sortBy={sortBy}
-          setSortBy={setSortBy}
+          setSortBy={handleSortByChange}
           viewMode={viewMode}
           setViewMode={setViewMode}
           filterOpen={filterOpen}
@@ -228,7 +296,9 @@ const DoctorSearch = () => {
           initialStep={initialStep}
           trigger={<></>}
           open={bookAppointmentOpen}
-          onOpenChange={setBookAppointmentOpen} doctor={undefined}        />
+          onOpenChange={setBookAppointmentOpen} 
+          doctor={undefined}        
+        />
       </div>
     </AppLayout>
   );

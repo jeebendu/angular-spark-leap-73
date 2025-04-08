@@ -8,8 +8,8 @@ export class Patient {
   branch: Branch;
   user: User;
   uid?: string;
-  firstname: string;
-  lastname: string;
+  firstname?: string;
+  lastname?: string;
   dob?: Date;
   age?: number;
   gender?: string;

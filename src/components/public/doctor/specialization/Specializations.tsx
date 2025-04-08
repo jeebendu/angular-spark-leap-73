@@ -25,8 +25,17 @@ export function Specializations() {
     fetchSpecialties();
   }, []);
 
-  const handleSpecializationClick = (specialization: string) => {
-    navigate(`/doctor/search?specialty=${encodeURIComponent(specialization)}`);
+  // const handleSpecializationClick = (specialization: string) => {
+  //   navigate(`/doctor/search?specialty=${encodeURIComponent(specialization)}`);
+  // };
+  const handleSpecializationClick = (id: number) => {
+    const latitude = 22.3511148;
+    const longitude = 78.6677428;
+    const radius = 5000.0;
+  
+    navigate(
+      `/doctor/search?specialty=${encodeURIComponent(id)}&latitude=${latitude}&longitude=${longitude}&radius=${radius}`
+    );
   };
 
   return (
@@ -49,7 +58,7 @@ export function Specializations() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05, duration: 0.3 }}
                 className="flex flex-col items-center cursor-pointer"
-                onClick={() => handleSpecializationClick(item.name)}
+                onClick={() => handleSpecializationClick(item.id)}
               >
                 <div className={`w-16 h-16 rounded-full bg-primary flex items-center justify-center mb-2 shadow-md hover:shadow-lg transition-all`}>
                   {IconComponent ? <IconComponent className="w-6 h-6 text-white" /> : null}

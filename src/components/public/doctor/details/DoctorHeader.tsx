@@ -19,8 +19,8 @@ export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
       <div className="md:flex">
         <div className="md:w-1/3 lg:w-1/4 relative">
           <img 
-            src={doctor.profileImageUrl || "https://res.cloudinary.com/dzxuxfagt/image/upload/w_500,h_500,c_thumb,g_face/assets/doctor_placeholder.png"}
-            alt={doctor.name || "Doctor"}
+            src={doctor.image || "https://res.cloudinary.com/dzxuxfagt/image/upload/w_500,h_500,c_thumb,g_face/assets/doctor_placeholder.png"}
+            alt={doctor.firstname +" "+ doctor.lastname || "Doctor"}
             className="w-full h-full object-cover object-center"
           />
           <div className="absolute top-4 right-4 md:hidden">
@@ -37,21 +37,26 @@ export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
           <div>
             <div className="flex items-start justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">{doctor.name}</h1>
+                <h1 className="text-2xl font-bold text-gray-900">{doctor.firstname +" "+ doctor.lastname}</h1>
                 <p className="text-gray-600">
-                  {doctor.specializationList.map((specialization) => (
-                    <span key={specialization.id}>
-                      {Array.isArray(specialization.name) ? specialization.name.join(", ") : specialization.name}
-                    </span>
-                  ))}
+                  {doctor.specializationList && Array.isArray(doctor.specializationList) ? (
+                    doctor.specializationList.map((specialization, index) => (
+                      <span key={specialization.id}>
+                        {specialization.name}
+                        {index < doctor.specializationList.length - 1 && ', '}
+                      </span>
+                    ))
+                  ) : (
+                    <span>No specializations available</span>
+                  )}
                 </p>
                 <p className="text-sm text-gray-500">{doctor.qualification}</p>
                 
                 <div className="flex items-center mt-2">
                   <div className="flex items-center">
                     <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    <span className="ml-1 text-sm font-medium">{doctor.rating}</span>
-                    <span className="ml-1 text-xs text-gray-500">({doctor.reviewCount} reviews)</span>
+                    <span className="ml-1 text-sm font-medium">{doctor.rating ?? "0"}</span>
+                    <span className="ml-1 text-xs text-gray-500">({doctor.reviewCount ?? 0} reviews)</span>
                   </div>
                   <span className="mx-2 text-gray-300">|</span>
                   <div className="flex items-center">
@@ -63,15 +68,19 @@ export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
                 <div className="flex flex-wrap gap-2 mt-3">
                   <Badge variant="outline" className="flex items-center gap-1 rounded-full px-3 py-1">
                     <Award className="h-3 w-3" />
-                    <span>{doctor.expYear}</span>
+                    <span>{doctor.expYear} Years Experience</span>
                   </Badge>
                   <Badge variant="outline" className="flex items-center gap-1 rounded-full px-3 py-1">
                     <Languages className="h-3 w-3" />
-                    <span>{doctor.languageList.map(language => language.name).join(", ")}</span>
+                    <span>
+                      {doctor.languageList && Array.isArray(doctor.languageList)
+                        ? doctor.languageList.map((language) => language.name).join(", ")
+                        : "No languages available"}
+                    </span>
                   </Badge>
                   <Badge variant="outline" className="flex items-center gap-1 rounded-full px-3 py-1">
                     <Building className="h-3 w-3" />
-                    <span>{doctor.clinics?.length || 0} Clinics</span>
+                    <span>{doctor.branchList?.length || 0} Clinics</span>
                   </Badge>
                 </div>
               </div>
@@ -88,26 +97,31 @@ export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
             
             <Separator className="my-4" />
             
-            <p className="text-gray-700 text-sm md:text-base leading-relaxed">{doctor.bio}</p>
+            <p className="text-gray-700 text-sm md:text-base leading-relaxed">{doctor.biography}</p>
           </div>
           
           <div className="flex items-center justify-between mt-6">
             <div>
               <p className="text-gray-500 text-sm">Consultation Fee</p>
               <p className="text-xl font-bold text-primary">
-                ₹{doctor.consultationFee ? doctor.consultationFee.replace('₹', '') : 'N/A'}
+                ₹{doctor.consultationFee ? doctor.consultationFee.replace('₹', '') : '500'}
               </p>
             </div>
             
-            <BookAppointmentModal 
-              doctorName={doctor.name}
-              specialty={doctor.specializationList[0]?.name || "Specialty Not Available"}
+            <BookAppointmentModal
+            doctor={doctor}
+              doctorName={doctor.firstname +" "+ doctor.lastname}
+              specialty={
+                doctor.specializationList && Array.isArray(doctor.specializationList) && doctor.specializationList[0]
+                  ? doctor.specializationList[0].name
+                  : "Specialty Not Available"
+              }
               initialClinicId={firstClinicId}
               initialStep={firstClinicId ? 2 : 1}
               open={openModal}
               onOpenChange={setOpenModal}
               trigger={
-                <Button 
+                <Button
                   className="sky-button rounded-full px-8 py-2"
                   onClick={() => setOpenModal(true)}
                 >

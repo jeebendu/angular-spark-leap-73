@@ -1,9 +1,11 @@
 
+
+import { DoctorSearchView } from "@/models/doctor/Doctor";
 import { DoctorGridItem } from "./DoctorGridItem";
 import { DoctorListItem } from "./DoctorListItem";
 
 interface DoctorsList {
-  doctors: any[];
+  doctors: DoctorSearchView[];
   viewMode: "grid" | "list";
   lastDoctorElementRef: (node: HTMLDivElement | null) => void;
   loading: boolean;
@@ -34,7 +36,7 @@ export function DoctorsList({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {doctors.map((doctor, index) => (
             <DoctorGridItem
-              key={doctor.id}
+              key={doctor.doctorId}
               doctor={doctor}
               index={index}
               isLastItem={index === doctors.length - 1}
@@ -47,7 +49,7 @@ export function DoctorsList({
         <div className="flex flex-col gap-4">
           {doctors.map((doctor, index) => (
             <DoctorListItem
-              key={doctor.id}
+              key={doctor.doctorId}
               doctor={doctor}
               index={index}
               isLastItem={index === doctors.length - 1}

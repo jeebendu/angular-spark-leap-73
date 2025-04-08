@@ -22,26 +22,28 @@ export const DoctorDetailsTabs = ({ doctor }: DoctorDetailsTabsProps) => {
         
         <TabsContent value="clinics">
           <ClinicsTab 
-            clinics={doctor.clinics} 
+            branch={doctor.branchList} 
             doctor={doctor} 
           />
         </TabsContent>
         
         <TabsContent value="about">
           <AboutTab 
+          doctor={doctor}
             education={doctor.education}
             languages={doctor.languageList}
           />
         </TabsContent>
         
         <TabsContent value="services">
-          <ServicesTab services={doctor.services} />
+          <ServicesTab services={doctor.serviceList} />
         </TabsContent>
         
         <TabsContent value="reviews">
           <ReviewsTab 
-            rating={doctor.rating}
-            reviewCount={doctor.reviewCount}
+            // rating={doctor.rating}
+            // reviewCount={doctor.reviewCount}
+            doctorId={doctor.id}
           />
         </TabsContent>
       </Tabs>

@@ -8,13 +8,15 @@ import { Doctor } from "@/models/doctor/Doctor";
 import { CalendarDays, CheckCircle2, Clock, MapPin } from "lucide-react";
 import { BookAppointmentModal } from "../../appointments/BookAppointmentModal";
 import { format } from "date-fns";
+import { Branch } from "@/models/shared/Branch";
 
 interface ClinicsTabProps {
-  clinics: Clinic[];
+  // clinics: Clinic[];
   doctor: Doctor;
+  branch:Branch[]
 }
 
-export const ClinicsTab = ({ clinics, doctor }: ClinicsTabProps) => {
+export const ClinicsTab = ({ doctor ,branch}: ClinicsTabProps) => {
   const [selectedClinic, setSelectedClinic] = useState(0);
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null);
@@ -49,8 +51,8 @@ export const ClinicsTab = ({ clinics, doctor }: ClinicsTabProps) => {
       <h3 className="text-lg font-medium mb-4">Available Clinics</h3>
       
       <div className="grid md:grid-cols-2 gap-4">
-        {clinics?.length > 0 ? (
-          clinics.map((clinic, index) => (
+        {branch?.length > 0 ? (
+          branch.map((branch, index) => (
             <Card
               key={index}
               className={`cursor-pointer border-2 ${
@@ -61,18 +63,18 @@ export const ClinicsTab = ({ clinics, doctor }: ClinicsTabProps) => {
               <CardContent className="p-4">
                 <div className="flex justify-between">
                   <div>
-                    <h4 className="font-medium text-base">{clinic.name}</h4>
+                    <h4 className="font-medium text-base">{branch.name}</h4>
                     <p className="text-sm text-gray-500 flex items-start mt-1">
                       <MapPin className="h-4 w-4 mr-1 shrink-0 mt-0.5" />
-                      {clinic.address}
+                      {branch.location + ", " + branch.city + ", " + branch.state?.name + ", " + branch.country?.name}
                     </p>
                     <div className="flex items-center mt-2 text-sm text-gray-500">
                       <CalendarDays className="h-4 w-4 mr-1" />
-                      <span>{clinic.days}</span>
+                      <span>branch.days</span>
                     </div>
                     <div className="flex items-center mt-1 text-sm text-gray-500">
                       <Clock className="h-4 w-4 mr-1" />
-                      <span>{clinic.timings}</span>
+                      <span>branch.timings</span>
                     </div>
                   </div>
                   {selectedClinic === index && (
@@ -180,11 +182,11 @@ export const ClinicsTab = ({ clinics, doctor }: ClinicsTabProps) => {
       </div>
       
       {/* BookAppointmentModal with controlled open state and initial step set to 3 */}
-      {clinics?.length > 0 && (
+      {branch?.length > 0 && (
         <BookAppointmentModal 
           doctorName={doctor.name}
           specialty={doctor.specialty}
-          initialClinicId={clinics[selectedClinic]?.id}
+          initialClinicId={branch[selectedClinic]?.id}
           initialStep={3}
           open={isModalOpen}
           onOpenChange={setIsModalOpen}

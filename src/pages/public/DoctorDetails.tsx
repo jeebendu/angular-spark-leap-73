@@ -12,7 +12,7 @@ import { setPageTitle, updateMetaTags } from "@/utils/seoUtils";
 
 const DoctorDetails = () => {
   const { doctorId } = useParams(); // Get the doctor ID from the URL
-  console.log("Doctor ID:", doctorId);
+  // console.log("Doctor ID:", doctorId);
   const location = useLocation();
   const [doctor, setDoctor] = useState<Doctor | null>(null); // State to store doctor data
   const [loading, setLoading] = useState<boolean>(true); // State to manage loading
@@ -27,8 +27,10 @@ const DoctorDetails = () => {
           
           // Set SEO tags once doctor data is loaded
           if (response.data) {
-            const doctorName = response.data.name;
-            const specialty = response.data.specializationList[0]?.name || '';
+            const doctorName = response.data.firstname + " " + response.data.lastname;
+            const specialty = Array.isArray(response.data.specializationList) && response.data.specializationList.length > 0
+            ? response.data.specializationList[0].name
+            : '';
             setPageTitle(`${doctorName} - ${specialty} | ClinicHub.care`);
             updateMetaTags(
               `Book an appointment with ${doctorName}, ${specialty} with ${response.data.expYear} years of experience. View doctor details, clinics, and available time slots.`,
@@ -55,9 +57,10 @@ const DoctorDetails = () => {
   if (loading) {
     return (
       <AppLayout>
-        <div className="container px-4 py-6 max-w-6xl mx-auto">
-          <p>Loading doctor details...</p>
-        </div>
+        <div className="flex flex-col items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <p className="mt-4 text-muted-foreground">Loading doctors...</p>
+      </div>
       </AppLayout>
     );
   }

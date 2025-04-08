@@ -2,6 +2,7 @@
 import { Appointment, ClinicReference } from "@/models/appointment/Appointment";
 import { Clinic } from "@/models/clinic/Clinic";
 import { FamilyMember } from "@/models/patient/Patient";
+import http from "@/lib/JwtInterceptor";
 
 // We need to manually define the ToasterToast type since it's not exported from the module
 interface ToasterToast {
@@ -85,7 +86,7 @@ export const validateClinicSelection = (selectedClinic: ClinicReference | string
 };
 
 export const validateDateTimeSelection = (
-  selectedDate: string, 
+  selectedDate: Date, 
   selectedTime: string,
   toastHelpers: ToastHelpers
 ): boolean => {
@@ -112,9 +113,9 @@ export const validateCurrentStep = (
 ): boolean => {
   switch(step) {
     case 1:
-      return validateClinicSelection(appointment.selectedClinic, toastHelpers);
+      return validateClinicSelection(appointment.doctorClinic.clinic, toastHelpers);
     case 2:
-      return validateDateTimeSelection(appointment.selectedDate, appointment.selectedTime, toastHelpers);
+      return validateDateTimeSelection(appointment.appointmentDate, appointment?.slot.startTime, toastHelpers);
     case 3:
       return validatePatientSelection();
     case 4:
@@ -129,14 +130,14 @@ export const bookAppointment = (
   appointmentDetails: Appointment,
   toastHelpers: ToastHelpers
 ): void => {
-  // In a real app, this would make an API call to save the appointment
-  toastHelpers.toast({
-    title: "Appointment Booked!",
-    description: `Your appointment has been confirmed for ${appointmentDetails.selectedDate} at ${appointmentDetails.selectedTime}.`,
-  });
+  // // In a real app, this would make an API call to save the appointment
+  // toastHelpers.toast({
+  //   title: "Appointment Booked!",
+  //   description: `Your appointment has been confirmed for ${appointmentDetails.selectedDate} at ${appointmentDetails.selectedTime}.`,
+  // });
   
-  // Return success - in a real app, you might return a Promise with the result
-  console.log("Appointment booked:", appointmentDetails);
+  // // Return success - in a real app, you might return a Promise with the result
+  // console.log("Appointment booked:", appointmentDetails);
 };
 
 // Get clinic by ID
@@ -166,4 +167,27 @@ export const calculateAppointmentCost = (): { consultationFee: number, platformF
     gst,
     total
   };
+};
+
+
+
+
+export const saveAppointment = async (appointment: Appointment) => {
+  return await http.post(`/v1/appointments/saveOrUpdate`, appointment);
+};
+
+export const slotByDrAndBranchId = async (slotFilter: any) => {
+  return await http.post(`/v1/public/doctor/slots/list-filtered`, slotFilter);
+};
+
+export const getAllAppointmentList = async (name: any) => {
+  return await http.get(`/v1/appointments/patient/appointments/${name}`);
+};
+  
+export const getPatietRelationList = async (id: any) => {
+  return await http.get(`/v1/patient/relation-with/list/patient/${id}`);
+};
+
+export const createNewPatientRelation = async (familymember: any) => {
+  return await http.post(`/v1/patient/relation-with/saveOrUpdate`, familymember);
 };

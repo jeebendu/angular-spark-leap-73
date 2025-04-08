@@ -1,5 +1,6 @@
+import { AuthUser } from '@/models/user/User';
 import apiService from './apiService';
-
+import http from "@/lib/JwtInterceptor";
 // Types for authentication
 export interface LoginResponse {
   token: string;
@@ -96,6 +97,33 @@ class AuthService {
            Math.random().toString(36).substring(2, 15);
   }
 }
+
+// ***********************
+
+export const sendOtpApi = async (authUser: AuthUser) => {
+  return await http.post(`/api/v1/auth/sendOtp`, authUser);
+};
+
+export const verifyOtpAndLoginApi = async (authUser: AuthUser) => {
+  const response= await http.post(`/api/v1/auth/otpLogin`, authUser);
+  const authResponse = response.data;
+  if (authResponse.token) {
+      localStorage.setItem('auth_token', authResponse.token);
+      localStorage.setItem('user_info', JSON.stringify({
+          name: 'User',
+          mobile: authResponse.username
+      }));
+      return { status: true, message: 'Login Successfull' };
+  } else {
+      return { status: false, message: 'Invalid Credential' };
+  }
+};
+
+export const verifyLoginApi = async () => {
+  return await http.get(`/api/v1/auth/isVerifyLogin`);
+};
+// ***********************
+
 
 // Create and export a singleton instance
 const authService = new AuthService();

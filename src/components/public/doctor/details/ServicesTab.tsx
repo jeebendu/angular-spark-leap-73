@@ -1,8 +1,10 @@
 
+
+import { DoctorService } from "@/models/doctor/Doctor";
 import { CheckCircle2 } from "lucide-react";
 
 interface ServicesTabProps {
-  services: string[];
+  services: DoctorService[];
 }
 
 export const ServicesTab = ({ services }: ServicesTabProps) => {
@@ -14,7 +16,7 @@ export const ServicesTab = ({ services }: ServicesTabProps) => {
           services.map((service, index) => (
             <div key={index} className="flex items-start">
               <CheckCircle2 className="h-5 w-5 text-primary mr-2 mt-0.5" />
-              <span>{service}</span>
+              <span>{service.name}</span>
             </div>
           ))
         ) : (

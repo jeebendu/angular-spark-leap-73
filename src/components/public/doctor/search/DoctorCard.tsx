@@ -6,17 +6,18 @@ import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { number } from "zod";
 
 interface DoctorCardProps {
-  id: string;
+  id:number;
   name: string;
   specialty: string;
   rating: number;
   reviewCount: number;
   price: string;
   imageSrc: string;
-  experience?: string;
-  languages?: string[];
+  experience?: number;
+  languages?: string;
   clinics?: {
     name: string;
     location: string;
@@ -32,8 +33,8 @@ export function DoctorCard({
   reviewCount, 
   price, 
   imageSrc, 
-  experience = "10+ years",
-  languages = ["English", "Hindi"],
+  experience ,
+  languages,
   clinics = [],
   onBookNow 
 }: DoctorCardProps) {

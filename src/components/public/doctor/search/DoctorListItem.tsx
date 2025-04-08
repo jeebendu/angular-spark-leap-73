@@ -2,31 +2,21 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { DoctorSearchView } from "@/models/doctor/Doctor";
 import { motion } from "framer-motion";
-import { Building, Clock, Heart, Languages, MapPin, Star } from "lucide-react";
+import { Award, Building, Clock, Heart, Languages, MapPin, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-interface DoctorClinic {
-  id: string;
-  name: string;
-  location: string;
-  distance: string;
-  available: boolean;
-}
+// interface DoctorClinic {
+//   id: string;
+//   name: string;
+//   location: string;
+//   distance: string;
+//   available: boolean;
+// }
 
 interface DoctorListItemProps {
-  doctor: {
-    id: string;
-    name: string;
-    specialty: string;
-    rating: number;
-    reviewCount: number;
-    price: number;
-    imageSrc: string;
-    experience: string;
-    languages: string[];
-    clinics: DoctorClinic[];
-  };
+  doctor: DoctorSearchView;
   index: number;
   isLastItem: boolean;
   lastDoctorElementRef: (node: HTMLDivElement | null) => void;
@@ -38,12 +28,12 @@ export function DoctorListItem({ doctor, index, isLastItem, lastDoctorElementRef
   const navigate = useNavigate();
   
   const handleViewProfile = () => {
-    navigate(`/doctor/${doctor.id}`);
+    navigate(`/doctor/${doctor.doctorId}`);
   };
   
   return (
     <motion.div
-      key={doctor.id}
+      key={doctor.doctorId}
       ref={isLastItem ? lastDoctorElementRef : null}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
@@ -60,7 +50,7 @@ export function DoctorListItem({ doctor, index, isLastItem, lastDoctorElementRef
             >
               <img 
                 src={doctor.imageSrc}
-                alt={doctor.name}
+                alt={doctor.doctorName}
                 className="w-full h-full object-cover"
               />
               <div className="absolute top-1 right-1 bg-white/80 backdrop-blur-sm px-1 py-0.5 rounded-full text-[8px] font-medium text-primary flex items-center">
@@ -72,39 +62,47 @@ export function DoctorListItem({ doctor, index, isLastItem, lastDoctorElementRef
               <div className="flex flex-col sm:flex-row sm:justify-between">
                 <div>
                   <div className="flex flex-wrap items-center gap-1 sm:gap-2">
-                    <h3 className="font-semibold text-base sm:text-lg cursor-pointer hover:text-primary" onClick={handleViewProfile}>{doctor.name}</h3>
+                    <h3 className="font-semibold text-base sm:text-lg cursor-pointer hover:text-primary" onClick={handleViewProfile}>{doctor.doctorName}</h3>
                     <div className="flex items-center">
                       <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-yellow-400 text-yellow-400" />
-                      <span className="font-medium ml-0.5 text-sm sm:text-base sm:ml-1">{doctor.rating}</span>
+                      <span className="font-medium ml-0.5 text-sm sm:text-base sm:ml-1">{doctor.averageRating}</span>
                       <span className="text-muted-foreground ml-0.5 text-xs sm:text-sm sm:ml-1">({doctor.reviewCount})</span>
                     </div>
                   </div>
                   
-                  <p className="text-muted-foreground text-xs sm:text-sm">{doctor.specialty}</p>
+                  <p className="text-muted-foreground text-xs sm:text-sm">{doctor.specialties}</p>
                   
                   <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-1 sm:mt-2">
                     <div className="px-2 sm:px-3 py-0.5 sm:py-1 bg-gray-100 rounded-full text-[10px] sm:text-xs flex items-center">
-                      <Clock className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
-                      {doctor.experience}
+                      <Award className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
+                      {doctor.experienceYears} Years
                     </div>
                     <div className="px-2 sm:px-3 py-0.5 sm:py-1 bg-gray-100 rounded-full text-[10px] sm:text-xs flex items-center">
                       <Languages className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
-                      {doctor.languages.join(", ")}
+                      {doctor.languages}
                     </div>
-                    <div className="px-2 sm:px-3 py-0.5 sm:py-1 bg-gray-100 rounded-full text-[10px] sm:text-xs flex items-center">
+                    {<div className="px-2 sm:px-3 py-0.5 sm:py-1 bg-gray-100 rounded-full text-[10px] sm:text-xs flex items-center">
                       <Building className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
-                      {doctor.clinics.length} {doctor.clinics.length === 1 ? 'Clinic' : 'Clinics'}
-                    </div>
+                      {/* {doctor.clinics.length} {doctor.clinics.length === 1 ? 'Clinic' : 'Clinics'} */}
+                      {/* {doctor.clinicName!=null ? doctor.clinicName : 'No Clinics'} */}
+                    </div>}
                   </div>
+
+                  <div className="mt-1 sm:mt-2">
+                      <div className="flex items-center">
+                        <MapPin className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-0.5 sm:mr-1 text-gray-500" />
+                        <span className="text-gray-700 text-[10px] sm:text-xs">{doctor.clinicName!=null ? doctor.clinicName : 'No Clinics'}</span>
+                      </div>
+                    </div>
                   
-                  {doctor.clinics.length > 0 && (
+                  {/* {doctor.clinics.length > 0 && (
                     <div className="mt-1 sm:mt-2">
                       <div className="flex items-center">
                         <MapPin className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-0.5 sm:mr-1 text-gray-500" />
-                        <span className="text-gray-700 text-[10px] sm:text-xs">{doctor.clinics[0].name}, {doctor.clinics[0].location}</span>
+                        <span className="text-gray-700 text-[10px] sm:text-xs">{doctor.clinics[0].name}, {doctor.clinics[0].branchList[0].city}</span>
                       </div>
                     </div>
-                  )}
+                  )} */}
                 </div>
                 
                 <div className="flex flex-row justify-between items-center mt-2 sm:mt-0 sm:flex-col sm:items-end sm:gap-2">
@@ -123,7 +121,7 @@ export function DoctorListItem({ doctor, index, isLastItem, lastDoctorElementRef
                     <Button 
                       size="sm"
                       className="sky-button rounded-full h-8"
-                      onClick={() => handleBookAppointment(doctor.name)}
+                      onClick={() => handleBookAppointment(doctor.doctorName)}
                     >
                       Book Now
                     </Button>

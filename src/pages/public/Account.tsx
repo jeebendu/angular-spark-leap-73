@@ -5,11 +5,90 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { toast } from "@/hooks/use-toast";
+import { Patient } from "@/models/patient/Patient";
 import { BellRing, CreditCard, Edit2, LogOut, Settings, Shield, User, UserCog } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { fetchMyProfilePatient, updatePatientInfo } from "@/services/PatientService";
+import authService from "@/services/authService";
+import { useNavigate } from "react-router-dom";
 
 export default function Account() {
   const { t } = useTranslation();
+  const navigate=useNavigate();
+  const [patient, setPatient] = useState<Patient>(null);
+
+  useEffect(() => {
+    getMyProfile();
+  }, []);
+
+  const getMyProfile = async () => {
+    try {
+      const response = await fetchMyProfilePatient();
+      if (response) {
+        setPatient(response.data);
+      }
+
+    } catch (error) {
+      console.log("Error fetching profile", error);
+    }
+
+  }
+
+  const hanleUserInputChange = (e: any) => {
+    const { name, value } = e.target;
+
+    setPatient((prev) => {
+      if (name.startsWith("user.")) {
+        const userKey = name.split(".")[1]; // Extract the nested key (e.g., "phone")
+        return {
+          ...prev,
+          user: {
+            ...prev.user,
+            [userKey]: value,
+          },
+        };
+      }
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
+  };
+
+
+  const updateChange = async () => {
+    try {
+
+      const response = await updatePatientInfo(patient);
+      if (response.data.status) {
+        console.log("Profile updated successfully", response);
+              toast({
+                title: "Profile Updated",
+                description: "Your profile has been updated successfully."
+              });
+        getMyProfile(); 
+      }else{
+        toast({
+          title: "Profile Updated",
+          description: "Something went wrong while updating your profile.",
+        });
+      }
+
+    } catch (error) {
+      console.log("Error updating profile", error);
+    }
+  }
+  const handleLogout = () => {
+    authService.logout();
+    navigate("/");
+    toast({
+      title: "Logged Out",
+      description: "You have been logged out successfully",
+    });
+  };
+
   
   return (
     <AppLayout>
@@ -17,8 +96,8 @@ export default function Account() {
         <div className="flex flex-col gap-6">
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold text-[#333]">{t('account.title')}</h1>
-            <Button variant="outline" className="gap-2">
-              <LogOut className="h-4 w-4" />
+            <Button variant="outline" className="gap-2" onClick={handleLogout}>
+              <LogOut className="h-4 w-4"  />
               {t('account.signOut')}
             </Button>
           </div>
@@ -32,12 +111,20 @@ export default function Account() {
                     <AvatarImage src="https://randomuser.me/api/portraits/men/42.jpg" />
                     <AvatarFallback>JD</AvatarFallback>
                   </Avatar>
-                  <h2 className="text-xl font-semibold">John Doe</h2>
-                  <p className="text-sm text-gray-500 mb-4">john.doe@example.com</p>
-                  <Button variant="outline" size="sm" className="gap-2 mb-6">
+                  {
+                    patient?.firstname ? (
+                      <h2 className="text-xl font-semibold">{`${patient.firstname} ${patient.lastname}`}</h2>
+                    ) : null
+                  }{
+                    patient?.user.email ? (
+                      <p className="text-sm text-gray-500 mb-4">{patient?.user.email}</p>
+                    ) : null
+                  }
+                 
+                  {/* <Button variant="outline" size="sm" className="gap-2 mb-6">
                     <Edit2 className="h-3 w-3" />
                     {t('account.edit')}
-                  </Button>
+                  </Button> */}
                   
                   <div className="w-full space-y-2">
                     <AccountNavItem icon={<User />} label={t('account.personalInfo')} active />
@@ -60,34 +147,41 @@ export default function Account() {
                       <CardTitle>{t('account.personalInfo')}</CardTitle>
                       <CardDescription>{t('account.manageDetails')}</CardDescription>
                     </div>
-                    <Button size="sm">{t('account.saveChanges')}</Button>
+                    <Button size="sm" onClick={updateChange}>{t('account.saveChanges')}</Button>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="firstName">{t('account.firstName')}</Label>
-                      <Input id="firstName" defaultValue="John" />
+                      <Input id="firstName" value={patient?.firstname} name="firstname" onChange={(e) => hanleUserInputChange(e)} />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="lastName">{t('account.lastName')}</Label>
-                      <Input id="lastName" defaultValue="Doe" />
+                      <Input id="lastName" value={patient?.lastname} name="lastname" onChange={(e) => hanleUserInputChange(e)} />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="email">{t('account.email')}</Label>
-                      <Input id="email" type="email" defaultValue="john.doe@example.com" />
+                      <Input id="email" type="email" value={patient?.user.email} name="user.email" onChange={(e) => hanleUserInputChange(e)} readOnly />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="phone">{t('account.phone')}</Label>
-                      <Input id="phone" defaultValue="+91 98765 43210" />
+                      <Input id="phone" value={patient?.user.phone} readOnly />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="dob">{t('account.dob')}</Label>
-                      <Input id="dob" defaultValue="15/04/1985" />
+                      <Input id="dob" type="date" value={patient?.dob ? new Date(patient.dob).toISOString().split('T')[0] : ''} name="dob" onChange={(e) => hanleUserInputChange(e)} />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="gender">{t('account.gender')}</Label>
-                      <Input id="gender" defaultValue="Male" />
+                      <div className="flex items-center gap-4">
+
+<Label htmlFor="male">Male</Label>
+<Input id="male" type="radio" style={{ height: "20px" }} value="Male" checked={patient?.gender == "Male"} name="gender" onChange={(e) => hanleUserInputChange(e)} />
+<Label htmlFor="female">Female</Label>
+<Input id="female" style={{ height: "20px" }} type="radio" value="Female" checked={patient?.gender == "Female"} name="gender" onChange={(e) => hanleUserInputChange(e)} />
+
+</div>
                     </div>
                   </div>
                 </CardContent>
@@ -107,9 +201,9 @@ export default function Account() {
                           <span className="bg-green-100 text-green-600 text-xs px-2 py-0.5 rounded-full">Default</span>
                         </div>
                         <p className="text-sm text-gray-500 mt-1">
-                          123 Main Street, Apartment 4B<br />
-                          Andheri East, Mumbai, 400069<br />
-                          Maharashtra, India
+                          {patient?.city},<br />
+                          {patient?.district?.name},<br />
+                          {patient?.state?.name}, {patient?.country?.name}
                         </p>
                       </div>
                       <div className="flex gap-2">
@@ -118,7 +212,7 @@ export default function Account() {
                       </div>
                     </div>
                     
-                    <div className="flex justify-between items-start p-4 border rounded-lg">
+                    {/* <div className="flex justify-between items-start p-4 border rounded-lg">
                       <div>
                         <h3 className="font-medium">Office</h3>
                         <p className="text-sm text-gray-500 mt-1">
@@ -132,7 +226,7 @@ export default function Account() {
                         <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">{t('account.delete')}</Button>
                       </div>
                     </div>
-                    
+                     */}
                     <Button variant="outline" className="w-full">
                       + {t('account.addAddress')}
                     </Button>

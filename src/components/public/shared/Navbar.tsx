@@ -11,6 +11,8 @@ import { DesktopNav } from "@/components/public/shared/navbar/DesktopNav";
 import { NotificationBell } from "@/components/public/shared/navbar/NotificationBell";
 import authService from "@/services/authService";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import {verifyLoginApi} from "@/services/authService";
+import { AuthUser } from "@/models/user/User";
 
 export function Navbar() {
   const { t } = useTranslation();
@@ -18,7 +20,17 @@ export function Navbar() {
   const isMobile = useIsMobile();
   const [selectedCity, setSelectedCity] = useState("Bangalore");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  
+  const [userInfo, setUserInfo] = useState<{ name: string, mobile: string } | null>(null);
+  const [authUser, setAuthUser] = useState<AuthUser>({
+    email: "",
+    reason: "login",
+    tenant: "dev",
+    phone: "",
+    otp: "",
+    authToken: ""
+  });
+
+
   useEffect(() => {
     const checkAuth = () => {
       const loggedIn = authService.isLoggedIn();
@@ -39,9 +51,21 @@ export function Navbar() {
       }
     };
 
+    const checkAuth =async () => {
+      const loggedIn = await verifyLoginApi();
+      setIsLoggedIn(loggedIn.data);
+
+      if (loggedIn.data) {
+        setUserInfo(authService.getCurrentUser());
+      }
+    };
+
+    checkAuth();
+
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, [scrolled]);
+
 
   return (
     <header className={`py-2 px-2 md:px-6 sticky top-0 z-30 ${scrolled ? 'glass-header' : 'bg-white border-b'}`}>

@@ -14,7 +14,38 @@ export interface User {
   role: Role;
 }
 
+
 export interface Role {
+  id: number;
+  name: string;
+  permissions: Permission[];
+}
+
+export interface Permission {
+  id: number;
+  module: Module;
+  read: boolean;
+  write: boolean;
+  upload: boolean;
+  print: boolean;
+}
+
+export interface Module {
+  id: number;
+  name: string;
+  code: string;
+}
+
     id: number;
     name: string;
+  }
+
+
+  export interface AuthUser {
+    email: string | null;
+    reason: "login";
+    tenant: "dev";
+    otp: string | null;
+    authToken: string | null;
+    phone: string | null;
   }

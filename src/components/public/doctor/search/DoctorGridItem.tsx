@@ -1,19 +1,9 @@
+import { DoctorSearchView } from "@/models/doctor/Doctor";
 import { motion } from "framer-motion";
 import { DoctorCard } from "./DoctorCard";
 
 interface DoctorGridItemProps {
-  doctor: {
-    id: string;
-    name: string;
-    specialty: string;
-    rating: number;
-    reviewCount: number;
-    price: number;
-    imageSrc: string;
-    experience: string;
-    languages: string[];
-    clinics: any[];
-  };
+  doctor: DoctorSearchView;
   index: number;
   isLastItem: boolean;
   lastDoctorElementRef: (node: HTMLDivElement | null) => void;
@@ -23,23 +13,23 @@ interface DoctorGridItemProps {
 export function DoctorGridItem({ doctor, index, isLastItem, lastDoctorElementRef, handleBookAppointment }: DoctorGridItemProps) {
   return (
     <motion.div
-      key={doctor.id}
+      key={doctor.doctorId}
       ref={isLastItem ? lastDoctorElementRef : null}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index % 12 * 0.05, duration: 0.3 }}
     >
       <DoctorCard
-        id={doctor.id}
-        name={doctor.name}
-        specialty={doctor.specialty}
-        rating={doctor.rating}
+        id={doctor.doctorId}
+        name={doctor.doctorName}
+        specialty={doctor.specialties}
+        rating={doctor.averageRating}
         reviewCount={doctor.reviewCount}
         price={`₹${doctor.price}`}
         imageSrc={doctor.imageSrc}
-        experience={doctor.experience}
+        experience={doctor.experienceYears}
         languages={doctor.languages}
-        clinics={doctor.clinics}
+        clinics={doctor.clinicName ? [{ name: doctor.clinicName, location: 'NA' }] : [{ name: 'No Clinics', location: 'NA' }]}
         onBookNow={(name) => handleBookAppointment(name)}
       />
     </motion.div>

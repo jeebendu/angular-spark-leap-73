@@ -1,5 +1,3 @@
-
-
 import { DoctorSearchView } from "@/models/doctor/Doctor";
 import { DoctorGridItem } from "./DoctorGridItem";
 import { DoctorListItem } from "./DoctorListItem";

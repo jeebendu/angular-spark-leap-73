@@ -11,7 +11,7 @@ interface DoctorHeaderProps { doctor: Doctor }
 
 export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
   // Get the first clinic if available for pre-selection
-  const firstClinicId = doctor.clinics && doctor.clinics.length > 0 ? doctor.clinics[0].id : undefined;
+  const firstClinicId = doctor.branchList && doctor.branchList.length > 0 ? doctor.branchList[0].id : undefined;
   const [openModal, setOpenModal] = useState(false);
   
   return (
@@ -19,7 +19,7 @@ export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
       <div className="md:flex">
         <div className="md:w-1/3 lg:w-1/4 relative">
           <img 
-            src={doctor.image || "https://res.cloudinary.com/dzxuxfagt/image/upload/w_500,h_500,c_thumb,g_face/assets/doctor_placeholder.png"}
+            src={doctor.image || doctor.profilePic || "https://res.cloudinary.com/dzxuxfagt/image/upload/w_500,h_500,c_thumb,g_face/assets/doctor_placeholder.png"}
             alt={doctor.firstname +" "+ doctor.lastname || "Doctor"}
             className="w-full h-full object-cover object-center"
           />
@@ -39,11 +39,11 @@ export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">{doctor.firstname +" "+ doctor.lastname}</h1>
                 <p className="text-gray-600">
-                  {doctor.specializationList && Array.isArray(doctor.specializationList) ? (
-                    doctor.specializationList.map((specialization, index) => (
+                  {doctor.specializations && Array.isArray(doctor.specializations) ? (
+                    doctor.specializations.map((specialization, index) => (
                       <span key={specialization.id}>
                         {specialization.name}
-                        {index < doctor.specializationList.length - 1 && ', '}
+                        {index < doctor.specializations!.length - 1 && ', '}
                       </span>
                     ))
                   ) : (
@@ -68,7 +68,7 @@ export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
                 <div className="flex flex-wrap gap-2 mt-3">
                   <Badge variant="outline" className="flex items-center gap-1 rounded-full px-3 py-1">
                     <Award className="h-3 w-3" />
-                    <span>{doctor.expYear} Years Experience</span>
+                    <span>{doctor.expYear || doctor.experience} Years Experience</span>
                   </Badge>
                   <Badge variant="outline" className="flex items-center gap-1 rounded-full px-3 py-1">
                     <Languages className="h-3 w-3" />
@@ -97,7 +97,7 @@ export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
             
             <Separator className="my-4" />
             
-            <p className="text-gray-700 text-sm md:text-base leading-relaxed">{doctor.biography}</p>
+            <p className="text-gray-700 text-sm md:text-base leading-relaxed">{doctor.biography || doctor.about}</p>
           </div>
           
           <div className="flex items-center justify-between mt-6">
@@ -109,14 +109,14 @@ export const DoctorHeader = ({ doctor }: DoctorHeaderProps) => {
             </div>
             
             <BookAppointmentModal
-            doctor={doctor}
+              doctor={doctor}
               doctorName={doctor.firstname +" "+ doctor.lastname}
               specialty={
-                doctor.specializationList && Array.isArray(doctor.specializationList) && doctor.specializationList[0]
-                  ? doctor.specializationList[0].name
+                doctor.specializations && Array.isArray(doctor.specializations) && doctor.specializations[0]
+                  ? doctor.specializations[0].name
                   : "Specialty Not Available"
               }
-              initialClinicId={firstClinicId}
+              initialClinicId={firstClinicId?.toString()}
               initialStep={firstClinicId ? 2 : 1}
               open={openModal}
               onOpenChange={setOpenModal}

@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { DoctorReview } from "@/models/doctor/Doctor";
 import { fetchDoctorReviewsById } from "@/services/DoctorService";
@@ -9,7 +8,6 @@ import { useParams } from "react-router-dom";
 interface ReviewsTabProps {
   doctorId: number; // Add doctorId as a prop
 }
-
 
 export const ReviewsTab = ({ doctorId }: ReviewsTabProps) => {
   const { id } = useParams();

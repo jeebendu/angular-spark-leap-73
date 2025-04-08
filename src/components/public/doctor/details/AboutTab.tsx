@@ -208,10 +208,10 @@ export const AboutTab = ({ education, languages, doctor }: AboutTabProps) => {
               <Mail className="h-4 w-4 mr-2 text-gray-500" />
               <span>{doctor.email}</span>
             </div>
-            {doctor.phone && (
+            {(doctor.phone || doctor.phoneNumber) && (
               <div className="flex items-center">
                 <Phone className="h-4 w-4 mr-2 text-gray-500" />
-                <span>{doctor.phone}</span>
+                <span>{doctor.phone || doctor.phoneNumber}</span>
               </div>
             )}
             {doctor.city && (

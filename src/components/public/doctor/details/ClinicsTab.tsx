@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -185,7 +184,7 @@ export const ClinicsTab = ({ doctor, branch}: ClinicsTabProps) => {
         <BookAppointmentModal 
           doctor={doctor}
           doctorName={doctor.firstname + " " + doctor.lastname}
-          specialty={doctor.desgination}
+          specialty={doctor.designation}
           initialClinicId={branch[selectedClinic]?.id.toString()}
           initialStep={3}
           open={isModalOpen}

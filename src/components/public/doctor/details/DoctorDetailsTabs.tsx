@@ -43,17 +43,17 @@ export const DoctorDetailsTabs = ({ doctor }: DoctorDetailsTabsProps) => {
           <AboutTab 
             doctor={doctor}
             education={doctor.education || []}
-            languages={doctor.languageList}
+            languages={doctor.languageList || []}
           />
         </TabsContent>
         
         <TabsContent value="services">
-          <ServicesTab services={doctor.serviceList} />
+          <ServicesTab services={doctor.services || []} />
         </TabsContent>
         
         <TabsContent value="reviews">
           <ReviewsTab 
-            doctorId={doctor.id}
+            doctorId={typeof doctor.id === 'string' ? parseInt(doctor.id) : doctor.id as number} 
           />
         </TabsContent>
       </Tabs>

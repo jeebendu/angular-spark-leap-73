@@ -58,6 +58,17 @@ export interface AppointmentDetails {
   consultationFee?: number;
   selectedClinic: ClinicReference;
   selectedMember: string;
+  
+  // Add the vitalSigns property to match what's used in AppointmentDetailsDialog
+  vitalSigns?: {
+    temperature?: string;
+    pulse?: string;
+    respiratoryRate?: string;
+    spo2?: string;
+    height?: string;
+    weight?: string;
+    bmi?: string;
+  };
 }
 
 export interface FilterOption {

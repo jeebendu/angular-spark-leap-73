@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toast } from "@/hooks/use-toast";
 import authService from "@/services/authService";
-import { Calendar, LogOut, User } from "lucide-react";
+import { Calendar, LogOut, User, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -63,6 +63,12 @@ export function NavbarUserMenu() {
           <Link to="/appointments" className="flex items-center w-full">
             <Calendar className="mr-2 h-4 w-4" />
             <span>My Appointments</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link to="/family-members" className="flex items-center w-full">
+            <Users className="mr-2 h-4 w-4" />
+            <span>Family Members</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem>

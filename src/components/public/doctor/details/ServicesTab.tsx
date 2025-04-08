@@ -7,6 +7,16 @@ interface ServicesTabProps {
 }
 
 export const ServicesTab = ({ services }: ServicesTabProps) => {
+  // Group services by category for better organization
+  const groupedServices = services?.reduce((acc, service) => {
+    const category = service.category || 'General';
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(service);
+    return acc;
+  }, {} as Record<string, DoctorService[]>);
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-4">
@@ -21,18 +31,23 @@ export const ServicesTab = ({ services }: ServicesTabProps) => {
         )}
       </div>
       
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-y-3 gap-x-8">
-        {services?.length > 0 ? (
-          services.map((service, index) => (
-            <div key={index} className="flex items-start">
-              <CheckCircle2 className="h-4 w-4 text-primary mr-2 mt-0.5" />
-              <span className="text-sm">{service.name}</span>
+      {services?.length > 0 ? (
+        Object.entries(groupedServices || {}).map(([category, categoryServices]) => (
+          <div key={category} className="mb-6 last:mb-0">
+            <h4 className="text-sm font-medium text-gray-500 mb-3">{category}</h4>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-y-3 gap-x-8">
+              {categoryServices.map((service, index) => (
+                <div key={index} className="flex items-start">
+                  <CheckCircle2 className="h-4 w-4 text-primary mr-2 mt-0.5" />
+                  <span className="text-sm">{service.name}</span>
+                </div>
+              ))}
             </div>
-          ))
-        ) : (
-          <p className="text-gray-500">No services available.</p>
-        )}
-      </div>
+          </div>
+        ))
+      ) : (
+        <p className="text-gray-500">No services available.</p>
+      )}
     </div>
   );
 };

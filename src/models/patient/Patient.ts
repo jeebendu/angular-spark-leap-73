@@ -1,3 +1,4 @@
+
 import { Country, District, State } from "../shared/Address";
 import { Branch } from "../shared/Branch";
 import { User } from "../user/User";
@@ -23,7 +24,12 @@ export class Patient {
 }
 
 export class FamilyMember {
-    id: string;
-    relationship: string;
-    name: string;
-  }
+  id: string;
+  firstname: string;
+  lastname: string;
+  dob: Date;
+  gender: string;
+  relationship: string;
+  phoneNumber: string;
+  profileImage?: string;
+}

@@ -11,12 +11,11 @@ import { format } from "date-fns";
 import { Branch } from "@/models/shared/Branch";
 
 interface ClinicsTabProps {
-  // clinics: Clinic[];
   doctor: Doctor;
-  branch:Branch[]
+  branch: Branch[]
 }
 
-export const ClinicsTab = ({ doctor ,branch}: ClinicsTabProps) => {
+export const ClinicsTab = ({ doctor, branch}: ClinicsTabProps) => {
   const [selectedClinic, setSelectedClinic] = useState(0);
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null);
@@ -184,9 +183,10 @@ export const ClinicsTab = ({ doctor ,branch}: ClinicsTabProps) => {
       {/* BookAppointmentModal with controlled open state and initial step set to 3 */}
       {branch?.length > 0 && (
         <BookAppointmentModal 
-          doctorName={doctor.name}
-          specialty={doctor.specialty}
-          initialClinicId={branch[selectedClinic]?.id}
+          doctor={doctor}
+          doctorName={doctor.firstname + " " + doctor.lastname}
+          specialty={doctor.desgination}
+          initialClinicId={branch[selectedClinic]?.id.toString()}
           initialStep={3}
           open={isModalOpen}
           onOpenChange={setIsModalOpen}

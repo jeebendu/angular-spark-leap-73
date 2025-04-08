@@ -1,3 +1,4 @@
+
 import { Doctor } from "../doctor/Doctor";
 import { DoctorClinic } from "../doctorClinic/DoctorClinic";
 import { FamilyMember, Patient } from "../patient/Patient";
@@ -13,31 +14,6 @@ export interface ClinicReference {
 }
 
 export interface Appointment {
-  // selectedClinic: ClinicReference; // Changed from Clinic to ClinicReference
-  // selectedDate: string;
-  // selectedTime: string;
-  // selectedMember: string;
-  // doctorName?: string;
-  // specialty?: string;
-  // status?: "upcoming" | "completed" | "cancelled";
-  // reason?: string;
-  // patientName?: string;
-  // appointmentType?: string;
-  // id?: string;
-  // email?: string;
-  // phone?: string;
-  // appointmentNumber?: string;
-  // visitType?: "General Visit" | "Video Call" | "Audio Call" | "Direct Visit";
-  // isNew?: boolean;
-  // lab?: string;
-  // testType?: string;
-  // age?: number;
-  // gender?: "Male" | "Female" | "Other";
-  // lastVisitDate?: string;
-  // nextVisitDate?: string;
-  // consultationFee?: number;
-  // patientId?: string;
-
   id: number;
   appointmentDate: Date;
   status: string;
@@ -48,7 +24,7 @@ export interface Appointment {
   // visitType: VisitType;
   slot: Slot;
   familyMember: FamilyMember;
-  doctorClinic:DoctorClinic;
+  doctorClinic: DoctorClinic;
 
   vitalSigns?: {
     temperature?: string;
@@ -62,11 +38,26 @@ export interface Appointment {
 }
 
 // Add the AppointmentDetails interface that many components depend on
-export interface AppointmentDetails extends Appointment {
-  // id: string; // Make id required for AppointmentDetails
+export interface AppointmentDetails {
+  id: string;
   appointmentNumber: string;
   patientName: string;
   status: "upcoming" | "completed" | "cancelled";
+  
+  // UI-specific fields used in components
+  selectedDate: string;
+  selectedTime: string;
+  visitType: "General Visit" | "Video Call" | "Audio Call" | "Direct Visit";
+  email?: string;
+  phone?: string;
+  isNew?: boolean;
+  age?: number;
+  gender?: "Male" | "Female" | "Other";
+  lastVisitDate?: string;
+  nextVisitDate?: string;
+  consultationFee?: number;
+  selectedClinic: ClinicReference;
+  selectedMember: string;
 }
 
 export interface FilterOption {
@@ -87,5 +78,3 @@ export const statusOptions: FilterOption[] = [
   { label: "Completed", value: "completed" },
   { label: "Cancelled", value: "cancelled" },
 ];
-
-

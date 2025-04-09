@@ -59,7 +59,7 @@ const Header = ({
           variant="ghost" 
           size="icon" 
           className="text-gray-600 rounded-full"
-          onClick={onMenuClick}
+          onClick={() => setProfileOpen(!profileOpen)}
         >
           <Menu className="h-5 w-5" />
         </Button>
@@ -79,7 +79,7 @@ const Header = ({
             variant="ghost" 
             size="icon" 
             className="rounded-full"
-            onClick={handleUserButtonClick}
+            onClick={() => setProfileOpen(!profileOpen)}
           >
             <Avatar className="h-8 w-8">
               <AvatarImage src="" />
@@ -89,7 +89,7 @@ const Header = ({
             </Avatar>
           </Button>
           
-          {profileOpen && !onUserClick && (
+          {profileOpen && (
             <div className="absolute right-0 mt-2 w-56 bg-white/90 backdrop-blur-md border border-gray-200 rounded-md shadow-lg py-1 z-50">
               <div className="px-4 py-3 border-b border-gray-100">
                 <p className="text-sm font-medium">John Doe</p>

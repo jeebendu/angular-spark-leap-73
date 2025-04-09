@@ -10,8 +10,6 @@ import {
   LogOut, 
   Settings, 
   UserCircle,
-  RefreshCw,
-  Filter
 } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -22,19 +20,13 @@ interface HeaderProps {
   onMenuClick: () => void;
   sidebarCollapsed?: boolean;
   onUserClick?: () => void;
-  onRefreshClick?: () => void;
-  onFilterToggle?: () => void;
-  showFilter?: boolean;
 }
 
 const Header = ({ 
   onMenuClick, 
   sidebarCollapsed, 
-  onUserClick, 
-  onRefreshClick,
-  onFilterToggle,
-  showFilter 
-}: HeaderProps) => {
+  onUserClick,
+}) => {
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
@@ -80,29 +72,6 @@ const Header = ({
         <Button variant="ghost" size="icon" className="text-gray-600 hidden md:flex rounded-full">
           <HelpCircle className="h-5 w-5" />
         </Button>
-        
-        {onRefreshClick && (
-          <Button variant="ghost" size="icon" className="text-gray-600 rounded-full" onClick={onRefreshClick}>
-            <RefreshCw className="h-5 w-5 text-primary" />
-          </Button>
-        )}
-        
-        {onFilterToggle && (
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className={cn(
-              "text-gray-600 rounded-full",
-              showFilter && "bg-primary/10 text-primary"
-            )}
-            onClick={onFilterToggle}
-          >
-            <Filter className={cn(
-              "h-5 w-5",
-              showFilter && "text-primary"
-            )} />
-          </Button>
-        )}
         
         {/* Profile dropdown */}
         <div className="relative" ref={profileRef}>

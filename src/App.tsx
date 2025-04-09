@@ -116,11 +116,11 @@ function App() {
               <Route path="/clinic-management" element={<ClinichubLanding />} />
 
               {/* Admin Routes */}
-            <Route path="/admin" element={<Dashboard />} />
-            <Route path="/admin/patients" element={<Patients />} />
-            <Route path="/admin/appointments" element={<AppointmentsAdmin />} />
-            <Route path="/admin/schedule" element={<Schedule />} />
-            <Route path="/admin/:section" element={<Dashboard />} />
+              <Route path="/admin" element={<Dashboard />} />
+              <Route path="/admin/patients" element={<Patients />} />
+              <Route path="/admin/appointments" element={<AppointmentsAdmin />} />
+              <Route path="/admin/schedule" element={<Schedule />} />
+              <Route path="/admin/:section" element={<Dashboard />} />
               
               {/* Clinic Routes */}
               <Route path="/clinics" element={<AllClinics />} />

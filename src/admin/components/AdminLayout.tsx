@@ -13,9 +13,6 @@ type AdminLayoutProps = {
   onUserClick?: () => void;
   showAddButton?: boolean;
   onAddButtonClick?: () => void;
-  onRefreshClick?: () => void;
-  onFilterToggle?: () => void;
-  showFilter?: boolean;
 };
 
 const AdminLayout = ({ 
@@ -24,9 +21,6 @@ const AdminLayout = ({
   onUserClick,
   showAddButton,
   onAddButtonClick,
-  onRefreshClick,
-  onFilterToggle,
-  showFilter
 }: AdminLayoutProps) => {
   const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -107,9 +101,6 @@ const AdminLayout = ({
           onMenuClick={toggleSidebar} 
           sidebarCollapsed={sidebarCollapsed}
           onUserClick={handleUserClick}
-          onRefreshClick={onRefreshClick}
-          onFilterToggle={onFilterToggle}
-          showFilter={showFilter}
         />
         <main
           ref={mainRef}

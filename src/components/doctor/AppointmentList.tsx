@@ -21,7 +21,7 @@ interface AppointmentListProps {
   onStartAppointment?: (appointmentId: string) => void;
 }
 
-export function AppointmentList({ appointments, onStartAppointment }: AppointmentListProps) {
+export function AppointmentListDoc({ appointments, onStartAppointment }: AppointmentListProps) {
   const { toast } = useToast();
   const navigate = useNavigate();
   

@@ -1,14 +1,13 @@
 
-import React, { useState } from "react";
+import { useState } from "react";
 import AdminLayout from "@/admin/components/AdminLayout";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import AppointmentSidebar from "../components/AppointmentSidebar";
 import PageHeader from "../components/PageHeader";
 import FilterCard, { FilterOption } from "../components/FilterCard";
 import InfiniteAppointmentList from "../modules/appointments/components/InfiniteAppointmentList";
 import { useAppointments } from "../modules/appointments/hooks/useAppointments";
+import AppointmentCalendar from "../modules/appointments/components/AppointmentCalendar";
+import AppointmentSidebar from "../modules/appointments/components/AppointmentSidebar";
 
 const AppointmentsAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -139,7 +138,12 @@ const AppointmentsAdmin = () => {
         />
       )}
 
-      {viewMode === 'list' && (
+      {viewMode === 'calendar' ? (
+        <AppointmentCalendar 
+          appointments={appointments} 
+          onAppointmentClick={handleAppointmentClick}
+        />
+      ) : (
         <InfiniteAppointmentList 
           appointments={appointments}
           loading={loading}

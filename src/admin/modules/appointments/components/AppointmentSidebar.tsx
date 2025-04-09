@@ -2,10 +2,10 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { X, Calendar, Clock, Mail, MapPin, Phone, Calendar as CalendarIcon } from 'lucide-react';
-import { Appointment, AppointmentStatus, AppointmentType } from '../modules/appointments/types/appointmentTypes';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { Appointment, AppointmentStatus, AppointmentType } from '../types/appointmentTypes';
 
 interface AppointmentSidebarProps {
   onClose: () => void;

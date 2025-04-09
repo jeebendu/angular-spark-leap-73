@@ -1,14 +1,13 @@
 
 import React, { useState } from 'react';
-import { 
-  ChevronLeft, 
-  ChevronRight,
-  Calendar as CalendarIcon
+import {
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
-import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, parseISO } from 'date-fns';
+import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Appointment } from '../types/appointment';
+import { Appointment } from '../types/appointmentTypes';
 
 interface AppointmentCalendarProps {
   appointments: Appointment[];

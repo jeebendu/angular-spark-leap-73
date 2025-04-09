@@ -27,11 +27,15 @@ import Chat from "./pages/public/Chat";
 import Appointments from "./pages/public/Appointments";
 import ClinichubLanding from "./pages/public/ClinichubLanding";
 import FamilyMembers from "./pages/public/FamilyMembers";
+import AllClinics from "./pages/public/AllClinics";
+import ClinicDetails from "./pages/public/ClinicDetails";
 
 // Map of routes to page titles
 const routeTitles: Record<string, string> = {
   "/": "Home",
   "/doctor/search": "Find Doctors",
+  "/clinics": "Health Centers & Clinics",
+  "/clinics/:clinicId": "Clinic Details",
   "/appointments": "Your Appointments",
   "/reports": "Medical Reports",
   "/tests": "Medical Tests",
@@ -104,6 +108,10 @@ function App() {
               <Route path="/family-members" element={<FamilyMembers />} />
               <Route path="/chat" element={<Chat />} />
               <Route path="/clinic-management" element={<ClinichubLanding />} />
+              
+              {/* Clinic Routes */}
+              <Route path="/clinics" element={<AllClinics />} />
+              <Route path="/clinics/:clinicId" element={<ClinicDetails />} />
               
               {/* Doctor Routes */}
               <Route path="/doctor" element={<DashboardPage />} />

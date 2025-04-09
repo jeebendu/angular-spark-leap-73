@@ -9,7 +9,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { number } from "zod";
 
 interface DoctorCardProps {
-  id:number;
+  id: number | string;
   name: string;
   specialty: string;
   rating: number;

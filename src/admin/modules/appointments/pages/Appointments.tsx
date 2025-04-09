@@ -2,12 +2,12 @@
 import { useState } from "react";
 import AdminLayout from "@/admin/components/AdminLayout";
 import { useToast } from "@/hooks/use-toast";
-import PageHeader from "../components/PageHeader";
-import FilterCard, { FilterOption } from "../components/FilterCard";
-import InfiniteAppointmentList from "../modules/appointments/components/InfiniteAppointmentList";
-import { useAppointments } from "../modules/appointments/hooks/useAppointments";
-import AppointmentCalendar from "../modules/appointments/components/AppointmentCalendar";
-import AppointmentSidebar from "../modules/appointments/components/AppointmentSidebar";
+import { useAppointments } from "../hooks/useAppointments";
+import FilterCard, { FilterOption } from "@/admin/components/FilterCard";
+import AppointmentSidebar from "../components/AppointmentSidebar";
+import PageHeader from "@/admin/components/PageHeader";
+import InfiniteAppointmentList from "../components/InfiniteAppointmentList";
+import AppointmentCalendar from "../components/AppointmentCalendar";
 
 const AppointmentsAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");

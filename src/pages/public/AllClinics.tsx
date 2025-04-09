@@ -6,7 +6,7 @@ import { Clinic } from '@/models/clinic/Clinic';
 import { ClinicGridItem } from '@/components/public/clinic/ClinicGridItem';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, Mic, Filter, LayoutGrid, LayoutList } from 'lucide-react';
+import { Search, Mic, Filter } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { 
   DropdownMenu, 
@@ -24,7 +24,6 @@ export default function AllClinics() {
   const [hasMore, setHasMore] = useState(true);
   const [totalClinics, setTotalClinics] = useState(0);
   const [relevance, setRelevance] = useState("newest");
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const { toast } = useToast();
 
   // Observer for infinite scrolling
@@ -86,16 +85,18 @@ export default function AllClinics() {
     setPage(0);
   };
 
+  // Location for the page title (we get this from URL or context in a real app)
+  const location = "Bhubaneswar";
+
   return (
     <AppLayout>
-      <div className="py-6 max-w-6xl mx-auto px-4">
+      <div className="container mx-auto px-4 py-6">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold mb-2">Health Centers & Clinics</h1>
-          <p className="text-muted-foreground">Find the best clinics and health centers near you</p>
+          <h1 className="text-2xl font-bold text-gray-800">{totalClinics} Clinics in {location}</h1>
         </div>
         
         {/* Search Bar */}
-        <div className="mb-8">
+        <div className="mb-6">
           <form onSubmit={handleSearch} className="flex items-stretch gap-2">
             <div className="relative flex-1">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -103,7 +104,7 @@ export default function AllClinics() {
               </div>
               <Input
                 type="text"
-                placeholder="Search by doctor name, specialty, condition..."
+                placeholder="Search by clinic name, specialty, condition..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 pr-12 h-12 rounded-full w-full"
@@ -143,10 +144,10 @@ export default function AllClinics() {
           </form>
         </div>
         
-        {/* Filters and View Options */}
-        <div className="flex justify-between items-center mb-6">
+        {/* Filters and Sort Options */}
+        <div className="flex justify-between items-center mb-4">
           <p className="text-muted-foreground">
-            Found {totalClinics} {totalClinics === 1 ? 'clinic' : 'clinics'}
+            Showing {clinics.length} of {totalClinics} clinics
           </p>
           
           <div className="flex items-center gap-4">
@@ -171,26 +172,11 @@ export default function AllClinics() {
                 </DropdownMenuRadioGroup>
               </DropdownMenuContent>
             </DropdownMenu>
-            
-            <div className="flex rounded-md border overflow-hidden">
-              <button 
-                className={`p-2 ${viewMode === 'grid' ? 'bg-primary text-white' : 'bg-white'}`}
-                onClick={() => setViewMode('grid')}
-              >
-                <LayoutGrid className="h-5 w-5" />
-              </button>
-              <button 
-                className={`p-2 ${viewMode === 'list' ? 'bg-primary text-white' : 'bg-white'}`}
-                onClick={() => setViewMode('list')}
-              >
-                <LayoutList className="h-5 w-5" />
-              </button>
-            </div>
           </div>
         </div>
         
-        {/* Clinics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Clinics List */}
+        <div>
           {clinics.map((clinic, index) => (
             <ClinicGridItem
               key={clinic.id}
@@ -202,7 +188,20 @@ export default function AllClinics() {
           ))}
           
           {loading && Array.from({ length: 3 }).map((_, index) => (
-            <div key={`skeleton-${index}`} className="h-80 rounded-lg bg-gray-100 animate-pulse" />
+            <div key={`skeleton-${index}`} className="border-b border-gray-200 py-6">
+              <div className="flex animate-pulse">
+                <div className="w-20 h-20 rounded-full bg-gray-200"></div>
+                <div className="flex-1 ml-4 space-y-2">
+                  <div className="h-5 bg-gray-200 rounded w-3/4"></div>
+                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                  <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+                </div>
+                <div className="w-40 space-y-2">
+                  <div className="h-10 bg-gray-200 rounded"></div>
+                  <div className="h-10 bg-gray-200 rounded"></div>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
         
@@ -210,12 +209,6 @@ export default function AllClinics() {
           <div className="text-center py-10">
             <h2 className="text-xl font-medium mb-2">No clinics found</h2>
             <p className="text-muted-foreground">Try a different search term</p>
-          </div>
-        )}
-        
-        {loading && page === 0 && (
-          <div className="text-center py-10">
-            <p>Loading clinics...</p>
           </div>
         )}
       </div>

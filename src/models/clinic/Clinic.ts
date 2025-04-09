@@ -10,6 +10,14 @@ export interface Clinic {
   branchList: Branch[];
   days: string;
   timings: string;
-  // Add additional properties that might be used in components
+  
+  // Additional properties that might be used in components
   location?: string;
+  clinicType?: string;
+  consultationFees?: string;
+  specialties?: string[];
+  doctorCount?: number;
+  rating?: number;
+  reviewCount?: number;
+  images?: string[];
 }

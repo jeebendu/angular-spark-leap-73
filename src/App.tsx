@@ -12,7 +12,6 @@ import { setPageTitle } from "./utils/seoUtils";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import DashboardPage from "./pages/doctor/Dashboard";
-import DoctorAppointmentsPage from "./pages/doctor/Appointments";
 import ProcessAppointment from "./pages/doctor/ProcessAppointment";
 import DoctorOnboardingPage from "./pages/doctor/Onboarding";
 import { DoctorSchedulePage } from "./pages/doctor/Schedule";
@@ -126,7 +125,6 @@ function App() {
               
               {/* Doctor Routes */}
               <Route path="/doctor" element={<DashboardPage />} />
-              <Route path="/doctor/appointments" element={<DoctorAppointmentsPage />} />
               <Route path="/doctor/appointments/:appointmentId" element={<ProcessAppointment />} />
               <Route path="/doctor/process-appointment" element={<ProcessAppointment />} />
               <Route path="/doctor/onboarding" element={<DoctorOnboardingPage />} />

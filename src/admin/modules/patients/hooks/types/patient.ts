@@ -9,7 +9,7 @@ export interface UserType {
   avatarUrl?: string;
 }
 
-export interface PatientType {
+export interface Patient {
   id: string;
   patientId?: string; // Unique patient ID
   firstName: string;

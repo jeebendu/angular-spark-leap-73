@@ -5,10 +5,10 @@ import { useToast } from "@/hooks/use-toast";
 import PageHeader from "../components/PageHeader";
 import FilterCard, { FilterOption } from "../components/FilterCard";
 import { usePatients } from "../modules/patients/hooks/usePatients";
-import { PatientType } from "@/admin/types/patient";
 import PatientTable from "../modules/patients/components/PatientTable";
 import PatientGrid from "../modules/patients/components/PatientGrid";
 import PatientSidebar from "../modules/patients/components/PatientSidebar";
+import { PatientType } from "../modules/patients/hooks/types/patient";
 
 const PatientsAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");

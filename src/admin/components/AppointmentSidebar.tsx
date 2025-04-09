@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { X, Calendar, Clock, Mail, MapPin, Phone, Calendar as CalendarIcon } from 'lucide-react';
-import { Appointment, AppointmentStatus, AppointmentType } from '../types/appointment';
+import { Appointment, AppointmentStatus, AppointmentType } from '../modules/appointments/types/appointmentTypes';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -13,7 +13,8 @@ interface AppointmentSidebarProps {
 }
 
 const AppointmentSidebar = ({ onClose, appointments }: AppointmentSidebarProps) => {
-  const getAppointmentTypeLabel = (type: AppointmentType) => {
+  const getAppointmentTypeLabel = (type?: AppointmentType) => {
+    if (!type) return "Visit";
     switch (type) {
       case "direct-visit": return "Direct Visit";
       case "video-call": return "Video Call";
@@ -32,9 +33,13 @@ const AppointmentSidebar = ({ onClose, appointments }: AppointmentSidebarProps) 
     }
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return format(date, "dd MMM yyyy");
+  const formatDate = (date: Date | string) => {
+    const dateObj = date instanceof Date ? date : new Date(date);
+    return format(dateObj, "dd MMM yyyy");
+  };
+
+  const formatTime = (timeString: string) => {
+    return timeString;
   };
 
   return (
@@ -60,44 +65,44 @@ const AppointmentSidebar = ({ onClose, appointments }: AppointmentSidebarProps) 
                 <div className="flex justify-between items-start">
                   <div>
                     <div className="flex items-center gap-2 mb-2">
-                      <Badge className={getStatusBadgeStyle(appointment.status)}>
+                      <Badge className={getStatusBadgeStyle(appointment.status as AppointmentStatus)}>
                         {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
                       </Badge>
                       <Badge variant="outline" className="rounded-full">
-                        {getAppointmentTypeLabel(appointment.type)}
+                        {getAppointmentTypeLabel(appointment.appointmentType)}
                       </Badge>
                     </div>
                     
-                    <h4 className="font-medium text-base">{appointment.patientName}</h4>
-                    <p className="text-gray-500 text-sm">#{appointment.appointmentId}</p>
+                    <h4 className="font-medium text-base">{appointment.patient.firstname} {appointment.patient.lastname}</h4>
+                    <p className="text-gray-500 text-sm">#{appointment.id}</p>
                   </div>
                   
                   <div className="text-right">
-                    <span className="text-amber-600 font-medium">${appointment.cost}</span>
+                    <span className="text-amber-600 font-medium">₹ 200</span>
                   </div>
                 </div>
                 
                 <div className="mt-3 space-y-2">
                   <div className="flex items-center text-gray-600 text-sm">
                     <Calendar className="h-4 w-4 mr-2" />
-                    {formatDate(appointment.date)}
+                    {appointment.slot?.date ? format(new Date(appointment.slot.date), "dd MMM yyyy") : formatDate(appointment.appointmentDate)}
                   </div>
                   <div className="flex items-center text-gray-600 text-sm">
                     <Clock className="h-4 w-4 mr-2" />
-                    {appointment.time}
+                    {appointment.slot?.startTime ? format(new Date(`1970-01-01T${appointment.slot.startTime}`), "hh:mm a") : "Time not available"}
                   </div>
                   <div className="flex items-center text-gray-600 text-sm">
                     <Mail className="h-4 w-4 mr-2" />
-                    {appointment.patientEmail}
+                    {appointment.patient.user?.email || "No email available"}
                   </div>
                   <div className="flex items-center text-gray-600 text-sm">
                     <Phone className="h-4 w-4 mr-2" />
-                    {appointment.patientPhone}
+                    {appointment.patient.user?.phone || "No phone available"}
                   </div>
-                  {appointment.patientAddress && (
+                  {appointment.patient.address && (
                     <div className="flex items-center text-gray-600 text-sm">
                       <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
-                      <span className="line-clamp-1">{appointment.patientAddress}</span>
+                      <span className="line-clamp-1">{appointment.patient.address}</span>
                     </div>
                   )}
                 </div>

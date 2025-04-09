@@ -1,6 +1,7 @@
 
 import { Slot } from "@/models/appointment/Slot";
-import { Doctor, DoctorClinic } from "@/models/doctor/Doctor";
+import { Doctor } from "@/models/doctor/Doctor";
+import { DoctorClinic } from "@/models/doctorClinic/DoctorClinic";
 import { FamilyMember, Patient } from "@/models/patient/Patient";
 import { Branch } from "@/models/shared/Branch";
 
@@ -11,13 +12,14 @@ export type VisitType = "new" | "follow-up" | "emergency" | "routine";
 export interface Appointment {
   id: number;
   appointmentDate: Date;
-  status: string;
+  status: AppointmentStatus;
   branch: Branch;
   patient: Patient;
   doctor: Doctor;
   slot: Slot;
   familyMember: FamilyMember;
   doctorClinic: DoctorClinic;
+  appointmentType?: AppointmentType;
   vitalSigns?: {
     temperature?: string;
     pulse?: string;

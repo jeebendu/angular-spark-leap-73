@@ -125,6 +125,8 @@ const AppointmentsAdmin = () => {
         showAddButton={true}
         addButtonLabel="New Appointment"
         onAddButtonClick={handleAddAppointment}
+        onFilterToggle={() => setShowFilters(!showFilters)}
+        showFilter={showFilters}
       />
 
       {showFilters && (

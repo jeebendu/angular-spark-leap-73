@@ -28,6 +28,7 @@ import ClinichubLanding from "./pages/public/ClinichubLanding";
 import Dashboard from "./admin/pages/Dashboard";
 import Schedule from "./admin/pages/Schedule";
 import AppointmentsAdmin from "./admin/pages/Appointments";
+import PatientsAdmin from "./admin/pages/Patients";
 import FamilyMembers from "./pages/public/FamilyMembers";
 import AllClinics from "./pages/public/AllClinics";
 import ClinicDetails from "./pages/public/ClinicDetails";
@@ -53,6 +54,7 @@ const routeTitles: Record<string, string> = {
   "/doctor/onboarding": "Doctor Onboarding",
   "/staff": "Staff Dashboard",
   "/staff/add-patient": "Add New Patient",
+  "/admin/patients": "Admin - Patient Management",
 };
 
 const ScrollToTop = () => {
@@ -116,6 +118,7 @@ function App() {
               {/* Admin Routes */}
               <Route path="/admin" element={<Dashboard />} />
               <Route path="/admin/appointments" element={<AppointmentsAdmin />} />
+              <Route path="/admin/patients" element={<PatientsAdmin />} />
               <Route path="/admin/schedule" element={<Schedule />} />
               <Route path="/admin/:section" element={<Dashboard />} />
               

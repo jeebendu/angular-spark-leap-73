@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { PatientType } from '@/admin/types/patient';
+import { Patient } from '@/admin/types/patient';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -9,9 +9,9 @@ import { Eye, Phone, Mail, Calendar, Activity } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface PatientGridProps {
-  patients: PatientType[];
+  patients: Patient[];
   loading: boolean;
-  onPatientClick: (patient: PatientType) => void;
+  onPatientClick: (patient: Patient) => void;
 }
 
 const PatientGrid: React.FC<PatientGridProps> = ({ patients, loading, onPatientClick }) => {

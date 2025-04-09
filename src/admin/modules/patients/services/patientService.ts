@@ -1,5 +1,5 @@
 
-import { PatientType } from '@/admin/types/patient';
+import { Patient } from '@/admin/types/patient';
 import apiService from '@/services/apiService';
 import { AxiosResponse } from 'axios';
 
@@ -16,7 +16,7 @@ export interface PatientQueryParams {
 }
 
 export interface PatientResponse {
-  content: PatientType[];
+  content: Patient[];
   totalElements: number;
   totalPages: number;
   size: number;
@@ -33,7 +33,7 @@ export const fetchPatients = async (params: PatientQueryParams): Promise<AxiosRe
   // Mock implementation for demonstration
   return new Promise((resolve) => {
     setTimeout(() => {
-      const mockPatients: PatientType[] = [];
+      const mockPatients: Patient[] = [];
       const startIndex = params.page * params.size;
       const endIndex = startIndex + params.size;
       
@@ -97,8 +97,8 @@ export const fetchPatients = async (params: PatientQueryParams): Promise<AxiosRe
       // Sort the results if sortBy is provided
       if (params.sortBy) {
         filteredPatients.sort((a: any, b: any) => {
-          const aValue = a[params.sortBy as keyof PatientType];
-          const bValue = b[params.sortBy as keyof PatientType];
+          const aValue = a[params.sortBy as keyof Patient];
+          const bValue = b[params.sortBy as keyof Patient];
           
           if (aValue < bValue) {
             return params.sortDirection === 'asc' ? -1 : 1;
@@ -127,14 +127,14 @@ export const fetchPatients = async (params: PatientQueryParams): Promise<AxiosRe
   });
 };
 
-export const fetchPatientById = async (id: string): Promise<AxiosResponse<PatientType>> => {
+export const fetchPatientById = async (id: string): Promise<AxiosResponse<Patient>> => {
   // In a real application, we would call the API
-  // return apiService.get<PatientType>(`/api/patients/${id}`);
+  // return apiService.get<Patient>(`/api/patients/${id}`);
   
   // Mock implementation for demonstration
   return new Promise((resolve) => {
     setTimeout(() => {
-      const mockPatient: PatientType = {
+      const mockPatient: Patient = {
         id: id,
         patientId: `PATIENT-${id}`,
         firstName: `First${id}`,

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { PatientType } from '@/admin/types/patient';
+import { Patient } from '@/admin/types/patient';
 import { 
   Calendar, 
   Phone, 
@@ -21,7 +21,7 @@ import { Separator } from '@/components/ui/separator';
 import { format } from 'date-fns';
 
 interface PatientSidebarProps {
-  patient: PatientType | null;
+  patient: Patient | null;
   onClose: () => void;
 }
 

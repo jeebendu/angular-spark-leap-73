@@ -27,13 +27,13 @@ import Appointments from "./pages/public/Appointments";
 import ClinichubLanding from "./pages/public/ClinichubLanding";
 import Dashboard from "./admin/pages/Dashboard";
 import Schedule from "./admin/pages/Schedule";
-import AppointmentsAdmin from "./admin/pages/Appointments";
-import PatientsAdmin from "./admin/pages/Patients";
 import FamilyMembers from "./pages/public/FamilyMembers";
 import AllClinics from "./pages/public/AllClinics";
 import ClinicDetails from "./pages/public/ClinicDetails";
 
 import "./admin/styles/admin.css";
+import AppointmentsAdmin from "./admin/modules/appointments/pages/Appointments";
+import PatientsAdmin from "./admin/modules/patients/pages/Patients";
 
 // Map of routes to page titles
 const routeTitles: Record<string, string> = {

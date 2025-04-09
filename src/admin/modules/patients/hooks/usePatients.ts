@@ -2,10 +2,10 @@
 import { useState, useEffect } from 'react';
 import { PatientQueryParams, fetchPatients } from '../services/patientService';
 import { useToast } from '@/hooks/use-toast';
-import { PatientType } from '@/admin/types/patient';
+import { Patient } from '@/admin/types/patient';
 
 export const usePatients = (initialParams: PatientQueryParams) => {
-  const [patients, setPatients] = useState<PatientType[]>([]);
+  const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);

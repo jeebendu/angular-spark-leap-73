@@ -8,7 +8,7 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { PatientType } from '@/admin/types/patient';
+import { Patient } from '@/admin/types/patient';
 import { format } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -16,9 +16,9 @@ import { Button } from '@/components/ui/button';
 import { Eye, MoreHorizontal } from 'lucide-react';
 
 interface PatientTableProps {
-  patients: PatientType[];
+  patients: Patient[];
   loading: boolean;
-  onPatientClick: (patient: PatientType) => void;
+  onPatientClick: (patient: Patient) => void;
 }
 
 const PatientTable: React.FC<PatientTableProps> = ({ patients, loading, onPatientClick }) => {

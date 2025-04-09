@@ -2,19 +2,19 @@
 import { useState } from "react";
 import AdminLayout from "@/admin/components/AdminLayout";
 import { useToast } from "@/hooks/use-toast";
-import PageHeader from "../components/PageHeader";
-import FilterCard, { FilterOption } from "../components/FilterCard";
-import { usePatients } from "../modules/patients/hooks/usePatients";
-import PatientTable from "../modules/patients/components/PatientTable";
-import PatientGrid from "../modules/patients/components/PatientGrid";
-import PatientSidebar from "../modules/patients/components/PatientSidebar";
-import { PatientType } from "../modules/patients/hooks/types/patient";
+import { Patient } from "../types/patient";
+import { usePatients } from "../hooks/usePatients";
+import FilterCard, { FilterOption } from "@/admin/components/FilterCard";
+import PatientSidebar from "../components/PatientSidebar";
+import PageHeader from "@/admin/components/PageHeader";
+import PatientTable from "../components/PatientTable";
+import PatientGrid from "../components/PatientGrid";
 
 const PatientsAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
   const [showSidebar, setShowSidebar] = useState(false);
-  const [selectedPatient, setSelectedPatient] = useState<PatientType | null>(null);
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [showFilters, setShowFilters] = useState(true);
   const { toast } = useToast();
 
@@ -135,7 +135,7 @@ const PatientsAdmin = () => {
     return () => clearTimeout(handler);
   };
 
-  const handlePatientClick = (patient: PatientType) => {
+  const handlePatientClick = (patient: Patient) => {
     setSelectedPatient(patient);
     setShowSidebar(true);
   };

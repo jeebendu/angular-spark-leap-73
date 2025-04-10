@@ -9,7 +9,7 @@ import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { fetchMyProfilePatient, fetchFamilyMemeberList } from "@/services/PatientService";
 import { getDoctorClinicDRAndBranchId } from "@/services/DoctorClinicService";
-import { FamilyMember, slotByDrAndBranchId } from "@/services/appointmentService";
+import { slotByDrAndBranchId } from "@/services/appointmentService";
 import { saveAppointment } from "@/services/appointmentService";
 
 import {
@@ -17,7 +17,6 @@ import {
   getAvailableTimes,
   getClinicById,
   getClinics,
-  getFamilyMembers,
   validateCurrentStep
 } from "@/services/appointmentService";
 import { CombinedStepIndicator } from "./CombinedStepIndicator";
@@ -33,6 +32,7 @@ import { Appointment } from "@/models/appointment/Appointment";
 import { Branch } from "@/models/shared/Branch";
 import { Slot } from "@/models/appointment/Slot";
 import { toast } from "@/hooks/use-toast";
+import { FamilyMember } from "@/models/patient/Patient";
 
 interface BookAppointmentModalProps {
   doctor: Doctor;
@@ -59,16 +59,14 @@ export function BookAppointmentModal({
 }: BookAppointmentModalProps) {
   const [step, setStep] = useState(initialStep);
   const [open, setOpen] = useState(false);
-  const [selectedClinicId, setSelectedClinicId] = useState(initialClinicId || ""); // Store clinic ID
+  const [selectedClinicId, setSelectedClinicId] = useState(initialClinicId || "");
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
-  // const [selectedMember, setSelectedMember] = useState("self");
-  const [paymentMethod, setPaymentMethod] = useState("clinic"); // Changed default to clinic
+  const [paymentMethod, setPaymentMethod] = useState("clinic");
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [slotList, setSlotList] = useState<Slot[]>([]);
   const [familyMemberList, setFamilyMembersList] = useState<FamilyMember[]>([]);
-
 
   const [appointment, setAppointment] = useState<Appointment>({
     id: null,
@@ -82,14 +80,10 @@ export function BookAppointmentModal({
     doctorClinic: null
   });
 
-
-
-  // Get the selected clinic object based on ID
   const selectedClinic = getClinicById(selectedClinicId);
 
   const stepLabels = ["Clinic", "Date", "Patient", "Review", "Payment"];
 
-  // Handle controlled/uncontrolled state
   const isControlled = controlledOpen !== undefined && setControlledOpen !== undefined;
 
   const getOpenState = () => {
@@ -103,8 +97,9 @@ export function BookAppointmentModal({
       setOpen(newState);
     }
   };
+
   useEffect(() => {
-  const fetchSlotDetailsWhenModalOpen = async () => {
+    const fetchSlotDetailsWhenModalOpen = async () => {
       const filterData = {
         doctor: appointmentObj.doctor,
         branch: appointmentObj?.branch,
@@ -112,7 +107,6 @@ export function BookAppointmentModal({
       }
       const response = await slotByDrAndBranchId(filterData);
       setSlotList(response.data);
-
     }
 
     if (appointmentObj) {
@@ -123,14 +117,10 @@ export function BookAppointmentModal({
       setAppointment((prev) => ({ ...prev, doctorClinic: appointmentObj.doctorClinic }));
       fetchSlotDetailsWhenModalOpen();
     }
-  }, [appointmentObj])
-
-
-
-
+  }, [appointmentObj]);
 
   useEffect(() => {
-     const fetchSlotDetailsWhenModalOpen = async () => {
+    const fetchSlotDetailsWhenModalOpen = async () => {
       const filterData = {
         doctor: doctor,
         branch: doctor.branchList[0],
@@ -138,7 +128,6 @@ export function BookAppointmentModal({
       }
       const response = await slotByDrAndBranchId(filterData);
       setSlotList(response.data);
-
     }
 
     if (doctor?.branchList?.length > 0) {
@@ -149,7 +138,7 @@ export function BookAppointmentModal({
     }
 
     fetchPatientDetails();
-  }, [])
+  }, []);
 
   const fetchPatientDetails = async () => {
     const response = await fetchMyProfilePatient();
@@ -165,27 +154,25 @@ export function BookAppointmentModal({
     const response = await fetchFamilyMemeberList(id);
     setFamilyMembersList(response.data);
   }
-  const handleMemberSelection = (member: FamilyMember) => {
+
+  const handleMemberSelection = (member: FamilyMember | null) => {
     setAppointment((prev) => ({ ...prev, familyMember: member }));
   }
 
-  // Set initial clinic when modal opens if provided
   useEffect(() => {
     if (getOpenState() && initialClinicId && !selectedClinicId) {
       setSelectedClinicId(initialClinicId);
     }
-    // Set initial step when modal opens
     if (getOpenState()) {
       setStep(initialStep);
     }
   }, [getOpenState(), initialClinicId, selectedClinicId, initialStep]);
 
-
   const updateselectedBranch = async (branch: Branch) => {
     if (!branch) return;
     setAppointment((prev) => ({ ...prev, branch: branch }));
     fetchDoctorClinicObj(branch);
-    fetchSlotData(branch,new Date());
+    fetchSlotData(branch, new Date());
   }
 
   const validateCurrentStepWithErrorHandling = (autoAdvance = false) => {
@@ -229,7 +216,6 @@ export function BookAppointmentModal({
   };
 
   const nextStep = () => {
-    console.log(appointment)
     if (validateCurrentStepWithErrorHandling() && step < 5) {
       setStep(step + 1);
       setErrorMessage(null);
@@ -244,11 +230,6 @@ export function BookAppointmentModal({
   };
 
   const handleBookAppointment = async () => {
-    // bookAppointment(appointment, {
-    //   toast: () => ({} as any),
-    //   dismiss: () => { },
-    //   toasts: []
-    // });
     const response = await saveAppointment(appointment);
     if (response.data.status) {
       setAppointment({
@@ -270,11 +251,7 @@ export function BookAppointmentModal({
         variant: "default"
       });
     }
-
   };
-
-
-
 
   const fetchDoctorClinicObj = async (branch: Branch) => {
     try {
@@ -285,7 +262,6 @@ export function BookAppointmentModal({
     }
   }
 
-
   const handleSlotClick = (slot: Slot) => {
     setAppointment((prev) => ({ ...prev, slot: slot }));
   }
@@ -293,10 +269,6 @@ export function BookAppointmentModal({
   const onDateSelectHandler = (date: Date) => {
     fetchSlotData(appointment.branch, date);
   }
-
-
-
-
 
   const fetchSlotData = async (currectSelectBranch: Branch, date: Date) => {
     const filterData = {
@@ -308,7 +280,6 @@ export function BookAppointmentModal({
     setSlotList(response.data);
   }
 
-
   const resetForm = () => {
     setStep(initialStep);
     setSelectedClinicId(initialClinicId || "");
@@ -318,8 +289,6 @@ export function BookAppointmentModal({
     setErrorMessage(null);
   };
 
-
-  // Step content rendering with proper titles
   const renderStepContent = () => {
     switch (step) {
       case 1:
@@ -366,7 +335,6 @@ export function BookAppointmentModal({
     }
   };
 
-  // Get step icon and title based on current step
   const getStepTitle = () => {
     switch (step) {
       case 1:
@@ -402,8 +370,8 @@ export function BookAppointmentModal({
         </DialogTrigger>
         <DialogContent
           className="sm:max-w-[800px] p-0 overflow-hidden bg-white pointer-events-auto"
-          onPointerDownOutside={(e) => e.preventDefault()} // Prevent closing on outside click
-          onEscapeKeyDown={(e) => e.preventDefault()} // Prevent closing on escape key
+          onPointerDownOutside={(e) => e.preventDefault()}
+          onEscapeKeyDown={(e) => e.preventDefault()}
         >
           <DialogHeader className="p-6 pb-2 sticky top-0 bg-white z-10 border-b">
             <div className="absolute right-4 top-4">
@@ -419,7 +387,6 @@ export function BookAppointmentModal({
           </DialogHeader>
 
           <div className="px-6 pt-4 pb-0">
-            {/* Combined step indicator */}
             <div className="sticky top-16 bg-white z-10 pb-4">
               <CombinedStepIndicator
                 currentStep={step}
@@ -430,7 +397,6 @@ export function BookAppointmentModal({
               />
             </div>
 
-            {/* Error message */}
             {errorMessage && (
               <div className="mb-4 p-3 bg-red-50 text-red-600 border border-red-200 rounded text-sm">
                 {errorMessage}
@@ -438,12 +404,10 @@ export function BookAppointmentModal({
             )}
           </div>
 
-          {/* Step content - made scrollable with padding to prevent content being hidden by buttons */}
           <div className="px-6 pb-28 max-h-[60vh] overflow-y-auto">
             {renderStepContent()}
           </div>
 
-          {/* Navigation Buttons - fixed at bottom with shadow */}
           <div className="sticky bottom-0 bg-white z-10 border-t shadow-md">
             <NavigationButtons
               step={step}
@@ -456,7 +420,6 @@ export function BookAppointmentModal({
         </DialogContent>
       </Dialog>
 
-      {/* Success dialog */}
       <BookingSuccessDialog
         open={successDialogOpen}
         onOpenChange={setSuccessDialogOpen}

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Users, Plus, X, UserCircle } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -15,18 +14,13 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Appointment } from "@/models/appointment/Appointment";
-
-interface FamilyMember {
-  id: string;
-  name: string;
-  relationship: string;
-}
+import { FamilyMember } from "@/models/patient/Patient";
 
 interface PatientSelectionStepProps {
   appointmentObj: Appointment;
   familyMembers: FamilyMember[];
-  reloadFamilyMember():void;
-  handleMemberSelection(member: FamilyMember): void;
+  reloadFamilyMember(): void;
+  handleMemberSelection(member: FamilyMember | null): void;
 }
 
 export function PatientSelectionStep({ 
@@ -36,144 +30,109 @@ export function PatientSelectionStep({
   handleMemberSelection
 }: PatientSelectionStepProps) {
   const [isAddingMember, setIsAddingMember] = useState(false);
-  // const [newMemberName, setNewMemberName] = useState("");
-  // const [newMemberRelationship, setNewMemberRelationship] = useState("");
-  // const [formError, setFormError] = useState("");
   
-
   const [familymember, setFamilymember] = useState({
     name: "",
     relationship: "",
     age: "",
     phone: "",
     gender: "",
-    patient:null
+    patient: null
   });
 
   useEffect(() => {
-    setFamilymember((prev)=>({...prev,patient:appointmentObj?.patient}));
-  },[]);
+    setFamilymember((prev) => ({...prev, patient: appointmentObj?.patient}));
+  }, []);
+  
   const { toast } = useToast();
 
-
-  // const handleAddFamilyMember = () => {
-  //   // Clear previous errors
-  //   setFormError("");
-    
-  //   if (newMemberName && newMemberRelationship) {
-  //     toast({
-  //       title: "Family member added",
-  //       description: `${newMemberName} (${newMemberRelationship}) has been added to your family members.`
-  //     });
-      
-  //     setIsAddingMember(false);
-  //     setNewMemberName("");
-  //     setNewMemberRelationship("");
-  //   } else {
-  //     setFormError("Both name and relationship are required.");
-  //   }
-  // };
-
-  // // Prepare family members to display, including self
-  // const allPatients = [
-  //   { id: "self", name: "Myself", relationship: "Primary Account" },
-  //   ...familyMembers
-  // ];
-
-  
   const handleAddFamilyMember = async () => {
-
-    const data = await createNewPatientRelation(familymember)
+    const data = await createNewPatientRelation(familymember);
+    
     if (data.status) {
-
       toast({
         title: "Family member added",
         description: `${familymember.name} (${familymember.relationship}) has been added to your family members.`
       });
+      
       reloadFamilyMember();
       setIsAddingMember(false);
-      setFamilymember({ name: "", relationship: "", age: "", phone: "", gender: "",patient:null });
-
-
+      setFamilymember({ name: "", relationship: "", age: "", phone: "", gender: "", patient: null });
     } else {
       toast({
-        title: "Something went wrog",
+        title: "Something went wrong",
         description: `Some error during add family member`
       });
     }
  
     setIsAddingMember(false);
-    setFamilymember({ name: "", relationship: "", age: "", phone: "", gender: "",patient:null });
-
+    setFamilymember({ name: "", relationship: "", age: "", phone: "", gender: "", patient: null });
   };
 
   const familyMemberInputChange = (e: any) => {
-    setFamilymember({ ...familymember, [e.target.name]: e.target.value })
-  }
-
-
-
+    setFamilymember({ ...familymember, [e.target.name]: e.target.value });
+  };
 
   return (
     <div className="space-y-4">
-<RadioGroup
-  value={appointmentObj?.familyMember?.id || "self"}
-  className="grid grid-cols-1 sm:grid-cols-2 gap-3"
->
-  {/* Add "Myself" as the default option */}
-  <div
-    key="self"
-    className={`border rounded-lg p-3 transition-colors flex items-center cursor-pointer ${
-      !appointmentObj?.familyMember?.id ? "border-primary bg-slate-50" : "border-gray-200"
-    }`}
-    onClick={() =>
-      handleMemberSelection(null)
-    }
-  >
-    <RadioGroupItem
-      value="self"
-      id="member-self"
-      className="mr-3"
-      checked={!appointmentObj?.familyMember?.id}
-    />
-    <Label htmlFor="member-self" className="cursor-pointer flex-1">
-      <div className="flex items-center">
-        <UserCircle className="h-8 w-8 mr-2 text-gray-400" />
-        <div>
-          <div className="font-medium">Myself</div>
-          <div className="text-xs text-gray-500">Primary Account</div>
+      <RadioGroup
+        value={appointmentObj?.familyMember?.id || "self"}
+        className="grid grid-cols-1 sm:grid-cols-2 gap-3"
+      >
+        {/* Add "Myself" as the default option */}
+        <div
+          key="self"
+          className={`border rounded-lg p-3 transition-colors flex items-center cursor-pointer ${
+            !appointmentObj?.familyMember?.id ? "border-primary bg-slate-50" : "border-gray-200"
+          }`}
+          onClick={() =>
+            handleMemberSelection(null)
+          }
+        >
+          <RadioGroupItem
+            value="self"
+            id="member-self"
+            className="mr-3"
+            checked={!appointmentObj?.familyMember?.id}
+          />
+          <Label htmlFor="member-self" className="cursor-pointer flex-1">
+            <div className="flex items-center">
+              <UserCircle className="h-8 w-8 mr-2 text-gray-400" />
+              <div>
+                <div className="font-medium">Myself</div>
+                <div className="text-xs text-gray-500">Primary Account</div>
+              </div>
+            </div>
+          </Label>
         </div>
-      </div>
-    </Label>
-  </div>
 
-  {/* Map through family members */}
-  {familyMembers.map((member) => (
-    <div
-      key={member.id}
-      className={`border rounded-lg p-3 transition-colors flex items-center cursor-pointer ${
-        appointmentObj?.familyMember?.id == member.id ? "border-primary bg-slate-50" : "border-gray-200"
-      }`}
-      onClick={() => handleMemberSelection(member)}
-    >
-      <RadioGroupItem
-        value={member.id}
-        id={`member-${member.id}`}
-        className="mr-3"
-        checked={appointmentObj?.familyMember?.id == member.id}
-      />
-      <Label htmlFor={`member-${member.id}`} className="cursor-pointer flex-1">
-        <div className="flex items-center">
-          <UserCircle className="h-8 w-8 mr-2 text-gray-400" />
-          <div>
-            <div className="font-medium">{member.name}</div>
-            <div className="text-xs text-gray-500">{member.relationship}</div>
+        {/* Map through family members */}
+        {familyMembers.map((member) => (
+          <div
+            key={member.id}
+            className={`border rounded-lg p-3 transition-colors flex items-center cursor-pointer ${
+              appointmentObj?.familyMember?.id === member.id ? "border-primary bg-slate-50" : "border-gray-200"
+            }`}
+            onClick={() => handleMemberSelection(member)}
+          >
+            <RadioGroupItem
+              value={member.id}
+              id={`member-${member.id}`}
+              className="mr-3"
+              checked={appointmentObj?.familyMember?.id === member.id}
+            />
+            <Label htmlFor={`member-${member.id}`} className="cursor-pointer flex-1">
+              <div className="flex items-center">
+                <UserCircle className="h-8 w-8 mr-2 text-gray-400" />
+                <div>
+                  <div className="font-medium">{member.name || `${member.firstname} ${member.lastname}`}</div>
+                  <div className="text-xs text-gray-500">{member.relationship}</div>
+                </div>
+              </div>
+            </Label>
           </div>
-        </div>
-      </Label>
-    </div>
-  ))}
-</RadioGroup>
+        ))}
+      </RadioGroup>
       
       <div className="mt-4">
         <Button
@@ -192,12 +151,6 @@ export function PatientSelectionStep({
             <DialogTitle>Add Family Member</DialogTitle>
           </DialogHeader>
           
-          {/* {formError && (
-            <div className="p-3 rounded bg-red-50 text-red-600 text-sm">
-              {formError}
-            </div>
-          )}
-           */}
           <div className="grid gap-4 py-2">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">
@@ -227,7 +180,7 @@ export function PatientSelectionStep({
 
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="relationship" className="text-right">
-              Phone
+                Phone
               </Label>
               <Input
                id="phone"

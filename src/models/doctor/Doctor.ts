@@ -1,3 +1,4 @@
+
 import { Clinic } from "@/services/appointmentService";
 import { BaseModel, Pageable, Sort } from "../shared/BaseModel";
 import { Branch } from "../shared/Branch";
@@ -84,15 +85,16 @@ export interface DoctorSearchForm {
   gender?: number; // Gender as a number (optional)
   expYearFirst?: number; // Minimum experience years (optional)
   expYearLast?: number; // Maximum experience years (optional)
+  clinicList?: Clinic[]; // Array of Clinic objects (optional)
   radius?: number; // Search radius (optional)
   latitude?: number; // Latitude as a number (optional)
   longitude?: number; // Longitude as a number (optional)
+  city?: string; // City name (optional)
+  rating?: number; // Minimum rating (optional)
   specialtyNames?: string[]; // Array of specialty names (optional)
   languageNames?: string[]; // Array of language names (optional)
   sortBy?: string; // Sorting field (optional)
-  sortDirection?: string; // Sorting direction (optional)
-  availableFrom?: string; // Add field for date range start
-  availableTo?: string;   // Add field for date range end
+  sortDirection?: "ASC" | "DESC"; // Sorting direction (optional)
 }
 
 export interface Education extends BaseModel {

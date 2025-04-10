@@ -3,12 +3,12 @@ import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
-  NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { Building, User } from "lucide-react";
 import { Link } from "react-router-dom";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 
 export function DesktopNav() {
   return (
@@ -49,3 +49,6 @@ export function DesktopNav() {
     </nav>
   );
 }
+
+// Add missing NavigationMenuLink type/component
+const NavigationMenuLink = NavigationMenuContent;

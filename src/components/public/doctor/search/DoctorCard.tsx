@@ -9,7 +9,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { number } from "zod";
 
 interface DoctorCardProps {
-  id: number | string;
+  id:number;
   name: string;
   specialty: string;
   rating: number;
@@ -22,7 +22,7 @@ interface DoctorCardProps {
     name: string;
     location: string;
   }[];
-  onBookNow?: (name: string) => void;
+  onBookNow?: (id: number) => void;
 }
 
 export function DoctorCard({ 
@@ -40,7 +40,7 @@ export function DoctorCard({
 }: DoctorCardProps) {
   const handleBookNow = () => {
     if (onBookNow) {
-      onBookNow(name);
+      onBookNow(id);
     }
   };
   

@@ -1,6 +1,6 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Calendar, Home, MessageSquare, Search, User, Building } from "lucide-react";
+import { Calendar, Home, MessageSquare, Search, User } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 export function MobileNavigation() {
@@ -20,13 +20,13 @@ export function MobileNavigation() {
           <Search className="w-5 h-5" />
           <span className="text-xs mt-1">Find</span>
         </Link>
-        <Link to="/clinics" className={`flex flex-col items-center p-2 ${location.pathname.includes('/clinics') ? 'text-primary' : 'text-muted-foreground'}`}>
-          <Building className="w-5 h-5" />
-          <span className="text-xs mt-1">Clinics</span>
-        </Link>
         <Link to="/appointments" className={`flex flex-col items-center p-2 ${location.pathname.includes('/appointments') ? 'text-primary' : 'text-muted-foreground'}`}>
           <Calendar className="w-5 h-5" />
           <span className="text-xs mt-1">Bookings</span>
+        </Link>
+        <Link to="/chat" className={`flex flex-col items-center p-2 ${location.pathname.includes('/chat') ? 'text-primary' : 'text-muted-foreground'}`}>
+          <MessageSquare className="w-5 h-5" />
+          <span className="text-xs mt-1">Chat</span>
         </Link>
         <Link to="/account" className={`flex flex-col items-center p-2 ${location.pathname.includes('/account') ? 'text-primary' : 'text-muted-foreground'}`}>
           <User className="w-5 h-5" />

@@ -8,12 +8,12 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { Patient } from '@/admin/types/patient';
 import { format } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Eye, MoreHorizontal } from 'lucide-react';
+import { Patient } from '@/admin/types/patient';
 
 interface PatientTableProps {
   patients: Patient[];
@@ -78,38 +78,38 @@ const PatientTable: React.FC<PatientTableProps> = ({ patients, loading, onPatien
                   <div className="flex items-center gap-3">
                     <Avatar>
                       <AvatarImage src={patient.photoUrl} />
-                      <AvatarFallback>{getInitials(patient.fullName)}</AvatarFallback>
+                      <AvatarFallback>{getInitials(patient.firstname+""+patient.lastname)}</AvatarFallback>
                     </Avatar>
                     <div>
-                      <div className="font-medium">{patient.fullName}</div>
-                      <div className="text-xs text-muted-foreground">{patient.patientId}</div>
+                      <div className="font-medium">{patient.firstname} {patient.lastname}</div>
+                      <div className="text-xs text-muted-foreground">{patient.uid}</div>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell>
                   <div className="flex flex-col">
-                    <span>{patient.age} years</span>
+                    <span>{patient?.age} years</span>
                     <Badge variant="outline" className="mt-1 w-fit">
-                      {patient.gender}
+                      {patient?.gender}
                     </Badge>
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className="text-sm">{patient.contactNumber}</div>
-                  <div className="text-xs text-muted-foreground truncate max-w-[200px]">{patient.email}</div>
+                  <div className="text-sm">{patient?.whatsappNo}</div>
+                  <div className="text-xs text-muted-foreground truncate max-w-[200px]">{patient?.user?.email}</div>
                 </TableCell>
                 <TableCell>
-                  {patient.lastVisit ? (
+                  {/* {patient.lastVisit ? (
                     <Badge variant="outline" className={`${getLastVisitClass(patient.lastVisit)}`}>
                       {format(new Date(patient.lastVisit), 'MMM d, yyyy')}
                     </Badge>
                   ) : (
                     <Badge variant="outline" className="bg-gray-100">No visits yet</Badge>
-                  )}
+                  )} */}
                 </TableCell>
                 <TableCell>
-                  <div className="text-sm">{patient.insuranceProvider || 'None'}</div>
-                  <div className="text-xs text-muted-foreground">{patient.insurancePolicyNumber}</div>
+                  <div className="text-sm">{patient?.insuranceProvider || 'None'}</div>
+                  <div className="text-xs text-muted-foreground">{patient?.insurancePolicyNumber}</div>
                 </TableCell>
                 <TableCell>
                   <Button variant="ghost" size="icon" className="rounded-full">

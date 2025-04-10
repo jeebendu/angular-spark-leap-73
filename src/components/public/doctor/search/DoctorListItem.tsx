@@ -20,7 +20,7 @@ interface DoctorListItemProps {
   index: number;
   isLastItem: boolean;
   lastDoctorElementRef: (node: HTMLDivElement | null) => void;
-  handleBookAppointment: (doctorName: string, clinicId?: string) => void;
+  handleBookAppointment: (doctorId: number) => void;
 }
 
 export function DoctorListItem({ doctor, index, isLastItem, lastDoctorElementRef, handleBookAppointment }: DoctorListItemProps) {
@@ -121,7 +121,7 @@ export function DoctorListItem({ doctor, index, isLastItem, lastDoctorElementRef
                     <Button 
                       size="sm"
                       className="sky-button rounded-full h-8"
-                      onClick={() => handleBookAppointment(doctor.doctorName)}
+                      onClick={() => handleBookAppointment(doctor.doctorId)}
                     >
                       Book Now
                     </Button>

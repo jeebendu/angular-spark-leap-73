@@ -1,4 +1,3 @@
-
 import { Country, District, State } from "../shared/Address";
 import { Branch } from "../shared/Branch";
 import { User } from "../user/User";
@@ -24,24 +23,24 @@ export class Patient {
 }
 
 export class FamilyMember {
-  id: string;
-  firstname: string;
-  lastname: string;
-  dob: Date;
-  gender: string;
-  relationship: string;
-  phoneNumber: string;
-  profileImage?: string;
+    id: string;
+    relationship: string;
+    name: string;
+  }
   
-  // Add name property as a computed getter
-  get name(): string {
-    return `${this.firstname} ${this.lastname}`.trim();
+export class patientHealth {
+    id: string;
+    patientdetails: Patient;
+    height:number;
+    weight:number;
+    bloodGroup:string;
+    allergies:string;
+    currentMedication:string;
+    bloodPressure:string;
+    heartRate:string;
+    cholesterol:string;
+    bloodSugar:string;
+   
   }
 
-  // Add a name setter to maintain compatibility
-  set name(fullName: string) {
-    const parts = fullName.split(' ');
-    this.firstname = parts[0] || '';
-    this.lastname = parts.slice(1).join(' ') || '';
-  }
-}
+   

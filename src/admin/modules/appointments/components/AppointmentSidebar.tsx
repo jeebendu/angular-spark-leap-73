@@ -5,7 +5,7 @@ import { X, Calendar, Clock, Mail, MapPin, Phone, Calendar as CalendarIcon } fro
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { Appointment, AppointmentStatus, AppointmentType } from '../types/appointmentTypes';
+import { Appointment, AppointmentStatus, AppointmentType } from '../types/appointment';
 
 interface AppointmentSidebarProps {
   onClose: () => void;

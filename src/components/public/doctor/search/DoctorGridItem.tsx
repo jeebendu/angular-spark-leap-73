@@ -1,4 +1,3 @@
-
 import { DoctorSearchView } from "@/models/doctor/Doctor";
 import { motion } from "framer-motion";
 import { DoctorCard } from "./DoctorCard";
@@ -8,7 +7,7 @@ interface DoctorGridItemProps {
   index: number;
   isLastItem: boolean;
   lastDoctorElementRef: (node: HTMLDivElement | null) => void;
-  handleBookAppointment: (doctorName: string) => void;
+  handleBookAppointment: (doctorId:number) => void;
 }
 
 export function DoctorGridItem({ doctor, index, isLastItem, lastDoctorElementRef, handleBookAppointment }: DoctorGridItemProps) {
@@ -24,14 +23,14 @@ export function DoctorGridItem({ doctor, index, isLastItem, lastDoctorElementRef
         id={doctor.doctorId}
         name={doctor.doctorName}
         specialty={doctor.specialties}
-        rating={Number(doctor.averageRating)}
-        reviewCount={Number(doctor.reviewCount)}
+        rating={doctor.averageRating}
+        reviewCount={doctor.reviewCount}
         price={`₹${doctor.price}`}
         imageSrc={doctor.imageSrc}
         experience={doctor.experienceYears}
         languages={doctor.languages}
         clinics={doctor.clinicName ? [{ name: doctor.clinicName, location: 'NA' }] : [{ name: 'No Clinics', location: 'NA' }]}
-        onBookNow={(name) => handleBookAppointment(name)}
+        onBookNow={(name) => handleBookAppointment(doctor.doctorId)}
       />
     </motion.div>
   );

@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Patient } from '@/admin/types/patient';
 import { 
   Calendar, 
   Phone, 
@@ -19,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { format } from 'date-fns';
+import { Patient } from '@/admin/types/patient';
 
 interface PatientSidebarProps {
   patient: Patient | null;
@@ -37,7 +37,7 @@ const PatientSidebar: React.FC<PatientSidebarProps> = ({ patient, onClose }) => 
       .substring(0, 2);
   };
 
-  const getAgeFromDOB = (dateOfBirth: string) => {
+  const getAgeFromDOB = (dateOfBirth: Date) => {
     const today = new Date();
     const birthDate = new Date(dateOfBirth);
     let age = today.getFullYear() - birthDate.getFullYear();
@@ -66,13 +66,13 @@ const PatientSidebar: React.FC<PatientSidebarProps> = ({ patient, onClose }) => 
           </Avatar>
           <div>
             <h3 className="text-xl font-bold">{patient.fullName}</h3>
-            <div className="text-sm text-muted-foreground">{patient.patientId}</div>
+            <div className="text-sm text-muted-foreground">{patient.uid}</div>
             <div className="mt-1 flex items-center gap-2 text-sm">
               <div className="bg-primary/10 py-1 px-2 rounded-full">
                 {patient.gender}
               </div>
               <div className="bg-primary/10 py-1 px-2 rounded-full">
-                {patient.age || getAgeFromDOB(patient.dateOfBirth)} years
+                {patient.age || getAgeFromDOB(patient.dob)} years
               </div>
             </div>
           </div>
@@ -87,12 +87,12 @@ const PatientSidebar: React.FC<PatientSidebarProps> = ({ patient, onClose }) => 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div className="flex items-center gap-2">
               <Phone className="h-4 w-4 text-muted-foreground" />
-              <span>{patient.contactNumber}</span>
+              <span>{patient.whatsappNo}</span>
             </div>
             
             <div className="flex items-center gap-2">
               <Mail className="h-4 w-4 text-muted-foreground" />
-              <span className="truncate">{patient.email}</span>
+              <span className="truncate">{patient?.user?.email}</span>
             </div>
           </div>
           
@@ -101,13 +101,13 @@ const PatientSidebar: React.FC<PatientSidebarProps> = ({ patient, onClose }) => 
             <span>{patient.address}</span>
           </div>
           
-          {patient.emergencyContact && (
+          {patient.whatsappNo && (
             <div className="flex items-start gap-2">
               <AlertCircle className="h-4 w-4 text-muted-foreground mt-0.5" />
               <div>
                 <span className="text-sm font-medium block">Emergency Contact</span>
-                <span>{patient.emergencyContact.name} ({patient.emergencyContact.relationship})</span>
-                <span className="block text-sm">{patient.emergencyContact.phone}</span>
+                <span>{patient.whatsappNo} Relative</span>
+                <span className="block text-sm">{patient.whatsappNo}</span>
               </div>
             </div>
           )}
@@ -121,7 +121,7 @@ const PatientSidebar: React.FC<PatientSidebarProps> = ({ patient, onClose }) => 
           
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4 text-muted-foreground" />
-            <span>Date of Birth: {format(new Date(patient.dateOfBirth), 'MMMM d, yyyy')}</span>
+            <span>Date of Birth: {format(new Date(patient.dob), 'MMMM d, yyyy')}</span>
           </div>
           
           <div className="flex items-center gap-2">

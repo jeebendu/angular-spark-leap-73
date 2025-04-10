@@ -6,11 +6,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
-import { Patient } from "@/models/patient/Patient";
+import { Patient, patientHealth } from "@/models/patient/Patient";
 import { BellRing, CreditCard, Edit2, LogOut, Settings, Shield, User, UserCog } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState,useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { fetchMyProfilePatient, updatePatientInfo } from "@/services/PatientService";
+import { fetchMyProfilePatient, updatePatientInfo ,healthDetailsByPatientId} from "@/services/PatientService";
 import authService from "@/services/authService";
 import { useNavigate } from "react-router-dom";
 
@@ -18,9 +18,12 @@ export default function Account() {
   const { t } = useTranslation();
   const navigate=useNavigate();
   const [patient, setPatient] = useState<Patient>(null);
-
+  const [patientHealth, setPatientHealth] = useState<patientHealth[]>(null);
+  const id = patient?.id;
+  const isFetching = useRef(false);
   useEffect(() => {
     getMyProfile();
+    
   }, []);
 
   const getMyProfile = async () => {
@@ -28,6 +31,27 @@ export default function Account() {
       const response = await fetchMyProfilePatient();
       if (response) {
         setPatient(response.data);
+      }
+
+    } catch (error) {
+      console.log("Error fetching profile", error);
+    }
+
+  }
+  
+  useEffect(() => {
+    getHealthDetails(id);
+    
+  }, [id]);
+
+  const getHealthDetails = async (id:number) => {
+    if (isFetching.current) return;
+    isFetching.current = true;
+    try {
+      const response = await healthDetailsByPatientId(id);
+      if (response) {
+        setPatientHealth(response.data);
+        
       }
 
     } catch (error) {
@@ -116,9 +140,9 @@ export default function Account() {
                       <h2 className="text-xl font-semibold">{`${patient.firstname} ${patient.lastname}`}</h2>
                     ) : null
                   }{
-                    patient?.user.email ? (
-                      <p className="text-sm text-gray-500 mb-4">{patient?.user.email}</p>
-                    ) : null
+                    patient?.user?.email && (
+                      <p className="text-sm text-gray-500 mb-4">{patient.user.email}</p>
+                    )
                   }
                  
                   {/* <Button variant="outline" size="sm" className="gap-2 mb-6">
@@ -162,11 +186,18 @@ export default function Account() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="email">{t('account.email')}</Label>
-                      <Input id="email" type="email" value={patient?.user.email} name="user.email" onChange={(e) => hanleUserInputChange(e)} readOnly />
+                      <Input
+                        id="email"
+                        type="email"
+                        value={patient?.user?.email || ''} // Add a fallback value
+                        name="user.email"
+                        onChange={(e) => hanleUserInputChange(e)}
+                        readOnly
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="phone">{t('account.phone')}</Label>
-                      <Input id="phone" value={patient?.user.phone} readOnly />
+                      <Input id="phone" value={patient?.user?.phone || ''} readOnly />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="dob">{t('account.dob')}</Label>
@@ -240,32 +271,43 @@ export default function Account() {
                   <CardDescription>{t('account.healthInfoDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="height">{t('account.height')}</Label>
-                      <Input id="height" defaultValue="175 cm" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="weight">{t('account.weight')}</Label>
-                      <Input id="weight" defaultValue="70 kg" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="bloodGroup">{t('account.bloodGroup')}</Label>
-                      <Input id="bloodGroup" defaultValue="O+" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="allergies">{t('account.allergies')}</Label>
-                      <Input id="allergies" defaultValue="None" />
-                    </div>
-                  </div>
+      {patientHealth && patientHealth.length > 0 ? (
+        patientHealth.map((health, index) => (
+          <div key={index}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <div className="space-y-2">
+                  <Label htmlFor={`height-${index}`}>{t('account.height')}</Label>
+                  <Input id={`height-${index}`} value={health.height || ''} readOnly />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor={`weight-${index}`}>{t('account.weight')}</Label>
+                  <Input id={`weight-${index}`} value={health.weight || ''} readOnly />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor={`bloodGroup-${index}`}>{t('account.bloodGroup')}</Label>
+                  <Input id={`bloodGroup-${index}`} value={health.bloodGroup || ''} readOnly />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor={`allergies-${index}`}>{t('account.allergies')}</Label>
+                  <Input id={`allergies-${index}`} value={health.allergies || 'None'} readOnly />
+                </div>
+              </div>
+            </div>
+            <div className="mt-6 space-y-4">
+              <h3 className="font-medium">{t('account.currentMedication')}</h3>
+              <div className="p-4 border rounded-lg">
+                <p className="text-sm text-gray-500">{health.currentMedication||"No current medications added"}</p>
+              </div>
+              <Button variant="outline" size="sm">{t('account.addMedication')}</Button>
+            </div>
+          </div>
+        ))
+      ) : (
+        <p className="text-sm text-gray-500">No health details available</p>
+      )}
                   
-                  <div className="mt-6 space-y-4">
-                    <h3 className="font-medium">{t('account.currentMedication')}</h3>
-                    <div className="p-4 border rounded-lg">
-                      <p className="text-sm text-gray-500">No current medications added</p>
-                    </div>
-                    <Button variant="outline" size="sm">{t('account.addMedication')}</Button>
-                  </div>
+
                 </CardContent>
               </Card>
             </div>

@@ -1,12 +1,12 @@
 
 import React from 'react';
-import { Patient } from '@/admin/types/patient';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Eye, Phone, Mail, Calendar, Activity } from 'lucide-react';
 import { format } from 'date-fns';
+import { Patient } from '@/admin/types/patient';
 
 interface PatientGridProps {
   patients: Patient[];
@@ -49,7 +49,7 @@ const PatientGrid: React.FC<PatientGridProps> = ({ patients, loading, onPatientC
               </Avatar>
               <div>
                 <h3 className="font-semibold text-lg">{patient.fullName}</h3>
-                <div className="text-sm text-muted-foreground">{patient.patientId}</div>
+                <div className="text-sm text-muted-foreground">{patient.uid}</div>
                 <div className="flex gap-2 mt-1">
                   <Badge variant="outline">{patient.gender}</Badge>
                   <Badge variant="outline">{patient.age} years</Badge>
@@ -62,12 +62,12 @@ const PatientGrid: React.FC<PatientGridProps> = ({ patients, loading, onPatientC
             <div className="space-y-2 text-sm">
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-muted-foreground" />
-                <span>{patient.contactNumber}</span>
+                <span>{patient.whatsappNo}</span>
               </div>
               
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-muted-foreground" />
-                <span className="truncate">{patient.email}</span>
+                <span className="truncate">{patient?.user?.email}</span>
               </div>
               
               <div className="flex items-center gap-2">

@@ -3,6 +3,7 @@ import { CreditCard, Wallet, Building, QrCode } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { calculateAppointmentCost } from "@/services/appointmentService";
+import { Appointment } from "@/models/appointment/Appointment";
 
 interface PaymentStepProps {
   paymentMethod: string;

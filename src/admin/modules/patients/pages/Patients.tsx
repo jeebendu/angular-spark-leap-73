@@ -2,13 +2,13 @@
 import { useState } from "react";
 import AdminLayout from "@/admin/components/AdminLayout";
 import { useToast } from "@/hooks/use-toast";
-import { Patient } from "../types/patient";
 import { usePatients } from "../hooks/usePatients";
 import FilterCard, { FilterOption } from "@/admin/components/FilterCard";
 import PatientSidebar from "../components/PatientSidebar";
 import PageHeader from "@/admin/components/PageHeader";
 import PatientTable from "../components/PatientTable";
 import PatientGrid from "../components/PatientGrid";
+import { Patient } from "@/admin/types/patient";
 
 const PatientsAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");

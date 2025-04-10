@@ -14,7 +14,6 @@ export const useAppointments = (initialParams: AppointmentQueryParams) => {
   const fetchAppointments = async (params: AppointmentQueryParams, append = false) => {
     setLoading(true);
     setError(null);
-    
     try {
       const response = await fetchAppointmentsByDoctorId(params);
       const newAppointments = response.data.content;

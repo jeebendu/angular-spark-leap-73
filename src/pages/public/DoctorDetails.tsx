@@ -28,12 +28,12 @@ const DoctorDetails = () => {
           // Set SEO tags once doctor data is loaded
           if (response.data) {
             const doctorName = response.data.firstname + " " + response.data.lastname;
-            const specialty = Array.isArray(response.data.specializations) && response.data.specializations.length > 0
-              ? response.data.specializations[0].name
-              : '';
+            const specialty = Array.isArray(response.data.specializationList) && response.data.specializationList.length > 0
+            ? response.data.specializationList[0].name
+            : '';
             setPageTitle(`${doctorName} - ${specialty} | ClinicHub.care`);
             updateMetaTags(
-              `Book an appointment with ${doctorName}, ${specialty} with ${response.data.expYear || response.data.experience} years of experience. View doctor details, clinics, and available time slots.`,
+              `Book an appointment with ${doctorName}, ${specialty} with ${response.data.expYear} years of experience. View doctor details, clinics, and available time slots.`,
               `doctor, ${specialty}, medical appointment, healthcare, clinichub`
             );
           }
@@ -52,6 +52,7 @@ const DoctorDetails = () => {
 
     loadDoctor();
   }, [doctorId]); // Re-run the effect when the ID changes
+
 
   // Show loading state if data is being fetched
   if (loading) {

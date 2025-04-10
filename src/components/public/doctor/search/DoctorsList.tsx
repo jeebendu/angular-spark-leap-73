@@ -1,3 +1,5 @@
+
+
 import { DoctorSearchView } from "@/models/doctor/Doctor";
 import { DoctorGridItem } from "./DoctorGridItem";
 import { DoctorListItem } from "./DoctorListItem";
@@ -7,7 +9,7 @@ interface DoctorsList {
   viewMode: "grid" | "list";
   lastDoctorElementRef: (node: HTMLDivElement | null) => void;
   loading: boolean;
-  handleBookAppointment: (doctorName: string, clinicId?: string) => void;
+  handleBookAppointment: (doctorId:number) => void;
   showNoMoreDoctors: boolean;
 }
 

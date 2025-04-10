@@ -6,10 +6,20 @@ import { AboutTab } from "./AboutTab";
 import { ServicesTab } from "./ServicesTab";
 import { ReviewsTab } from "./ReviewsTab";
 import { Building, User, ClipboardList, MessageSquare } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Appointment } from "@/models/appointment/Appointment";
+import { fetchMyProfilePatient, fetchFamilyMemeberList } from "@/services/PatientService";
+import { Branch } from "@/models/shared/Branch";
+import { getDoctorClinicDRAndBranchId } from "@/services/DoctorClinicService";
+import { Slot } from "@/models/appointment/Slot";
+import { FamilyMember, slotByDrAndBranchId } from "@/services/appointmentService";
+
 
 interface DoctorDetailsTabsProps { doctor: Doctor }
 
 export const DoctorDetailsTabs = ({ doctor }: DoctorDetailsTabsProps) => {
+
+
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden mb-6">
       <Tabs defaultValue="clinics">
@@ -34,7 +44,7 @@ export const DoctorDetailsTabs = ({ doctor }: DoctorDetailsTabsProps) => {
         
         <TabsContent value="clinics">
           <ClinicsTab 
-            branch={doctor.branchList} 
+            branchList={doctor.branchList} 
             doctor={doctor} 
           />
         </TabsContent>
@@ -43,17 +53,17 @@ export const DoctorDetailsTabs = ({ doctor }: DoctorDetailsTabsProps) => {
           <AboutTab 
             doctor={doctor}
             education={doctor.education || []}
-            languages={doctor.languageList || []}
+            languages={doctor.languageList}
           />
         </TabsContent>
         
         <TabsContent value="services">
-          <ServicesTab services={doctor.services || []} />
+          <ServicesTab services={doctor.serviceList} />
         </TabsContent>
         
         <TabsContent value="reviews">
           <ReviewsTab 
-            doctorId={typeof doctor.id === 'string' ? parseInt(doctor.id) : doctor.id as number} 
+            doctorId={doctor.id}
           />
         </TabsContent>
       </Tabs>

@@ -5,12 +5,17 @@ import { DoctorFilters } from "@/components/public/doctor/search/DoctorFilters";
 import { DoctorSearchBar } from "@/components/public/doctor/search/DoctorSearchBar";
 import { DoctorsList } from "@/components/public/doctor/search/DoctorsList";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { DoctorSearchForm, DoctorSearchPageble, DoctorSearchView } from "@/models/doctor/Doctor";
-import { searchDoctorClinics } from "@/services/DoctorClinicService";
+import { Doctor, DoctorSearchForm, DoctorSearchPageble, DoctorSearchView } from "@/models/doctor/Doctor";
+import { getDoctorClinicDRAndBranchId, searchDoctorClinics } from "@/services/DoctorClinicService";
 import { setPageTitle, updateMetaTags } from "@/utils/seoUtils";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
+import { number } from "zod";
+import { fetchDoctorById } from "@/services/DoctorService";
+import { Appointment } from "@/models/appointment/Appointment";
+import { verifyLoginApi } from "@/services/authService";
+import { LoginDialog } from "@/components/public/shared/navbar/LoginDialog";
 
 const DoctorSearch = () => {
   const [searchParams] = useSearchParams();
@@ -99,13 +104,13 @@ const DoctorSearch = () => {
 
       const response = await searchDoctorClinics(searchFilters, pageNumber, 10);
       const data = response.data;
-      
+
       if (resetList) {
         setDoctors(data.content);
       } else {
         setDoctors((prev) => [...prev, ...data.content]);
       }
-      
+
       setHasMore(!data.last);
       setShowNoMoreDoctors(data.content.length === 0 || data.last);
     } catch (error) {
@@ -128,7 +133,7 @@ const DoctorSearch = () => {
       "Search and find the best doctors near you. Filter by specialty, experience, gender, and more.",
       "doctor search, find specialist, medical professionals, healthcare providers"
     );
-    
+
     fetchDoctorsWithFilters(0, true);
   }, [fetchDoctorsWithFilters]);
 
@@ -136,9 +141,7 @@ const DoctorSearch = () => {
   const lastDoctorElementRef = useCallback(
     (node: HTMLDivElement | null) => {
       if (loading) return;
-
       if (observer.current) observer.current.disconnect();
-
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && hasMore) {
           setPage((prevPage) => prevPage + 1);
@@ -190,27 +193,42 @@ const DoctorSearch = () => {
       setSelectedExperience([...selectedExperience, experience]);
     }
   };
-  
-  const handleBookAppointment = (doctorName: string, clinicId?: string) => {
-    setSelectedDoctor(doctorName);
-    setBookAppointmentOpen(true);
-    setInitialStep(1);
-    
-    if (clinicId) {
-      setSelectedClinic(clinicId);
-      setInitialStep(2);
-    } else {
-      setSelectedClinic(null);
+
+  const [doctor, setDoctor] = useState<Doctor>();
+  const [appointment, setAppointment] = useState<Appointment>();
+  const [isLogin, setIsLogin] = useState<any>();
+
+  const handleBookAppointment = async (doctorId: number) => {
+    try {
+      const isLoggedIn = await verifyLoginApi();
+      if (isLoggedIn.data) {
+        setBookAppointmentOpen(true);
+      } else {
+        setBookAppointmentOpen(false);
+        setIsLogin(Math.random());
+        return;
+      }
+    } catch (error) {
+      setBookAppointmentOpen(false);
+      setIsLogin(Math.random());
+      return;
     }
+    const response = await fetchDoctorById(doctorId);
+    const drClinic = await getDoctorClinicDRAndBranchId(doctorId, response.data.branchList[0].id);
+    setDoctor(response.data);
+    setAppointment((prev) => ({ ...prev, doctor: response.data }));
+    setAppointment((prev) => ({ ...prev, branch: response.data.branchList[0] }));
+    setAppointment((prev) => ({ ...prev, doctorClinic: drClinic.data }));
+    setSelectedDoctor(response.data.firstname + " " + response.data.lastname);
   };
-  
+
   // Apply filters when the user clicks Apply
   const applyFilters = () => {
     // Reset page to 0 when applying new filters
     setPage(0);
     // Fetch doctors with the new filters, resetting the list
     fetchDoctorsWithFilters(0, true);
-    
+
     if (isMobile) {
       setFilterOpen(false);
     }
@@ -229,7 +247,7 @@ const DoctorSearch = () => {
     setPage(0);
     fetchDoctorsWithFilters(0, true);
   };
-  
+
   return (
     <AppLayout>
       <div className="container px-2 sm:px-4 py-3 sm:py-6">
@@ -258,11 +276,11 @@ const DoctorSearch = () => {
           setSelectedLanguages={setSelectedLanguages}
           setSelectedExperience={setSelectedExperience}
         />
-        
+
         <div className="flex flex-col md:flex-row gap-4 md:gap-6 mt-4">
           {!isMobile && (
             <div className="w-full md:w-64 shrink-0">
-              <DoctorFilters 
+              <DoctorFilters
                 selectedSpecialties={selectedSpecialties}
                 selectedGenders={selectedGenders}
                 selectedLanguages={selectedLanguages}
@@ -277,7 +295,7 @@ const DoctorSearch = () => {
               />
             </div>
           )}
-          
+
           <div className="flex-1">
             <DoctorsList
               doctors={doctors}
@@ -289,16 +307,24 @@ const DoctorSearch = () => {
             />
           </div>
         </div>
-        
+
         <BookAppointmentModal
           doctorName={selectedDoctor || undefined}
           initialClinicId={selectedClinic || undefined}
           initialStep={initialStep}
           trigger={<></>}
           open={bookAppointmentOpen}
-          onOpenChange={setBookAppointmentOpen} 
-          doctor={undefined}        
+          onOpenChange={setBookAppointmentOpen}
+          doctor={doctor}
+          appointmentObj={appointment}
         />
+
+
+        {(
+          <span style={{ display: "none", position: "absolute" }}>
+            <LoginDialog isLogin={isLogin} />
+          </span>
+        )}
       </div>
     </AppLayout>
   );

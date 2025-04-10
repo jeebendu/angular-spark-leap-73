@@ -44,28 +44,30 @@ export const fetchPatients = async (params: PatientQueryParams): Promise<AxiosRe
         const lastVisitDate = new Date(now.setDate(now.getDate() - (i % 30)));
         
         mockPatients.push({
-          id: `PID${1000 + i}`,
-          patientId: `PATIENT-${1000 + i}`,
-          firstName: `First${i}`,
-          lastName: `Last${i}`,
+          id: i,
+          uid: `PATIENT-${1000 + i}`,
+          firstname: `First${i}`,
+          lastname: `Last${i}`,
           fullName: `First${i} Last${i}`,
-          dateOfBirth: new Date(1980 + (i % 40), i % 12, (i % 28) + 1).toISOString().split('T')[0],
+          dob: new Date(1980 + (i % 40), i % 12, (i % 28) + 1),
           age: 30 + (i % 40),
           gender: gender,
-          contactNumber: `+1-555-${100 + i}`,
-          email: `patient${i}@example.com`,
+          whatsappNo: `+1-555-${100 + i}`,
+          // email: `patient${i}@example.com`,
           address: `${100 + i} Main St, City${i}, State`,
           lastVisit: lastVisitDate.toISOString().split('T')[0],
           insuranceProvider: i % 5 === 0 ? 'Medicare' : (i % 5 === 1 ? 'BlueCross' : (i % 5 === 2 ? 'Aetna' : (i % 5 === 3 ? 'UnitedHealth' : 'Cigna'))),
           insurancePolicyNumber: `POL-${10000 + i}`,
           medicalHistory: i % 3 === 0 ? 'Hypertension, Diabetes' : (i % 3 === 1 ? 'Asthma' : 'No significant history'),
-          emergencyContact: {
-            name: `Emergency${i}`,
-            relationship: i % 2 === 0 ? 'Spouse' : 'Parent',
-            phone: `+1-555-${200 + i}`
-          },
+          // emergencyContact: {
+          //   name: `Emergency${i}`,
+          //   relationship: i % 2 === 0 ? 'Spouse' : 'Parent',
+          //   phone: `+1-555-${200 + i}`
+          // },
           photoUrl: i % 10 === 0 ? 'https://i.pravatar.cc/150?img=' + (i % 70) : undefined,
-          createdAt: new Date(2020 + (i % 3), i % 12, (i % 28) + 1).toISOString()
+          createdTime: new Date(),
+          refDoctor: null,
+          user: null
         });
       }
       
@@ -74,9 +76,9 @@ export const fetchPatients = async (params: PatientQueryParams): Promise<AxiosRe
       if (params.searchTerm) {
         const searchTerm = params.searchTerm.toLowerCase();
         filteredPatients = filteredPatients.filter(patient => 
-          patient.fullName.toLowerCase().includes(searchTerm) || 
-          patient.email.toLowerCase().includes(searchTerm) ||
-          patient.patientId?.toLowerCase().includes(searchTerm)
+          patient.firstname+" "+patient.lastname.toLowerCase().includes(searchTerm) || 
+          patient?.user?.email.toLowerCase().includes(searchTerm) ||
+          patient.uid?.toLowerCase().includes(searchTerm)
         );
       }
       
@@ -127,7 +129,7 @@ export const fetchPatients = async (params: PatientQueryParams): Promise<AxiosRe
   });
 };
 
-export const fetchPatientById = async (id: string): Promise<AxiosResponse<Patient>> => {
+export const fetchPatientById = async (id: number): Promise<AxiosResponse<Patient>> => {
   // In a real application, we would call the API
   // return apiService.get<Patient>(`/api/patients/${id}`);
   
@@ -136,27 +138,30 @@ export const fetchPatientById = async (id: string): Promise<AxiosResponse<Patien
     setTimeout(() => {
       const mockPatient: Patient = {
         id: id,
-        patientId: `PATIENT-${id}`,
-        firstName: `First${id}`,
-        lastName: `Last${id}`,
+        uid: `PID${id}`,
+        refDoctor:null,
+        user:null,
+        // patientId: `PATIENT-${id}`,
+        firstname: `First${id}`,
+        lastname: `Last${id}`,
         fullName: `First${id} Last${id}`,
-        dateOfBirth: new Date(1980, 5, 15).toISOString().split('T')[0],
+        dob: new Date(1980, 5, 15),
         age: 40,
         gender: "Male",
-        contactNumber: `+1-555-${id}`,
-        email: `patient${id}@example.com`,
+        whatsappNo: `+1-555-${id}`,
+        // email: `patient${id}@example.com`,
         address: `${id} Main St, City, State`,
         lastVisit: new Date(2023, 3, 10).toISOString().split('T')[0],
         insuranceProvider: 'BlueCross',
         insurancePolicyNumber: `POL-${id}`,
         medicalHistory: 'Hypertension, Diabetes',
-        emergencyContact: {
-          name: `Emergency Contact`,
-          relationship: 'Spouse',
-          phone: `+1-555-${parseInt(id) + 100}`
-        },
-        photoUrl: 'https://i.pravatar.cc/150?img=' + (parseInt(id) % 70),
-        createdAt: new Date(2020, 1, 1).toISOString()
+        // emergencyContact: {
+        //   name: `Emergency Contact`,
+        //   relationship: 'Spouse',
+        //   phone: `+1-555-${parseInt(id) + 100}`
+        // },
+        photoUrl: 'https://i.pravatar.cc/150?img=' + (parseInt(id.toString()) % 70),
+        createdTime: new Date(2020, 1, 1)
       };
       
       resolve({

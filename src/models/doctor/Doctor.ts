@@ -1,141 +1,122 @@
-import { Country, District, State } from "../shared/Address";
+
+import { Clinic } from "@/services/appointmentService";
+import { BaseModel, Pageable, Sort } from "../shared/BaseModel";
 import { Branch } from "../shared/Branch";
+import { Patient } from "../patient/Patient";
+import { Country, District, State } from "../shared/Address";
 import { User } from "../user/User";
 
-export class Doctor {
-  id: number | string;
-  branchList?: Branch[];
-  title?: string;
-  firstname?: string;
-  lastname?: string;
-  experience?: number;
-  ranking?: number;
-  qualification?: string;
-  username?: string;
-  about?: string;
-  email?: string;
-  phoneNumber?: string;
-  phone?: string; // Added phone property
-  city?: string;
-  status?: string;
-  gender?: string;
-  designation?: string;
-  registrationNumber?: string;
-  alternativeContact?: string;
-  profilePic?: string;
-  image?: string; // Added image property
-  specializations?: Specialization[];
-  services?: DoctorService[];
-  ratings?: Rating[];
-  
-  // Additional properties referenced in the components
-  biography?: string;
-  expYear?: number;
-  reviewCount?: number;
-  rating?: number;
-  consultationFee?: string;
-  education?: Education[];
-  languageList?: Language[];
-  clinics?: Clinic[];
-}
+export interface Doctor {
+  id: number;
+  uid: string;
+  firstname: string;
+  lastname: string;
+  external: boolean;
+  desgination: string;
+  expYear: number;
+  email: string;
+  phone: string;
+  qualification: string;
+  joiningDate: string;
+  about: string;
+  image: string;
+  pincode: string;
+  city: string;
+  biography: string;
+  gender: number;
+  verified: boolean;
+  percentages: any[]; // Adjust type if percentages have a specific structure
+  specializationList: Specialization[];
+  serviceList: DoctorService[];
+  branchList: Branch[];
+  languageList: Language[];
+  user: User;
+  district: District;
+  state: State;
+  country: Country;
+  education?: Education[]; // Added as optional
 
-export class DoctorService {
-  id?: number | string;
-  name: string;
-  description?: string;
-  category?: string;
-  price?: number;
-}
-
-export class Specialization {
-  id: number | string;
-  name: string;
-  description?: string;
-  icon?: string;
-  category?: string;
-  parentId?: number | string;
-}
-
-export class Rating {
-  id?: number | string;
+  //temp
+  consultationFee: any;
+  reviewCount: number;
   rating: number;
-  comment?: string;
-  patientName?: string;
-  date?: Date;
+  clinics: Clinic[]; // Array of Clinic objects
 }
 
-// Add missing types
-export class Education {
-  id?: number | string;
-  degree: string;
-  institution: string;
-  year: string;
-  description?: string;
-}
-
-export class Language {
-  id?: number | string;
-  name: string;
-  code?: string;
-}
-
-export class Clinic {
-  id: number | string;
-  name: string;
-  location?: string;
-  branchList?: Branch[];
-}
-
-export class DoctorReview {
-  id?: number | string;
-  doctorId?: number | string;
-  patitientList?: any[];
-  rating: number;
-  message?: string;
-  createdTime?: string;
-}
-
-// Add search-related types
-export interface DoctorSearchForm {
-  doctorName?: string;
-  clinicName?: string;
-  gender?: number;
-  expYearFirst?: number;
-  expYearLast?: number;
-  specialtyNames?: string[];
-  languageNames?: string[];
-  radius?: number;
-  latitude?: number;
-  longitude?: number;
-  sortBy?: string;
-  sortDirection?: 'ASC' | 'DESC';
-  page?: number;
-  size?: number;
-}
-
-export interface DoctorSearchPageble {
-  content: DoctorSearchView[];
-  pageable: any;
-  last: boolean;
-  totalElements: number;
-  totalPages: number;
-  size: number;
-  number: number;
-  sort: any;
-  first: boolean;
-  numberOfElements: number;
-  empty: boolean;
+export interface DoctorClinic {
+  id: number;
+  clinic: Clinic;
+  doctor: Doctor;
 }
 
 export interface DoctorSearchView {
-  doctorId: string;
+  doctorId: number;
   doctorName: string;
+  clinicId: number;
+  clinicName: string;
+  gender: number;
+  experienceYears: number;
+  city: string;
   specialties: string;
+  languages: string;
   averageRating: number;
   reviewCount: number;
-  price: string;
-  experienceYears: number;
-  languages: string;
+  price: number;
   imageSrc: string;
-  clinicName?: string;
+}
+
+export interface DoctorSearchPageble {
+  content: DoctorSearchView[]; 
+  pageable: Pageable;
+  last: boolean;
+  totalPages: number;
+  totalElements: number;
+  size: number;
+  number: number;
+  sort: Sort;
+  numberOfElements: number;
+  first: boolean;
+  empty: boolean;
+}
+
+export interface DoctorSearchForm {
+  doctorName?: string; // Doctor's name (optional)
+  clinicName?: string; // Clinic's name (optional)
+  gender?: number; // Gender as a number (optional)
+  expYearFirst?: number; // Minimum experience years (optional)
+  expYearLast?: number; // Maximum experience years (optional)
+  clinicList?: Clinic[]; // Array of Clinic objects (optional)
+  radius?: number; // Search radius (optional)
+  latitude?: number; // Latitude as a number (optional)
+  longitude?: number; // Longitude as a number (optional)
+  city?: string; // City name (optional)
+  rating?: number; // Minimum rating (optional)
+  specialtyNames?: string[]; // Array of specialty names (optional)
+  languageNames?: string[]; // Array of language names (optional)
+  sortBy?: string; // Sorting field (optional)
+  sortDirection?: "ASC" | "DESC"; // Sorting direction (optional)
+}
+
+export interface Education extends BaseModel {
+  degree: string;
+  institute: string;
+  year: string;
+}
+
+export interface Specialization extends BaseModel {}
+
+export interface DoctorService extends BaseModel {}
+
+export interface Language extends BaseModel {}
+
+export interface DoctorReview {
+  id: number;
+  like: number;
+  dislike: number;
+  message: string;
+  rating: number;
+  isrecommended: boolean;
+  patitientList: Patient[];
+  doctor: Doctor;
+  createdTime: Date;
 }

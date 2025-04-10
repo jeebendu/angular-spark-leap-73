@@ -28,8 +28,6 @@ import ClinichubLanding from "./pages/public/ClinichubLanding";
 import Dashboard from "./admin/pages/Dashboard";
 import Schedule from "./admin/pages/Schedule";
 import FamilyMembers from "./pages/public/FamilyMembers";
-import AllClinics from "./pages/public/AllClinics";
-import ClinicDetails from "./pages/public/ClinicDetails";
 
 import "./admin/styles/admin.css";
 import AppointmentsAdmin from "./admin/modules/appointments/pages/Appointments";
@@ -123,8 +121,8 @@ function App() {
               <Route path="/admin/:section" element={<Dashboard />} />
               
               {/* Clinic Routes */}
-              <Route path="/clinics" element={<AllClinics />} />
-              <Route path="/clinics/:clinicId" element={<ClinicDetails />} />
+              {/* <Route path="/clinics" element={<AllClinics />} />
+              <Route path="/clinics/:clinicId" element={<ClinicDetails />} /> */}
               
               {/* Doctor Routes */}
               <Route path="/doctor" element={<DashboardPage />} />

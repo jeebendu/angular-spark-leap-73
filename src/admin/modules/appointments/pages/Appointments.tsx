@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AdminLayout from "@/admin/components/AdminLayout";
 import { useToast } from "@/hooks/use-toast";
 import { useAppointments } from "../hooks/useAppointments";
@@ -8,6 +8,8 @@ import AppointmentSidebar from "../components/AppointmentSidebar";
 import PageHeader from "@/admin/components/PageHeader";
 import InfiniteAppointmentList from "../components/InfiniteAppointmentList";
 import AppointmentCalendar from "../components/AppointmentCalendar";
+import { Doctor } from "../types/Doctor";
+import { fetchDoctorDetailsById } from "../services/DoctorService";
 
 const AppointmentsAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -16,14 +18,33 @@ const AppointmentsAdmin = () => {
   const [selectedAppointment, setSelectedAppointment] = useState<any | null>(null);
   const [showFilters, setShowFilters] = useState(true);
   const { toast } = useToast();
+  const [doctor, setDoctor] = useState<Doctor>();
 
   // Filter states
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({
     types: [],
     statuses: [],
-    assignees: []
+    branches: [],
+    searchTerm: null,
   });
-
+  // Define filter options
+  const [filterOptions, setFilterOptions] = useState<FilterOption[]>([
+    {
+      id: 'statuses',
+      label: 'Status',
+      options: [
+        { id: 'UPCOMING', label: 'Upcoming' },
+        { id: 'COMPLETED', label: 'Completed' },
+        { id: 'CANCELLED', label: 'Cancelled' },
+        { id: 'IN_PROGRESS', label: 'In Progress' }
+      ]
+    },
+    {
+      id: 'branches',
+      label: 'Branch',
+      options: []
+    }
+  ]);
   // Use the custom hook for appointments with lazy loading
   const {
     appointments,
@@ -35,40 +56,13 @@ const AppointmentsAdmin = () => {
   } = useAppointments({
     page: 0,
     size: 10,
-    doctorId: 1 // Replace with actual doctor ID when available
+    doctorId: 1, // Replace with actual doctor ID when available
+    branches:[],
+    searchTerm: null,
+    statuses:[]
   });
 
-  // Define filter options
-  const filterOptions: FilterOption[] = [
-    {
-      id: 'types',
-      label: 'Types',
-      options: [
-        { id: 'direct-visit', label: 'Direct Visit' },
-        { id: 'video-call', label: 'Video Call' },
-        { id: 'audio-call', label: 'Audio Call' }
-      ]
-    },
-    {
-      id: 'statuses',
-      label: 'Status',
-      options: [
-        { id: 'upcoming', label: 'Upcoming' },
-        { id: 'completed', label: 'Completed' },
-        { id: 'cancelled', label: 'Cancelled' },
-        { id: 'new', label: 'New' }
-      ]
-    },
-    {
-      id: 'assignees',
-      label: 'Assigned to',
-      options: [
-        { id: 'dr-smith', label: 'Dr. John Smith' },
-        { id: 'dr-watson', label: 'Dr. Emma Watson' },
-        { id: 'dr-brown', label: 'Dr. Robert Brown' }
-      ]
-    }
-  ];
+
 
   const handleFilterChange = (filterId: string, optionId: string) => {
     setSelectedFilters(prev => {
@@ -78,6 +72,10 @@ const AppointmentsAdmin = () => {
       } else {
         newFilters[filterId] = [...(newFilters[filterId] || []), optionId];
       }
+  
+      // Update the filters using the updateFilters function
+      updateFilters(newFilters);
+  
       return newFilters;
     });
   };
@@ -87,7 +85,17 @@ const AppointmentsAdmin = () => {
     setSelectedFilters({
       types: [],
       statuses: [],
-      assignees: []
+      assignees: [],
+      searchTerm: null,
+      branches: []
+    });
+    updateFilters({
+      page: 0,
+      size: 10,
+      doctorId: 1,
+      branches:[],
+      searchTerm: null,
+      statuses:[]
     });
   };
 
@@ -108,17 +116,51 @@ const AppointmentsAdmin = () => {
       title: "Starting Appointment",
       description: "Navigating to appointment...",
     });
-    // Handle appointment start logic
+  };
+
+  useEffect(() => {
+    const fetchDocttorInfo = async () => {
+      const response = await fetchDoctorDetailsById(1);
+      setDoctor(response.data);
+
+      // Dynamically update branch options in filterOptions
+      setFilterOptions(prevOptions => {
+        return prevOptions.map(option => {
+          if (option.id === 'branches') {
+            return {
+              ...option,
+              options: response.data.branchList.map((branch: any) => ({
+                id: branch.id,
+                label: branch.name
+              }))
+            };
+          }
+          return option;
+        });
+      });
+    };
+
+    fetchDocttorInfo();
+  }, []);
+
+  
+  const onSearchChanege = async (term: string) => {
+    updateFilters({
+      ...selectedFilters,
+      searchTerm: term,
+      page: 0,
+    });
+    setSearchTerm(term);
   };
 
   return (
-    <AdminLayout 
+    <AdminLayout
       rightSidebar={showSidebar ? <AppointmentSidebar onClose={() => setShowSidebar(false)} appointments={appointments} /> : undefined}
       onUserClick={() => setShowSidebar(!showSidebar)}
       showAddButton={true}
       onAddButtonClick={handleAddAppointment}
     >
-      <PageHeader 
+      <PageHeader
         title="Appointments"
         onViewModeToggle={() => setViewMode(viewMode === 'list' ? 'calendar' : 'list')}
         viewMode={viewMode}
@@ -130,9 +172,9 @@ const AppointmentsAdmin = () => {
       />
 
       {showFilters && (
-        <FilterCard 
+        <FilterCard
           searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
+          onSearchChange={onSearchChanege}
           filters={filterOptions}
           selectedFilters={selectedFilters}
           onFilterChange={handleFilterChange}
@@ -141,12 +183,12 @@ const AppointmentsAdmin = () => {
       )}
 
       {viewMode === 'calendar' ? (
-        <AppointmentCalendar 
-          appointments={appointments} 
+        <AppointmentCalendar
+          appointments={appointments}
           onAppointmentClick={handleAppointmentClick}
         />
       ) : (
-        <InfiniteAppointmentList 
+        <InfiniteAppointmentList
           appointments={appointments}
           loading={loading}
           hasMore={hasMore}

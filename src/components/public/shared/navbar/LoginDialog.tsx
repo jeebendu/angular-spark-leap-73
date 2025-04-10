@@ -26,16 +26,18 @@ import { toast } from "@/hooks/use-toast";
 import { AuthUser } from "@/models/user/User";
 import authService from "@/services/authService";
 import { User } from "lucide-react";
-import { useState } from "react";
-import {verifyOtpAndLoginApi, sendOtpApi} from "@/services/authService";
+import { useEffect, useState } from "react";
+import { verifyOtpAndLoginApi, sendOtpApi } from "@/services/authService";
 
-export function LoginDialog() {
+export function LoginDialog({ isLogin }) {
   const [otpValue, setOtpValue] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [loginDialogOpen, setLoginDialogOpen] = useState(false);
   const [countryCode, setCountryCode] = useState("+91");
-  
+  const [isLoding, setIsLoding] = useState(false);
+
+
   const [authUser, setAuthUser] = useState<AuthUser>({
     email: "",
     reason: "login",
@@ -44,69 +46,19 @@ export function LoginDialog() {
     otp: "",
     authToken: ""
   });
-  
+
+
+  useEffect(() => {
+    if (isLogin) {
+      setLoginDialogOpen(true)
+    }
+  }, [isLogin]);
+
   const resetLoginForm = () => {
     setMobileNumber("");
     setOtpValue("");
     setIsOtpSent(false);
   };
-
-  // const handleSendOtp = async () => {
-  //   if (mobileNumber.length !== 10) {
-  //     toast({
-  //       title: "Invalid mobile number",
-  //       description: "Please enter a valid 10 digit mobile number",
-  //       variant: "destructive"
-  //     });
-  //     return;
-  //   }
-    
-  //   const success = await authService.sendOtp(mobileNumber);
-  //   if (success) {
-  //     setIsOtpSent(true);
-  //     toast({
-  //       title: "OTP Sent",
-  //       description: `Please enter the last 5 digits of ${mobileNumber} as OTP`,
-  //     });
-  //   } else {
-  //     toast({
-  //       title: "Failed to send OTP",
-  //       description: "Please try again",
-  //       variant: "destructive"
-  //     });
-  //   }
-  // };
-
-  // const handleVerifyOtp = async () => {
-  //   if (otpValue.length !== 5) {
-  //     toast({
-  //       title: "Invalid OTP",
-  //       description: "Please enter a valid 5 digit OTP",
-  //       variant: "destructive"
-  //     });
-  //     return;
-  //   }
-    
-  //   const success = await authService.verifyOtp(otpValue);
-  //   if (success) {
-  //     setLoginDialogOpen(false);
-      
-  //     toast({
-  //       title: "Login Successful",
-  //       description: "You are now logged in",
-  //     });
-  //   } else {
-  //     toast({
-  //       title: "Invalid OTP",
-  //       description: "Please check and try again",
-  //       variant: "destructive"
-  //     });
-  //   }
-  // };
-
-// ********************************************************
-
-
 
 
   const handleSendOtp = async () => {
@@ -120,14 +72,15 @@ export function LoginDialog() {
     //   return;
     // }
 
+    setIsLoding(true);
     // Send OTP
     const success = await sendOtpApi(authUser);
-    console.log("success");
     if (success.status) {
+      setIsLoding(false);
       setIsOtpSent(true);
       toast({
         title: "OTP Sent",
-        description: `Please enter the last 5 digits of ${authUser.phone} as OTP`,
+        description: `Please enter OTP here`,
       });
       const token = success.data.message.split("::")[0];
       setAuthUser((prev) => ({ ...prev, authToken: token }));
@@ -142,7 +95,7 @@ export function LoginDialog() {
   };
 
   const handleVerifyOtp = async () => {
-   
+
     if (authUser.otp.length !== 6) {
       toast({
         title: "Invalid OTP",
@@ -175,11 +128,11 @@ export function LoginDialog() {
     setAuthUser((prev) => ({ ...prev, [e.target.name]: e.target.value })); // Assign to AuthUser
 
   }
-  const otpHandler=(val:string)=>{
-      setOtpValue(val)
-      setAuthUser((prev)=>({ ...prev, otp:val}));
-    
-    }
+  const otpHandler = (val: string) => {
+    setOtpValue(val)
+    setAuthUser((prev) => ({ ...prev, otp: val }));
+
+  }
 
   return (
     <Dialog open={loginDialogOpen} onOpenChange={(open) => {
@@ -216,7 +169,7 @@ export function LoginDialog() {
                         <SelectContent>
                           <SelectItem value="+91">
                             <div className="flex items-center">
-                            <span className="w-6 mr-2">IN</span>
+                              <span className="w-6 mr-2">IN</span>
                               +91
                             </div>
                           </SelectItem>
@@ -227,7 +180,7 @@ export function LoginDialog() {
                       id="mobile"
                       type="tel"
                       placeholder="Enter your email"
-                       name="email"
+                      name="email"
                       value={authUser.email}
                       onChange={(e) => handleMobileEmailChange(e)}
                       className="rounded-md border-gray-300 flex-1"
@@ -237,13 +190,15 @@ export function LoginDialog() {
                     For demo: OTP will be the last 5 digits of your mobile number
                   </p>
                 </div>
-                <Button 
-                  className="w-full sky-button" 
+
+                <Button
+                  className="w-full sky-button"
                   onClick={handleSendOtp}
                   disabled={!authUser.email}
                 >
-                  Send OTP
+             Send OTP
                 </Button>
+
               </>
             ) : (
               <>
@@ -252,10 +207,10 @@ export function LoginDialog() {
                     Enter OTP sent to {mobileNumber}
                   </label>
                   <div className="flex justify-center">
-                    <InputOTP 
+                    <InputOTP
                       maxLength={6}
-                      value={authUser.otp} 
-                      onChange={(e) =>otpHandler(e)}
+                      value={authUser.otp}
+                      onChange={(e) => otpHandler(e)}
                       className="otp-input-premium"
                     >
                       <InputOTPGroup className="gap-4">
@@ -271,18 +226,18 @@ export function LoginDialog() {
                   <p className="text-xs text-center mt-2">
                     Didn't receive the code? <button className="text-primary">Resend</button>
                   </p>
-   
+
                 </div>
-                <Button 
-                  className="w-full sky-button" 
+                <Button
+                  className="w-full sky-button"
                   onClick={handleVerifyOtp}
                   disabled={otpValue.length !== 6}
                 >
                   Verify OTP
                 </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full" 
+                <Button
+                  variant="outline"
+                  className="w-full"
                   onClick={() => setIsOtpSent(false)}
                 >
                   Go Back
@@ -315,7 +270,7 @@ export function LoginDialog() {
                     <SelectContent>
                       <SelectItem value="+91">
                         <div className="flex items-center">
-                        <span className="w-6 mr-2">IN</span> +91
+                          <span className="w-6 mr-2">IN</span> +91
                         </div>
                       </SelectItem>
                     </SelectContent>

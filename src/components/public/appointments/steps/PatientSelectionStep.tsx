@@ -1,10 +1,11 @@
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Users, Plus, X, UserCircle } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { createNewPatientRelation } from "@/services/appointmentService";
 import {
   Dialog,
   DialogContent,
@@ -13,89 +14,166 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { FamilyMember } from "@/models/patient/Patient";
+import { Appointment } from "@/models/appointment/Appointment";
+
+interface FamilyMember {
+  id: string;
+  name: string;
+  relationship: string;
+}
 
 interface PatientSelectionStepProps {
-  selectedMember: string;
-  setSelectedMember: (memberId: string) => void;
+  appointmentObj: Appointment;
   familyMembers: FamilyMember[];
+  reloadFamilyMember():void;
+  handleMemberSelection(member: FamilyMember): void;
 }
 
 export function PatientSelectionStep({ 
-  selectedMember, 
-  setSelectedMember, 
-  familyMembers 
+  appointmentObj,
+  familyMembers,
+  reloadFamilyMember,
+  handleMemberSelection
 }: PatientSelectionStepProps) {
   const [isAddingMember, setIsAddingMember] = useState(false);
-  const [newMemberFirstname, setNewMemberFirstname] = useState("");
-  const [newMemberLastname, setNewMemberLastname] = useState("");
-  const [newMemberRelationship, setNewMemberRelationship] = useState("");
-  const [formError, setFormError] = useState("");
+  // const [newMemberName, setNewMemberName] = useState("");
+  // const [newMemberRelationship, setNewMemberRelationship] = useState("");
+  // const [formError, setFormError] = useState("");
+  
+
+  const [familymember, setFamilymember] = useState({
+    name: "",
+    relationship: "",
+    age: "",
+    phone: "",
+    gender: "",
+    patient:null
+  });
+
+  useEffect(() => {
+    setFamilymember((prev)=>({...prev,patient:appointmentObj?.patient}));
+  },[]);
   const { toast } = useToast();
 
-  const handleAddFamilyMember = () => {
-    // Clear previous errors
-    setFormError("");
+
+  // const handleAddFamilyMember = () => {
+  //   // Clear previous errors
+  //   setFormError("");
     
-    if (newMemberFirstname && newMemberRelationship) {
+  //   if (newMemberName && newMemberRelationship) {
+  //     toast({
+  //       title: "Family member added",
+  //       description: `${newMemberName} (${newMemberRelationship}) has been added to your family members.`
+  //     });
+      
+  //     setIsAddingMember(false);
+  //     setNewMemberName("");
+  //     setNewMemberRelationship("");
+  //   } else {
+  //     setFormError("Both name and relationship are required.");
+  //   }
+  // };
+
+  // // Prepare family members to display, including self
+  // const allPatients = [
+  //   { id: "self", name: "Myself", relationship: "Primary Account" },
+  //   ...familyMembers
+  // ];
+
+  
+  const handleAddFamilyMember = async () => {
+
+    const data = await createNewPatientRelation(familymember)
+    if (data.status) {
+
       toast({
         title: "Family member added",
-        description: `${newMemberFirstname} ${newMemberLastname} (${newMemberRelationship}) has been added to your family members.`
+        description: `${familymember.name} (${familymember.relationship}) has been added to your family members.`
       });
-      
+      reloadFamilyMember();
       setIsAddingMember(false);
-      setNewMemberFirstname("");
-      setNewMemberLastname("");
-      setNewMemberRelationship("");
+      setFamilymember({ name: "", relationship: "", age: "", phone: "", gender: "",patient:null });
+
+
     } else {
-      setFormError("Both name and relationship are required.");
+      toast({
+        title: "Something went wrog",
+        description: `Some error during add family member`
+      });
     }
+ 
+    setIsAddingMember(false);
+    setFamilymember({ name: "", relationship: "", age: "", phone: "", gender: "",patient:null });
+
   };
 
-  // Prepare family members to display, including self
-  const selfMember = new FamilyMember();
-  selfMember.id = "self";
-  selfMember.firstname = "Myself";
-  selfMember.lastname = "";
-  selfMember.relationship = "Primary Account";
-  selfMember.dob = new Date();
-  selfMember.gender = "";
-  selfMember.phoneNumber = "";
-  
-  const allPatients = [
-    selfMember,
-    ...familyMembers
-  ];
+  const familyMemberInputChange = (e: any) => {
+    setFamilymember({ ...familymember, [e.target.name]: e.target.value })
+  }
+
+
+
 
   return (
     <div className="space-y-4">
-      <RadioGroup value={selectedMember} onValueChange={setSelectedMember} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {allPatients.map((member) => (
-          <div 
-            key={member.id} 
-            className={`border rounded-lg p-3 transition-colors flex items-center cursor-pointer ${
-              selectedMember === member.id ? "border-primary bg-slate-50" : "border-gray-200"
-            }`}
-            onClick={() => setSelectedMember(member.id)}
-          >
-            <RadioGroupItem 
-              value={member.id} 
-              id={`member-${member.id}`} 
-              className="mr-3" 
-              checked={selectedMember === member.id}
-            />
-            <Label htmlFor={`member-${member.id}`} className="cursor-pointer flex-1">
-              <div className="flex items-center">
-                <UserCircle className="h-8 w-8 mr-2 text-gray-400" />
-                <div>
-                  <div className="font-medium">{`${member.firstname} ${member.lastname}`.trim()}</div>
-                  <div className="text-xs text-gray-500">{member.relationship}</div>
-                </div>
-              </div>
-            </Label>
+<RadioGroup
+  value={appointmentObj?.familyMember?.id || "self"}
+  className="grid grid-cols-1 sm:grid-cols-2 gap-3"
+>
+  {/* Add "Myself" as the default option */}
+  <div
+    key="self"
+    className={`border rounded-lg p-3 transition-colors flex items-center cursor-pointer ${
+      !appointmentObj?.familyMember?.id ? "border-primary bg-slate-50" : "border-gray-200"
+    }`}
+    onClick={() =>
+      handleMemberSelection(null)
+    }
+  >
+    <RadioGroupItem
+      value="self"
+      id="member-self"
+      className="mr-3"
+      checked={!appointmentObj?.familyMember?.id}
+    />
+    <Label htmlFor="member-self" className="cursor-pointer flex-1">
+      <div className="flex items-center">
+        <UserCircle className="h-8 w-8 mr-2 text-gray-400" />
+        <div>
+          <div className="font-medium">Myself</div>
+          <div className="text-xs text-gray-500">Primary Account</div>
+        </div>
+      </div>
+    </Label>
+  </div>
+
+  {/* Map through family members */}
+  {familyMembers.map((member) => (
+    <div
+      key={member.id}
+      className={`border rounded-lg p-3 transition-colors flex items-center cursor-pointer ${
+        appointmentObj?.familyMember?.id == member.id ? "border-primary bg-slate-50" : "border-gray-200"
+      }`}
+      onClick={() => handleMemberSelection(member)}
+    >
+      <RadioGroupItem
+        value={member.id}
+        id={`member-${member.id}`}
+        className="mr-3"
+        checked={appointmentObj?.familyMember?.id == member.id}
+      />
+      <Label htmlFor={`member-${member.id}`} className="cursor-pointer flex-1">
+        <div className="flex items-center">
+          <UserCircle className="h-8 w-8 mr-2 text-gray-400" />
+          <div>
+            <div className="font-medium">{member.name}</div>
+            <div className="text-xs text-gray-500">{member.relationship}</div>
           </div>
-        ))}
-      </RadioGroup>
+        </div>
+      </Label>
+    </div>
+  ))}
+</RadioGroup>
       
       <div className="mt-4">
         <Button
@@ -114,47 +192,76 @@ export function PatientSelectionStep({
             <DialogTitle>Add Family Member</DialogTitle>
           </DialogHeader>
           
-          {formError && (
+          {/* {formError && (
             <div className="p-3 rounded bg-red-50 text-red-600 text-sm">
               {formError}
             </div>
           )}
-          
+           */}
           <div className="grid gap-4 py-2">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="firstname" className="text-right">
-                First Name
+              <Label htmlFor="name" className="text-right">
+                Name
               </Label>
               <Input
-                id="firstname"
-                value={newMemberFirstname}
-                onChange={(e) => setNewMemberFirstname(e.target.value)}
+                id="name"
+                name="name"
+                value={familymember.name}
+                onChange={(e) => familyMemberInputChange(e)}
                 className="col-span-3"
               />
             </div>
+
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="lastname" className="text-right">
-                Last Name
+              <Label htmlFor="relationship" className="text-right">
+                Age
               </Label>
               <Input
-                id="lastname"
-                value={newMemberLastname}
-                onChange={(e) => setNewMemberLastname(e.target.value)}
+                id="age"
+                name="age"
+                value={familymember.age}
+                onChange={(e) => familyMemberInputChange(e)}
                 className="col-span-3"
               />
             </div>
+
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="relationship" className="text-right">
+              Phone
+              </Label>
+              <Input
+               id="phone"
+               name="phone"
+               value={familymember.phone}
+               onChange={(e) => familyMemberInputChange(e)}
+                className="col-span-3"
+              />
+            </div>
+
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="gender" className="text-right">Gender</Label>
+              <div className="flex items-center gap-4">
+                <Label htmlFor="male">Male</Label>
+                <Input id="male" type="radio" style={{ height: "20px" }} value="Male" checked={familymember?.gender == "Male"} name="gender" onChange={(e) => familyMemberInputChange(e)} />
+                <Label htmlFor="female">Female</Label>
+                <Input id="female" style={{ height: "20px" }} type="radio" value="Female" checked={familymember?.gender == "Female"} name="gender" onChange={(e) => familyMemberInputChange(e)} />
+              </div>
+            </div>
+
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="relationship" className="text-right">
                 Relationship
               </Label>
               <Input
                 id="relationship"
-                value={newMemberRelationship}
-                onChange={(e) => setNewMemberRelationship(e.target.value)}
+                name="relationship"
+                value={familymember.relationship}
+                onChange={(e) => familyMemberInputChange(e)}
                 className="col-span-3"
                 placeholder="e.g. Spouse, Child, Parent"
               />
             </div>
+
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsAddingMember(false)}>

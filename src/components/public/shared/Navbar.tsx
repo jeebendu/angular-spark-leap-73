@@ -29,7 +29,14 @@ export function Navbar() {
     otp: "",
     authToken: ""
   });
+// const [loginDialogOpen, setLoginDialogOpen] = useState(false);
 
+//   useEffect(() => {
+//     setLoginDialogOpen(false);
+//     if (isRequiredLogins) {
+//       setLoginDialogOpen(true);
+//     }
+//   }, [isRequiredLogins]);
 
   useEffect(() => {
     const checkAuth = () => {
@@ -92,7 +99,7 @@ export function Navbar() {
             {isLoggedIn ? (
               <NavbarUserMenu />
             ) : (
-              <LoginDialog />
+              <LoginDialog isLogin={null} />
             )}
             
             {isMobile && <MobileMenu />}

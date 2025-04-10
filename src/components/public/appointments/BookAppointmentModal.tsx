@@ -1,3 +1,4 @@
+
 import {
   Dialog,
   DialogContent,
@@ -255,7 +256,9 @@ export function BookAppointmentModal({
 
   const fetchDoctorClinicObj = async (branch: Branch) => {
     try {
-      const response = await getDoctorClinicDRAndBranchId(doctor.id, branch?.id);
+      // Convert string to number if needed
+      const branchId = typeof branch?.id === 'string' ? parseInt(branch.id as string) : branch?.id;
+      const response = await getDoctorClinicDRAndBranchId(doctor.id, branchId);
       setAppointment((prev) => ({ ...prev, doctorClinic: response.data }));
     } catch (error) {
       console.log("Something went wrong");

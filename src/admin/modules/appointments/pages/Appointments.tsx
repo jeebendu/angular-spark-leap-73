@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { DateRange } from "react-day-picker";
 
 const AppointmentsAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -30,14 +31,8 @@ const AppointmentsAdmin = () => {
   const { toast } = useToast();
   const [doctor, setDoctor] = useState<Doctor>();
   
-  // Date range filter
-  const [dateRange, setDateRange] = useState<{
-    from: Date | undefined;
-    to: Date | undefined;
-  }>({
-    from: undefined,
-    to: undefined
-  });
+  // Date range filter - updated to use DateRange type
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
 
   // Filter states
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({
@@ -108,10 +103,7 @@ const AppointmentsAdmin = () => {
       searchTerm: null,
       branches: []
     });
-    setDateRange({
-      from: undefined,
-      to: undefined
-    });
+    setDateRange(undefined);
     updateFilters({
       page: 0,
       size: 10,
@@ -170,11 +162,11 @@ const AppointmentsAdmin = () => {
 
   // Update filters when date range changes
   useEffect(() => {
-    if (dateRange.from && dateRange.to) {
+    if (dateRange?.from) {
       updateFilters({
         ...selectedFilters,
-        fromDate: format(dateRange.from, 'yyyy-MM-dd'),
-        toDate: format(dateRange.to, 'yyyy-MM-dd'),
+        fromDate: dateRange.from ? format(dateRange.from, 'yyyy-MM-dd') : undefined,
+        toDate: dateRange.to ? format(dateRange.to, 'yyyy-MM-dd') : undefined,
       });
     }
   }, [dateRange]);
@@ -227,11 +219,11 @@ const AppointmentsAdmin = () => {
                       variant={"outline"}
                       className={cn(
                         "w-[240px] justify-start text-left font-normal",
-                        !dateRange.from && "text-muted-foreground"
+                        !dateRange?.from && "text-muted-foreground"
                       )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {dateRange.from ? (
+                      {dateRange?.from ? (
                         dateRange.to ? (
                           `${format(dateRange.from, "MMM dd, yyyy")} - ${format(dateRange.to, "MMM dd, yyyy")}`
                         ) : (
@@ -252,11 +244,11 @@ const AppointmentsAdmin = () => {
                     />
                   </PopoverContent>
                 </Popover>
-                {dateRange.from && (
+                {dateRange?.from && (
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    onClick={() => setDateRange({ from: undefined, to: undefined })}
+                    onClick={() => setDateRange(undefined)}
                     className="ml-2"
                   >
                     Clear

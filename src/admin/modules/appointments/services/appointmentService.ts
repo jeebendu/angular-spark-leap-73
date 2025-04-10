@@ -97,8 +97,7 @@ const getMockAppointments = (params: AppointmentQueryParams) => {
       },
       doctor: {
         id: 1,
-        firstname: "Dr. House",
-        lastname: "MD",
+        name: "Dr. House MD", // Updated to match admin Doctor type
         user: null
       },
       slot: {

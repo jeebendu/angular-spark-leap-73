@@ -11,11 +11,12 @@ import { setPageTitle, updateMetaTags } from "@/utils/seoUtils";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
-import { number } from "zod";
 import { fetchDoctorById } from "@/services/DoctorService";
 import { Appointment } from "@/models/appointment/Appointment";
 import { verifyLoginApi } from "@/services/authService";
 import { LoginDialog } from "@/components/public/shared/navbar/LoginDialog";
+import { DateRange } from "react-day-picker";
+import { format } from "date-fns";
 
 const DoctorSearch = () => {
   const [searchParams] = useSearchParams();
@@ -47,6 +48,9 @@ const DoctorSearch = () => {
   const [bookAppointmentOpen, setBookAppointmentOpen] = useState(false);
   const [initialStep, setInitialStep] = useState(1);
   const { toast } = useToast();
+  
+  // Updated to use DateRange type from react-day-picker
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
 
   const observer = useRef<IntersectionObserver>();
   const isFetching = useRef(false);
@@ -61,9 +65,9 @@ const DoctorSearch = () => {
       const searchFilters: DoctorSearchForm = {
         doctorName: searchTerm || undefined,
         clinicName: selectedClinic || undefined,
-        gender: selectedGenders.length > 0 ? parseInt(selectedGenders[0], 10) : undefined,
-        expYearFirst: selectedExperience.length > 0 ? parseInt(selectedExperience[0], 10) : undefined,
-        expYearLast: selectedExperience.length > 1 ? parseInt(selectedExperience[1], 10) : undefined,
+        gender: selectedGenders.length > 0 ? parseInt(selectedGenders[0]) : undefined,
+        expYearFirst: selectedExperience.length > 0 ? parseInt(selectedExperience[0]) : undefined,
+        expYearLast: selectedExperience.length > 1 ? parseInt(selectedExperience[1]) : undefined,
         radius: radius || 50,
         latitude: latitude ? parseFloat(latitude) : undefined,
         longitude: longitude ? parseFloat(longitude) : undefined,
@@ -78,6 +82,14 @@ const DoctorSearch = () => {
       // If languages are selected, add them to the search filters
       if (selectedLanguages.length > 0) {
         searchFilters.languageNames = selectedLanguages;
+      }
+      
+      // If date range is selected, add from and to dates
+      if (dateRange?.from) {
+        searchFilters.fromDate = format(dateRange.from, 'yyyy-MM-dd');
+        if (dateRange.to) {
+          searchFilters.toDate = format(dateRange.to, 'yyyy-MM-dd');
+        }
       }
 
       // Apply sorting based on sortBy value
@@ -124,7 +136,7 @@ const DoctorSearch = () => {
       setLoading(false);
       isFetching.current = false;
     }
-  }, [searchTerm, selectedClinic, selectedGenders, selectedExperience, selectedSpecialties, selectedLanguages, radius, latitude, longitude, sortBy, toast]);
+  }, [searchTerm, selectedClinic, selectedGenders, selectedExperience, selectedSpecialties, selectedLanguages, radius, latitude, longitude, sortBy, dateRange, toast]);
 
   // Initial load of doctors
   useEffect(() => {

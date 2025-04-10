@@ -89,7 +89,9 @@ export const ClinicsTab = ({ doctor, branchList }: ClinicsTabProps) => {
 
   const fetchDoctorClinicObj = async (branch: Branch) => {
     try {
-      const response = await getDoctorClinicDRAndBranchId(doctor.id, branch?.id);
+      // Convert string to number if needed
+      const branchId = typeof branch?.id === 'string' ? parseInt(branch.id as string) : branch?.id;
+      const response = await getDoctorClinicDRAndBranchId(doctor.id, branchId);
       setAppointment((prev) => ({ ...prev, doctorClinic: response.data }));
     } catch (error) {
       console.log("Something went wrong");
@@ -281,7 +283,7 @@ export const ClinicsTab = ({ doctor, branchList }: ClinicsTabProps) => {
           doctor={doctor}
           doctorName={doctor.firstname + " " + doctor.lastname}
           specialty={doctor.desgination}
-          initialClinicId={branchList[selectedClinic]?.id.toString()}
+          initialClinicId={branchList[selectedClinic]?.id?.toString()}
           initialStep={3}
           open={isModalOpen}
           onOpenChange={setIsModalOpen}

@@ -1,7 +1,7 @@
+
 import { Country, District, State } from "../shared/Address";
 import { Branch } from "../shared/Branch";
 import { User } from "../user/User";
-
 
 export class Patient {
   id: number;
@@ -23,24 +23,28 @@ export class Patient {
 }
 
 export class FamilyMember {
-    id: string;
-    relationship: string;
-    name: string;
-  }
+  id: string;
+  firstname: string;
+  lastname: string;
+  dob: Date;
+  age?: number;
+  gender: string;
+  relationship: string;
+  phoneNumber?: string;
+  profileImage?: string;
+  name?: string; // Keep for compatibility with some components
+}
   
 export class patientHealth {
-    id: string;
-    patientdetails: Patient;
-    height:number;
-    weight:number;
-    bloodGroup:string;
-    allergies:string;
-    currentMedication:string;
-    bloodPressure:string;
-    heartRate:string;
-    cholesterol:string;
-    bloodSugar:string;
-   
-  }
-
-   
+  id: string;
+  patientdetails: Patient;
+  height: number;
+  weight: number;
+  bloodGroup: string;
+  allergies: string;
+  currentMedication: string;
+  bloodPressure: string;
+  heartRate: string;
+  cholesterol: string;
+  bloodSugar: string;
+}

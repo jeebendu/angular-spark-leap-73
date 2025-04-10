@@ -5,17 +5,26 @@ import { DoctorFilters } from "@/components/public/doctor/search/DoctorFilters";
 import { DoctorSearchBar } from "@/components/public/doctor/search/DoctorSearchBar";
 import { DoctorsList } from "@/components/public/doctor/search/DoctorsList";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Doctor, DoctorSearchForm, DoctorSearchPageble, DoctorSearchView } from "@/models/doctor/Doctor";
+import { Doctor, DoctorSearchForm, DoctorSearchView } from "@/models/doctor/Doctor";
 import { getDoctorClinicDRAndBranchId, searchDoctorClinics } from "@/services/DoctorClinicService";
 import { setPageTitle, updateMetaTags } from "@/utils/seoUtils";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
-import { number } from "zod";
 import { fetchDoctorById } from "@/services/DoctorService";
 import { Appointment } from "@/models/appointment/Appointment";
 import { verifyLoginApi } from "@/services/authService";
 import { LoginDialog } from "@/components/public/shared/navbar/LoginDialog";
+import { 
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 const DoctorSearch = () => {
   const [searchParams] = useSearchParams();
@@ -39,7 +48,7 @@ const DoctorSearch = () => {
   const [sortBy, setSortBy] = useState("relevance");
   const [selectedDoctor, setSelectedDoctor] = useState<string | null>(null);
   const [selectedClinic, setSelectedClinic] = useState<string | null>(null);
-  const [page, setPage] = useState(0); // Changed to start from 0 for API pagination
+  const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [doctors, setDoctors] = useState<DoctorSearchView[]>([]);
@@ -47,6 +56,15 @@ const DoctorSearch = () => {
   const [bookAppointmentOpen, setBookAppointmentOpen] = useState(false);
   const [initialStep, setInitialStep] = useState(1);
   const { toast } = useToast();
+
+  // Date range filter
+  const [dateRange, setDateRange] = useState<{
+    from: Date | undefined;
+    to: Date | undefined;
+  }>({
+    from: undefined,
+    to: undefined
+  });
 
   const observer = useRef<IntersectionObserver>();
   const isFetching = useRef(false);
@@ -69,9 +87,16 @@ const DoctorSearch = () => {
         longitude: longitude ? parseFloat(longitude) : undefined,
       };
 
+      // Add date range if selected
+      if (dateRange.from) {
+        searchFilters.availableFrom = format(dateRange.from, 'yyyy-MM-dd');
+      }
+      if (dateRange.to) {
+        searchFilters.availableTo = format(dateRange.to, 'yyyy-MM-dd');
+      }
+
       // If specialties are selected, add them to the search filters
       if (selectedSpecialties.length > 0) {
-        // You may need to modify this based on your API requirements
         searchFilters.specialtyNames = selectedSpecialties;
       }
 
@@ -124,7 +149,7 @@ const DoctorSearch = () => {
       setLoading(false);
       isFetching.current = false;
     }
-  }, [searchTerm, selectedClinic, selectedGenders, selectedExperience, selectedSpecialties, selectedLanguages, radius, latitude, longitude, sortBy, toast]);
+  }, [searchTerm, selectedClinic, selectedGenders, selectedExperience, selectedSpecialties, selectedLanguages, radius, latitude, longitude, sortBy, dateRange, toast]);
 
   // Initial load of doctors
   useEffect(() => {
@@ -293,6 +318,68 @@ const DoctorSearch = () => {
                 setPriceRange={setPriceRange}
                 applyFilters={applyFilters}
               />
+              
+              <div className="mt-4 p-4 bg-white rounded-lg shadow">
+                <h3 className="text-sm font-medium mb-2">Available Dates</h3>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !dateRange.from && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {dateRange.from ? (
+                        dateRange.to ? (
+                          `${format(dateRange.from, "MMM dd, yyyy")} - ${format(dateRange.to, "MMM dd, yyyy")}`
+                        ) : (
+                          format(dateRange.from, "MMM dd, yyyy")
+                        )
+                      ) : (
+                        <span>Select availability dates</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="range"
+                      selected={dateRange}
+                      onSelect={setDateRange}
+                      initialFocus
+                      className={cn("p-3 pointer-events-auto")}
+                    />
+                  </PopoverContent>
+                </Popover>
+                {dateRange.from && (
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => {
+                      setDateRange({ from: undefined, to: undefined });
+                      setPage(0);
+                      fetchDoctorsWithFilters(0, true);
+                    }}
+                    className="w-full mt-2"
+                  >
+                    Clear Dates
+                  </Button>
+                )}
+                {dateRange.from && dateRange.to && (
+                  <Button 
+                    variant="default" 
+                    size="sm" 
+                    onClick={() => {
+                      setPage(0);
+                      fetchDoctorsWithFilters(0, true);
+                    }}
+                    className="w-full mt-2"
+                  >
+                    Apply Date Filter
+                  </Button>
+                )}
+              </div>
             </div>
           )}
 
@@ -318,7 +405,6 @@ const DoctorSearch = () => {
           doctor={doctor}
           appointmentObj={appointment}
         />
-
 
         {(
           <span style={{ display: "none", position: "absolute" }}>

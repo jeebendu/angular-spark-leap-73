@@ -10,6 +10,16 @@ import InfiniteAppointmentList from "../components/InfiniteAppointmentList";
 import AppointmentCalendar from "../components/AppointmentCalendar";
 import { Doctor } from "../types/Doctor";
 import { fetchDoctorDetailsById } from "../services/DoctorService";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 const AppointmentsAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -19,6 +29,15 @@ const AppointmentsAdmin = () => {
   const [showFilters, setShowFilters] = useState(true);
   const { toast } = useToast();
   const [doctor, setDoctor] = useState<Doctor>();
+  
+  // Date range filter
+  const [dateRange, setDateRange] = useState<{
+    from: Date | undefined;
+    to: Date | undefined;
+  }>({
+    from: undefined,
+    to: undefined
+  });
 
   // Filter states
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({
@@ -27,6 +46,7 @@ const AppointmentsAdmin = () => {
     branches: [],
     searchTerm: null,
   });
+  
   // Define filter options
   const [filterOptions, setFilterOptions] = useState<FilterOption[]>([
     {
@@ -45,6 +65,7 @@ const AppointmentsAdmin = () => {
       options: []
     }
   ]);
+  
   // Use the custom hook for appointments with lazy loading
   const {
     appointments,
@@ -57,9 +78,9 @@ const AppointmentsAdmin = () => {
     page: 0,
     size: 10,
     doctorId: 1, // Replace with actual doctor ID when available
-    branches:[],
+    branches: [],
     searchTerm: null,
-    statuses:[]
+    statuses: []
   });
 
   const handleFilterChange = (filterId: string, optionId: string) => {
@@ -87,13 +108,19 @@ const AppointmentsAdmin = () => {
       searchTerm: null,
       branches: []
     });
+    setDateRange({
+      from: undefined,
+      to: undefined
+    });
     updateFilters({
       page: 0,
       size: 10,
       doctorId: 1,
-      branches:[],
+      branches: [],
       searchTerm: null,
-      statuses:[]
+      statuses: [],
+      fromDate: undefined,
+      toDate: undefined
     });
   };
 
@@ -117,7 +144,7 @@ const AppointmentsAdmin = () => {
   };
 
   useEffect(() => {
-    const fetchDocttorInfo = async () => {
+    const fetchDoctorInfo = async () => {
       const response = await fetchDoctorDetailsById(1);
       setDoctor(response.data);
 
@@ -138,11 +165,21 @@ const AppointmentsAdmin = () => {
       });
     };
 
-    fetchDocttorInfo();
+    fetchDoctorInfo();
   }, []);
 
+  // Update filters when date range changes
+  useEffect(() => {
+    if (dateRange.from && dateRange.to) {
+      updateFilters({
+        ...selectedFilters,
+        fromDate: format(dateRange.from, 'yyyy-MM-dd'),
+        toDate: format(dateRange.to, 'yyyy-MM-dd'),
+      });
+    }
+  }, [dateRange]);
   
-  const onSearchChanege = async (term: string) => {
+  const onSearchChange = async (term: string) => {
     updateFilters({
       ...selectedFilters,
       searchTerm: term,
@@ -158,43 +195,96 @@ const AppointmentsAdmin = () => {
       showAddButton={true}
       onAddButtonClick={handleAddAppointment}
     >
-      <PageHeader
-        title="Appointments"
-        onViewModeToggle={() => setViewMode(viewMode === 'list' ? 'calendar' : 'list')}
-        viewMode={viewMode}
-        showAddButton={true}
-        addButtonLabel="New Appointment"
-        onAddButtonClick={handleAddAppointment}
-        onFilterToggle={() => setShowFilters(!showFilters)}
-        showFilter={showFilters}
-      />
+      <div className="flex flex-col h-full">
+        <div className="sticky top-0 z-10 bg-[#eff5ff] pb-2">
+          <PageHeader
+            title="Appointments"
+            onViewModeToggle={() => setViewMode(viewMode === 'list' ? 'calendar' : 'list')}
+            viewMode={viewMode}
+            showAddButton={true}
+            addButtonLabel="New Appointment"
+            onAddButtonClick={handleAddAppointment}
+            onFilterToggle={() => setShowFilters(!showFilters)}
+            showFilter={showFilters}
+          />
 
-      {showFilters && (
-        <FilterCard
-          searchTerm={searchTerm}
-          onSearchChange={onSearchChanege}
-          filters={filterOptions}
-          selectedFilters={selectedFilters}
-          onFilterChange={handleFilterChange}
-          onClearFilters={clearFilters}
-        />
-      )}
+          {showFilters && (
+            <div className="space-y-2">
+              <FilterCard
+                searchTerm={searchTerm}
+                onSearchChange={onSearchChange}
+                filters={filterOptions}
+                selectedFilters={selectedFilters}
+                onFilterChange={handleFilterChange}
+                onClearFilters={clearFilters}
+              />
+              
+              <div className="flex items-center mb-4">
+                <span className="text-sm font-medium mr-2">Date Range:</span>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-[240px] justify-start text-left font-normal",
+                        !dateRange.from && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {dateRange.from ? (
+                        dateRange.to ? (
+                          `${format(dateRange.from, "MMM dd, yyyy")} - ${format(dateRange.to, "MMM dd, yyyy")}`
+                        ) : (
+                          format(dateRange.from, "MMM dd, yyyy")
+                        )
+                      ) : (
+                        <span>Select date range</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="range"
+                      selected={dateRange}
+                      onSelect={setDateRange}
+                      initialFocus
+                      className={cn("p-3 pointer-events-auto")}
+                    />
+                  </PopoverContent>
+                </Popover>
+                {dateRange.from && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => setDateRange({ from: undefined, to: undefined })}
+                    className="ml-2"
+                  >
+                    Clear
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
 
-      {viewMode === 'calendar' ? (
-        <AppointmentCalendar
-          appointments={appointments}
-          onAppointmentClick={handleAppointmentClick}
-        />
-      ) : (
-        <InfiniteAppointmentList
-          appointments={appointments}
-          loading={loading}
-          hasMore={hasMore}
-          loadMore={loadMore}
-          onAppointmentClick={handleAppointmentClick}
-          onStartAppointment={handleStartAppointment}
-        />
-      )}
+        <div className="flex-1 overflow-auto">
+          {viewMode === 'calendar' ? (
+            <AppointmentCalendar
+              appointments={appointments}
+              onAppointmentClick={handleAppointmentClick}
+            />
+          ) : (
+            <InfiniteAppointmentList
+              appointments={appointments}
+              loading={loading}
+              hasMore={hasMore}
+              loadMore={loadMore}
+              onAppointmentClick={handleAppointmentClick}
+              onStartAppointment={handleStartAppointment}
+            />
+          )}
+        </div>
+      </div>
     </AdminLayout>
   );
 };

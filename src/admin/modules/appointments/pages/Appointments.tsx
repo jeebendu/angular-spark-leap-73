@@ -62,8 +62,6 @@ const AppointmentsAdmin = () => {
     statuses:[]
   });
 
-
-
   const handleFilterChange = (filterId: string, optionId: string) => {
     setSelectedFilters(prev => {
       const newFilters = { ...prev };

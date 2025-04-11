@@ -112,7 +112,7 @@ const getMockAppointments = (params: AppointmentQueryParams) => {
         user: null,
         external: false,
         about: "",
-        joiningDate: "2020-01-01",
+        joiningDate: new Date("2020-01-01"), // Fixed: Convert string to Date
         pincode: "12345",
         city: "Princeton",
         biography: "",

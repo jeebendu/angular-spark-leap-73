@@ -162,60 +162,57 @@ const PatientsAdmin = () => {
       showAddButton={true}
       onAddButtonClick={handleAddPatient}
     >
-      <div className="flex flex-col h-full">
-        <div className="sticky top-0 z-10 bg-[#eff5ff] pb-2">
-          <PageHeader 
-            title="Patients"
-            onViewModeToggle={() => setViewMode(viewMode === 'list' ? 'calendar' : 'list')}
-            viewMode={viewMode}
-            showAddButton={true}
-            addButtonLabel="New Patient"
-            onAddButtonClick={handleAddPatient}
-            onRefreshClick={refreshPatients}
-            onFilterToggle={() => setShowFilters(!showFilters)}
-            showFilter={showFilters}
+      <PageHeader 
+        title="Patients"
+        onViewModeToggle={() => setViewMode(viewMode === 'list' ? 'calendar' : 'list')}
+        viewMode={viewMode}
+        showAddButton={true}
+        addButtonLabel="New Patient"
+        onAddButtonClick={handleAddPatient}
+        onRefreshClick={refreshPatients}
+        onFilterToggle={() => setShowFilters(!showFilters)}
+        showFilter={showFilters}
+      />
+
+      {showFilters && (
+        <FilterCard 
+          searchTerm={searchTerm}
+          onSearchChange={handleSearchChange}
+          filters={filterOptions}
+          selectedFilters={selectedFilters}
+          onFilterChange={handleFilterChange}
+          onClearFilters={clearFilters}
+        />
+      )}
+
+      <div className="text-sm text-muted-foreground mb-4">
+        Showing {loadedElements} of {totalElements} patients
+      </div>
+
+      <div 
+        className="overflow-auto flex-1 pb-6" 
+        onScroll={handleScroll}
+        style={{ maxHeight: 'calc(100vh - 220px)' }}
+      >
+        {viewMode === 'list' ? (
+          <PatientTable 
+            patients={patients}
+            loading={loading}
+            onPatientClick={handlePatientClick}
           />
-
-          {showFilters && (
-            <FilterCard 
-              searchTerm={searchTerm}
-              onSearchChange={handleSearchChange}
-              filters={filterOptions}
-              selectedFilters={selectedFilters}
-              onFilterChange={handleFilterChange}
-              onClearFilters={clearFilters}
-            />
-          )}
-
-          <div className="text-sm text-muted-foreground mt-2">
-            Showing {loadedElements} of {totalElements} patients
+        ) : (
+          <PatientGrid 
+            patients={patients}
+            loading={loading}
+            onPatientClick={handlePatientClick}
+          />
+        )}
+        
+        {loading && patients.length > 0 && (
+          <div className="flex justify-center my-4">
+            <div className="animate-pulse bg-gray-200 h-8 w-40 rounded-md"></div>
           </div>
-        </div>
-
-        <div 
-          className="flex-1 overflow-auto"
-          onScroll={handleScroll}
-        >
-          {viewMode === 'list' ? (
-            <PatientTable 
-              patients={patients}
-              loading={loading}
-              onPatientClick={handlePatientClick}
-            />
-          ) : (
-            <PatientGrid 
-              patients={patients}
-              loading={loading}
-              onPatientClick={handlePatientClick}
-            />
-          )}
-          
-          {loading && patients.length > 0 && (
-            <div className="flex justify-center my-4">
-              <div className="animate-pulse bg-gray-200 h-8 w-40 rounded-md"></div>
-            </div>
-          )}
-        </div>
+        )}
       </div>
     </AdminLayout>
   );

@@ -12,6 +12,7 @@ export interface User {
   effectiveTo?: Date;
   effectiveFrom?: Date;
   role: Role;
+  image:string;
 }
 
 

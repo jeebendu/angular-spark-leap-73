@@ -2,15 +2,12 @@
 import axios from 'axios';
 import { getEnvVariable } from '../utils/envUtils';
 
-const BASE_URL = 'https://ef0a-2409-4089-299-fd06-d0a9-6418-b93-dbcc.ngrok-free.app';
+const BASE_URL =  getEnvVariable('BASE_URL');
 const X_APP_TOKEN = getEnvVariable('X_APP_TOKEN');
 
 const http = axios.create({
   baseURL: BASE_URL,
   timeout: 0,
-  headers: {
-    'Content-Type': 'application/json',
-  },
   allowAbsoluteUrls: true,
 });
 
@@ -23,7 +20,7 @@ http.interceptors.request.use(
     config.headers['X-App-Token'] = X_APP_TOKEN;
 
     // Add token if available
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('auth_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

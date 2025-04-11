@@ -7,29 +7,33 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { Patient, patientHealth } from "@/models/patient/Patient";
-import { BellRing, CreditCard, Edit2, LogOut, Settings, Shield, User, UserCog } from "lucide-react";
-import { useEffect, useState,useRef } from "react";
+import { BellRing, CreditCard, Edit2, Loader, LogOut, Settings, Shield, User, UserCog } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { fetchMyProfilePatient, updatePatientInfo ,healthDetailsByPatientId} from "@/services/PatientService";
+import { fetchMyProfilePatient, updatePatientInfo, healthDetailsByPatientId } from "@/services/PatientService";
 import authService from "@/services/authService";
 import { useNavigate } from "react-router-dom";
+import { uploadProfileImage } from "@/services/UserService";
 
 export default function Account() {
   const { t } = useTranslation();
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const [patient, setPatient] = useState<Patient>(null);
   const [patientHealth, setPatientHealth] = useState<patientHealth[]>(null);
   const id = patient?.id;
   const isFetching = useRef(false);
   useEffect(() => {
     getMyProfile();
-    
+
   }, []);
 
   const getMyProfile = async () => {
     try {
       const response = await fetchMyProfilePatient();
       if (response) {
+        if(response.data.user.image){
+          setPreviewImage(response.data.user.image)
+        }
         setPatient(response.data);
       }
 
@@ -38,20 +42,20 @@ export default function Account() {
     }
 
   }
-  
+
   useEffect(() => {
     getHealthDetails(id);
-    
+
   }, [id]);
 
-  const getHealthDetails = async (id:number) => {
+  const getHealthDetails = async (id: number) => {
     if (isFetching.current) return;
     isFetching.current = true;
     try {
       const response = await healthDetailsByPatientId(id);
       if (response) {
         setPatientHealth(response.data);
-        
+
       }
 
     } catch (error) {
@@ -88,12 +92,12 @@ export default function Account() {
       const response = await updatePatientInfo(patient);
       if (response.data.status) {
         console.log("Profile updated successfully", response);
-              toast({
-                title: "Profile Updated",
-                description: "Your profile has been updated successfully."
-              });
-        getMyProfile(); 
-      }else{
+        toast({
+          title: "Profile Updated",
+          description: "Your profile has been updated successfully."
+        });
+        getMyProfile();
+      } else {
         toast({
           title: "Profile Updated",
           description: "Something went wrong while updating your profile.",
@@ -112,8 +116,65 @@ export default function Account() {
       description: "You have been logged out successfully",
     });
   };
+  // ****************************************
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewImage, setPreviewImage] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+const [isuploading,SetUploading]=useState(false)
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
 
-  
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      setPreviewImage(URL.createObjectURL(file)); // Preview the selected image
+    }
+  };
+
+  const handleUpload = async () => {
+    SetUploading(true)
+    if (selectedFile) {
+      if(selectedFile==null){
+        toast({
+            title: "No file selected",
+            description: "Please select a file to upload.",
+            variant: "destructive",
+        });
+        return;
+      }
+      if (selectedFile.size > 5 * 1024 * 1024) { 
+        toast({
+            title: "File too large",
+            description: "The selected file exceeds the maximum size of 5MB. Please choose a smaller file.",
+            variant: "destructive",
+        });
+        return; 
+    }
+
+      let formData: FormData = new FormData();
+      formData.append('file', selectedFile);
+      const response = await uploadProfileImage(patient.user.id, formData);
+      if (response.data.status) {
+        SetUploading(false);
+        toast({
+          title: "Profile photo updated",
+          description: "Your profile photo has been updated successfully.",
+        });
+        getMyProfile();
+        setSelectedFile(null);
+      }else{
+        SetUploading(false);
+        toast({
+          title: "Profile photo upload failed",
+          description: "Something went wrong while uploading your profile photo.",
+          variant: "destructive",
+      });
+      }
+    }
+  };
+
   return (
     <AppLayout>
       <div className="container px-4 mx-auto py-6">
@@ -121,20 +182,37 @@ export default function Account() {
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold text-[#333]">{t('account.title')}</h1>
             <Button variant="outline" className="gap-2" onClick={handleLogout}>
-              <LogOut className="h-4 w-4"  />
+              <LogOut className="h-4 w-4" />
               {t('account.signOut')}
             </Button>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-6">
             {/* Profile Summary Card */}
             <Card className="h-fit md:sticky top-6">
               <CardContent className="p-6">
                 <div className="flex flex-col items-center text-center">
-                  <Avatar className="h-24 w-24 mb-4">
-                    <AvatarImage src="https://randomuser.me/api/portraits/men/42.jpg" />
-                    <AvatarFallback>JD</AvatarFallback>
-                  </Avatar>
+                  <div onClick={handleAvatarClick} className="cursor-pointer">
+                    <Avatar className="h-24 w-24 mb-4">
+                      <AvatarImage src={previewImage} />
+                      <AvatarFallback>{(patient?.firstname? patient?.firstname.split("")[0]:"")+""+ (patient?.lastname? patient?.lastname.split("")[0]:"") }</AvatarFallback>
+                    </Avatar>
+                  </div>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                  />
+                  {selectedFile && (
+                    <Button variant="outline" size="sm" disabled={isuploading} className="mt-1 mb-2 px-4" onClick={handleUpload}>
+                       {isuploading ? <Loader className="animate-spin h-4 w-4 mr-2" /> : "Upload"}
+                       
+                    </Button>
+                  )}
+
+
                   {
                     patient?.firstname ? (
                       <h2 className="text-xl font-semibold">{`${patient.firstname} ${patient.lastname}`}</h2>
@@ -144,12 +222,12 @@ export default function Account() {
                       <p className="text-sm text-gray-500 mb-4">{patient.user.email}</p>
                     )
                   }
-                 
+
                   {/* <Button variant="outline" size="sm" className="gap-2 mb-6">
                     <Edit2 className="h-3 w-3" />
                     {t('account.edit')}
                   </Button> */}
-                  
+
                   <div className="w-full space-y-2">
                     <AccountNavItem icon={<User />} label={t('account.personalInfo')} active />
                     <AccountNavItem icon={<Shield />} label={t('account.security')} />
@@ -161,7 +239,7 @@ export default function Account() {
                 </div>
               </CardContent>
             </Card>
-            
+
             {/* Main Content Area */}
             <div className="space-y-6">
               <Card>
@@ -207,17 +285,17 @@ export default function Account() {
                       <Label htmlFor="gender">{t('account.gender')}</Label>
                       <div className="flex items-center gap-4">
 
-<Label htmlFor="male">Male</Label>
-<Input id="male" type="radio" style={{ height: "20px" }} value="Male" checked={patient?.gender == "Male"} name="gender" onChange={(e) => hanleUserInputChange(e)} />
-<Label htmlFor="female">Female</Label>
-<Input id="female" style={{ height: "20px" }} type="radio" value="Female" checked={patient?.gender == "Female"} name="gender" onChange={(e) => hanleUserInputChange(e)} />
+                        <Label htmlFor="male">Male</Label>
+                        <Input id="male" type="radio" style={{ height: "20px" }} value="Male" checked={patient?.gender == "Male"} name="gender" onChange={(e) => hanleUserInputChange(e)} />
+                        <Label htmlFor="female">Female</Label>
+                        <Input id="female" style={{ height: "20px" }} type="radio" value="Female" checked={patient?.gender == "Female"} name="gender" onChange={(e) => hanleUserInputChange(e)} />
 
-</div>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-              
+
               <Card>
                 <CardHeader>
                   <CardTitle>{t('account.addressInfo')}</CardTitle>
@@ -242,7 +320,7 @@ export default function Account() {
                         <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">{t('account.delete')}</Button>
                       </div>
                     </div>
-                    
+
                     {/* <div className="flex justify-between items-start p-4 border rounded-lg">
                       <div>
                         <h3 className="font-medium">Office</h3>
@@ -264,49 +342,49 @@ export default function Account() {
                   </div>
                 </CardContent>
               </Card>
-              
+
               <Card>
                 <CardHeader>
                   <CardTitle>{t('account.healthInfo')}</CardTitle>
                   <CardDescription>{t('account.healthInfoDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent>
-      {patientHealth && patientHealth.length > 0 ? (
-        patientHealth.map((health, index) => (
-          <div key={index}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <div className="space-y-2">
-                  <Label htmlFor={`height-${index}`}>{t('account.height')}</Label>
-                  <Input id={`height-${index}`} value={health.height || ''} readOnly />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor={`weight-${index}`}>{t('account.weight')}</Label>
-                  <Input id={`weight-${index}`} value={health.weight || ''} readOnly />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor={`bloodGroup-${index}`}>{t('account.bloodGroup')}</Label>
-                  <Input id={`bloodGroup-${index}`} value={health.bloodGroup || ''} readOnly />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor={`allergies-${index}`}>{t('account.allergies')}</Label>
-                  <Input id={`allergies-${index}`} value={health.allergies || 'None'} readOnly />
-                </div>
-              </div>
-            </div>
-            <div className="mt-6 space-y-4">
-              <h3 className="font-medium">{t('account.currentMedication')}</h3>
-              <div className="p-4 border rounded-lg">
-                <p className="text-sm text-gray-500">{health.currentMedication||"No current medications added"}</p>
-              </div>
-              <Button variant="outline" size="sm">{t('account.addMedication')}</Button>
-            </div>
-          </div>
-        ))
-      ) : (
-        <p className="text-sm text-gray-500">No health details available</p>
-      )}
-                  
+                  {patientHealth && patientHealth.length > 0 ? (
+                    patientHealth.map((health, index) => (
+                      <div key={index}>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <div className="space-y-2">
+                              <Label htmlFor={`height-${index}`}>{t('account.height')}</Label>
+                              <Input id={`height-${index}`} value={health.height || ''} readOnly />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor={`weight-${index}`}>{t('account.weight')}</Label>
+                              <Input id={`weight-${index}`} value={health.weight || ''} readOnly />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor={`bloodGroup-${index}`}>{t('account.bloodGroup')}</Label>
+                              <Input id={`bloodGroup-${index}`} value={health.bloodGroup || ''} readOnly />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor={`allergies-${index}`}>{t('account.allergies')}</Label>
+                              <Input id={`allergies-${index}`} value={health.allergies || 'None'} readOnly />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="mt-6 space-y-4">
+                          <h3 className="font-medium">{t('account.currentMedication')}</h3>
+                          <div className="p-4 border rounded-lg">
+                            <p className="text-sm text-gray-500">{health.currentMedication || "No current medications added"}</p>
+                          </div>
+                          <Button variant="outline" size="sm">{t('account.addMedication')}</Button>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-sm text-gray-500">No health details available</p>
+                  )}
+
 
                 </CardContent>
               </Card>

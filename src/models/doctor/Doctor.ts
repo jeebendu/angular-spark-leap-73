@@ -95,8 +95,6 @@ export interface DoctorSearchForm {
   languageNames?: string[]; // Array of language names (optional)
   sortBy?: string; // Sorting field (optional)
   sortDirection?: "ASC" | "DESC"; // Sorting direction (optional)
-  fromDate?: string; // Start date for appointment availability (optional)
-  toDate?: string; // End date for appointment availability (optional)
 }
 
 export interface Education extends BaseModel {

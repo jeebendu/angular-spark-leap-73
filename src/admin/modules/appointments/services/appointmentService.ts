@@ -1,8 +1,8 @@
 
 import http from "@/lib/JwtInterceptor";
-import { isProduction } from "@/utils/envUtils";
 import { AllAppointment } from "@/admin/types/allappointment";
 import { addDays, subDays, format } from "date-fns";
+import { isProduction } from "@/utils/envUtils";
 
 export interface AppointmentQueryParams {
   page: number;
@@ -71,7 +71,7 @@ const getMockAppointments = (params: AppointmentQueryParams) => {
   const today = new Date();
   
   // Generate 50 appointments
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 100; i++) {
     const appointmentDate = addDays(subDays(today, 15), i);
     const statusOptions = ["UPCOMING", "COMPLETED", "CANCELLED", "IN_PROGRESS"];
     const status = statusOptions[Math.floor(Math.random() * statusOptions.length)];
@@ -92,7 +92,16 @@ const getMockAppointments = (params: AppointmentQueryParams) => {
         whatsappNo: `+919876${543210 + i}`,
         firstname: patientName.split(' ')[0],
         lastname: patientName.split(' ')[1],
-        user: null,
+        user: {
+          id: 100 + i,
+          name: patientName,
+          email: `${patientName.split(' ')[0].toLowerCase()}@example.com`,
+          phone: `+919876${543210 + i}`,
+          branch:null,
+          username:null,
+          password:null,
+          role: null,
+        },
         refDoctor: null
       },
       doctor: {
@@ -113,8 +122,10 @@ const getMockAppointments = (params: AppointmentQueryParams) => {
       },
       slot: {
         id: 200 + i,
-        startTime: appointmentDate,
-        endTime: addDays(appointmentDate, 1),
+        startTime: "17:01:28",
+        endTime: "17:11:28",
+        // startTime: appointmentDate,
+        // endTime: addDays(appointmentDate, 1),
         status: "AVAILABLE",
         doctor: null,
         branch: {

@@ -1,3 +1,4 @@
+
 import { Appointment, ClinicReference } from "@/models/appointment/Appointment";
 import { Clinic } from "@/models/clinic/Clinic";
 import { FamilyMember } from "@/models/patient/Patient";
@@ -23,35 +24,11 @@ export interface ToastHelpers {
   toasts: ToasterToast[];
 }
 
-// Mock data for family members - updated to match FamilyMember type
+// Mock data for family members
 export const getFamilyMembers = (): FamilyMember[] => [
-  { 
-    id: "1", 
-    firstname: "Sarah", 
-    lastname: "Smith", 
-    relationship: "Spouse", 
-    dob: new Date("1985-06-15"), 
-    gender: "Female", 
-    name: "Sarah Smith" 
-  },
-  { 
-    id: "2", 
-    firstname: "Alex", 
-    lastname: "Smith", 
-    relationship: "Child", 
-    dob: new Date("2010-03-22"), 
-    gender: "Male", 
-    name: "Alex Smith" 
-  },
-  { 
-    id: "3", 
-    firstname: "Jane", 
-    lastname: "Smith", 
-    relationship: "Parent", 
-    dob: new Date("1955-11-30"), 
-    gender: "Female", 
-    name: "Jane Smith" 
-  }
+  { id: "1", name: "Sarah Smith", relationship: "Spouse" },
+  { id: "2", name: "Alex Smith", relationship: "Child" },
+  { id: "3", name: "Jane Smith", relationship: "Parent" }
 ];
 
 // Mock data for clinics - Now returning proper Clinic objects
@@ -172,15 +149,7 @@ export const getClinicById = (clinicId: string): Clinic | undefined => {
 export const getFamilyMemberById = (memberId: string): FamilyMember | undefined => {
   // Handle the "self" case
   if (memberId === "self") {
-    return { 
-      id: "self", 
-      firstname: "Self", 
-      lastname: "", 
-      relationship: "Self", 
-      dob: new Date(), 
-      gender: "Unknown",
-      name: "Yourself" 
-    };
+    return { id: "self", name: "Yourself", relationship: "Self" };
   }
   return getFamilyMembers().find(member => member.id === memberId);
 };
@@ -199,6 +168,9 @@ export const calculateAppointmentCost = (): { consultationFee: number, platformF
     total
   };
 };
+
+
+
 
 export const saveAppointment = async (appointment: Appointment) => {
   return await http.post(`/v1/appointments/saveOrUpdate`, appointment);
@@ -219,3 +191,5 @@ export const getPatietRelationList = async (id: any) => {
 export const createNewPatientRelation = async (familymember: any) => {
   return await http.post(`/v1/patient/relation-with/saveOrUpdate`, familymember);
 };
+
+

@@ -35,15 +35,15 @@ export interface FamilyMember {
 
 export interface Slot{
     id: number;
-    startTime: Date;
-    endTime: Date;
-    status: String;
-    doctor: Doctor;
-    branch: Branch;
+    doctor?: Doctor;
+    branch?: Branch;
+    startTime?:string;
+    endTime?: string; 
     availableSlots: number;
-    date: Date;
-    duration: number;
-    slotType: String;
+    date?: Date;
+    duration?: number;
+    slotType?: String;
+    status?: string;
 }
 
 export interface Branch{

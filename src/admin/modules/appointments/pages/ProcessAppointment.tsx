@@ -73,9 +73,7 @@ const getAppointmentById = async (id: string): Promise<AllAppointment> => {
         name: "Main Clinic",
         email: "main@clinic.com",
         contact: "+1 123 456 7890",
-        address: "123 Main St",
-        days: "Mon-Fri",
-        timings: "9:00 AM - 5:00 PM"
+        address: "123 Main St"
       }
     }
   };

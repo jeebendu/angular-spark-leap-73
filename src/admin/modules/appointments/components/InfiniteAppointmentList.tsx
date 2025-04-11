@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { format, isValid, parseISO } from 'date-fns';
 import { Appointment } from '../types/appointment';
 import { Card, CardContent } from '../../../../components/ui/card';
@@ -26,16 +26,16 @@ const InfiniteAppointmentList: React.FC<InfiniteAppointmentListProps> = ({
   const [selectedAppointment, setSelectedAppointment] = useState<string | null>(null);
 
   const handleAppointmentClick = (appointment: Appointment) => {
-    setSelectedAppointment(appointment.id);
+    setSelectedAppointment(appointment.id.toString());
     onAppointmentClick(appointment);
   };
 
   // Helper function to safely format dates
-  const safeFormatDate = (dateString: string | null | undefined) => {
+  const safeFormatDate = (dateString: string | Date | null | undefined) => {
     if (!dateString) return 'N/A';
     
     try {
-      const date = parseISO(dateString);
+      const date = typeof dateString === 'string' ? parseISO(dateString) : dateString;
       if (!isValid(date)) return 'Invalid date';
       return format(date, 'MMM dd, yyyy');
     } catch (error) {
@@ -45,11 +45,11 @@ const InfiniteAppointmentList: React.FC<InfiniteAppointmentListProps> = ({
   };
 
   // Helper function to safely format times
-  const safeFormatTime = (dateString: string | null | undefined) => {
+  const safeFormatTime = (dateString: string | Date | null | undefined) => {
     if (!dateString) return 'N/A';
     
     try {
-      const date = parseISO(dateString);
+      const date = typeof dateString === 'string' ? parseISO(dateString) : dateString;
       if (!isValid(date)) return 'Invalid time';
       return format(date, 'h:mm a');
     } catch (error) {
@@ -80,9 +80,9 @@ const InfiniteAppointmentList: React.FC<InfiniteAppointmentListProps> = ({
   const renderAppointmentCard = (appointment: Appointment) => {
     return (
       <Card
-        key={appointment.id}
+        key={appointment.id.toString()}
         className={`mb-3 cursor-pointer hover:shadow-md transition-shadow ${
-          selectedAppointment === appointment.id ? 'border-primary border-2' : ''
+          selectedAppointment === appointment.id.toString() ? 'border-primary border-2' : ''
         }`}
         onClick={() => handleAppointmentClick(appointment)}
       >
@@ -90,15 +90,19 @@ const InfiniteAppointmentList: React.FC<InfiniteAppointmentListProps> = ({
           <div className="flex justify-between items-start">
             <div>
               <h3 className="font-semibold">
-                {appointment.patient?.name || 'Unknown Patient'}
+                {appointment.patient?.firstname 
+                  ? `${appointment.patient.firstname} ${appointment.patient.lastname || ''}`
+                  : 'Unknown Patient'}
               </h3>
               <p className="text-sm text-gray-600">
-                {appointment.doctorName || 'Unknown Doctor'}
+                {appointment.doctor?.name || 'Unknown Doctor'}
               </p>
               <div className="text-sm mt-2">
                 <span>{safeFormatDate(appointment.appointmentDate)}</span>
                 <span className="mx-1">•</span>
-                <span>{safeFormatTime(appointment.startTime)} - {safeFormatTime(appointment.endTime)}</span>
+                <span>
+                  {safeFormatTime(appointment.slot?.startTime)} - {safeFormatTime(appointment.slot?.endTime)}
+                </span>
               </div>
             </div>
             <Badge className={`${getStatusColor(appointment.status)}`}>
@@ -106,7 +110,7 @@ const InfiniteAppointmentList: React.FC<InfiniteAppointmentListProps> = ({
             </Badge>
           </div>
           <p className="text-sm mt-2 text-gray-700 line-clamp-2">
-            {appointment.reason || 'No reason provided'}
+            {appointment.slot?.slotType || 'No reason provided'}
           </p>
         </CardContent>
       </Card>

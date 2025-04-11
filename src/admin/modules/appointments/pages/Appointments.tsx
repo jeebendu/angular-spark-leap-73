@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import AdminLayout from "@/admin/components/AdminLayout";
 import { useToast } from "@/hooks/use-toast";
@@ -31,10 +30,8 @@ const AppointmentsAdmin = () => {
   const { toast } = useToast();
   const [doctor, setDoctor] = useState<Doctor>();
   
-  // Date range filter - updated to use DateRange type
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
 
-  // Filter states
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({
     types: [],
     statuses: [],
@@ -42,7 +39,6 @@ const AppointmentsAdmin = () => {
     searchTerm: null,
   });
   
-  // Define filter options
   const [filterOptions, setFilterOptions] = useState<FilterOption[]>([
     {
       id: 'statuses',
@@ -61,7 +57,6 @@ const AppointmentsAdmin = () => {
     }
   ]);
   
-  // Use the custom hook for appointments with lazy loading
   const {
     appointments,
     loading,
@@ -72,7 +67,7 @@ const AppointmentsAdmin = () => {
   } = useAppointments({
     page: 0,
     size: 10,
-    doctorId: 1, // Replace with actual doctor ID when available
+    doctorId: 1,
     branches: [],
     searchTerm: null,
     statuses: []
@@ -87,7 +82,6 @@ const AppointmentsAdmin = () => {
         newFilters[filterId] = [...(newFilters[filterId] || []), optionId];
       }
   
-      // Update the filters using the updateFilters function
       updateFilters(newFilters);
   
       return newFilters;
@@ -140,7 +134,6 @@ const AppointmentsAdmin = () => {
       const response = await fetchDoctorDetailsById(1);
       setDoctor(response.data);
 
-      // Dynamically update branch options in filterOptions
       setFilterOptions(prevOptions => {
         return prevOptions.map(option => {
           if (option.id === 'branches') {
@@ -160,7 +153,6 @@ const AppointmentsAdmin = () => {
     fetchDoctorInfo();
   }, []);
 
-  // Update filters when date range changes
   useEffect(() => {
     if (dateRange?.from) {
       updateFilters({
@@ -268,11 +260,10 @@ const AppointmentsAdmin = () => {
           ) : (
             <InfiniteAppointmentList
               appointments={appointments}
-              loading={loading}
+              isLoading={loading}
               hasMore={hasMore}
               loadMore={loadMore}
               onAppointmentClick={handleAppointmentClick}
-              onStartAppointment={handleStartAppointment}
             />
           )}
         </div>

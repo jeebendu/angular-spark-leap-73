@@ -1,4 +1,3 @@
-
 import http from "@/lib/JwtInterceptor";
 import { AllAppointment } from "@/admin/types/allappointment";
 import { addDays, subDays, format } from "date-fns";
@@ -57,6 +56,99 @@ export const fetchAllAppointments = async (params: AppointmentQueryParams) => {
   } else {
     // Generate mock data
     return getMockAppointments(params);
+  }
+};
+
+/**
+ * Updates an appointment's status
+ */
+export const updateAppointmentStatus = async (appointmentId: number, status: string) => {
+  if (isProduction()) {
+    return await http.put(`v1/appointments/${appointmentId}/status`, { status });
+  } else {
+    // Mock success response
+    return Promise.resolve({ data: { success: true } });
+  }
+};
+
+/**
+ * Fetch a single appointment by ID
+ */
+export const getAppointmentById = async (appointmentId: string | number) => {
+  if (isProduction()) {
+    return await http.get(`v1/appointments/${appointmentId}`);
+  } else {
+    // Mock data for a single appointment
+    const mockAppointment: AllAppointment = {
+      id: typeof appointmentId === 'string' ? parseInt(appointmentId) : appointmentId,
+      isAccept: true,
+      status: "UPCOMING",
+      patient: {
+        id: 101,
+        uid: "PT1001",
+        gender: "Male",
+        dob: new Date("1985-05-15"),
+        age: 38,
+        address: "123 Main Street",
+        whatsappNo: "+919876543210",
+        firstname: "John",
+        lastname: "Doe",
+        user: {
+          id: 101,
+          name: "John Doe",
+          email: "john@example.com",
+          phone: "+919876543210",
+          branch: null,
+          username: null,
+          password: null,
+          role: null,
+        },
+        refDoctor: null
+      },
+      doctor: {
+        id: 1,
+        name: "Dr. Sarah Johnson",
+        email: "sarah@clinic.com",
+        uid: "DR1001",
+        mobile: 1234567890,
+        desgination: "Cardiologist",
+        specialization: "Cardiology",
+        specializationList: [],
+        qualification: "MD",
+        joiningDate: new Date("2018-01-01"),
+        user: null,
+        status: "ACTIVE",
+        external: false,
+        external_temp: null
+      },
+      slot: {
+        id: 201,
+        startTime: "10:00 AM",
+        endTime: "10:30 AM",
+        status: "BOOKED",
+        availableSlots: 0,
+        date: new Date(),
+        duration: 30,
+        slotType: "REGULAR"
+      },
+      familyMember: null,
+      doctorClinic: {
+        id: 1,
+        doctor: null,
+        clinic: {
+          id: 1,
+          name: "Main Clinic",
+          email: "main@clinic.com",
+          contact: "+1 123 456 7890",
+          address: "123 Main St",
+          branchList: [],
+          days: "Mon-Fri",
+          timings: "9:00 AM - 5:00 PM"
+        }
+      }
+    };
+    
+    return Promise.resolve({ data: mockAppointment });
   }
 };
 

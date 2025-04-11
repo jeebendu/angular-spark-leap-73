@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -32,6 +31,7 @@ import FamilyMembers from "./pages/public/FamilyMembers";
 import "./admin/styles/admin.css";
 import AppointmentsAdmin from "./admin/modules/appointments/pages/Appointments";
 import PatientsAdmin from "./admin/modules/patients/pages/Patients";
+import AdminProcessAppointment from "./admin/modules/appointments/pages/ProcessAppointment";
 
 // Map of routes to page titles
 const routeTitles: Record<string, string> = {
@@ -53,6 +53,8 @@ const routeTitles: Record<string, string> = {
   "/staff": "Staff Dashboard",
   "/staff/add-patient": "Add New Patient",
   "/admin/patients": "Admin - Patient Management",
+  "/admin/appointments": "Admin - Appointments",
+  "/admin/appointments/process/:appointmentId": "Process Appointment",
 };
 
 const ScrollToTop = () => {
@@ -116,6 +118,7 @@ function App() {
               {/* Admin Routes */}
               <Route path="/admin" element={<Dashboard />} />
               <Route path="/admin/appointments" element={<AppointmentsAdmin />} />
+              <Route path="/admin/appointments/process/:appointmentId" element={<AdminProcessAppointment />} />
               <Route path="/admin/patients" element={<PatientsAdmin />} />
               <Route path="/admin/schedule" element={<Schedule />} />
               <Route path="/admin/:section" element={<Dashboard />} />

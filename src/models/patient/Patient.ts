@@ -22,11 +22,7 @@ export class Patient {
   district?: District;
 }
 
-export class FamilyMember {
-    id: string;
-    relationship: string;
-    name: string;
-  }
+
   
 export class patientHealth {
     id: string;

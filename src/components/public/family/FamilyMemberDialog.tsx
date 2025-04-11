@@ -4,10 +4,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FamilyMember } from "@/models/patient/Patient";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Upload, X } from "lucide-react";
+import { FamilyMember } from "@/admin/types/allappointment";
 
 interface FamilyMemberDialogProps {
   open: boolean;
@@ -23,13 +23,12 @@ export function FamilyMemberDialog({
   onSave 
 }: FamilyMemberDialogProps) {
   const [formData, setFormData] = useState<Partial<FamilyMember>>({
-    firstname: "",
-    lastname: "",
-    dob: new Date(),
+    id: null,
+    name: "",
+    age: null,
     gender: "Male",
     relationship: "",
-    phoneNumber: "",
-    profileImage: ""
+    phone: "",
   });
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -39,7 +38,7 @@ export function FamilyMemberDialog({
       setFormData({
         ...member
       });
-      setImagePreview(member.profileImage || null);
+      setImagePreview( null);
     } else {
       resetForm();
     }
@@ -47,13 +46,12 @@ export function FamilyMemberDialog({
 
   const resetForm = () => {
     setFormData({
-      firstname: "",
-      lastname: "",
-      dob: new Date(),
+      id: null,
+      name: "",
+      age: null,
       gender: "Male",
       relationship: "",
-      phoneNumber: "",
-      profileImage: ""
+      phone: "",
     });
     setFormErrors({});
     setImagePreview(null);
@@ -101,18 +99,18 @@ export function FamilyMemberDialog({
   const validateForm = () => {
     const errors: Record<string, string> = {};
     
-    if (!formData.firstname?.trim()) {
+    if (!formData.name?.trim()) {
       errors.firstname = "First name is required";
     }
     
-    if (!formData.lastname?.trim()) {
-      errors.lastname = "Last name is required";
-    }
+    // if (!formData.lastname?.trim()) {
+    //   errors.lastname = "Last name is required";
+    // }
     
-    if (!formData.dob) {
-      errors.dob = "Date of birth is required";
-    } else if (new Date(formData.dob) > new Date()) {
-      errors.dob = "Date of birth cannot be in the future";
+    if (!formData.age) {
+      errors.dob = "age  is required";
+    } else if (new Date(formData.age) > new Date()) {
+      errors.dob = "age cannot be in the future";
     }
     
     if (!formData.relationship?.trim()) {
@@ -148,8 +146,8 @@ export function FamilyMemberDialog({
                   <AvatarImage src={imagePreview} />
                 ) : null}
                 <AvatarFallback className="bg-gray-200 text-gray-500 text-lg">
-                  {formData.firstname && formData.lastname ? 
-                    `${formData.firstname.charAt(0)}${formData.lastname.charAt(0)}`.toUpperCase() : 
+                  {formData.name  ? 
+                    `${formData.name.charAt(0)}`.toUpperCase() : 
                     "FM"}
                 </AvatarFallback>
               </Avatar>
@@ -195,27 +193,15 @@ export function FamilyMemberDialog({
               <Label htmlFor="firstname">First Name *</Label>
               <Input 
                 id="firstname" 
-                name="firstname" 
-                value={formData.firstname || ''} 
+                name="name" 
+                value={String(formData.name) || ''} 
                 onChange={handleChange} 
               />
               {formErrors.firstname && (
-                <p className="text-sm text-destructive">{formErrors.firstname}</p>
+                <p className="text-sm text-destructive">{formErrors.name}</p>
               )}
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="lastname">Last Name *</Label>
-              <Input 
-                id="lastname" 
-                name="lastname" 
-                value={formData.lastname || ''} 
-                onChange={handleChange} 
-              />
-              {formErrors.lastname && (
-                <p className="text-sm text-destructive">{formErrors.lastname}</p>
-              )}
-            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -224,7 +210,7 @@ export function FamilyMemberDialog({
               <Input 
                 id="dob" 
                 type="date" 
-                value={formData.dob ? new Date(formData.dob).toISOString().split('T')[0] : ''} 
+                value={formData.age ?formData.age : ''} 
                 onChange={handleDateChange} 
               />
               {formErrors.dob && (
@@ -235,7 +221,7 @@ export function FamilyMemberDialog({
             <div className="space-y-2">
               <Label>Gender *</Label>
               <RadioGroup 
-                value={formData.gender} 
+                value={String(formData.gender)} 
                 onValueChange={handleRadioChange}
                 className="flex gap-4"
               >
@@ -256,7 +242,7 @@ export function FamilyMemberDialog({
             <Input 
               id="relationship" 
               name="relationship" 
-              value={formData.relationship || ''} 
+              value={String(formData.relationship) || ''} 
               onChange={handleChange} 
               placeholder="e.g. Spouse, Child, Parent, Sibling"
             />
@@ -270,7 +256,7 @@ export function FamilyMemberDialog({
             <Input 
               id="phoneNumber" 
               name="phoneNumber" 
-              value={formData.phoneNumber || ''} 
+              value={String(formData.phone) || ''} 
               onChange={handleChange} 
               placeholder="(Optional)"
             />

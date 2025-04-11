@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { getEnvVariable } from '../utils/envUtils';
 
-const BASE_URL =  getEnvVariable('BASE_URL');
+const BASE_URL = getEnvVariable('BASE_URL');
 const X_APP_TOKEN = getEnvVariable('X_APP_TOKEN');
 
 const http = axios.create({

@@ -3,12 +3,12 @@ import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
+  NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { Building, User } from "lucide-react";
 import { Link } from "react-router-dom";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 
 export function DesktopNav() {
   return (
@@ -20,26 +20,22 @@ export function DesktopNav() {
             <NavigationMenuContent>
               <ul className="grid gap-3 p-4 w-[200px]">
                 <li>
-                  <NavigationMenuLink asChild>
-                    <Link
-                      to="/clinic-management"
-                      className="flex items-center p-2 hover:bg-slate-100 rounded-md"
-                    >
-                      <Building className="mr-2 h-4 w-4" />
-                      <span>Clinic</span>
-                    </Link>
-                  </NavigationMenuLink>
+                  <Link
+                    to="/clinic-management"
+                    className="flex items-center p-2 hover:bg-slate-100 rounded-md"
+                  >
+                    <Building className="mr-2 h-4 w-4" />
+                    <span>Clinic</span>
+                  </Link>
                 </li>
                 <li>
-                  <NavigationMenuLink asChild>
-                    <Link
-                      to="/doctor"
-                      className="flex items-center p-2 hover:bg-slate-100 rounded-md"
-                    >
-                      <User className="mr-2 h-4 w-4" />
-                      <span>Doctors</span>
-                    </Link>
-                  </NavigationMenuLink>
+                  <Link
+                    to="/doctor"
+                    className="flex items-center p-2 hover:bg-slate-100 rounded-md"
+                  >
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Doctors</span>
+                  </Link>
                 </li>
               </ul>
             </NavigationMenuContent>
@@ -49,6 +45,3 @@ export function DesktopNav() {
     </nav>
   );
 }
-
-// Add missing NavigationMenuLink type/component
-const NavigationMenuLink = NavigationMenuContent;

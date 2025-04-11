@@ -8,12 +8,16 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { AllAppointment } from "@/admin/types/allappointment";
+import { Patient } from "@/admin/types/patient";
 import { getAppointmentById, updateAppointmentStatus } from "../services/appointmentService";
+import AdminLayout from "@/admin/components/AdminLayout";
+import { getMockPatientById } from "../services/patientMockService";
 
 const ProcessAppointment = () => {
   const { appointmentId } = useParams<{ appointmentId: string }>();
   const navigate = useNavigate();
   const [appointment, setAppointment] = useState<AllAppointment | null>(null);
+  const [patientDetails, setPatientDetails] = useState<Patient | null>(null);
 
   // Fetch appointment data
   const { data, isLoading, error } = useQuery({
@@ -25,6 +29,12 @@ const ProcessAppointment = () => {
   useEffect(() => {
     if (data) {
       setAppointment(data.data);
+      
+      // Once we have the appointment, fetch detailed patient information
+      if (data.data?.patient?.id) {
+        const patientData = getMockPatientById(data.data.patient.id);
+        setPatientDetails(patientData);
+      }
     }
   }, [data]);
 
@@ -43,24 +53,20 @@ const ProcessAppointment = () => {
     navigate("/admin/appointments");
   };
 
-  if (isLoading) {
-    return (
-      <div className="container mx-auto p-6">
-        <PageHeader title="Processing Appointment" />
+  const getPageContent = () => {
+    if (isLoading) {
+      return (
         <div className="flex justify-center items-center h-[60vh]">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
             <p className="mt-4 text-gray-600">Loading appointment details...</p>
           </div>
         </div>
-      </div>
-    );
-  }
+      );
+    }
 
-  if (error) {
-    return (
-      <div className="container mx-auto p-6">
-        <PageHeader title="Processing Appointment" />
+    if (error) {
+      return (
         <div className="bg-red-50 border border-red-200 rounded-lg p-6 mt-6">
           <h3 className="text-lg font-semibold text-red-800">Error Loading Appointment</h3>
           <p className="text-red-600 mt-2">
@@ -75,14 +81,11 @@ const ProcessAppointment = () => {
             Back to Appointments
           </Button>
         </div>
-      </div>
-    );
-  }
+      );
+    }
 
-  if (!appointment) {
-    return (
-      <div className="container mx-auto p-6">
-        <PageHeader title="Processing Appointment" />
+    if (!appointment) {
+      return (
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mt-6">
           <h3 className="text-lg font-semibold text-yellow-800">Appointment Not Found</h3>
           <p className="text-yellow-600 mt-2">
@@ -97,34 +100,50 @@ const ProcessAppointment = () => {
             Back to Appointments
           </Button>
         </div>
-      </div>
+      );
+    }
+
+    // If we have the appointment and patient details, merge them
+    if (patientDetails && appointment.patient) {
+      appointment.patient = {
+        ...appointment.patient,
+        ...patientDetails
+      };
+    }
+
+    return (
+      <>
+        <div className="mb-4 flex items-center">
+          <Button
+            variant="outline"
+            onClick={() => navigate("/admin/appointments")}
+            className="flex items-center gap-1"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span>Back to Appointments</span>
+          </Button>
+        </div>
+        
+        <AppointmentProcess
+          appointment={appointment}
+          onClose={handleClose}
+          onStatusUpdate={handleStatusUpdate}
+        />
+      </>
     );
-  }
+  };
 
   return (
-    <div className="container mx-auto p-6">
-      <PageHeader 
-        title="Process Appointment" 
-        onRefreshClick={() => window.location.reload()}
-      />
-      
-      <div className="mb-4 flex items-center">
-        <Button
-          variant="outline"
-          onClick={() => navigate("/admin/appointments")}
-          className="flex items-center gap-1"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          <span>Back to Appointments</span>
-        </Button>
+    <AdminLayout>
+      <div className="container mx-auto p-6">
+        <PageHeader 
+          title="Process Appointment" 
+          onRefreshClick={() => window.location.reload()}
+        />
+        
+        {getPageContent()}
       </div>
-      
-      <AppointmentProcess
-        appointment={appointment}
-        onClose={handleClose}
-        onStatusUpdate={handleStatusUpdate}
-      />
-    </div>
+    </AdminLayout>
   );
 };
 

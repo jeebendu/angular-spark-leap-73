@@ -4,7 +4,7 @@ import { AllAppointment } from '../../../types/allappointment';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
-import { Loader2, Video, MapPin, Bell, ClipboardList } from 'lucide-react';
+import { Loader2, Video, MapPin, Bell, ClipboardList, PlayCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 
@@ -163,16 +163,21 @@ const InfiniteAppointmentList: React.FC<InfiniteAppointmentListProps> = ({
                 </Link>
                 
                 {(appointment.status.toString().toLowerCase() === 'upcoming') && (
-                  <Button 
-                    size="sm"
+                  <Link 
+                    to={`/admin/appointments/process/${appointment.id}`}
                     onClick={(e) => {
                       e.stopPropagation();
                       onStartAppointment(appointment);
                     }}
-                    className="bg-primary text-white hover:bg-primary/90 rounded-full h-8"
                   >
-                    Start
-                  </Button>
+                    <Button 
+                      size="sm"
+                      className="bg-primary text-white hover:bg-primary/90 rounded-full h-8 flex items-center gap-1"
+                    >
+                      <PlayCircle className="h-4 w-4" />
+                      <span>Start</span>
+                    </Button>
+                  </Link>
                 )}
               </div>
             </div>

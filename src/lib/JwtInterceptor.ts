@@ -2,10 +2,10 @@
 import axios from 'axios';
 import { getEnvVariable } from '../utils/envUtils';
 
-const BASE_URL = getEnvVariable('BASE_URL');
+const BASE_URL = 'https://ef0a-2409-4089-299-fd06-d0a9-6418-b93-dbcc.ngrok-free.app';
 const X_APP_TOKEN = getEnvVariable('X_APP_TOKEN');
 
-const apiClient = axios.create({
+const http = axios.create({
   baseURL: BASE_URL,
   timeout: 0,
   headers: {
@@ -15,7 +15,7 @@ const apiClient = axios.create({
 });
 
 // Request interceptor
-apiClient.interceptors.request.use(
+http.interceptors.request.use(
   (config) => {
     // Add headers to every request
     config.headers['Accept'] = 'application/json';
@@ -36,7 +36,7 @@ apiClient.interceptors.request.use(
 );
 
 // Response interceptor
-apiClient.interceptors.response.use(
+http.interceptors.response.use(
   (response) => {
     return response;
   },
@@ -45,4 +45,4 @@ apiClient.interceptors.response.use(
   }
 );
 
-export default apiClient;
+export default http;

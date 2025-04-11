@@ -95,9 +95,7 @@ const InfiniteAppointmentList: React.FC<InfiniteAppointmentListProps> = ({
                   : 'Unknown Patient'}
               </h3>
               <p className="text-sm text-gray-600">
-                {appointment.doctor ? 
-                  `${appointment.doctor.firstname || ''} ${appointment.doctor.lastname || ''}` : 
-                  'Unknown Doctor'}
+                {appointment.doctor?.name || 'Unknown Doctor'}
               </p>
               <div className="text-sm mt-2">
                 <span>{safeFormatDate(appointment.appointmentDate)}</span>

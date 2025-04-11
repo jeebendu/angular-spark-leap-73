@@ -27,6 +27,17 @@ export const generateMockPatient = (id: number): Patient => {
     refDoctor: {
       id: faker.number.int({ min: 1, max: 100 }),
       name: `Dr. ${faker.person.fullName()}`,
+      email: faker.internet.email(),
+      uid: faker.string.uuid(),
+      mobile: parseInt(faker.phone.number('9#########')),
+      desgination: faker.person.jobTitle(),
+      specialization: faker.helpers.arrayElement(["Cardiology", "Neurology", "Dermatology", "Orthopedics"]),
+      specializationList: [],
+      qualification: faker.helpers.arrayElement(["MBBS", "MD", "MS", "DM"]),
+      joiningDate: faker.date.past(),
+      status: "Active",
+      external: faker.datatype.boolean(),
+      external_temp: null,
       user: {
         id: faker.number.int({ min: 1, max: 1000 }),
         name: `Dr. ${faker.person.fullName()}`,

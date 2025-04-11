@@ -29,7 +29,13 @@ export const generateMockPatient = (id: number): Patient => {
       name: `Dr. ${faker.person.fullName()}`,
       user: {
         id: faker.number.int({ min: 1, max: 1000 }),
-        name: `Dr. ${faker.person.fullName()}`
+        name: `Dr. ${faker.person.fullName()}`,
+        username: faker.internet.userName(),
+        email: faker.internet.email(),
+        phone: faker.phone.number(),
+        password: faker.internet.password(),
+        branch: null,
+        role: null
       }
     },
     consDoctorId: faker.number.int({ min: 1, max: 50 }),
@@ -40,7 +46,13 @@ export const generateMockPatient = (id: number): Patient => {
     createdTime: faker.date.recent(),
     user: {
       id: faker.number.int({ min: 1, max: 1000 }),
-      name: `${firstName} ${lastName}`
+      name: `${firstName} ${lastName}`,
+      username: faker.internet.userName(),
+      email: faker.internet.email({ firstName, lastName }),
+      phone: faker.phone.number(),
+      password: faker.internet.password(),
+      branch: null,
+      role: null
     },
     photoUrl: faker.helpers.maybe(() => faker.image.avatar(), { probability: 0.3 }),
     insuranceProvider: faker.helpers.maybe(() => faker.company.name(), { probability: 0.6 }),

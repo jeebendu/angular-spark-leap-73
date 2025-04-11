@@ -216,8 +216,6 @@ const getMockAppointments = (params: AppointmentQueryParams) => {
         id: 200 + i,
         startTime: "17:01:28",
         endTime: "17:11:28",
-        // startTime: appointmentDate,
-        // endTime: addDays(appointmentDate, 1),
         status: "AVAILABLE",
         doctor: null,
         branch: {
@@ -245,7 +243,15 @@ const getMockAppointments = (params: AppointmentQueryParams) => {
       doctorClinic: {
         id: 1,
         doctor: null,
-        clinic: null
+        clinic: {
+          id: 1,
+          name: "Main Clinic",
+          email: "main@clinic.com",
+          contact: "+1 123 456 7890",
+          address: "123 Main St",
+          days: "Mon-Fri",
+          timings: "9:00 AM - 5:00 PM"
+        }
       }
     };
     

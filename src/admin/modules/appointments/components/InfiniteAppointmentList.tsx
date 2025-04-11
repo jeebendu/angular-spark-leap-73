@@ -1,19 +1,20 @@
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Appointment } from '../types/appointment';
+import { AllAppointment } from '../../../types/allappointment';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
-import { Loader2, Video, MapPin, Bell } from 'lucide-react';
+import { Loader2, Video, MapPin, Bell, ClipboardList } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Link } from 'react-router-dom';
 
 interface InfiniteAppointmentListProps {
-  appointments: Appointment[];
+  appointments: AllAppointment[];
   loading: boolean;
   hasMore: boolean;
   loadMore: () => void;
-  onAppointmentClick: (appointment: Appointment) => void;
-  onStartAppointment: (appointment: Appointment) => void;
+  onAppointmentClick: (appointment: AllAppointment) => void;
+  onStartAppointment: (appointment: AllAppointment) => void;
 }
 
 const InfiniteAppointmentList: React.FC<InfiniteAppointmentListProps> = ({
@@ -25,7 +26,7 @@ const InfiniteAppointmentList: React.FC<InfiniteAppointmentListProps> = ({
   onStartAppointment
 }) => {
   const observer = useRef<IntersectionObserver | null>(null);
-  const [visibleAppointments, setVisibleAppointments] = useState<Appointment[]>([]);
+  const [visibleAppointments, setVisibleAppointments] = useState<AllAppointment[]>([]);
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -104,13 +105,7 @@ const InfiniteAppointmentList: React.FC<InfiniteAppointmentListProps> = ({
           <div className="flex flex-wrap md:flex-nowrap gap-4 items-start justify-between">
             <div className="flex items-center gap-3 flex-1">
               <div className="h-14 w-14 rounded-full bg-gray-200 relative overflow-hidden flex-shrink-0">
-                {appointment.patient.photoUrl ? (
-                  <img
-                    src={appointment.patient.photoUrl}
-                    alt={`${appointment.patient.firstname}`}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
+                {appointment.patient.user?.name && (
                   <div className="w-full h-full flex items-center justify-center bg-blue-100 text-blue-600 text-lg font-semibold">
                     {appointment.patient.firstname?.charAt(0)}
                     {appointment.patient.lastname?.charAt(0)}
@@ -123,14 +118,14 @@ const InfiniteAppointmentList: React.FC<InfiniteAppointmentListProps> = ({
                   <h3 className="font-semibold text-lg truncate">
                     {appointment.patient.firstname} {appointment.patient.lastname}
                   </h3>
-                  <Badge variant="outline" className={cn("rounded-full", getStatusBadgeStyle(appointment.status))}>
-                    {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1).toLowerCase()}
+                  <Badge variant="outline" className={cn("rounded-full", getStatusBadgeStyle(appointment.status.toString()))}>
+                    {appointment.status.toString().charAt(0).toUpperCase() + appointment.status.toString().slice(1).toLowerCase()}
                   </Badge>
                 </div>
                 
                 <div className="text-gray-500 flex items-center text-sm mb-1">
                   <span>
-                    #{appointment.id} · {appointment.doctor?.user?.name || 'Unknown Doctor'}
+                    #{appointment.id} · {appointment.doctor?.name || 'Unknown Doctor'}
                   </span>
                 </div>
                 
@@ -152,18 +147,22 @@ const InfiniteAppointmentList: React.FC<InfiniteAppointmentListProps> = ({
                 </div>
                 <div className="font-medium">
                   {appointment.slot?.startTime 
-                    ? format(new Date(`1970-01-01T${appointment.slot.startTime}`), "hh:mm a") 
+                    ? appointment.slot.startTime 
                     : "Time not available"}
                 </div>
               </div>
               
               <div className="flex items-center gap-2 mt-1">
-                <Badge variant="outline" className="flex items-center">
-                  {getAppointmentTypeIcon(appointment.appointmentType)}
-                  {appointment.appointmentType === 'video-call' ? 'Video Call' : 'Direct Visit'}
-                </Badge>
+                <Link 
+                  to={`/admin/appointments/process/${appointment.id}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="text-blue-600 hover:text-blue-800 flex items-center gap-1 text-sm"
+                >
+                  <ClipboardList className="h-4 w-4" />
+                  <span>Process</span>
+                </Link>
                 
-                {(appointment.status.toLowerCase() === 'upcoming') && (
+                {(appointment.status.toString().toLowerCase() === 'upcoming') && (
                   <Button 
                     size="sm"
                     onClick={(e) => {

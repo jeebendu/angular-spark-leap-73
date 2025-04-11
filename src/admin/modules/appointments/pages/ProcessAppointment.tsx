@@ -8,97 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { AllAppointment } from "@/admin/types/allappointment";
-
-// Mock function to get a single appointment by ID
-// In a real app, this would be an API call to get the appointment
-const getAppointmentById = async (id: string): Promise<AllAppointment> => {
-  // This is a mock implementation
-  return {
-    id: parseInt(id),
-    isAccept: true,
-    status: "UPCOMING",
-    patient: {
-      id: 101,
-      uid: "PT1001",
-      gender: "Male",
-      dob: new Date("1985-05-15"),
-      age: 38,
-      address: "123 Main Street",
-      whatsappNo: "+919876543210",
-      firstname: "John",
-      lastname: "Doe",
-      user: {
-        id: 101,
-        name: "John Doe",
-        email: "john@example.com",
-        phone: "+919876543210",
-        branch: null,
-        username: null,
-        password: null,
-        role: null,
-      },
-      refDoctor: null
-    },
-    doctor: {
-      id: 1,
-      name: "Dr. Sarah Johnson",
-      email: "sarah@clinic.com",
-      uid: "DR1001",
-      mobile: 1234567890,
-      desgination: "Cardiologist",
-      specialization: "Cardiology",
-      specializationList: [],
-      qualification: "MD",
-      joiningDate: new Date("2018-01-01"),
-      user: null,
-      status: "ACTIVE",
-      external: false,
-      external_temp: null
-    },
-    slot: {
-      id: 201,
-      startTime: "10:00 AM",
-      endTime: "10:30 AM",
-      status: "BOOKED",
-      availableSlots: 0,
-      date: new Date(),
-      duration: 30,
-      slotType: "REGULAR"
-    },
-    familyMember: null,
-    doctorClinic: {
-      id: 1,
-      doctor: null,
-      clinic: {
-        id: 1,
-        uid: "CL1001",
-        name: "Main Clinic",
-        email: "main@clinic.com",
-        contact: "+1 123 456 7890",
-        address: "123 Main St",
-        plan: {
-          features: {
-            id: 1,
-            module: {
-              id: 1,
-              name: "Appointments"
-            },
-            print: true
-          }
-        }
-      }
-    }
-  };
-};
-
-// Mock function to update appointment status
-// In a real app, this would be an API call to update the appointment
-const updateAppointmentStatus = async (id: number, status: string): Promise<void> => {
-  // This is a mock implementation
-  console.log(`Appointment ${id} status updated to ${status}`);
-  // Return a promise that resolves after a delay to simulate an API call
-  return new Promise((resolve) => setTimeout(resolve, 500));
-};
+import { getAppointmentById, updateAppointmentStatus } from "../services/appointmentService";
 
 const ProcessAppointment = () => {
   const { appointmentId } = useParams<{ appointmentId: string }>();
@@ -114,7 +24,7 @@ const ProcessAppointment = () => {
 
   useEffect(() => {
     if (data) {
-      setAppointment(data);
+      setAppointment(data.data);
     }
   }, [data]);
 

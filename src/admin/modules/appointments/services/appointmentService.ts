@@ -137,10 +137,21 @@ export const getAppointmentById = async (appointmentId: string | number) => {
         doctor: null,
         clinic: {
           id: 1,
+          uid: "CL1001",
           name: "Main Clinic",
           email: "main@clinic.com",
           contact: "+1 123 456 7890",
-          address: "123 Main St"
+          address: "123 Main St",
+          plan: {
+            features: {
+              id: 1,
+              module: {
+                id: 1,
+                name: "Appointments"
+              },
+              print: true
+            }
+          }
         }
       }
     };
@@ -242,10 +253,21 @@ const getMockAppointments = (params: AppointmentQueryParams) => {
         doctor: null,
         clinic: {
           id: 1,
+          uid: `CL${1000 + i}`,
           name: "Main Clinic",
           email: "main@clinic.com",
           contact: "+1 123 456 7890",
-          address: "123 Main St"
+          address: "123 Main St",
+          plan: {
+            features: {
+              id: 1,
+              module: {
+                id: 1,
+                name: "Appointments"
+              },
+              print: true
+            }
+          }
         }
       }
     };

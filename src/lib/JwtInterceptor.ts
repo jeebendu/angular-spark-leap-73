@@ -1,31 +1,48 @@
-import axios from 'axios';
-const BASE_URL=import.meta.env.VITE_BASE_URL
-const DEV=import.meta.env.VITE_DEV
-const X_APP_TOKEN=import.meta.env.VITE_X_APP_TOKEN
 
-const token=localStorage.getItem('auth_token') || null;
-// Create an Axios instance
-const http = axios.create({
-  baseURL: BASE_URL, // Set the base URL
+import axios from 'axios';
+import { getEnvVariable } from '../utils/envUtils';
+
+const BASE_URL = getEnvVariable('BASE_URL');
+const X_APP_TOKEN = getEnvVariable('X_APP_TOKEN');
+
+const apiClient = axios.create({
+  baseURL: BASE_URL,
+  timeout: 0,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  allowAbsoluteUrls: true,
 });
 
-// Add a request interceptor
-http.interceptors.request.use(
+// Request interceptor
+apiClient.interceptors.request.use(
   (config) => {
     // Add headers to every request
-    config.headers['Dev'] = DEV;
+    config.headers['Accept'] = 'application/json';
+    config.headers['ngrok-skip-browser-warning'] = '1';
     config.headers['X-App-Token'] = X_APP_TOKEN;
-    if(token!=null) {
-      config.headers['Authorization'] = `Bearer ${token}`;
+
+    // Add token if available
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
-  
+    
     return config;
   },
   (error) => {
-    // Handle request error
     return Promise.reject(error);
   }
 );
 
-export default http;
+// Response interceptor
+apiClient.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
+export default apiClient;

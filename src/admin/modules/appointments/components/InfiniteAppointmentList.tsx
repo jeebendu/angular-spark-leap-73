@@ -107,13 +107,13 @@ const InfiniteAppointmentList: React.FC<InfiniteAppointmentListProps> = ({
                 {appointment.patient.photoUrl ? (
                   <img
                     src={appointment.patient.photoUrl}
-                    alt={appointment.patient.firstname}
+                    alt={`${appointment.patient.firstname}`}
                     className="w-full h-full object-cover"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-blue-100 text-blue-600 text-lg font-semibold">
-                    {appointment.patient.firstname.charAt(0)}
-                    {appointment.patient.lastname.charAt(0)}
+                    {appointment.patient.firstname?.charAt(0)}
+                    {appointment.patient.lastname?.charAt(0)}
                   </div>
                 )}
               </div>
@@ -130,7 +130,7 @@ const InfiniteAppointmentList: React.FC<InfiniteAppointmentListProps> = ({
                 
                 <div className="text-gray-500 flex items-center text-sm mb-1">
                   <span>
-                    #{appointment.id} · {appointment.doctor.name}
+                    #{appointment.id} · {appointment.doctor?.user?.name || 'Unknown Doctor'}
                   </span>
                 </div>
                 
@@ -163,7 +163,7 @@ const InfiniteAppointmentList: React.FC<InfiniteAppointmentListProps> = ({
                   {appointment.appointmentType === 'video-call' ? 'Video Call' : 'Direct Visit'}
                 </Badge>
                 
-                {(appointment.status === 'UPCOMING' || appointment.status === 'upcoming') && (
+                {(appointment.status.toLowerCase() === 'upcoming') && (
                   <Button 
                     size="sm"
                     onClick={(e) => {

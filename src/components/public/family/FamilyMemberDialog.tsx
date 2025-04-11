@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Upload, X } from "lucide-react";
-import { FamilyMember } from "@/admin/types/allappointment";
+import { FamilyMember } from "@/models/patient/Patient";
 
 interface FamilyMemberDialogProps {
   open: boolean;
@@ -38,7 +38,7 @@ export function FamilyMemberDialog({
       setFormData({
         ...member
       });
-      setImagePreview( null);
+      setImagePreview(member.profileImage || null);
     } else {
       resetForm();
     }
@@ -71,9 +71,9 @@ export function FamilyMemberDialog({
   };
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({ ...prev, dob: new Date(e.target.value) }));
-    if (formErrors.dob) {
-      setFormErrors(prev => ({ ...prev, dob: "" }));
+    setFormData(prev => ({ ...prev, age: parseInt(e.target.value) }));
+    if (formErrors.age) {
+      setFormErrors(prev => ({ ...prev, age: "" }));
     }
   };
 
@@ -100,17 +100,11 @@ export function FamilyMemberDialog({
     const errors: Record<string, string> = {};
     
     if (!formData.name?.trim()) {
-      errors.firstname = "First name is required";
+      errors.name = "Name is required";
     }
     
-    // if (!formData.lastname?.trim()) {
-    //   errors.lastname = "Last name is required";
-    // }
-    
     if (!formData.age) {
-      errors.dob = "age  is required";
-    } else if (new Date(formData.age) > new Date()) {
-      errors.dob = "age cannot be in the future";
+      errors.age = "Age is required";
     }
     
     if (!formData.relationship?.trim()) {
@@ -146,7 +140,7 @@ export function FamilyMemberDialog({
                   <AvatarImage src={imagePreview} />
                 ) : null}
                 <AvatarFallback className="bg-gray-200 text-gray-500 text-lg">
-                  {formData.name  ? 
+                  {formData.name ? 
                     `${formData.name.charAt(0)}`.toUpperCase() : 
                     "FM"}
                 </AvatarFallback>
@@ -190,31 +184,31 @@ export function FamilyMemberDialog({
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="firstname">First Name *</Label>
+              <Label htmlFor="name">Name *</Label>
               <Input 
-                id="firstname" 
+                id="name" 
                 name="name" 
                 value={String(formData.name) || ''} 
                 onChange={handleChange} 
               />
-              {formErrors.firstname && (
+              {formErrors.name && (
                 <p className="text-sm text-destructive">{formErrors.name}</p>
               )}
             </div>
-            
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="dob">Date of Birth *</Label>
+              <Label htmlFor="age">Age *</Label>
               <Input 
-                id="dob" 
-                type="date" 
-                value={formData.age ?formData.age : ''} 
-                onChange={handleDateChange} 
+                id="age" 
+                type="number" 
+                name="age"
+                value={formData.age || ''} 
+                onChange={handleChange} 
               />
-              {formErrors.dob && (
-                <p className="text-sm text-destructive">{formErrors.dob}</p>
+              {formErrors.age && (
+                <p className="text-sm text-destructive">{formErrors.age}</p>
               )}
             </div>
             
@@ -252,10 +246,10 @@ export function FamilyMemberDialog({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phoneNumber">Phone Number</Label>
+            <Label htmlFor="phone">Phone Number</Label>
             <Input 
-              id="phoneNumber" 
-              name="phoneNumber" 
+              id="phone" 
+              name="phone" 
               value={String(formData.phone) || ''} 
               onChange={handleChange} 
               placeholder="(Optional)"

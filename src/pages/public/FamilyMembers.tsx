@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { FamilyMember } from "@/models/patient/Patient";
 import { Plus, UserPlus, Edit2, Trash2, UserCircle } from "lucide-react";
-import { fetchFamilyMembers, deleteFamilyMember } from "@/services/PatientService";
+import { fetchFamilyMemeberList, deleteFamilyMember } from "@/services/PatientService";
 import { toast } from "@/hooks/use-toast";
 import { FamilyMemberDialog } from "@/components/public/family/FamilyMemberDialog";
 import { useTranslation } from "react-i18next";
@@ -37,25 +37,23 @@ export default function FamilyMembers() {
 
       // Configure the first mock member
       mockData[0].id = "1";
-      mockData[0].firstname = "Sarah";
-      mockData[0].lastname = "Johnson";
-      mockData[0].dob = new Date("1990-05-15");
+      mockData[0].name = "Sarah Johnson";
+      mockData[0].age = 32;
       mockData[0].gender = "Female";
       mockData[0].relationship = "Spouse";
-      mockData[0].phoneNumber = "+1234567890";
+      mockData[0].phone = "+1234567890";
       mockData[0].profileImage = "";
 
       // Configure the second mock member
       mockData[1].id = "2";
-      mockData[1].firstname = "David";
-      mockData[1].lastname = "Johnson";
-      mockData[1].dob = new Date("2015-10-23");
+      mockData[1].name = "David Johnson";
+      mockData[1].age = 10;
       mockData[1].gender = "Male";
       mockData[1].relationship = "Child";
-      mockData[1].phoneNumber = "";
+      mockData[1].phone = "";
       mockData[1].profileImage = "";
       
-      // In real implementation: const response = await fetchFamilyMembers();
+      // In real implementation: const response = await fetchFamilyMemeberList();
       // setFamilyMembers(response.data);
       setFamilyMembers(mockData);
     } catch (error) {
@@ -121,20 +119,15 @@ export default function FamilyMembers() {
     setIsDialogOpen(false);
   };
 
-  const getInitials = (firstname: string, lastname: string) => {
-    return `${firstname.charAt(0)}${lastname.charAt(0)}`.toUpperCase();
+  const getInitials = (name: string) => {
+    const parts = name.split(' ');
+    if (parts.length > 1) {
+      return `${parts[0].charAt(0)}${parts[1].charAt(0)}`.toUpperCase();
+    }
+    return name.charAt(0).toUpperCase();
   };
 
-  const calculateAge = (dob: Date) => {
-    const today = new Date();
-    const birthDate = new Date(dob);
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-    
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
-    
+  const calculateAge = (age: number) => {
     return age;
   };
 
@@ -177,14 +170,14 @@ export default function FamilyMembers() {
                       <div className="bg-orange-50 p-4 flex items-center">
                         <Avatar className="h-16 w-16 mr-4">
                           {member.profileImage ? (
-                            <AvatarImage src={member.profileImage} alt={`${member.firstname} ${member.lastname}`} />
+                            <AvatarImage src={member.profileImage} alt={member.name} />
                           ) : null}
                           <AvatarFallback className="bg-primary text-white text-lg">
-                            {getInitials(member.firstname, member.lastname)}
+                            {getInitials(member.name)}
                           </AvatarFallback>
                         </Avatar>
                         <div>
-                          <h3 className="font-medium text-lg">{`${member.firstname} ${member.lastname}`}</h3>
+                          <h3 className="font-medium text-lg">{member.name}</h3>
                           <p className="text-gray-500 text-sm">{member.relationship}</p>
                         </div>
                       </div>
@@ -193,16 +186,16 @@ export default function FamilyMembers() {
                         <div className="grid grid-cols-2 gap-2 text-sm">
                           <div>
                             <p className="text-gray-500">Age</p>
-                            <p>{calculateAge(member.dob)} years</p>
+                            <p>{calculateAge(member.age)} years</p>
                           </div>
                           <div>
                             <p className="text-gray-500">Gender</p>
                             <p>{member.gender}</p>
                           </div>
-                          {member.phoneNumber && (
+                          {member.phone && (
                             <div className="col-span-2">
                               <p className="text-gray-500">Phone</p>
-                              <p>{member.phoneNumber}</p>
+                              <p>{member.phone}</p>
                             </div>
                           )}
                         </div>

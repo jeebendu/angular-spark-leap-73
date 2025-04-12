@@ -1,19 +1,31 @@
 
-import React from "react";
+import React, { useState } from "react";
 import AdminLayout from "@/admin/components/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Calendar as CalendarIcon, Plus } from "lucide-react";
+import { toast } from "sonner";
+import { SlotCreationDialog } from "@/components/doctor/SlotCreationDialog";
+import { Slot } from "@/models/appointment/Slot";
 
 const Schedule = () => {
+  const [isSlotDialogOpen, setIsSlotDialogOpen] = useState(false);
+
+  const handleSaveSlot = (slot: Partial<Slot>) => {
+    // In a real application, this would save to the backend
+    console.log("New slot created:", slot);
+    toast.success(`New slot created for ${slot.date?.toLocaleDateString()} at ${slot.startTime}`);
+    setIsSlotDialogOpen(false);
+  };
+
   return (
     <AdminLayout>
       <div className="sticky-header">
         <div className="mb-6 flex justify-between items-center">
           <h1 className="text-2xl font-semibold">Schedule</h1>
           <div className="flex items-center space-x-2">
-            <Button className="rounded-full">
+            <Button className="rounded-full" onClick={() => setIsSlotDialogOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">New Event</span>
+              <span className="hidden sm:inline">New Slot</span>
             </Button>
           </div>
         </div>
@@ -27,6 +39,12 @@ const Schedule = () => {
           <Button className="rounded-full">Request Early Access</Button>
         </div>
       </div>
+
+      <SlotCreationDialog
+        open={isSlotDialogOpen}
+        onOpenChange={setIsSlotDialogOpen}
+        onSave={handleSaveSlot}
+      />
     </AdminLayout>
   );
 };

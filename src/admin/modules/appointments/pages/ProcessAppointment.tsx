@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -13,7 +12,17 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, Save, Clock, ChevronDown, ChevronUp } from "lucide-react";
+import { 
+  ArrowLeft, 
+  Save, 
+  Clock, 
+  ChevronDown, 
+  ChevronUp, 
+  Plus, 
+  X,
+  Pill,
+  XCircle
+} from "lucide-react";
 import { toast } from "sonner";
 import {
   Form,
@@ -30,12 +39,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { AllAppointment } from "@/admin/types/allappointment";
 import { Patient } from "@/admin/types/patient";
 import { getAppointmentById, updateAppointmentStatus } from "../services/appointmentService";
 import { getMockPatientById } from "../services/patientMockService";
 
-// Define the schema for form validation
 const consultationSchema = z.object({
   vitals: z.object({
     temperature: z.string().optional(),
@@ -64,7 +80,22 @@ const consultationSchema = z.object({
   followUp: z.string().optional(),
 });
 
+type Medication = {
+  name: string;
+  dosage: string;
+  frequency: string;
+  duration: string;
+};
+
+const medicationSchema = z.object({
+  name: z.string().min(1, "Medication name is required"),
+  dosage: z.string().min(1, "Dosage is required"),
+  frequency: z.string().min(1, "Frequency is required"),
+  duration: z.string().min(1, "Duration is required"),
+});
+
 type ConsultationFormValues = z.infer<typeof consultationSchema>;
+type MedicationFormValues = z.infer<typeof medicationSchema>;
 
 const ProcessAppointment = () => {
   const { appointmentId } = useParams<{ appointmentId: string }>();
@@ -79,11 +110,11 @@ const ProcessAppointment = () => {
     advice: true,
     followUp: true,
   });
-  const [medicationList, setMedicationList] = useState<Array<{ name: string; dosage: string; frequency: string; duration: string }>>([
-    { name: "", dosage: "", frequency: "", duration: "" }
-  ]);
+  const [medicationList, setMedicationList] = useState<Medication[]>([]);
+  const [isMedicationModalOpen, setIsMedicationModalOpen] = useState(false);
+  const [currentMedication, setCurrentMedication] = useState<Medication | null>(null);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
-  // Form setup
   const form = useForm<ConsultationFormValues>({
     resolver: zodResolver(consultationSchema),
     defaultValues: {
@@ -101,14 +132,23 @@ const ProcessAppointment = () => {
         diagnosis: "",
         followUpDate: "",
       },
-      medications: [{ name: "", dosage: "", frequency: "", duration: "" }],
+      medications: [],
       notes: "",
       advice: "",
       followUp: "",
     },
   });
 
-  // Fetch appointment data
+  const medicationForm = useForm<MedicationFormValues>({
+    resolver: zodResolver(medicationSchema),
+    defaultValues: {
+      name: "",
+      dosage: "",
+      frequency: "",
+      duration: "",
+    }
+  });
+
   const { data, isLoading, error } = useQuery({
     queryKey: ["appointment", appointmentId],
     queryFn: () => getAppointmentById(appointmentId || "0"),
@@ -119,7 +159,6 @@ const ProcessAppointment = () => {
     if (data) {
       setAppointment(data.data);
       
-      // Once we have the appointment, fetch detailed patient information
       if (data.data?.patient?.id) {
         const patientData = getMockPatientById(data.data.patient.id);
         setPatientDetails(patientData);
@@ -127,44 +166,58 @@ const ProcessAppointment = () => {
     }
   }, [data]);
 
-  // Calculate BMI when height or weight changes
   const calculateBMI = () => {
     const height = parseFloat(form.getValues("vitals.height") || "0");
     const weight = parseFloat(form.getValues("vitals.weight") || "0");
     
     if (height > 0 && weight > 0) {
-      // Height in meters (convert from cm)
       const heightInMeters = height / 100;
       const bmi = (weight / (heightInMeters * heightInMeters)).toFixed(1);
       form.setValue("vitals.bmi", bmi);
     }
   };
 
-  // Add medication field
-  const addMedication = () => {
-    setMedicationList([...medicationList, { name: "", dosage: "", frequency: "", duration: "" }]);
+  const openAddMedicationModal = () => {
+    medicationForm.reset({
+      name: "",
+      dosage: "",
+      frequency: "",
+      duration: "",
+    });
+    setEditingIndex(null);
+    setIsMedicationModalOpen(true);
   };
 
-  // Remove medication field
+  const openEditMedicationModal = (medication: Medication, index: number) => {
+    medicationForm.reset(medication);
+    setEditingIndex(index);
+    setIsMedicationModalOpen(true);
+  };
+
+  const saveMedication = (data: MedicationFormValues) => {
+    if (editingIndex !== null) {
+      const updatedList = [...medicationList];
+      updatedList[editingIndex] = data;
+      setMedicationList(updatedList);
+    } else {
+      setMedicationList([...medicationList, data]);
+    }
+    
+    form.setValue("medications", [...medicationList, data]);
+    
+    setIsMedicationModalOpen(false);
+    
+    toast.success(editingIndex !== null ? "Medication updated" : "Medication added");
+  };
+
   const removeMedication = (index: number) => {
     const updatedList = [...medicationList];
     updatedList.splice(index, 1);
     setMedicationList(updatedList);
-  };
-
-  // Update medication field
-  const updateMedication = (index: number, field: string, value: string) => {
-    const updatedList = [...medicationList];
-    updatedList[index] = { ...updatedList[index], [field]: value };
-    setMedicationList(updatedList);
     
-    // Update form value
-    const medications = form.getValues("medications") || [];
-    medications[index] = { ...medications[index], [field]: value };
-    form.setValue("medications", medications);
+    form.setValue("medications", updatedList);
   };
 
-  // Toggle section expansion
   const toggleSection = (section: string) => {
     setExpandedSections({
       ...expandedSections,
@@ -172,14 +225,11 @@ const ProcessAppointment = () => {
     });
   };
 
-  // Handle form submission
   const onSubmit = (data: ConsultationFormValues) => {
     console.log("Form submitted with:", data);
     
-    // In a real app, this would save to the backend
     toast.success("Consultation completed successfully");
     
-    // Update appointment status
     handleStatusUpdate(appointment?.id || 0, "COMPLETED");
   };
 
@@ -196,6 +246,12 @@ const ProcessAppointment = () => {
 
   const handleClose = () => {
     navigate("/admin/appointments");
+  };
+
+  const handleCancel = () => {
+    if (window.confirm("Are you sure you want to cancel? Any unsaved changes will be lost.")) {
+      navigate("/admin/appointments");
+    }
   };
 
   if (isLoading) {
@@ -271,7 +327,6 @@ const ProcessAppointment = () => {
     );
   }
 
-  // If we have the appointment and patient details, merge them
   if (patientDetails && appointment.patient) {
     appointment.patient = {
       ...appointment.patient,
@@ -283,25 +338,33 @@ const ProcessAppointment = () => {
     <AdminLayout>
       <div className="p-6">
         <PageHeader 
-          title="Process Appointment" 
+          title={
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                onClick={() => navigate("/admin/appointments")}
+                className="p-0 h-auto"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <span>Process Appointment</span>
+            </div>
+          }
           onRefreshClick={() => window.location.reload()}
-          onViewModeToggle={() => {}}
+          additionalActions={
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={handleClose} className="rounded-full">
+                Close
+              </Button>
+              <Button variant="destructive" size="sm" onClick={() => handleStatusUpdate(appointment.id, "CANCELLED")} className="rounded-full">
+                Cancel Appointment
+              </Button>
+            </div>
+          }
           showAddButton={false}
         />
         
-        <div className="mb-4 flex items-center">
-          <Button
-            variant="outline"
-            onClick={() => navigate("/admin/appointments")}
-            className="flex items-center gap-1 rounded-full"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span>Back to Appointments</span>
-          </Button>
-        </div>
-        
         <div className="bg-white rounded-lg shadow-sm p-6">
-          {/* Patient Info Header */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 pb-4 border-b">
             <div>
               <h2 className="text-2xl font-bold">
@@ -320,19 +383,10 @@ const ProcessAppointment = () => {
                 </div>
               </div>
             </div>
-            <div className="flex gap-2 mt-4 md:mt-0">
-              <Button variant="outline" size="sm" onClick={handleClose} className="rounded-full">
-                Close
-              </Button>
-              <Button variant="destructive" size="sm" onClick={() => handleStatusUpdate(appointment.id, "CANCELLED")} className="rounded-full">
-                Cancel Appointment
-              </Button>
-            </div>
           </div>
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              {/* Vitals Section */}
               <Card className="shadow-sm">
                 <CardContent className="p-0">
                   <div 
@@ -479,7 +533,6 @@ const ProcessAppointment = () => {
                 </CardContent>
               </Card>
               
-              {/* Consultation Section */}
               <Card className="shadow-sm">
                 <CardContent className="p-0">
                   <div 
@@ -548,7 +601,6 @@ const ProcessAppointment = () => {
                 </CardContent>
               </Card>
               
-              {/* Medications Section */}
               <Card className="shadow-sm">
                 <CardContent className="p-0">
                   <div 
@@ -562,84 +614,51 @@ const ProcessAppointment = () => {
                   {expandedSections.medications && (
                     <div className="p-4 pt-0 border-t">
                       <div className="mt-4">
-                        {medicationList.map((medication, index) => (
-                          <div key={index} className="p-4 border rounded-md relative mb-4">
-                            <button
-                              type="button"
-                              onClick={() => removeMedication(index)}
-                              className="absolute top-2 right-2 text-gray-500 hover:text-red-500"
-                            >
-                              ✕
-                            </button>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-                              <div>
-                                <Label htmlFor={`med-name-${index}`}>Medication Name</Label>
-                                <Input
-                                  id={`med-name-${index}`}
-                                  value={medication.name}
-                                  onChange={(e) => updateMedication(index, "name", e.target.value)}
-                                  placeholder="Medication name"
-                                  className="mt-1"
-                                />
+                        {medicationList.length > 0 ? (
+                          <div className="space-y-4">
+                            {medicationList.map((medication, index) => (
+                              <div key={index} className="p-4 border rounded-md relative flex justify-between items-center">
+                                <div className="flex-1">
+                                  <div className="text-sm font-medium">{medication.name} ({medication.dosage})</div>
+                                  <div className="text-sm text-gray-500">{medication.frequency} for {medication.duration}</div>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => openEditMedicationModal(medication, index)}
+                                    className="text-primary"
+                                  >
+                                    Edit
+                                  </Button>
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => removeMedication(index)}
+                                    className="text-destructive"
+                                  >
+                                    <XCircle className="h-4 w-4" />
+                                  </Button>
+                                </div>
                               </div>
-                              <div>
-                                <Label htmlFor={`med-dosage-${index}`}>Dosage</Label>
-                                <Input
-                                  id={`med-dosage-${index}`}
-                                  value={medication.dosage}
-                                  onChange={(e) => updateMedication(index, "dosage", e.target.value)}
-                                  placeholder="e.g., 500mg"
-                                  className="mt-1"
-                                />
-                              </div>
-                              <div>
-                                <Label htmlFor={`med-freq-${index}`}>Frequency</Label>
-                                <Select
-                                  onValueChange={(value) => updateMedication(index, "frequency", value)}
-                                  defaultValue={medication.frequency}
-                                >
-                                  <SelectTrigger className="w-full mt-1">
-                                    <SelectValue placeholder="Select frequency" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="Once daily">Once daily</SelectItem>
-                                    <SelectItem value="Twice daily">Twice daily</SelectItem>
-                                    <SelectItem value="Three times daily">Three times daily</SelectItem>
-                                    <SelectItem value="Four times daily">Four times daily</SelectItem>
-                                    <SelectItem value="As needed">As needed</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                              <div>
-                                <Label htmlFor={`med-duration-${index}`}>Duration</Label>
-                                <Select
-                                  onValueChange={(value) => updateMedication(index, "duration", value)}
-                                  defaultValue={medication.duration}
-                                >
-                                  <SelectTrigger className="w-full mt-1">
-                                    <SelectValue placeholder="Select duration" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="3 days">3 days</SelectItem>
-                                    <SelectItem value="5 days">5 days</SelectItem>
-                                    <SelectItem value="7 days">7 days</SelectItem>
-                                    <SelectItem value="10 days">10 days</SelectItem>
-                                    <SelectItem value="14 days">14 days</SelectItem>
-                                    <SelectItem value="1 month">1 month</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                            </div>
+                            ))}
                           </div>
-                        ))}
+                        ) : (
+                          <div className="text-center py-6 text-gray-500">
+                            No medications added yet
+                          </div>
+                        )}
                         
                         <Button 
                           type="button" 
                           variant="outline" 
-                          onClick={addMedication}
-                          className="w-full mt-2 rounded-full"
+                          onClick={openAddMedicationModal}
+                          className="w-full mt-4 rounded-full"
                         >
-                          + Add Medication
+                          <Plus className="h-4 w-4 mr-2" />
+                          Add Medication
                         </Button>
                       </div>
                     </div>
@@ -647,7 +666,6 @@ const ProcessAppointment = () => {
                 </CardContent>
               </Card>
               
-              {/* Notes Section */}
               <Card className="shadow-sm">
                 <CardContent className="p-0">
                   <div 
@@ -681,7 +699,6 @@ const ProcessAppointment = () => {
                 </CardContent>
               </Card>
               
-              {/* Advice Section */}
               <Card className="shadow-sm">
                 <CardContent className="p-0">
                   <div 
@@ -715,7 +732,6 @@ const ProcessAppointment = () => {
                 </CardContent>
               </Card>
               
-              {/* Follow Up Section */}
               <Card className="shadow-sm">
                 <CardContent className="p-0">
                   <div 
@@ -749,11 +765,7 @@ const ProcessAppointment = () => {
                 </CardContent>
               </Card>
               
-              {/* Submit buttons */}
-              <div className="flex justify-end gap-3 mt-8">
-                <Button type="button" variant="outline" onClick={handleClose} className="rounded-full">
-                  Cancel
-                </Button>
+              <div className="flex justify-end mt-8">
                 <Button type="submit" className="bg-primary hover:bg-primary/90 rounded-full">
                   <Save className="h-4 w-4 mr-2" />
                   Save & Complete Appointment
@@ -763,6 +775,106 @@ const ProcessAppointment = () => {
           </Form>
         </div>
       </div>
+
+      <Dialog open={isMedicationModalOpen} onOpenChange={setIsMedicationModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Pill className="h-5 w-5 text-primary" />
+              {editingIndex !== null ? "Edit Medication" : "Add New Medication"}
+            </DialogTitle>
+            <DialogDescription>
+              {editingIndex !== null 
+                ? "Update the medication details below." 
+                : "Enter the medication details below."}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <form onSubmit={medicationForm.handleSubmit(saveMedication)} className="space-y-4 py-4">
+            <div className="grid grid-cols-1 gap-4">
+              <div>
+                <Label htmlFor="med-name">Medication Name</Label>
+                <Input
+                  id="med-name"
+                  placeholder="E.g., Amoxicillin"
+                  {...medicationForm.register("name")}
+                  className="mt-1"
+                />
+                {medicationForm.formState.errors.name && (
+                  <p className="text-sm text-red-500 mt-1">{medicationForm.formState.errors.name.message}</p>
+                )}
+              </div>
+              
+              <div>
+                <Label htmlFor="med-dosage">Dosage</Label>
+                <Input
+                  id="med-dosage"
+                  placeholder="E.g., 500mg"
+                  {...medicationForm.register("dosage")}
+                  className="mt-1"
+                />
+                {medicationForm.formState.errors.dosage && (
+                  <p className="text-sm text-red-500 mt-1">{medicationForm.formState.errors.dosage.message}</p>
+                )}
+              </div>
+              
+              <div>
+                <Label htmlFor="med-frequency">Frequency</Label>
+                <Select
+                  onValueChange={(value) => medicationForm.setValue("frequency", value)}
+                  defaultValue={medicationForm.getValues("frequency")}
+                >
+                  <SelectTrigger className="w-full mt-1">
+                    <SelectValue placeholder="Select frequency" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Once daily">Once daily</SelectItem>
+                    <SelectItem value="Twice daily">Twice daily</SelectItem>
+                    <SelectItem value="Three times daily">Three times daily</SelectItem>
+                    <SelectItem value="Four times daily">Four times daily</SelectItem>
+                    <SelectItem value="As needed">As needed</SelectItem>
+                  </SelectContent>
+                </Select>
+                {medicationForm.formState.errors.frequency && (
+                  <p className="text-sm text-red-500 mt-1">{medicationForm.formState.errors.frequency.message}</p>
+                )}
+              </div>
+              
+              <div>
+                <Label htmlFor="med-duration">Duration</Label>
+                <Select
+                  onValueChange={(value) => medicationForm.setValue("duration", value)}
+                  defaultValue={medicationForm.getValues("duration")}
+                >
+                  <SelectTrigger className="w-full mt-1">
+                    <SelectValue placeholder="Select duration" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="3 days">3 days</SelectItem>
+                    <SelectItem value="5 days">5 days</SelectItem>
+                    <SelectItem value="7 days">7 days</SelectItem>
+                    <SelectItem value="10 days">10 days</SelectItem>
+                    <SelectItem value="14 days">14 days</SelectItem>
+                    <SelectItem value="1 month">1 month</SelectItem>
+                  </SelectContent>
+                </Select>
+                {medicationForm.formState.errors.duration && (
+                  <p className="text-sm text-red-500 mt-1">{medicationForm.formState.errors.duration.message}</p>
+                )}
+              </div>
+            </div>
+            
+            <DialogFooter className="mt-6">
+              <Button type="button" variant="outline" onClick={() => setIsMedicationModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit">
+                {editingIndex !== null ? "Update" : "Add"} Medication
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
   );
 };

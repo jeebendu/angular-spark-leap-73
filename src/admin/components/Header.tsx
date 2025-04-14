@@ -15,6 +15,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import ClinicBranchFilter from "./ClinicBranchFilter";
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -59,13 +60,23 @@ const Header = ({
           variant="ghost" 
           size="icon" 
           className="text-gray-600 rounded-full"
-          onClick={() => setProfileOpen(!profileOpen)}
+          onClick={onMenuClick}
         >
           <Menu className="h-5 w-5" />
         </Button>
+        
+        {/* Add the ClinicBranchFilter here */}
+        {!isMobile && <ClinicBranchFilter className="ml-4" />}
       </div>
 
       <div className="flex items-center space-x-2 md:space-x-4">
+        {/* Mobile view for ClinicBranchFilter */}
+        {isMobile && (
+          <div className="mr-2">
+            <ClinicBranchFilter />
+          </div>
+        )}
+        
         <Button variant="ghost" size="icon" className="text-gray-600 hidden md:flex rounded-full">
           <Bell className="h-5 w-5" />
         </Button>
@@ -79,7 +90,7 @@ const Header = ({
             variant="ghost" 
             size="icon" 
             className="rounded-full"
-            onClick={() => setProfileOpen(!profileOpen)}
+            onClick={handleUserButtonClick}
           >
             <Avatar className="h-8 w-8">
               <AvatarImage src="" />

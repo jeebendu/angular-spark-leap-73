@@ -14,12 +14,14 @@ export const EducationForm = () => {
   const [educations, setEducations] = useState<Education[]>([
     {
       id: 1,
+      name: "MD in Cardiology",
       degree: "MD in Cardiology",
       institute: "Harvard Medical School",
       year: "2010-2014",
     },
     {
       id: 2,
+      name: "MBBS",
       degree: "MBBS",
       institute: "Johns Hopkins University",
       year: "2005-2009",
@@ -29,6 +31,7 @@ export const EducationForm = () => {
   const handleAddEducation = () => {
     const newEducation: Education = {
       id: Date.now(),
+      name: "",
       degree: "",
       institute: "",
       year: "",
@@ -43,6 +46,10 @@ export const EducationForm = () => {
   const handleInputChange = (id: number, name: string, value: string) => {
     setEducations(educations.map(edu => {
       if (edu.id === id) {
+        // If the degree field is being updated, also update the name field with the same value
+        if (name === "degree") {
+          return { ...edu, [name]: value, name: value };
+        }
         return { ...edu, [name]: value };
       }
       return edu;

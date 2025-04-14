@@ -8,13 +8,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import AdminLayout from "@/admin/components/AdminLayout";
 import PageHeader from "@/admin/components/PageHeader";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Save, Clock, ChevronDown, ChevronUp } from "lucide-react";
-import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { ArrowLeft, Save, Clock, ChevronDown, ChevronUp } from "lucide-react";
+import { toast } from "sonner";
 import {
   Form,
   FormControl,
@@ -201,8 +201,11 @@ const ProcessAppointment = () => {
   if (isLoading) {
     return (
       <AdminLayout>
-        <div className="container mx-auto p-6">
-          <PageHeader title="Process Appointment" onRefreshClick={() => window.location.reload()} />
+        <div className="p-6">
+          <PageHeader 
+            title="Process Appointment" 
+            onRefreshClick={() => window.location.reload()}
+          />
           <div className="flex justify-center items-center h-[60vh]">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
@@ -217,8 +220,11 @@ const ProcessAppointment = () => {
   if (error) {
     return (
       <AdminLayout>
-        <div className="container mx-auto p-6">
-          <PageHeader title="Process Appointment" onRefreshClick={() => window.location.reload()} />
+        <div className="p-6">
+          <PageHeader 
+            title="Process Appointment" 
+            onRefreshClick={() => window.location.reload()}
+          />
           <div className="bg-red-50 border border-red-200 rounded-lg p-6 mt-6">
             <h3 className="text-lg font-semibold text-red-800">Error Loading Appointment</h3>
             <p className="text-red-600 mt-2">
@@ -241,8 +247,11 @@ const ProcessAppointment = () => {
   if (!appointment) {
     return (
       <AdminLayout>
-        <div className="container mx-auto p-6">
-          <PageHeader title="Process Appointment" onRefreshClick={() => window.location.reload()} />
+        <div className="p-6">
+          <PageHeader 
+            title="Process Appointment" 
+            onRefreshClick={() => window.location.reload()}
+          />
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mt-6">
             <h3 className="text-lg font-semibold text-yellow-800">Appointment Not Found</h3>
             <p className="text-yellow-600 mt-2">
@@ -272,21 +281,26 @@ const ProcessAppointment = () => {
 
   return (
     <AdminLayout>
-      <div className="container mx-auto p-6">
-        <PageHeader title="Process Appointment" onRefreshClick={() => window.location.reload()} />
+      <div className="p-6">
+        <PageHeader 
+          title="Process Appointment" 
+          onRefreshClick={() => window.location.reload()}
+          onViewModeToggle={() => {}}
+          showAddButton={false}
+        />
         
         <div className="mb-4 flex items-center">
           <Button
             variant="outline"
             onClick={() => navigate("/admin/appointments")}
-            className="flex items-center gap-1"
+            className="flex items-center gap-1 rounded-full"
           >
             <ArrowLeft className="h-4 w-4" />
             <span>Back to Appointments</span>
           </Button>
         </div>
         
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-lg shadow-sm p-6">
           {/* Patient Info Header */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 pb-4 border-b">
             <div>
@@ -307,10 +321,10 @@ const ProcessAppointment = () => {
               </div>
             </div>
             <div className="flex gap-2 mt-4 md:mt-0">
-              <Button variant="outline" size="sm" onClick={handleClose}>
+              <Button variant="outline" size="sm" onClick={handleClose} className="rounded-full">
                 Close
               </Button>
-              <Button variant="destructive" size="sm" onClick={() => handleStatusUpdate(appointment.id, "CANCELLED")}>
+              <Button variant="destructive" size="sm" onClick={() => handleStatusUpdate(appointment.id, "CANCELLED")} className="rounded-full">
                 Cancel Appointment
               </Button>
             </div>
@@ -319,7 +333,7 @@ const ProcessAppointment = () => {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               {/* Vitals Section */}
-              <Card>
+              <Card className="shadow-sm">
                 <CardContent className="p-0">
                   <div 
                     className="flex justify-between items-center p-4 cursor-pointer"
@@ -466,7 +480,7 @@ const ProcessAppointment = () => {
               </Card>
               
               {/* Consultation Section */}
-              <Card>
+              <Card className="shadow-sm">
                 <CardContent className="p-0">
                   <div 
                     className="flex justify-between items-center p-4 cursor-pointer"
@@ -535,7 +549,7 @@ const ProcessAppointment = () => {
               </Card>
               
               {/* Medications Section */}
-              <Card>
+              <Card className="shadow-sm">
                 <CardContent className="p-0">
                   <div 
                     className="flex justify-between items-center p-4 cursor-pointer"
@@ -623,7 +637,7 @@ const ProcessAppointment = () => {
                           type="button" 
                           variant="outline" 
                           onClick={addMedication}
-                          className="w-full mt-2"
+                          className="w-full mt-2 rounded-full"
                         >
                           + Add Medication
                         </Button>
@@ -634,7 +648,7 @@ const ProcessAppointment = () => {
               </Card>
               
               {/* Notes Section */}
-              <Card>
+              <Card className="shadow-sm">
                 <CardContent className="p-0">
                   <div 
                     className="flex justify-between items-center p-4 cursor-pointer"
@@ -668,7 +682,7 @@ const ProcessAppointment = () => {
               </Card>
               
               {/* Advice Section */}
-              <Card>
+              <Card className="shadow-sm">
                 <CardContent className="p-0">
                   <div 
                     className="flex justify-between items-center p-4 cursor-pointer"
@@ -702,7 +716,7 @@ const ProcessAppointment = () => {
               </Card>
               
               {/* Follow Up Section */}
-              <Card>
+              <Card className="shadow-sm">
                 <CardContent className="p-0">
                   <div 
                     className="flex justify-between items-center p-4 cursor-pointer"
@@ -737,10 +751,10 @@ const ProcessAppointment = () => {
               
               {/* Submit buttons */}
               <div className="flex justify-end gap-3 mt-8">
-                <Button type="button" variant="outline" onClick={handleClose}>
+                <Button type="button" variant="outline" onClick={handleClose} className="rounded-full">
                   Cancel
                 </Button>
-                <Button type="submit" className="bg-primary hover:bg-primary/90">
+                <Button type="submit" className="bg-primary hover:bg-primary/90 rounded-full">
                   <Save className="h-4 w-4 mr-2" />
                   Save & Complete Appointment
                 </Button>

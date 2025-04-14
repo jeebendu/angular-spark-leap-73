@@ -24,6 +24,7 @@ const roleAccess: Record<string, UserRole[]> = {
   "/admin/appointments": ["admin", "doctor", "staff"],
   "/admin/patients": ["admin", "doctor", "staff"],
   "/admin/schedule": ["admin", "doctor", "staff"],
+  "/admin/doctor-availability": ["admin", "doctor", "staff"],
   "/admin/settings": ["admin"],
 };
 
@@ -33,6 +34,7 @@ const navItems = [
   { icon: <Calendar className="h-5 w-5" />, label: "Appointments", href: "/admin/appointments", roles: ["admin", "doctor", "staff"] },
   { icon: <Users className="h-5 w-5" />, label: "Patients", href: "/admin/patients", roles: ["admin", "doctor", "staff"] },
   { icon: <Clock className="h-5 w-5" />, label: "Schedule", href: "/admin/schedule", roles: ["admin", "doctor", "staff"] },
+  { icon: <Clock className="h-5 w-5" />, label: "Availability", href: "/admin/doctor-availability", roles: ["admin", "doctor", "staff"] },
   { icon: <Settings className="h-5 w-5" />, label: "Settings", href: "/admin/settings", roles: ["admin"] },
 ];
 

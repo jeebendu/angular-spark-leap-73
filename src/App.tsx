@@ -26,6 +26,7 @@ import Appointments from "./pages/public/Appointments";
 import ClinichubLanding from "./pages/public/ClinichubLanding";
 import Dashboard from "./admin/pages/Dashboard";
 import Schedule from "./admin/pages/Schedule";
+import DoctorAvailability from "./admin/pages/DoctorAvailability";
 import FamilyMembers from "./pages/public/FamilyMembers";
 
 import "./admin/styles/admin.css";
@@ -55,6 +56,7 @@ const routeTitles: Record<string, string> = {
   "/admin/patients": "Admin - Patient Management",
   "/admin/appointments": "Admin - Appointments",
   "/admin/appointments/process/:appointmentId": "Process Appointment",
+  "/admin/doctor-availability": "Admin - Doctor Availability",
 };
 
 const ScrollToTop = () => {
@@ -121,6 +123,7 @@ function App() {
               <Route path="/admin/appointments/process/:appointmentId" element={<AdminProcessAppointment />} />
               <Route path="/admin/patients" element={<PatientsAdmin />} />
               <Route path="/admin/schedule" element={<Schedule />} />
+              <Route path="/admin/doctor-availability" element={<DoctorAvailability />} />
               <Route path="/admin/:section" element={<Dashboard />} />
               
               {/* Clinic Routes */}

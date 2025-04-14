@@ -345,21 +345,24 @@ const ProcessAppointment = () => {
     };
   }
 
+  // This is the fix - making sure we're using proper JSX structure for the PageHeader title prop
   return (
     <AdminLayout>
       <div className="p-6">
         <PageHeader 
           title={
-            <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                onClick={() => navigate("/admin/appointments")}
-                className="p-0 h-auto"
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-              <span>Process Appointment</span>
-            </div>
+            <>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate("/admin/appointments")}
+                  className="p-0 h-auto"
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                </Button>
+                <span>Process Appointment</span>
+              </div>
+            </>
           }
           onRefreshClick={() => window.location.reload()}
           additionalActions={

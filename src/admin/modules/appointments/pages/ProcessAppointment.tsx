@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -80,6 +81,7 @@ const consultationSchema = z.object({
   followUp: z.string().optional(),
 });
 
+// Define the Medication type explicitly from the schema
 type Medication = {
   name: string;
   dosage: string;
@@ -195,15 +197,24 @@ const ProcessAppointment = () => {
   };
 
   const saveMedication = (data: MedicationFormValues) => {
+    // Ensure all fields have valid values before saving
+    const validatedMedication: Medication = {
+      name: data.name,
+      dosage: data.dosage,
+      frequency: data.frequency,
+      duration: data.duration
+    };
+    
     if (editingIndex !== null) {
       const updatedList = [...medicationList];
-      updatedList[editingIndex] = data;
+      updatedList[editingIndex] = validatedMedication;
       setMedicationList(updatedList);
+      form.setValue("medications", updatedList);
     } else {
-      setMedicationList([...medicationList, data]);
+      const newList = [...medicationList, validatedMedication];
+      setMedicationList(newList);
+      form.setValue("medications", newList);
     }
-    
-    form.setValue("medications", [...medicationList, data]);
     
     setIsMedicationModalOpen(false);
     

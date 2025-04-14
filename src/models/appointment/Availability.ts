@@ -13,10 +13,18 @@ export interface DayAvailability {
   slots: TimeSlot[];
 }
 
+export interface DoctorLeave {
+  id: string;
+  startDate: Date;
+  endDate: Date;
+  reason?: string;
+}
+
 export interface AvailabilitySettings {
   generalAvailability: DayAvailability[];
   clinicAvailability: {
     [clinicId: string]: DayAvailability[];
   };
   appointmentFees: string;
+  leaves: DoctorLeave[];
 }

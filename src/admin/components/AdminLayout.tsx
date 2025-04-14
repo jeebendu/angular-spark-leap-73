@@ -15,7 +15,7 @@ type AdminLayoutProps = {
   onAddButtonClick?: () => void;
 };
 
-// Change from default export to named export
+// Use both named export and default export for backward compatibility
 export const AdminLayout = ({ 
   children, 
   rightSidebar, 
@@ -138,4 +138,5 @@ export const AdminLayout = ({
   );
 };
 
+// Also export as default for backward compatibility
 export default AdminLayout;

@@ -13,11 +13,16 @@ import { Branch } from "@/admin/types/branch";
 import { Country } from "@/admin/types/country";
 import { State } from "@/admin/types/state";
 import { District } from "@/admin/types/district";
+import { Features } from "@/admin/types/features";
+import { Module } from "@/admin/types/role";
 
 // Mock data - In a real application, you would fetch these from an API
+const mockModule: Module = { id: 1, name: "Basic Module" };
+const mockFeatures: Features = { id: 1, module: mockModule, print: true };
+
 const mockClinics: Clinic[] = [
-  { id: 1, uid: "c1", name: "Main Clinic", email: "main@example.com", contact: "1234567890", address: "123 Main St", plan: { name: "Premium" } },
-  { id: 2, uid: "c2", name: "Downtown Clinic", email: "downtown@example.com", contact: "1234567891", address: "456 Downtown", plan: { name: "Premium" } },
+  { id: 1, uid: "c1", name: "Main Clinic", email: "main@example.com", contact: "1234567890", address: "123 Main St", plan: { features: mockFeatures } },
+  { id: 2, uid: "c2", name: "Downtown Clinic", email: "downtown@example.com", contact: "1234567891", address: "456 Downtown", plan: { features: mockFeatures } },
 ];
 
 // Create country object to use in state and district objects

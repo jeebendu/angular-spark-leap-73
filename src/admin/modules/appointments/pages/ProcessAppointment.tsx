@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -350,20 +349,7 @@ const ProcessAppointment = () => {
     <AdminLayout>
       <div className="p-6">
         <PageHeader 
-          title={
-            <>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  onClick={() => navigate("/admin/appointments")}
-                  className="p-0 h-auto"
-                >
-                  <ArrowLeft className="h-5 w-5" />
-                </Button>
-                <span>Process Appointment</span>
-              </div>
-            </>
-          }
+          title="Process Appointment"
           onRefreshClick={() => window.location.reload()}
           additionalActions={
             <div className="flex gap-2">

@@ -10,12 +10,18 @@ import {
 import { Building, Store } from "lucide-react";
 import { Clinic } from "@/admin/types/clinic";
 import { Branch } from "@/admin/types/branch";
+import { Country } from "@/admin/types/country";
+import { State } from "@/admin/types/state";
+import { District } from "@/admin/types/district";
 
 // Mock data - In a real application, you would fetch these from an API
 const mockClinics: Clinic[] = [
-  { id: 1, uid: "c1", name: "Main Clinic", email: "main@example.com", contact: "1234567890", address: "123 Main St", plan: { id: 1, name: "Premium" } },
-  { id: 2, uid: "c2", name: "Downtown Clinic", email: "downtown@example.com", contact: "1234567891", address: "456 Downtown", plan: { id: 1, name: "Premium" } },
+  { id: 1, uid: "c1", name: "Main Clinic", email: "main@example.com", contact: "1234567890", address: "123 Main St", plan: { name: "Premium" } },
+  { id: 2, uid: "c2", name: "Downtown Clinic", email: "downtown@example.com", contact: "1234567891", address: "456 Downtown", plan: { name: "Premium" } },
 ];
+
+// Create country object to use in state and district objects
+const mockCountry: Country = { id: 1, name: "Country 1" };
 
 interface ClinicBranchFilterProps {
   className?: string;
@@ -48,11 +54,17 @@ export const ClinicBranchFilter: React.FC<ClinicBranchFilterProps> = ({ classNam
   useEffect(() => {
     if (!selectedClinic) return;
     
+    // Create proper State object that includes the required country property
+    const mockState: State = { id: 1, name: "State 1", country: mockCountry };
+    
+    // Create proper District object that includes the required state property
+    const mockDistrict: District = { id: 1, name: "District 1", state: mockState };
+    
     // In a real app, you would fetch branches for the selected clinic from an API
     // This is a mock implementation
     const mockBranches: Branch[] = [
-      { id: 1, name: "Main Branch", code: "MB", location: "Central", active: true, state: { id: 1, name: "State 1" }, district: { id: 1, name: "District 1" }, country: { id: 1, name: "Country 1" }, city: "City 1", mapUrl: "", pincode: 123456, image: "", latitude: 0, longitude: 0 },
-      { id: 2, name: "Secondary Branch", code: "SB", location: "East", active: true, state: { id: 1, name: "State 1" }, district: { id: 1, name: "District 1" }, country: { id: 1, name: "Country 1" }, city: "City 1", mapUrl: "", pincode: 123456, image: "", latitude: 0, longitude: 0 },
+      { id: 1, name: "Main Branch", code: "MB", location: "Central", active: true, state: mockState, district: mockDistrict, country: mockCountry, city: "City 1", mapUrl: "", pincode: 123456, image: "", latitude: 0, longitude: 0 },
+      { id: 2, name: "Secondary Branch", code: "SB", location: "East", active: true, state: mockState, district: mockDistrict, country: mockCountry, city: "City 1", mapUrl: "", pincode: 123456, image: "", latitude: 0, longitude: 0 },
     ];
     
     setBranches(mockBranches);

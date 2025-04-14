@@ -1,4 +1,3 @@
-
 import { ReactNode, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
@@ -14,6 +13,7 @@ import {
   LogOut,
   PanelLeftClose,
   PanelLeft,
+  UserCog,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -52,6 +52,7 @@ export function DoctorLayout({ children }: DoctorLayoutProps) {
     { name: "Appointments", href: "/doctor/appointments", icon: Calendar },
     { name: "Patients", href: "/doctor/patients", icon: User },
     { name: "Schedule", href: "/doctor/schedule", icon: Clock },
+    { name: "Profile Settings", href: "/doctor/profile-settings", icon: UserCog },
     { name: "Settings", href: "/doctor/settings", icon: Settings },
   ];
   
@@ -63,7 +64,6 @@ export function DoctorLayout({ children }: DoctorLayoutProps) {
     // In a real app, this would handle actual logout functionality
   };
 
-  // Don't show the sidebar on the onboarding route
   const isOnboardingRoute = pathname.includes("/doctor/onboarding");
   if (isOnboardingRoute) {
     return (
@@ -75,7 +75,6 @@ export function DoctorLayout({ children }: DoctorLayoutProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
-      {/* Mobile sidebar toggle */}
       <Button
         variant="ghost"
         size="icon"
@@ -85,7 +84,6 @@ export function DoctorLayout({ children }: DoctorLayoutProps) {
         {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
       </Button>
       
-      {/* Sidebar */}
       <div
         className={cn(
           "fixed inset-y-0 left-0 z-40 transform transition-all duration-300 ease-in-out bg-white border-r border-gray-100 shadow-lg",
@@ -95,7 +93,6 @@ export function DoctorLayout({ children }: DoctorLayoutProps) {
         )}
       >
         <div className="flex flex-col h-full">
-          {/* Logo area */}
           <div className="p-4 border-b border-gray-100 flex justify-between items-center">
             <div className="flex items-center">
               {!iconOnly ? (
@@ -120,7 +117,6 @@ export function DoctorLayout({ children }: DoctorLayoutProps) {
             </Button>
           </div>
 
-          {/* Navigation */}
           <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
             <TooltipProvider delayDuration={200}>
               {navigation.map((item) => {
@@ -159,7 +155,6 @@ export function DoctorLayout({ children }: DoctorLayoutProps) {
             </TooltipProvider>
           </nav>
 
-          {/* User profile */}
           <div className={cn("p-4 border-t border-gray-100", iconOnly && "px-2")}>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -210,7 +205,6 @@ export function DoctorLayout({ children }: DoctorLayoutProps) {
         </div>
       </div>
 
-      {/* Main content */}
       <div className={cn(
         "transition-all duration-300 ease-in-out",
         sidebarOpen ? (iconOnly ? "md:ml-16" : "md:ml-64") : "ml-0"

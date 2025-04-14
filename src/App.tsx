@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,6 +15,7 @@ import DashboardPage from "./pages/doctor/Dashboard";
 import ProcessAppointment from "./pages/doctor/ProcessAppointment";
 import DoctorOnboardingPage from "./pages/doctor/Onboarding";
 import { DoctorSchedulePage } from "./pages/doctor/Schedule";
+import ProfileSettings from "./pages/doctor/ProfileSettings";
 import StaffDashboard from "./pages/staff/Dashboard";
 import AddPatient from "./pages/staff/AddPatient";
 import DoctorSearch from "./pages/public/DoctorSearch";
@@ -51,6 +53,7 @@ const routeTitles: Record<string, string> = {
   "/doctor/appointments": "Manage Appointments",
   "/doctor/schedule": "Manage Schedule",
   "/doctor/onboarding": "Doctor Onboarding",
+  "/doctor/profile-settings": "Profile Settings",
   "/staff": "Staff Dashboard",
   "/staff/add-patient": "Add New Patient",
   "/admin/patients": "Admin - Patient Management",
@@ -136,6 +139,7 @@ function App() {
               <Route path="/doctor/process-appointment" element={<ProcessAppointment />} />
               <Route path="/doctor/onboarding" element={<DoctorOnboardingPage />} />
               <Route path="/doctor/schedule" element={<DoctorSchedulePage />} />
+              <Route path="/doctor/profile-settings" element={<ProfileSettings />} />
               
               {/* Staff Routes */}
               <Route path="/staff" element={<StaffDashboard />} />

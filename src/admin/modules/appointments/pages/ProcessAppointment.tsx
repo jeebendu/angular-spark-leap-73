@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -12,6 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
 import { 
   ArrowLeft, 
   Save, 
@@ -21,7 +24,9 @@ import {
   Plus, 
   X,
   Pill,
-  XCircle
+  XCircle,
+  CalendarIcon,
+  FileText
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -47,6 +52,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { AllAppointment } from "@/admin/types/allappointment";
 import { Patient } from "@/admin/types/patient";
 import { getAppointmentById, updateAppointmentStatus } from "../services/appointmentService";
@@ -75,9 +85,18 @@ const consultationSchema = z.object({
       duration: z.string().min(1, "Duration is required"),
     })
   ).optional(),
+  labTests: z.array(
+    z.object({
+      name: z.string().min(1, "Test name is required"),
+      instructions: z.string().optional(),
+    })
+  ).optional(),
   notes: z.string().optional(),
   advice: z.string().optional(),
-  followUp: z.string().optional(),
+  followUp: z.object({
+    date: z.date().optional(),
+    notes: z.string().optional(),
+  }).optional(),
 });
 
 // Define the Medication type explicitly from the schema
@@ -88,6 +107,12 @@ type Medication = {
   duration: string;
 };
 
+// Define the Laboratory Test type
+type LabTest = {
+  name: string;
+  instructions: string;
+};
+
 const medicationSchema = z.object({
   name: z.string().min(1, "Medication name is required"),
   dosage: z.string().min(1, "Dosage is required"),
@@ -95,8 +120,14 @@ const medicationSchema = z.object({
   duration: z.string().min(1, "Duration is required"),
 });
 
+const labTestSchema = z.object({
+  name: z.string().min(1, "Test name is required"),
+  instructions: z.string().optional(),
+});
+
 type ConsultationFormValues = z.infer<typeof consultationSchema>;
 type MedicationFormValues = z.infer<typeof medicationSchema>;
+type LabTestFormValues = z.infer<typeof labTestSchema>;
 
 const ProcessAppointment = () => {
   const { appointmentId } = useParams<{ appointmentId: string }>();
@@ -107,14 +138,20 @@ const ProcessAppointment = () => {
     vitals: true,
     consultation: true,
     medications: true,
+    labTests: true,
     notes: true,
     advice: true,
     followUp: true,
   });
   const [medicationList, setMedicationList] = useState<Medication[]>([]);
+  const [labTestsList, setLabTestsList] = useState<LabTest[]>([]);
   const [isMedicationModalOpen, setIsMedicationModalOpen] = useState(false);
+  const [isLabTestModalOpen, setIsLabTestModalOpen] = useState(false);
   const [currentMedication, setCurrentMedication] = useState<Medication | null>(null);
+  const [currentLabTest, setCurrentLabTest] = useState<LabTest | null>(null);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editingLabTestIndex, setEditingLabTestIndex] = useState<number | null>(null);
+  const [followUpDate, setFollowUpDate] = useState<Date | undefined>(undefined);
 
   const form = useForm<ConsultationFormValues>({
     resolver: zodResolver(consultationSchema),
@@ -134,9 +171,13 @@ const ProcessAppointment = () => {
         followUpDate: "",
       },
       medications: [],
+      labTests: [],
       notes: "",
       advice: "",
-      followUp: "",
+      followUp: {
+        date: undefined,
+        notes: "",
+      },
     },
   });
 
@@ -147,6 +188,14 @@ const ProcessAppointment = () => {
       dosage: "",
       frequency: "",
       duration: "",
+    }
+  });
+
+  const labTestForm = useForm<LabTestFormValues>({
+    resolver: zodResolver(labTestSchema),
+    defaultValues: {
+      name: "",
+      instructions: "",
     }
   });
 
@@ -195,6 +244,21 @@ const ProcessAppointment = () => {
     setIsMedicationModalOpen(true);
   };
 
+  const openAddLabTestModal = () => {
+    labTestForm.reset({
+      name: "",
+      instructions: "",
+    });
+    setEditingLabTestIndex(null);
+    setIsLabTestModalOpen(true);
+  };
+
+  const openEditLabTestModal = (labTest: LabTest, index: number) => {
+    labTestForm.reset(labTest);
+    setEditingLabTestIndex(index);
+    setIsLabTestModalOpen(true);
+  };
+
   const saveMedication = (data: MedicationFormValues) => {
     // Ensure all fields have valid values before saving
     const validatedMedication: Medication = {
@@ -220,12 +284,43 @@ const ProcessAppointment = () => {
     toast.success(editingIndex !== null ? "Medication updated" : "Medication added");
   };
 
+  const saveLabTest = (data: LabTestFormValues) => {
+    // Ensure all fields have valid values before saving
+    const validatedLabTest: LabTest = {
+      name: data.name,
+      instructions: data.instructions || "",
+    };
+    
+    if (editingLabTestIndex !== null) {
+      const updatedList = [...labTestsList];
+      updatedList[editingLabTestIndex] = validatedLabTest;
+      setLabTestsList(updatedList);
+      form.setValue("labTests", updatedList);
+    } else {
+      const newList = [...labTestsList, validatedLabTest];
+      setLabTestsList(newList);
+      form.setValue("labTests", newList);
+    }
+    
+    setIsLabTestModalOpen(false);
+    
+    toast.success(editingLabTestIndex !== null ? "Lab test updated" : "Lab test added");
+  };
+
   const removeMedication = (index: number) => {
     const updatedList = [...medicationList];
     updatedList.splice(index, 1);
     setMedicationList(updatedList);
     
     form.setValue("medications", updatedList);
+  };
+
+  const removeLabTest = (index: number) => {
+    const updatedList = [...labTestsList];
+    updatedList.splice(index, 1);
+    setLabTestsList(updatedList);
+    
+    form.setValue("labTests", updatedList);
   };
 
   const toggleSection = (section: string) => {
@@ -262,6 +357,11 @@ const ProcessAppointment = () => {
     if (window.confirm("Are you sure you want to cancel? Any unsaved changes will be lost.")) {
       navigate("/admin/appointments");
     }
+  };
+
+  const handleFollowUpDateChange = (date: Date | undefined) => {
+    setFollowUpDate(date);
+    form.setValue("followUp.date", date);
   };
 
   if (isLoading) {
@@ -344,7 +444,6 @@ const ProcessAppointment = () => {
     };
   }
 
-  // This is the fix - making sure we're using proper JSX structure for the PageHeader title prop
   return (
     <AdminLayout>
       <div className="p-6">
@@ -581,20 +680,6 @@ const ProcessAppointment = () => {
                             </FormItem>
                           )}
                         />
-                        
-                        <FormField
-                          control={form.control}
-                          name="consultation.followUpDate"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Follow-up Date (if needed)</FormLabel>
-                              <FormControl>
-                                <Input type="date" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
                       </div>
                     </div>
                   )}
@@ -659,6 +744,74 @@ const ProcessAppointment = () => {
                         >
                           <Plus className="h-4 w-4 mr-2" />
                           Add Medication
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+              
+              {/* Laboratory Tests Section */}
+              <Card className="shadow-sm">
+                <CardContent className="p-0">
+                  <div 
+                    className="flex justify-between items-center p-4 cursor-pointer"
+                    onClick={() => toggleSection('labTests')}
+                  >
+                    <h3 className="text-lg font-medium">Laboratory Tests</h3>
+                    {expandedSections.labTests ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                  </div>
+                  
+                  {expandedSections.labTests && (
+                    <div className="p-4 pt-0 border-t">
+                      <div className="mt-4">
+                        {labTestsList.length > 0 ? (
+                          <div className="space-y-4">
+                            {labTestsList.map((labTest, index) => (
+                              <div key={index} className="p-4 border rounded-md relative flex justify-between items-center">
+                                <div className="flex-1">
+                                  <div className="text-sm font-medium">{labTest.name}</div>
+                                  {labTest.instructions && (
+                                    <div className="text-sm text-gray-500">{labTest.instructions}</div>
+                                  )}
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => openEditLabTestModal(labTest, index)}
+                                    className="text-primary"
+                                  >
+                                    Edit
+                                  </Button>
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => removeLabTest(index)}
+                                    className="text-destructive"
+                                  >
+                                    <XCircle className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="text-center py-6 text-gray-500">
+                            No laboratory tests added yet
+                          </div>
+                        )}
+                        
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          onClick={openAddLabTestModal}
+                          className="w-full mt-4 rounded-full"
+                        >
+                          <Plus className="h-4 w-4 mr-2" />
+                          Add Laboratory Test
                         </Button>
                       </div>
                     </div>
@@ -732,6 +885,7 @@ const ProcessAppointment = () => {
                 </CardContent>
               </Card>
               
+              {/* Follow Up Section - Moved to be last */}
               <Card className="shadow-sm">
                 <CardContent className="p-0">
                   <div 
@@ -744,22 +898,58 @@ const ProcessAppointment = () => {
                   
                   {expandedSections.followUp && (
                     <div className="p-4 pt-0 border-t">
-                      <FormField
-                        control={form.control}
-                        name="followUp"
-                        render={({ field }) => (
-                          <FormItem className="mt-4">
-                            <FormControl>
-                              <Textarea
-                                placeholder="Enter follow up details here..."
-                                className="min-h-[150px]"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                      <div className="mt-4 space-y-4">
+                        {/* Modern Calendar for Follow-up Date */}
+                        <div className="space-y-2">
+                          <Label>Follow-up Date</Label>
+                          <div className="flex flex-col sm:flex-row gap-4">
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  className="w-full sm:w-[240px] justify-start text-left font-normal"
+                                >
+                                  {followUpDate ? (
+                                    format(followUpDate, "PPP")
+                                  ) : (
+                                    <span className="text-muted-foreground">Select date</span>
+                                  )}
+                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-auto p-0" align="start">
+                                <Calendar
+                                  mode="single"
+                                  selected={followUpDate}
+                                  onSelect={handleFollowUpDateChange}
+                                  disabled={(date) => date < new Date()}
+                                  initialFocus
+                                  className="pointer-events-auto"
+                                />
+                              </PopoverContent>
+                            </Popover>
+                          </div>
+                        </div>
+                        
+                        {/* Follow-up Notes */}
+                        <FormField
+                          control={form.control}
+                          name="followUp.notes"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Follow-up Notes</FormLabel>
+                              <FormControl>
+                                <Textarea
+                                  placeholder="Enter follow-up instructions and notes here..."
+                                  className="min-h-[150px]"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
                     </div>
                   )}
                 </CardContent>
@@ -776,6 +966,7 @@ const ProcessAppointment = () => {
         </div>
       </div>
 
+      {/* Medication Dialog */}
       <Dialog open={isMedicationModalOpen} onOpenChange={setIsMedicationModalOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -870,6 +1061,62 @@ const ProcessAppointment = () => {
               </Button>
               <Button type="submit">
                 {editingIndex !== null ? "Update" : "Add"} Medication
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Laboratory Test Dialog */}
+      <Dialog open={isLabTestModalOpen} onOpenChange={setIsLabTestModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5 text-primary" />
+              {editingLabTestIndex !== null ? "Edit Laboratory Test" : "Add New Laboratory Test"}
+            </DialogTitle>
+            <DialogDescription>
+              {editingLabTestIndex !== null 
+                ? "Update the laboratory test details below." 
+                : "Enter the laboratory test details below."}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <form onSubmit={labTestForm.handleSubmit(saveLabTest)} className="space-y-4 py-4">
+            <div className="grid grid-cols-1 gap-4">
+              <div>
+                <Label htmlFor="test-name">Test Name</Label>
+                <Input
+                  id="test-name"
+                  placeholder="E.g., Complete Blood Count"
+                  {...labTestForm.register("name")}
+                  className="mt-1"
+                />
+                {labTestForm.formState.errors.name && (
+                  <p className="text-sm text-red-500 mt-1">{labTestForm.formState.errors.name.message}</p>
+                )}
+              </div>
+              
+              <div>
+                <Label htmlFor="test-instructions">Special Instructions</Label>
+                <Textarea
+                  id="test-instructions"
+                  placeholder="E.g., Fasting required for 8 hours"
+                  {...labTestForm.register("instructions")}
+                  className="mt-1 min-h-[100px]"
+                />
+                {labTestForm.formState.errors.instructions && (
+                  <p className="text-sm text-red-500 mt-1">{labTestForm.formState.errors.instructions.message}</p>
+                )}
+              </div>
+            </div>
+            
+            <DialogFooter className="mt-6">
+              <Button type="button" variant="outline" onClick={() => setIsLabTestModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit">
+                {editingLabTestIndex !== null ? "Update" : "Add"} Laboratory Test
               </Button>
             </DialogFooter>
           </form>

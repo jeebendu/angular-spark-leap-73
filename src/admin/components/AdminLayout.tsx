@@ -15,7 +15,8 @@ type AdminLayoutProps = {
   onAddButtonClick?: () => void;
 };
 
-const AdminLayout = ({ 
+// Change from default export to named export
+export const AdminLayout = ({ 
   children, 
   rightSidebar, 
   onUserClick,

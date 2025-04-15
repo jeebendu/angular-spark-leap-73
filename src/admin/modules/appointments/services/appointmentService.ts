@@ -78,7 +78,7 @@ export const updateAppointmentStatus = async (appointmentId: number, status: str
  */
 export const getAppointmentById = async (appointmentId: string | number) => {
   if (isProduction()) {
-    return await http.get(`v1/appointments/${appointmentId}`);
+    return await http.get(`/v1/appointments/id/${appointmentId}`);
   } else {
     // Mock data for a single appointment
     const mockAppointment = await getMockAppointmentById(appointmentId);

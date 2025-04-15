@@ -1,5 +1,9 @@
 
+import { Branch } from "./branch";
+import { Country } from "./country";
+import { District } from "./district";
 import { Doctor, User } from "./doctor";
+import { State } from "./state";
 
 
 export interface Patient {
@@ -7,6 +11,7 @@ export interface Patient {
   uid: string;
   gender: any;
   dob: Date;
+  city: string;
   age: number;
   address: string;
   whatsappNo?: string;
@@ -25,6 +30,12 @@ export interface Patient {
   fullName?: string; // Added this property
   lastVisit?: string;
   medicalHistory?: string;
+
+  branch: Branch;
+  alternativeContact?: string;
+  country?: Country;
+  state?: State;
+  district?: District;
 }
 
 export type UserRole = "admin" | "doctor" | "staff";

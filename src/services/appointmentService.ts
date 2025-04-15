@@ -215,3 +215,7 @@ export const getPatietRelationList = async (id: any) => {
 export const createNewPatientRelation = async (familymember: any) => {
   return await http.post(`/v1/patient/relation-with/saveOrUpdate`, familymember);
 };
+
+export const cancelAppointment = async (id: number) => {
+  return await http.post(`/v1/appointments/updateStatusToCancelled/id/${id}`);
+}

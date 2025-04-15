@@ -27,6 +27,7 @@ export interface Doctor {
   verified: boolean;
   percentages: any[]; // Adjust type if percentages have a specific structure
   specializationList: Specialization[];
+  specialization:string;
   serviceList: DoctorService[];
   branchList: Branch[];
   languageList: Language[];

@@ -1,15 +1,39 @@
 
+import { Appointment } from "@/admin/modules/appointments/types/appointment";
 import { AppLayout } from "@/components/AppLayout";
 import { AppointmentCard } from "@/components/public/appointments/AppointmentCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getAllAppointmentList } from "@/services/appointmentService";
 import { motion } from "framer-motion";
 import { Calendar, Search } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Appointments = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [appointmentList, setAppointmentList] = useState<Appointment[]>([]);
+
+
+
+  const getAllAppointmentListAftersearch = async (id: string) => {
+    try {
+        const data = await getAllAppointmentList(id);
+        setSearchTerm(id);
+        setAppointmentList(data.data);
+        console.log("type", id);
+        console.log("data", data.data);
+
+    }catch (error) {
+      console.error("Error in getAllSpecialization:", error);
+    }
+  };
+
+  useEffect(() => {
+    getAllAppointmentListAftersearch("UPCOMING");
+  }, []);
+
+
   
   return (
     <AppLayout>
@@ -23,11 +47,23 @@ const Appointments = () => {
           
           <div className="bg-white rounded-xl p-5 shadow-sm mb-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-              <Tabs defaultValue="upcoming" className="w-full sm:w-auto">
+              <Tabs 
+                defaultValue="UPCOMING"
+                className="w-full sm:w-auto"
+                onValueChange={(value) => {
+                  if (value === "UPCOMING") {
+                    getAllAppointmentListAftersearch("UPCOMING"); // Replace "upcoming-id" with the actual ID or parameter
+                  } else if(value === "COMPLETED") {
+                    getAllAppointmentListAftersearch("COMPLETED"); // Replace "past-id" with the actual ID or parameter
+                  }else {
+                    getAllAppointmentListAftersearch("CANCELLED"); // Replace "cancelled-id" with the actual ID or parameter
+                  }
+                }}
+              >
                 <TabsList>
-                  <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
-                  <TabsTrigger value="past">Past</TabsTrigger>
-                  <TabsTrigger value="cancelled">Cancelled</TabsTrigger>
+                  <TabsTrigger value="UPCOMING">Upcoming</TabsTrigger>
+                  <TabsTrigger value="COMPLETED">Past</TabsTrigger>
+                  <TabsTrigger value="CANCELLED">Cancelled</TabsTrigger>
                 </TabsList>
               </Tabs>
               
@@ -43,124 +79,49 @@ const Appointments = () => {
               </div>
             </div>
             
-            <Tabs defaultValue="upcoming">
-              <TabsContent value="upcoming" className="mt-0">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <AppointmentCard
-                    appointment={{
-                      id: "apt1",
-                      doctorName: "Dr. Sarah Johnson",
-                      specialty: "Cardiologist",
-                      date: "Today, 15 May",
-                      time: "10:00 AM",
-                      imageSrc: "https://placehold.co/200/eaf7fc/33C3F0?text=SJ&font=montserrat",
-                      status: "upcoming"
-                    }}
-                  />
-                  <AppointmentCard
-                    appointment={{
-                      id: "apt2",
-                      doctorName: "Dr. Michael Chen",
-                      specialty: "Dermatologist",
-                      date: "Tomorrow, 16 May",
-                      time: "02:30 PM",
-                      imageSrc: "https://placehold.co/200/eaf7fc/33C3F0?text=MC&font=montserrat",
-                      status: "upcoming"
-                    }}
-                  />
-                  <AppointmentCard
-                    appointment={{
-                      id: "apt3",
-                      doctorName: "Dr. Emma Wilson",
-                      specialty: "Pediatrician",
-                      date: "18 May",
-                      time: "11:15 AM",
-                      imageSrc: "https://placehold.co/200/eaf7fc/33C3F0?text=EW&font=montserrat",
-                      status: "upcoming"
-                    }}
-                  />
-                  <AppointmentCard
-                    appointment={{
-                      id: "apt4",
-                      doctorName: "Dr. David Patel",
-                      specialty: "Orthopedic",
-                      date: "20 May",
-                      time: "09:30 AM",
-                      imageSrc: "https://placehold.co/200/eaf7fc/33C3F0?text=DP&font=montserrat",
-                      status: "upcoming"
-                    }}
-                  />
-                  <AppointmentCard
-                    appointment={{
-                      id: "apt5",
-                      doctorName: "Dr. Lisa Wang",
-                      specialty: "Neurologist",
-                      date: "22 May",
-                      time: "03:45 PM",
-                      imageSrc: "https://placehold.co/200/eaf7fc/33C3F0?text=LW&font=montserrat",
-                      status: "upcoming"
-                    }}
-                  />
+            
+            {searchTerm === "UPCOMING" && (
+              <div className="mt-0">
+                    {appointmentList?.map((appointmentss, index) => (
+                  <div key={index} className="grid grid-cols-12 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <AppointmentCard
+                     appointment={appointmentss}
+                      className="col-span-12 md:col-span-6 lg:col-span-4"
+                      forUser="You"
+                    />
+                  </div>
+                ))}
                 </div>
-              </TabsContent>
+            )}
               
-              <TabsContent value="past" className="mt-0">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <AppointmentCard
-                    appointment={{
-                      id: "apt6",
-                      doctorName: "Dr. James Wilson",
-                      specialty: "Cardiologist",
-                      date: "10 May",
-                      time: "11:30 AM",
-                      imageSrc: "https://placehold.co/200/eaf7fc/33C3F0?text=JW&font=montserrat",
-                      status: "completed"
-                    }}
-                    className="opacity-70"
-                  />
-                  <AppointmentCard
-                    appointment={{
-                      id: "apt7",
-                      doctorName: "Dr. Emily Parker",
-                      specialty: "Dermatologist",
-                      date: "05 May",
-                      time: "09:15 AM",
-                      imageSrc: "https://placehold.co/200/eaf7fc/33C3F0?text=EP&font=montserrat",
-                      status: "completed"
-                    }}
-                    className="opacity-70"
-                  />
-                  <AppointmentCard
-                    appointment={{
-                      id: "apt8",
-                      doctorName: "Dr. Robert Kim",
-                      specialty: "Pediatrician",
-                      date: "28 Apr",
-                      time: "02:00 PM",
-                      imageSrc: "https://placehold.co/200/eaf7fc/33C3F0?text=RK&font=montserrat",
-                      status: "completed"
-                    }}
-                    className="opacity-70"
-                  />
-                </div>
-              </TabsContent>
+              {searchTerm === "COMPLETED" && (
+              <div className="mt-0">
+                  {appointmentList?.map((appointmentss, index) => (
+                  <div key={index} className="grid grid-cols-12 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <AppointmentCard
+                     appointment={appointmentss}
+                      className="col-span-12 md:col-span-6 lg:col-span-4"
+                      forUser="You"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
               
-              <TabsContent value="cancelled" className="mt-0">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <AppointmentCard
-                    appointment={{
-                      id: "apt9",
-                      doctorName: "Dr. Melissa Thompson",
-                      specialty: "Neurologist",
-                      date: "12 May",
-                      time: "04:30 PM",
-                      imageSrc: "https://placehold.co/200/eaf7fc/33C3F0?text=MT&font=montserrat",
-                      status: "cancelled"
-                    }}
-                  />
-                </div>
-              </TabsContent>
-            </Tabs>
+              {searchTerm === "CANCELLED" && (
+              <div className="mt-0">
+                 {appointmentList?.map((appointmentss, index) => (
+                  <div key={index} className="grid grid-cols-12 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <AppointmentCard
+                     appointment={appointmentss}
+                      className="col-span-12 md:col-span-6 lg:col-span-4"
+                      forUser="You"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+           
           </div>
           
           <div className="bg-white rounded-xl p-5 shadow-sm">

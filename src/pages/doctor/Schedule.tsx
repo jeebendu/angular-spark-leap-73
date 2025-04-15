@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,8 +10,6 @@ import { cn } from "@/lib/utils";
 import { DayAvailability, TimeSlot } from "@/models/appointment/Availability";
 import { useToast } from "@/hooks/use-toast";
 import { DoctorLayout } from "@/components/doctor/DoctorLayout";
-import { SlotCreationDialog } from "@/components/doctor/SlotCreationDialog";
-import { Slot } from "@/models/appointment/Slot";
 
 const DAYS_OF_WEEK = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
@@ -20,8 +17,6 @@ export function DoctorSchedulePage() {
   const { toast } = useToast();
   const [selectedTab, setSelectedTab] = useState("general");
   const [selectedDay, setSelectedDay] = useState("Monday");
-  const [isSlotDialogOpen, setIsSlotDialogOpen] = useState(false);
-  const [appointmentFees, setAppointmentFees] = useState("254");
   const [availabilityData, setAvailabilityData] = useState<Record<string, DayAvailability[]>>({
     general: DAYS_OF_WEEK.map(day => ({
       day,
@@ -35,6 +30,7 @@ export function DoctorSchedulePage() {
     })),
     clinic: []
   });
+  const [appointmentFees, setAppointmentFees] = useState("254");
 
   const findDayAvailability = (day: string) => {
     return availabilityData[selectedTab]?.find(d => d.day === day) || {
@@ -88,25 +84,6 @@ export function DoctorSchedulePage() {
     
     updateAvailability(selectedDay, {
       slots: [...currentDayData.slots, newSlot]
-    });
-  };
-
-  const handleSaveSlot = (slot: Partial<Slot>) => {
-    // Convert the Slot to TimeSlot for our current data structure
-    const newSlot: TimeSlot = {
-      id: slot.id?.toString() || Date.now().toString(),
-      day: selectedDay,
-      startTime: slot.startTime || "09:00 AM",
-      capacity: slot.availableSlots
-    };
-    
-    updateAvailability(selectedDay, {
-      slots: [...currentDayData.slots, newSlot]
-    });
-    
-    toast({
-      title: "Slot created",
-      description: `New slot added for ${selectedDay} at ${slot.startTime}`,
     });
   };
 
@@ -185,7 +162,7 @@ export function DoctorSchedulePage() {
                           <Button 
                             variant="outline" 
                             className="text-primary" 
-                            onClick={() => setIsSlotDialogOpen(true)}
+                            onClick={addTimeSlot}
                           >
                             <Plus className="mr-1 h-4 w-4" />
                             Add Slots
@@ -260,12 +237,6 @@ export function DoctorSchedulePage() {
             </Card>
           </TabsContent>
         </Tabs>
-
-        <SlotCreationDialog 
-          open={isSlotDialogOpen}
-          onOpenChange={setIsSlotDialogOpen}
-          onSave={handleSaveSlot}
-        />
       </div>
     </DoctorLayout>
   );

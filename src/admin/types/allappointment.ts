@@ -7,14 +7,15 @@ import { Country } from "./country";
 
 export interface AllAppointment {
 
-    id: number;
-    patient: Patient;
-    isAccept: boolean;
-    doctor: Doctor;
-    status: String;
-    slot: Slot;
-    familyMember: FamilyMember;
-    doctorClinic: DoctorClinic;
+  id: number;
+  appointmentDate: Date;
+  status: string;
+  branch: Branch;
+  patient: Patient;
+  doctor: Doctor;
+  slot: Slot;
+  familyMember: FamilyMember;
+  doctorClinic: DoctorClinic;
 }
 
 export interface DoctorClinic{

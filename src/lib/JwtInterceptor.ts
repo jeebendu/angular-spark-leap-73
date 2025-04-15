@@ -24,19 +24,17 @@ http.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    
     // Add selected clinic and branch to headers if available
     const selectedClinic = localStorage.getItem('selectedClinic');
     const selectedBranch = localStorage.getItem('selectedBranch');
-    
+
     if (selectedClinic) {
       config.headers['X-Clinic-ID'] = selectedClinic;
     }
-    
+
     if (selectedBranch) {
       config.headers['X-Branch-ID'] = selectedBranch;
     }
-    
     return config;
   },
   (error) => {

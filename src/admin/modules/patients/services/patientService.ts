@@ -2,6 +2,8 @@
 import { Patient } from '@/admin/types/patient';
 import apiService from '@/services/apiService';
 import { AxiosResponse } from 'axios';
+import http from "@/lib/JwtInterceptor";
+
 
 export interface PatientQueryParams {
   page: number;
@@ -30,6 +32,11 @@ export const fetchPatients = async (params: PatientQueryParams): Promise<AxiosRe
   // This is where we would normally call the API
   // return apiService.get<PatientResponse>('/api/patients', { params });
   
+
+    return await http.post(`/v1/appointments/patients/doctor/1`,params);
+  
+
+
   // Mock implementation for demonstration
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -48,6 +55,8 @@ export const fetchPatients = async (params: PatientQueryParams): Promise<AxiosRe
           uid: `PATIENT-${1000 + i}`,
           firstname: `First${i}`,
           lastname: `Last${i}`,
+          city:null,
+          branch:null,
           fullName: `First${i} Last${i}`,
           dob: new Date(1980 + (i % 40), i % 12, (i % 28) + 1),
           age: 30 + (i % 40),
@@ -140,6 +149,8 @@ export const fetchPatientById = async (id: number): Promise<AxiosResponse<Patien
         id: id,
         uid: `PID${id}`,
         refDoctor:null,
+        city:null,
+        branch:null,
         user:null,
         // patientId: `PATIENT-${id}`,
         firstname: `First${id}`,

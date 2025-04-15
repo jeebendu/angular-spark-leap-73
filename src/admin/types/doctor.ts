@@ -8,6 +8,8 @@ import { Branch } from "./branch";
 export interface Doctor {
     id: number;
     name: string;
+    lastname: string;
+    firstname: string;
     email: string;
     uid: string;
     mobile: number;
@@ -32,6 +34,7 @@ export interface User{
   effectiveTo?: Date;
   effectiveFrom?: Date;
   role: Role;
+  image:String;
 }
 
 export interface SearchForm {

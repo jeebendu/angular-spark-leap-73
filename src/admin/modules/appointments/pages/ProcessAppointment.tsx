@@ -15,13 +15,13 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
-import { 
-  ArrowLeft, 
-  Save, 
-  Clock, 
-  ChevronDown, 
-  ChevronUp, 
-  Plus, 
+import {
+  ArrowLeft,
+  Save,
+  Clock,
+  ChevronDown,
+  ChevronUp,
+  Plus,
   X,
   Pill,
   XCircle,
@@ -61,6 +61,7 @@ import { AllAppointment } from "@/admin/types/allappointment";
 import { Patient } from "@/admin/types/patient";
 import { getAppointmentById, updateAppointmentStatus } from "../services/appointmentService";
 import { getMockPatientById } from "../services/patientMockService";
+import { Medicines, Prescription } from "@/admin/types/newModel/Prescription";
 
 const consultationSchema = z.object({
   vitals: z.object({
@@ -76,6 +77,7 @@ const consultationSchema = z.object({
     symptoms: z.string().min(3, "Symptoms are required"),
     diagnosis: z.string().min(3, "Diagnosis is required"),
     followUpDate: z.string().optional(),
+    complaints: z.string().min(3, "Complaints are required")
   }),
   medications: z.array(
     z.object({
@@ -92,6 +94,7 @@ const consultationSchema = z.object({
     })
   ).optional(),
   notes: z.string().optional(),
+  previousHistory: z.string().optional(),
   advice: z.string().optional(),
   followUp: z.object({
     date: z.date().optional(),
@@ -99,13 +102,7 @@ const consultationSchema = z.object({
   }).optional(),
 });
 
-// Define the Medication type explicitly from the schema
-type Medication = {
-  name: string;
-  dosage: string;
-  frequency: string;
-  duration: string;
-};
+
 
 // Define the Laboratory Test type
 type LabTest = {
@@ -118,6 +115,8 @@ const medicationSchema = z.object({
   dosage: z.string().min(1, "Dosage is required"),
   frequency: z.string().min(1, "Frequency is required"),
   duration: z.string().min(1, "Duration is required"),
+  timings: z.string().min(1, "Timing is required"),
+  instruction: z.string().min(3, "Instruction is required"),
 });
 
 const labTestSchema = z.object({
@@ -143,11 +142,11 @@ const ProcessAppointment = () => {
     advice: true,
     followUp: true,
   });
-  const [medicationList, setMedicationList] = useState<Medication[]>([]);
+  const [medicationList, setMedicationList] = useState<Medicines[]>([]);
   const [labTestsList, setLabTestsList] = useState<LabTest[]>([]);
   const [isMedicationModalOpen, setIsMedicationModalOpen] = useState(false);
   const [isLabTestModalOpen, setIsLabTestModalOpen] = useState(false);
-  const [currentMedication, setCurrentMedication] = useState<Medication | null>(null);
+  const [currentMedication, setCurrentMedication] = useState<Medicines | null>(null);
   const [currentLabTest, setCurrentLabTest] = useState<LabTest | null>(null);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingLabTestIndex, setEditingLabTestIndex] = useState<number | null>(null);
@@ -169,16 +168,43 @@ const ProcessAppointment = () => {
         symptoms: "",
         diagnosis: "",
         followUpDate: "",
+        complaints: ""
       },
       medications: [],
       labTests: [],
       notes: "",
+      previousHistory:"",
       advice: "",
       followUp: {
         date: undefined,
         notes: "",
       },
     },
+  });
+
+  const [prescription, setPrescription] = useState<Prescription>({
+    id: null,
+    medicines: [],
+    temperature: null,
+    pulse: null,
+    respiratory: null,
+    spo2: null,
+    height: null,
+    weight: null,
+    waist: null,
+    bsa: null,
+    bmi: null,
+    previousHistory: "",
+    symptoms: "",
+    previousClinicNote: "",
+    clinicNotes: "",
+    laboratoryTests: "",
+    complaints: "",
+    diagnosis: "",
+    advice: "",
+    followUp: null,
+    doctor: null,
+    patient: null
   });
 
   const medicationForm = useForm<MedicationFormValues>({
@@ -188,6 +214,8 @@ const ProcessAppointment = () => {
       dosage: "",
       frequency: "",
       duration: "",
+      timings: "",
+      instruction: ""
     }
   });
 
@@ -208,10 +236,11 @@ const ProcessAppointment = () => {
   useEffect(() => {
     if (data) {
       setAppointment(data.data);
-      
+
       if (data.data?.patient?.id) {
         const patientData = getMockPatientById(data.data.patient.id);
         setPatientDetails(patientData);
+        setPrescription((prev) => ({ ...prev, patient: data.data.patient, doctor: data.data.doctorClinic.doctor }))
       }
     }
   }, [data]);
@@ -219,11 +248,13 @@ const ProcessAppointment = () => {
   const calculateBMI = () => {
     const height = parseFloat(form.getValues("vitals.height") || "0");
     const weight = parseFloat(form.getValues("vitals.weight") || "0");
-    
+
     if (height > 0 && weight > 0) {
       const heightInMeters = height / 100;
       const bmi = (weight / (heightInMeters * heightInMeters)).toFixed(1);
       form.setValue("vitals.bmi", bmi);
+      console.log(bmi)
+      setPrescription((prev) => ({ ...prev, bmi: Number(bmi) }));
     }
   };
 
@@ -236,9 +267,10 @@ const ProcessAppointment = () => {
     });
     setEditingIndex(null);
     setIsMedicationModalOpen(true);
+    console.log(prescription)
   };
 
-  const openEditMedicationModal = (medication: Medication, index: number) => {
+  const openEditMedicationModal = (medication: Medicines, index: number) => {
     medicationForm.reset(medication);
     setEditingIndex(index);
     setIsMedicationModalOpen(true);
@@ -261,26 +293,30 @@ const ProcessAppointment = () => {
 
   const saveMedication = (data: MedicationFormValues) => {
     // Ensure all fields have valid values before saving
-    const validatedMedication: Medication = {
+    const validatedMedication: Medicines = {
       name: data.name,
       dosage: data.dosage,
       frequency: data.frequency,
-      duration: data.duration
+      duration: data.duration,
+      timings: data.timings,
+      instruction: data.instruction
     };
-    
+
     if (editingIndex !== null) {
       const updatedList = [...medicationList];
       updatedList[editingIndex] = validatedMedication;
       setMedicationList(updatedList);
       form.setValue("medications", updatedList);
+      setPrescription((prev) => ({ ...prev, medicines: updatedList }));
     } else {
       const newList = [...medicationList, validatedMedication];
       setMedicationList(newList);
       form.setValue("medications", newList);
+      setPrescription((prev) => ({ ...prev, medicines: newList }));
     }
-    
+
     setIsMedicationModalOpen(false);
-    
+
     toast.success(editingIndex !== null ? "Medication updated" : "Medication added");
   };
 
@@ -290,7 +326,7 @@ const ProcessAppointment = () => {
       name: data.name,
       instructions: data.instructions || "",
     };
-    
+
     if (editingLabTestIndex !== null) {
       const updatedList = [...labTestsList];
       updatedList[editingLabTestIndex] = validatedLabTest;
@@ -301,9 +337,9 @@ const ProcessAppointment = () => {
       setLabTestsList(newList);
       form.setValue("labTests", newList);
     }
-    
+
     setIsLabTestModalOpen(false);
-    
+
     toast.success(editingLabTestIndex !== null ? "Lab test updated" : "Lab test added");
   };
 
@@ -311,15 +347,16 @@ const ProcessAppointment = () => {
     const updatedList = [...medicationList];
     updatedList.splice(index, 1);
     setMedicationList(updatedList);
-    
+
     form.setValue("medications", updatedList);
+    setPrescription((prev) => ({ ...prev, medicines: updatedList }));
   };
 
   const removeLabTest = (index: number) => {
     const updatedList = [...labTestsList];
     updatedList.splice(index, 1);
     setLabTestsList(updatedList);
-    
+
     form.setValue("labTests", updatedList);
   };
 
@@ -331,10 +368,11 @@ const ProcessAppointment = () => {
   };
 
   const onSubmit = (data: ConsultationFormValues) => {
-    console.log("Form submitted with:", data);
-    
+    // console.log("Form submitted with:", data);
+    console.log(prescription)
+
     toast.success("Consultation completed successfully");
-    
+
     handleStatusUpdate(appointment?.id || 0, "COMPLETED");
   };
 
@@ -361,15 +399,25 @@ const ProcessAppointment = () => {
 
   const handleFollowUpDateChange = (date: Date | undefined) => {
     setFollowUpDate(date);
+    if (date) {
+      setPrescription((prev) => ({ ...prev, followUp: date }));
+    }
     form.setValue("followUp.date", date);
   };
+
+
+  const handlePrescriptionInput = (e: any) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    setPrescription((prev) => ({ ...prev, [name]: value }));
+  }
 
   if (isLoading) {
     return (
       <AdminLayout>
         <div className="p-6">
-          <PageHeader 
-            title="Process Appointment" 
+          <PageHeader
+            title="Process Appointment"
             onRefreshClick={() => window.location.reload()}
           />
           <div className="flex justify-center items-center h-[60vh]">
@@ -387,8 +435,8 @@ const ProcessAppointment = () => {
     return (
       <AdminLayout>
         <div className="p-6">
-          <PageHeader 
-            title="Process Appointment" 
+          <PageHeader
+            title="Process Appointment"
             onRefreshClick={() => window.location.reload()}
           />
           <div className="bg-red-50 border border-red-200 rounded-lg p-6 mt-6">
@@ -414,8 +462,8 @@ const ProcessAppointment = () => {
     return (
       <AdminLayout>
         <div className="p-6">
-          <PageHeader 
-            title="Process Appointment" 
+          <PageHeader
+            title="Process Appointment"
             onRefreshClick={() => window.location.reload()}
           />
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mt-6">
@@ -447,7 +495,7 @@ const ProcessAppointment = () => {
   return (
     <AdminLayout>
       <div className="p-6">
-        <PageHeader 
+        <PageHeader
           title="Process Appointment"
           onRefreshClick={() => window.location.reload()}
           additionalActions={
@@ -462,7 +510,7 @@ const ProcessAppointment = () => {
           }
           showAddButton={false}
         />
-        
+
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 pb-4 border-b">
             <div>
@@ -483,19 +531,18 @@ const ProcessAppointment = () => {
               </div>
             </div>
           </div>
-
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <Card className="shadow-sm">
                 <CardContent className="p-0">
-                  <div 
+                  <div
                     className="flex justify-between items-center p-4 cursor-pointer"
                     onClick={() => toggleSection('vitals')}
                   >
                     <h3 className="text-lg font-medium">Patient Vitals</h3>
                     {expandedSections.vitals ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                   </div>
-                  
+
                   {expandedSections.vitals && (
                     <div className="p-4 pt-0 border-t">
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
@@ -506,16 +553,13 @@ const ProcessAppointment = () => {
                             <FormItem>
                               <FormLabel>Temperature (°C)</FormLabel>
                               <FormControl>
-                                <Input 
-                                  placeholder="36.5" 
-                                  {...field} 
-                                />
+                                <Input placeholder="36.5" {...field} name="temperature" value={prescription.temperature} onChange={(e) => handlePrescriptionInput(e)} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
-                        
+
                         <FormField
                           control={form.control}
                           name="vitals.pulse"
@@ -523,16 +567,13 @@ const ProcessAppointment = () => {
                             <FormItem>
                               <FormLabel>Pulse (bpm)</FormLabel>
                               <FormControl>
-                                <Input 
-                                  placeholder="75" 
-                                  {...field} 
-                                />
+                                <Input placeholder="75" {...field} name="pulse" value={prescription.pulse} onChange={(e) => handlePrescriptionInput(e)} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
-                        
+
                         <FormField
                           control={form.control}
                           name="vitals.respiratoryRate"
@@ -540,16 +581,12 @@ const ProcessAppointment = () => {
                             <FormItem>
                               <FormLabel>Respiratory Rate (bpm)</FormLabel>
                               <FormControl>
-                                <Input 
-                                  placeholder="16" 
-                                  {...field} 
-                                />
+                                <Input placeholder="16" {...field} name="respiratory" value={prescription.respiratory} onChange={(e) => handlePrescriptionInput(e)} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
-                        
                         <FormField
                           control={form.control}
                           name="vitals.spo2"
@@ -557,16 +594,40 @@ const ProcessAppointment = () => {
                             <FormItem>
                               <FormLabel>SpO2 (%)</FormLabel>
                               <FormControl>
-                                <Input 
-                                  placeholder="98" 
-                                  {...field} 
-                                />
+                                <Input placeholder="98" {...field} name="spo2" value={prescription.spo2} onChange={(e) => handlePrescriptionInput(e)} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
-                        
+
+                        <FormField
+                          control={form.control}
+                          name="vitals.spo2"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Waist</FormLabel>
+                              <FormControl>
+                                <Input placeholder="98" {...field} name="waist" value={prescription.waist} onChange={(e) => handlePrescriptionInput(e)} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="vitals.spo2"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>BSA</FormLabel>
+                              <FormControl>
+                                <Input placeholder="44" {...field} name="bsa" value={prescription.bsa} onChange={(e) => handlePrescriptionInput(e)} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
                         <FormField
                           control={form.control}
                           name="vitals.height"
@@ -574,11 +635,13 @@ const ProcessAppointment = () => {
                             <FormItem>
                               <FormLabel>Height (cm)</FormLabel>
                               <FormControl>
-                                <Input 
-                                  placeholder="170" 
-                                  {...field} 
+                                <Input
+                                  placeholder="170"
+                                  {...field}
+                                  name="height" value={prescription.height}
                                   onChange={(e) => {
                                     field.onChange(e);
+                                    handlePrescriptionInput(e);
                                     setTimeout(calculateBMI, 100);
                                   }}
                                 />
@@ -587,7 +650,6 @@ const ProcessAppointment = () => {
                             </FormItem>
                           )}
                         />
-                        
                         <FormField
                           control={form.control}
                           name="vitals.weight"
@@ -595,11 +657,13 @@ const ProcessAppointment = () => {
                             <FormItem>
                               <FormLabel>Weight (kg)</FormLabel>
                               <FormControl>
-                                <Input 
-                                  placeholder="70" 
-                                  {...field} 
+                                <Input
+                                  placeholder="70"
+                                  {...field}
+                                  name="weight" value={prescription.weight}
                                   onChange={(e) => {
                                     field.onChange(e);
+                                    handlePrescriptionInput(e);
                                     setTimeout(calculateBMI, 100);
                                   }}
                                 />
@@ -608,7 +672,6 @@ const ProcessAppointment = () => {
                             </FormItem>
                           )}
                         />
-                        
                         <FormField
                           control={form.control}
                           name="vitals.bmi"
@@ -616,35 +679,54 @@ const ProcessAppointment = () => {
                             <FormItem>
                               <FormLabel>BMI</FormLabel>
                               <FormControl>
-                                <Input 
-                                  readOnly 
-                                  placeholder="Calculated" 
-                                  {...field} 
-                                />
+                                <Input readOnly {...field} placeholder="Calculated" name="bmi" value={prescription.bmi} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
+
                       </div>
                     </div>
                   )}
                 </CardContent>
               </Card>
-              
+
+
               <Card className="shadow-sm">
                 <CardContent className="p-0">
-                  <div 
+                  <div
                     className="flex justify-between items-center p-4 cursor-pointer"
                     onClick={() => toggleSection('consultation')}
                   >
                     <h3 className="text-lg font-medium">Consultation Details</h3>
                     {expandedSections.consultation ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                   </div>
-                  
+
                   {expandedSections.consultation && (
                     <div className="p-4 pt-0 border-t">
                       <div className="space-y-4 mt-4">
+
+                        <FormField
+                          control={form.control}
+                          name="consultation.complaints"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Complaints</FormLabel>
+                              <FormControl>
+                                <Textarea
+                                  placeholder="Patient's reported Complaints"
+                                  className="min-h-[100px]"
+                                  {...field}
+                                  value={prescription.complaints}
+                                  name="complaints"
+                                  onChange={(e) => handlePrescriptionInput(e)}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
                         <FormField
                           control={form.control}
                           name="consultation.symptoms"
@@ -656,13 +738,16 @@ const ProcessAppointment = () => {
                                   placeholder="Patient's reported symptoms"
                                   className="min-h-[100px]"
                                   {...field}
+                                  value={prescription.symptoms}
+                                  name="symptoms"
+                                  onChange={(e) => handlePrescriptionInput(e)}
                                 />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
-                        
+
                         <FormField
                           control={form.control}
                           name="consultation.diagnosis"
@@ -674,6 +759,9 @@ const ProcessAppointment = () => {
                                   placeholder="Your diagnosis"
                                   className="min-h-[100px]"
                                   {...field}
+                                  value={prescription.diagnosis}
+                                  name="diagnosis"
+                                  onChange={(e) => handlePrescriptionInput(e)}
                                 />
                               </FormControl>
                               <FormMessage />
@@ -685,17 +773,17 @@ const ProcessAppointment = () => {
                   )}
                 </CardContent>
               </Card>
-              
+
               <Card className="shadow-sm">
                 <CardContent className="p-0">
-                  <div 
+                  <div
                     className="flex justify-between items-center p-4 cursor-pointer"
                     onClick={() => toggleSection('medications')}
                   >
                     <h3 className="text-lg font-medium">Prescribed Medications</h3>
                     {expandedSections.medications ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                   </div>
-                  
+
                   {expandedSections.medications && (
                     <div className="p-4 pt-0 border-t">
                       <div className="mt-4">
@@ -705,7 +793,7 @@ const ProcessAppointment = () => {
                               <div key={index} className="p-4 border rounded-md relative flex justify-between items-center">
                                 <div className="flex-1">
                                   <div className="text-sm font-medium">{medication.name} ({medication.dosage})</div>
-                                  <div className="text-sm text-gray-500">{medication.frequency} for {medication.duration}</div>
+                                  <div className="text-sm text-gray-500">{medication.frequency} for {medication.duration} each {medication.timings}</div>
                                 </div>
                                 <div className="flex items-center space-x-2">
                                   <Button
@@ -735,10 +823,10 @@ const ProcessAppointment = () => {
                             No medications added yet
                           </div>
                         )}
-                        
-                        <Button 
-                          type="button" 
-                          variant="outline" 
+
+                        <Button
+                          type="button"
+                          variant="outline"
                           onClick={openAddMedicationModal}
                           className="w-full mt-4 rounded-full"
                         >
@@ -750,18 +838,18 @@ const ProcessAppointment = () => {
                   )}
                 </CardContent>
               </Card>
-              
+
               {/* Laboratory Tests Section */}
               <Card className="shadow-sm">
                 <CardContent className="p-0">
-                  <div 
+                  <div
                     className="flex justify-between items-center p-4 cursor-pointer"
                     onClick={() => toggleSection('labTests')}
                   >
                     <h3 className="text-lg font-medium">Laboratory Tests</h3>
                     {expandedSections.labTests ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                   </div>
-                  
+
                   {expandedSections.labTests && (
                     <div className="p-4 pt-0 border-t">
                       <div className="mt-4">
@@ -803,10 +891,10 @@ const ProcessAppointment = () => {
                             No laboratory tests added yet
                           </div>
                         )}
-                        
-                        <Button 
-                          type="button" 
-                          variant="outline" 
+
+                        <Button
+                          type="button"
+                          variant="outline"
                           onClick={openAddLabTestModal}
                           className="w-full mt-4 rounded-full"
                         >
@@ -818,17 +906,17 @@ const ProcessAppointment = () => {
                   )}
                 </CardContent>
               </Card>
-              
+
               <Card className="shadow-sm">
                 <CardContent className="p-0">
-                  <div 
+                  <div
                     className="flex justify-between items-center p-4 cursor-pointer"
                     onClick={() => toggleSection('notes')}
                   >
                     <h3 className="text-lg font-medium">Additional Notes</h3>
                     {expandedSections.notes ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                   </div>
-                  
+
                   {expandedSections.notes && (
                     <div className="p-4 pt-0 border-t">
                       <FormField
@@ -836,32 +924,58 @@ const ProcessAppointment = () => {
                         name="notes"
                         render={({ field }) => (
                           <FormItem className="mt-4">
+                             <FormLabel>Additional Notes</FormLabel>
                             <FormControl>
                               <Textarea
                                 placeholder="Enter any additional notes, instructions or observations"
                                 className="min-h-[150px]"
                                 {...field}
+                                name="clinicNotes"
+                                value={prescription.clinicNotes}
+                                onChange={(e) => handlePrescriptionInput(e)}
                               />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
+
+                      <FormField
+                        control={form.control}
+                        name="previousHistory"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Previous Medical History</FormLabel>
+                            <FormControl>
+                              <Textarea
+                                placeholder="Enter previous medical history here..."
+                                className="min-h-[150px]"
+                                {...field}
+                                name="previousHistory"
+                                value={prescription.previousHistory}
+                                onChange={(e) => handlePrescriptionInput(e)}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
                     </div>
                   )}
                 </CardContent>
               </Card>
-              
+
               <Card className="shadow-sm">
                 <CardContent className="p-0">
-                  <div 
+                  <div
                     className="flex justify-between items-center p-4 cursor-pointer"
                     onClick={() => toggleSection('advice')}
                   >
                     <h3 className="text-lg font-medium">Advice</h3>
                     {expandedSections.advice ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                   </div>
-                  
+
                   {expandedSections.advice && (
                     <div className="p-4 pt-0 border-t">
                       <FormField
@@ -874,6 +988,9 @@ const ProcessAppointment = () => {
                                 placeholder="Enter your advice here..."
                                 className="min-h-[150px]"
                                 {...field}
+                                name="advice"
+                                value={prescription.advice}
+                                onChange={(e) => handlePrescriptionInput(e)}
                               />
                             </FormControl>
                             <FormMessage />
@@ -884,18 +1001,18 @@ const ProcessAppointment = () => {
                   )}
                 </CardContent>
               </Card>
-              
+
               {/* Follow Up Section - Moved to be last */}
               <Card className="shadow-sm">
                 <CardContent className="p-0">
-                  <div 
+                  <div
                     className="flex justify-between items-center p-4 cursor-pointer"
                     onClick={() => toggleSection('followUp')}
                   >
                     <h3 className="text-lg font-medium">Follow Up</h3>
                     {expandedSections.followUp ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                   </div>
-                  
+
                   {expandedSections.followUp && (
                     <div className="p-4 pt-0 border-t">
                       <div className="mt-4 space-y-4">
@@ -920,7 +1037,7 @@ const ProcessAppointment = () => {
                               <PopoverContent className="w-auto p-0" align="start">
                                 <Calendar
                                   mode="single"
-                                  selected={followUpDate}
+                                  selected={prescription.followUp}
                                   onSelect={handleFollowUpDateChange}
                                   disabled={(date) => date < new Date()}
                                   initialFocus
@@ -930,7 +1047,7 @@ const ProcessAppointment = () => {
                             </Popover>
                           </div>
                         </div>
-                        
+
                         {/* Follow-up Notes */}
                         <FormField
                           control={form.control}
@@ -954,7 +1071,7 @@ const ProcessAppointment = () => {
                   )}
                 </CardContent>
               </Card>
-              
+
               <div className="flex justify-end mt-8">
                 <Button type="submit" className="bg-primary hover:bg-primary/90 rounded-full">
                   <Save className="h-4 w-4 mr-2" />
@@ -975,12 +1092,12 @@ const ProcessAppointment = () => {
               {editingIndex !== null ? "Edit Medication" : "Add New Medication"}
             </DialogTitle>
             <DialogDescription>
-              {editingIndex !== null 
-                ? "Update the medication details below." 
+              {editingIndex !== null
+                ? "Update the medication details below."
                 : "Enter the medication details below."}
             </DialogDescription>
           </DialogHeader>
-          
+
           <form onSubmit={medicationForm.handleSubmit(saveMedication)} className="space-y-4 py-4">
             <div className="grid grid-cols-1 gap-4">
               <div>
@@ -995,7 +1112,7 @@ const ProcessAppointment = () => {
                   <p className="text-sm text-red-500 mt-1">{medicationForm.formState.errors.name.message}</p>
                 )}
               </div>
-              
+
               <div>
                 <Label htmlFor="med-dosage">Dosage</Label>
                 <Input
@@ -1008,7 +1125,7 @@ const ProcessAppointment = () => {
                   <p className="text-sm text-red-500 mt-1">{medicationForm.formState.errors.dosage.message}</p>
                 )}
               </div>
-              
+
               <div>
                 <Label htmlFor="med-frequency">Frequency</Label>
                 <Select
@@ -1030,7 +1147,7 @@ const ProcessAppointment = () => {
                   <p className="text-sm text-red-500 mt-1">{medicationForm.formState.errors.frequency.message}</p>
                 )}
               </div>
-              
+
               <div>
                 <Label htmlFor="med-duration">Duration</Label>
                 <Select
@@ -1053,8 +1170,35 @@ const ProcessAppointment = () => {
                   <p className="text-sm text-red-500 mt-1">{medicationForm.formState.errors.duration.message}</p>
                 )}
               </div>
+
+              <div>
+                <Label htmlFor="med-timing">Timing</Label>
+                <Input
+                  id="med-timing"
+                  placeholder="E.g., after food"
+                  {...medicationForm.register("timings")}
+                  className="mt-1"
+                />
+                {medicationForm.formState.errors.timings && (
+                  <p className="text-sm text-red-500 mt-1">{medicationForm.formState.errors.timings.message}</p>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="med-instruction">Instruction</Label>
+                <Input
+                  id="med-instruction"
+                  placeholder="E.g., avoid sour food"
+                  {...medicationForm.register("instruction")}
+                  className="mt-1"
+                />
+                {medicationForm.formState.errors.timings && (
+                  <p className="text-sm text-red-500 mt-1">{medicationForm.formState.errors.instruction.message}</p>
+                )}
+              </div>
+
             </div>
-            
+
             <DialogFooter className="mt-6">
               <Button type="button" variant="outline" onClick={() => setIsMedicationModalOpen(false)}>
                 Cancel
@@ -1066,7 +1210,7 @@ const ProcessAppointment = () => {
           </form>
         </DialogContent>
       </Dialog>
-      
+
       {/* Laboratory Test Dialog */}
       <Dialog open={isLabTestModalOpen} onOpenChange={setIsLabTestModalOpen}>
         <DialogContent className="sm:max-w-md">
@@ -1076,12 +1220,12 @@ const ProcessAppointment = () => {
               {editingLabTestIndex !== null ? "Edit Laboratory Test" : "Add New Laboratory Test"}
             </DialogTitle>
             <DialogDescription>
-              {editingLabTestIndex !== null 
-                ? "Update the laboratory test details below." 
+              {editingLabTestIndex !== null
+                ? "Update the laboratory test details below."
                 : "Enter the laboratory test details below."}
             </DialogDescription>
           </DialogHeader>
-          
+
           <form onSubmit={labTestForm.handleSubmit(saveLabTest)} className="space-y-4 py-4">
             <div className="grid grid-cols-1 gap-4">
               <div>
@@ -1096,7 +1240,7 @@ const ProcessAppointment = () => {
                   <p className="text-sm text-red-500 mt-1">{labTestForm.formState.errors.name.message}</p>
                 )}
               </div>
-              
+
               <div>
                 <Label htmlFor="test-instructions">Special Instructions</Label>
                 <Textarea
@@ -1110,7 +1254,7 @@ const ProcessAppointment = () => {
                 )}
               </div>
             </div>
-            
+
             <DialogFooter className="mt-6">
               <Button type="button" variant="outline" onClick={() => setIsLabTestModalOpen(false)}>
                 Cancel

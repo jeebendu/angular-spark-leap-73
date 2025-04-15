@@ -46,7 +46,8 @@ export const generateMockPatient = (id: number): Patient => {
         phone: faker.phone.number(),
         password: faker.internet.password(),
         branch: null,
-        role: null
+        role: null,
+        image:null
       }
     },
     consDoctorId: faker.number.int({ min: 1, max: 50 }),
@@ -63,7 +64,8 @@ export const generateMockPatient = (id: number): Patient => {
       phone: faker.phone.number(),
       password: faker.internet.password(),
       branch: null,
-      role: null
+      role: null,  
+      image:null
     },
     photoUrl: faker.helpers.maybe(() => faker.image.avatar(), { probability: 0.3 }),
     insuranceProvider: faker.helpers.maybe(() => faker.company.name(), { probability: 0.6 }),

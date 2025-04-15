@@ -105,10 +105,10 @@ const InfiniteAppointmentList: React.FC<InfiniteAppointmentListProps> = ({
           <div className="flex flex-wrap md:flex-nowrap gap-4 items-start justify-between">
             <div className="flex items-center gap-3 flex-1">
               <div className="h-14 w-14 rounded-full bg-gray-200 relative overflow-hidden flex-shrink-0">
-                {appointment.patient.user?.name && (
+                {appointment.patient.firstname && (
                   <div className="w-full h-full flex items-center justify-center bg-blue-100 text-blue-600 text-lg font-semibold">
-                    {appointment.patient.firstname?.charAt(0)}
-                    {appointment.patient.lastname?.charAt(0)}
+                    {appointment.patient?.firstname?.charAt(0)}
+                    {appointment.patient?.lastname?.charAt(0)}
                   </div>
                 )}
               </div>
@@ -125,16 +125,15 @@ const InfiniteAppointmentList: React.FC<InfiniteAppointmentListProps> = ({
                 
                 <div className="text-gray-500 flex items-center text-sm mb-1">
                   <span>
-                    #{appointment.id} · {appointment.doctor?.name || 'Unknown Doctor'}
+                    #{appointment.id} · {appointment?.doctorClinic?.doctor?.firstname} {appointment?.doctorClinic?.doctor?.lastname}
                   </span>
                 </div>
-                
-                {appointment.patient.address && (
+
                   <div className="flex items-center text-gray-500 text-sm">
                     <MapPin className="h-3.5 w-3.5 mr-1" />
-                    <span className="truncate">{appointment.patient.address}</span>
+                    <span className="truncate">{appointment?.patient.city},{appointment?.patient?.district? appointment?.patient?.district?.name:""},{appointment?.patient?.state ? appointment?.patient?.state?.name:""}</span>
                   </div>
-                )}
+
               </div>
             </div>
             
@@ -146,8 +145,8 @@ const InfiniteAppointmentList: React.FC<InfiniteAppointmentListProps> = ({
                     : "Date not available"}
                 </div>
                 <div className="font-medium">
-                  {appointment.slot?.startTime 
-                    ? appointment.slot.startTime 
+                  {appointment?.slot?.startTime 
+                   ? format(new Date(`1970-01-01T${appointment?.slot?.startTime}`), "hh:mm a") 
                     : "Time not available"}
                 </div>
               </div>

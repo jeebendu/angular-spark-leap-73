@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -47,8 +46,6 @@ const consultationSchema = z.object({
   ).optional(),
 });
 
-
-
 type ConsultationFormValues = z.infer<typeof consultationSchema>;
 
 export const AppointmentProcess = ({ appointment, onClose, onStatusUpdate }: AppointmentProcessProps) => {
@@ -74,6 +71,7 @@ export const AppointmentProcess = ({ appointment, onClose, onStatusUpdate }: App
     laboratoryTests: "",
     complaints: "",
     advice: "",
+    diagnosis: "",
     followUp: null,
     doctor: null,
     patient: null
@@ -142,7 +140,7 @@ export const AppointmentProcess = ({ appointment, onClose, onStatusUpdate }: App
       const updatedMedicines = [...prev.medicines];
       updatedMedicines[index] = { ...updatedMedicines[index], [field]: value };
       return { ...prev, medicines: updatedMedicines };
-  });
+    });
   };
 
   const removeMedication = (index: number) => {

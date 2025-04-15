@@ -40,12 +40,15 @@ export const getMockAppointments = (params: AppointmentQueryParams) => {
           name: patientName,
           email: `${patientName.split(' ')[0].toLowerCase()}@example.com`,
           phone: `+919876${543210 + i}`,
-          branch:null,
-          username:null,
-          password:null,
+          branch: null,
+          username: `user${i}`,
+          password: `password${i}`,
           role: null,
+          image: "", // Add the required image property
         },
-        refDoctor: null
+        refDoctor: null,
+        city: `City ${i}`, // Add the required city property
+        branch: null,  // Add the required branch property
       },
       doctor: {
         id: 1,
@@ -61,7 +64,9 @@ export const getMockAppointments = (params: AppointmentQueryParams) => {
         user: null,
         status: "ACTIVE",
         external: false,
-        external_temp: null
+        external_temp: null,
+        firstname: "Gregory", // Add required firstname
+        lastname: "House", // Add required lastname
       },
       slot: {
         id: 200 + i,
@@ -188,11 +193,14 @@ export const getMockAppointmentById = async (id: string | number): Promise<AllAp
         email: "john@example.com",
         phone: "+919876543210",
         branch: null,
-        username: null,
-        password: null,
+        username: "johnuser",
+        password: "password",
         role: null,
+        image: "", // Add the required image property
       },
-      refDoctor: null
+      refDoctor: null,
+      city: "Boston", // Add the required city property
+      branch: null,  // Add the required branch property
     },
     doctor: {
       id: 1,
@@ -208,7 +216,9 @@ export const getMockAppointmentById = async (id: string | number): Promise<AllAp
       user: null,
       status: "ACTIVE",
       external: false,
-      external_temp: null
+      external_temp: null,
+      firstname: "Sarah", // Add required firstname
+      lastname: "Johnson", // Add required lastname
     },
     slot: {
       id: 201,

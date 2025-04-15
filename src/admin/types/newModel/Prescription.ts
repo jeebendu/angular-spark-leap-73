@@ -1,3 +1,4 @@
+
 import { Doctor } from "../doctor";
 import { Patient } from "../patient";
 import { appointmentType, visitType } from "./AppointmentType";
@@ -20,11 +21,10 @@ export interface Prescription {
     laboratoryTests: String;
     complaints: string;
     advice: string;
-
+    diagnosis: string; // Added missing required property
 
     followUp: Date;
     symptoms: string;
-    diagnosis: string;
 
 
     // appointmentType:appointmentType;

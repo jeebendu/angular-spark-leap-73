@@ -1,4 +1,3 @@
-
 import { AppointmentQueryParams } from "@/admin/modules/appointments/services/appointmentService";
 import { AllAppointment } from "@/admin/types/allappointment";
 import { addDays, subDays } from "date-fns";
@@ -41,12 +40,14 @@ export const getMockAppointments = (params: AppointmentQueryParams) => {
           email: `${patientName.split(' ')[0].toLowerCase()}@example.com`,
           phone: `+919876${543210 + i}`,
           branch:null,
-          username:null,
-          password:null,
+          username:`user${i}`,
+          password:`pass${i}`,
           role: null,
-          image: null
+          image: "",
         },
         refDoctor: null,
+        city: `City ${i}`,
+        branch: null,
       },
       doctor: {
         id: 1,
@@ -62,7 +63,9 @@ export const getMockAppointments = (params: AppointmentQueryParams) => {
         user: null,
         status: "ACTIVE",
         external: false,
-        external_temp: null
+        external_temp: null,
+        firstname: "Gregory",
+        lastname: "House"
       },
       slot: {
         id: 200 + i,
@@ -160,7 +163,7 @@ export const getMockAppointments = (params: AppointmentQueryParams) => {
       totalPages: Math.ceil(filteredAppointments.length / size),
       size: size,
       number: page,
-      last: startIndex + size >= filteredAppointments.length
+      last: size >= filteredAppointments.length
     }
   });
 };
@@ -189,12 +192,14 @@ export const getMockAppointmentById = async (id: string | number): Promise<AllAp
         email: "john@example.com",
         phone: "+919876543210",
         branch: null,
-        username: null,
-        password: null,
+        username: "johnuser",
+        password: "password",
         role: null,
-        image: null,
+        image: "",
       },
-      refDoctor: null
+      refDoctor: null,
+      city: "New York",
+      branch: null,
     },
     doctor: {
       id: 1,
@@ -210,7 +215,9 @@ export const getMockAppointmentById = async (id: string | number): Promise<AllAp
       user: null,
       status: "ACTIVE",
       external: false,
-      external_temp: null
+      external_temp: null,
+      firstname: "Sarah",
+      lastname: "Johnson"
     },
     slot: {
       id: 201,

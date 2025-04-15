@@ -13,5 +13,17 @@ export const isProduction = (): boolean => {
  * @returns The value of the environment variable or empty string if not found
  */
 export const getEnvVariable = (key: string): string => {
-  return (import.meta.env[`VITE_${key}`] as string) || '';
+  const fullKey = key.startsWith('VITE_') ? key : `VITE_${key}`;
+  return (import.meta.env[fullKey] as string) || '';
+};
+
+/**
+ * Force reload environment variables
+ * This helps when environment changes are not reflecting
+ */
+export const reloadEnv = (): void => {
+  console.log('Reloading environment variables...');
+  console.log('BASE_URL:', getEnvVariable('BASE_URL'));
+  console.log('X_APP_TOKEN:', getEnvVariable('X_APP_TOKEN'));
+  console.log('PRODUCTION:', getEnvVariable('PRODUCTION'));
 };

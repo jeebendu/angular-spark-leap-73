@@ -1,3 +1,4 @@
+
 import { AppointmentRequest } from "@/admin/mock/appointment-request/appointmentRequest";
 import { Country } from "@/admin/types/country";
 import { State } from "@/admin/types/state";
@@ -115,6 +116,8 @@ export const getMockAppointmentRequests = (page: number, size: number, searchTer
                 status: `Status ${i % 3 + 1}`,
                 external: i % 2 === 0,
                 external_temp: null,
+                firstname: `DocFirstName${i}`, // Added firstname
+                lastname: `DocLastName${i}`,   // Added lastname
             },
             appointmentType: {
                 id: i % 3 + 1,

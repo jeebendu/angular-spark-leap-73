@@ -56,6 +56,8 @@ export const DoctorSpecializationMockService = {
         status: i % 2 === 0 ? "Active" : "Inactive",
         external: i % 3 === 0,
         external_temp: null,
+        firstname: `Doctor${i}FirstName`,
+        lastname: `Doctor${i}LastName`,
       };
 
       const mockSpecialization: Specialization = {

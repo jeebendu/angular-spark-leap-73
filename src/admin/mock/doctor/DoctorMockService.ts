@@ -1,3 +1,4 @@
+
 import { Doctor } from "@/admin/types/doctor";
 import { Specialization } from "@/admin/types/specialization";
 
@@ -60,6 +61,8 @@ export const DoctorMockService = {
         status: i % 2 === 0 ? "Active" : "Inactive",
         external: i % 3 === 0,
         external_temp: null,
+        firstname: `Doctor${i}FirstName`, // Added firstname
+        lastname: `Doctor${i}LastName`,   // Added lastname
       };
 
       mockData.push(mockDoctor);

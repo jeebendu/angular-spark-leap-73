@@ -6,16 +6,16 @@ import { District } from "./district";
 import { Country } from "./country";
 
 export interface AllAppointment {
-
   id: number;
-  appointmentDate: Date;
+  appointmentDate?: Date;
   status: string;
-  branch: Branch;
+  branch?: Branch;
   patient: Patient;
   doctor: Doctor;
   slot: Slot;
   familyMember: FamilyMember;
   doctorClinic: DoctorClinic;
+  isAccept?: boolean; // Added this property
 }
 
 export interface DoctorClinic{
@@ -23,7 +23,6 @@ export interface DoctorClinic{
     doctor: Doctor;
     clinic: Clinic;
 }
-
 
 export interface FamilyMember {
     id: number;
@@ -62,15 +61,13 @@ export interface Branch{
     image: string;
     latitude: number;
     longitude: number;
-
 }
-
 
 export interface StatusUpdate {
-status:String;
+    status:String;
 }
+
 export interface SearchAppointment {
-    
     status:String;
     date:Date;
 }

@@ -1,4 +1,3 @@
-
 import { AllAppointment } from "@/admin/types/allappointment";
 import { addDays, subDays } from "date-fns";
 import { AppointmentQueryParams } from "./appointmentService";
@@ -23,8 +22,8 @@ export const getMockAppointments = (params: AppointmentQueryParams) => {
     
     const mockAppointment: AllAppointment = {
       id: i + 1,
-      isAccept: true,
       status: status,
+      appointmentDate: appointmentDate, // Added appointmentDate
       patient: {
         id: 100 + i,
         uid: `PT${1000 + i}`,
@@ -40,15 +39,15 @@ export const getMockAppointments = (params: AppointmentQueryParams) => {
           name: patientName,
           email: `${patientName.split(' ')[0].toLowerCase()}@example.com`,
           phone: `+919876${543210 + i}`,
-          branch: null,
-          username: `user${i}`,
-          password: `password${i}`,
+          branch:null,
+          username:`user${i}`,
+          password:`pass${i}`,
           role: null,
-          image: "", // Add the required image property
+          image: "",
         },
         refDoctor: null,
-        city: `City ${i}`, // Add the required city property
-        branch: null,  // Add the required branch property
+        city: `City ${i}`,
+        branch: null,
       },
       doctor: {
         id: 1,
@@ -65,8 +64,8 @@ export const getMockAppointments = (params: AppointmentQueryParams) => {
         status: "ACTIVE",
         external: false,
         external_temp: null,
-        firstname: "Gregory", // Add required firstname
-        lastname: "House", // Add required lastname
+        firstname: "Gregory",
+        lastname: "House"
       },
       slot: {
         id: 200 + i,
@@ -175,7 +174,7 @@ export const getMockAppointments = (params: AppointmentQueryParams) => {
 export const getMockAppointmentById = async (id: string | number): Promise<AllAppointment> => {
   const mockAppointment: AllAppointment = {
     id: typeof id === 'string' ? parseInt(id) : id,
-    isAccept: true,
+    appointmentDate: new Date(), // Added appointmentDate
     status: "UPCOMING",
     patient: {
       id: 101,
@@ -196,11 +195,11 @@ export const getMockAppointmentById = async (id: string | number): Promise<AllAp
         username: "johnuser",
         password: "password",
         role: null,
-        image: "", // Add the required image property
+        image: "",
       },
       refDoctor: null,
-      city: "Boston", // Add the required city property
-      branch: null,  // Add the required branch property
+      city: "Boston",
+      branch: null,
     },
     doctor: {
       id: 1,
@@ -217,8 +216,8 @@ export const getMockAppointmentById = async (id: string | number): Promise<AllAp
       status: "ACTIVE",
       external: false,
       external_temp: null,
-      firstname: "Sarah", // Add required firstname
-      lastname: "Johnson", // Add required lastname
+      firstname: "Sarah",
+      lastname: "Johnson"
     },
     slot: {
       id: 201,

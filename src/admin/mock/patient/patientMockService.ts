@@ -62,6 +62,8 @@ const generateMockPatients = (): Patient[] => {
         status: "Active",
         external: false,
         external_temp: null,
+        firstname: `DocFirstName${i}`,
+        lastname: `DocLastName${i}`,
       },
       consDoctorId: i % 10,
       remark: `Remark ${i}`,

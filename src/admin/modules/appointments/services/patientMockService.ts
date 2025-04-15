@@ -29,7 +29,7 @@ export const generateMockPatient = (id: number): Patient => {
       name: `Dr. ${faker.person.fullName()}`,
       email: faker.internet.email(),
       uid: faker.string.uuid(),
-      mobile: faker.number.int({ min: 9000000000, max: 9999999999 }), // Fixed: Using number generator instead of phone parser
+      mobile: faker.number.int({ min: 9000000000, max: 9999999999 }),
       desgination: faker.person.jobTitle(),
       specialization: faker.helpers.arrayElement(["Cardiology", "Neurology", "Dermatology", "Orthopedics"]),
       specializationList: [],
@@ -38,6 +38,8 @@ export const generateMockPatient = (id: number): Patient => {
       status: "Active",
       external: faker.datatype.boolean(),
       external_temp: null,
+      firstname: faker.person.firstName(), // Added firstname
+      lastname: faker.person.lastName(),   // Added lastname
       user: {
         id: faker.number.int({ min: 1, max: 1000 }),
         name: `Dr. ${faker.person.fullName()}`,
@@ -47,7 +49,7 @@ export const generateMockPatient = (id: number): Patient => {
         password: faker.internet.password(),
         branch: null,
         role: null,
-        image:null
+        image: ""  // Fix: Added image property
       }
     },
     consDoctorId: faker.number.int({ min: 1, max: 50 }),

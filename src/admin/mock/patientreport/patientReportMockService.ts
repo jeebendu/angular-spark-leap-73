@@ -64,6 +64,8 @@ export const PatientReportMockService = {
           status: "Active",
           external: false,
           external_temp: null,
+          firstname: `DocFirstName${i}`,
+          lastname: `DocLastName${i}`,
         },
         user: {
           id: i,
